@@ -82,8 +82,7 @@ export const SimpleDashboard: React.FC = () => {
     );
   }
 
-  console.log('Dashboard raw data:', { leads, deals });
-  console.log('Dashboard processed data:', { leadsArray, dealsArray, stats });
+
 
   return (
     <div className="space-y-6">
@@ -99,16 +98,7 @@ export const SimpleDashboard: React.FC = () => {
         </button>
       </div>
 
-      {/* Debug Info */}
-      <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-4">
-        <h4 className="font-medium text-yellow-800">Debug Info:</h4>
-        <p className="text-sm text-yellow-700">
-          Leads loaded: {leadsArray.length} | Deals loaded: {dealsArray.length}
-        </p>
-        <p className="text-sm text-yellow-700">
-          Loading states: Leads: {leadsLoading ? 'Loading' : 'Done'} | Deals: {dealsLoading ? 'Loading' : 'Done'}
-        </p>
-      </div>
+
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

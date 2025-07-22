@@ -55,9 +55,6 @@ export async function apiRequest(url: string, options: RequestOptions = {}) {
 queryClient.setQueryDefaults([], {
   queryFn: async ({ queryKey }: any) => {
     const url = Array.isArray(queryKey) ? queryKey[0] : queryKey;
-    console.log('Fetching data from:', url);
-    const result = await apiRequest(url);
-    console.log('Query result:', result);
-    return result;
+    return apiRequest(url);
   },
 });
