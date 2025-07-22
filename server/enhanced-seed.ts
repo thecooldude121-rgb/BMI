@@ -1,4 +1,4 @@
-import { db } from "./storage";
+import { db } from "./db";
 import * as schema from "@shared/schema";
 import { eq } from "drizzle-orm";
 
@@ -29,9 +29,19 @@ export async function createEnhancedSampleData() {
 
     const userId = sampleUser[0].id;
 
-    // Create 5 sample accounts
-    console.log("🏢 Creating 5 sample accounts...");
-    const sampleAccounts = await db.insert(schema.accounts).values([
+    // Check and create exactly 5 sample accounts
+    const existingAccounts = await db.select().from(schema.accounts).limit(10);
+    console.log("🏢 Existing accounts:", existingAccounts.length);
+    
+    let sampleAccounts;
+    if (existingAccounts.length >= 5) {
+      sampleAccounts = existingAccounts.slice(0, 5);
+      console.log("✅ Using existing 5 accounts");
+    } else {
+      // Delete all existing accounts first
+      await db.delete(schema.accounts);
+      console.log("🏢 Creating exactly 5 sample accounts...");
+      sampleAccounts = await db.insert(schema.accounts).values([
       {
         name: 'TechCorp Solutions',
         domain: 'techcorp.com',
@@ -87,11 +97,21 @@ export async function createEnhancedSampleData() {
         description: 'Comprehensive financial services and consulting firm',
         ownerId: userId
       }
-    ]).returning();
+      ]).returning();
+    }
 
-    // Create 5 sample contacts
-    console.log("👥 Creating 5 sample contacts...");
-    const sampleContacts = await db.insert(schema.contacts).values([
+    // Check and create exactly 5 sample contacts
+    const existingContacts = await db.select().from(schema.contacts).limit(10);
+    console.log("👥 Existing contacts:", existingContacts.length);
+    
+    let sampleContacts;
+    if (existingContacts.length >= 5) {
+      sampleContacts = existingContacts.slice(0, 5);
+      console.log("✅ Using existing 5 contacts");
+    } else {
+      await db.delete(schema.contacts);
+      console.log("👥 Creating exactly 5 sample contacts...");
+      sampleContacts = await db.insert(schema.contacts).values([
       {
         accountId: sampleAccounts[0].id,
         firstName: 'Sarah',
@@ -157,11 +177,21 @@ export async function createEnhancedSampleData() {
         isPrimary: true,
         ownerId: userId
       }
-    ]).returning();
+      ]).returning();
+    }
 
-    // Create 5 sample leads
-    console.log("🎯 Creating 5 sample leads...");
-    const sampleLeads = await db.insert(schema.leads).values([
+    // Check and create exactly 5 sample leads
+    const existingLeads = await db.select().from(schema.leads).limit(10);
+    console.log("🎯 Existing leads:", existingLeads.length);
+    
+    let sampleLeads;
+    if (existingLeads.length >= 5) {
+      sampleLeads = existingLeads.slice(0, 5);
+      console.log("✅ Using existing 5 leads");
+    } else {
+      await db.delete(schema.leads);
+      console.log("🎯 Creating exactly 5 sample leads...");
+      sampleLeads = await db.insert(schema.leads).values([
       {
         contactId: sampleContacts[0].id,
         accountId: sampleAccounts[0].id,
@@ -257,11 +287,21 @@ export async function createEnhancedSampleData() {
         assignedTo: userId,
         notes: 'Major financial services firm looking for digital transformation platform'
       }
-    ]).returning();
+      ]).returning();
+    }
 
-    // Create 5 sample deals
-    console.log("💼 Creating 5 sample deals...");
-    const sampleDeals = await db.insert(schema.deals).values([
+    // Check and create exactly 5 sample deals
+    const existingDeals = await db.select().from(schema.deals).limit(10);
+    console.log("💼 Existing deals:", existingDeals.length);
+    
+    let sampleDeals;
+    if (existingDeals.length >= 5) {
+      sampleDeals = existingDeals.slice(0, 5);
+      console.log("✅ Using existing 5 deals");
+    } else {
+      await db.delete(schema.deals);
+      console.log("💼 Creating exactly 5 sample deals...");
+      sampleDeals = await db.insert(schema.deals).values([
       {
         name: 'TechCorp Enterprise License',
         title: 'TechCorp Enterprise License',
@@ -337,7 +377,8 @@ export async function createEnhancedSampleData() {
         nextStep: 'Final presentation to board of directors',
         notes: 'Strong champion support. Technical requirements approved. Pricing discussions ongoing.'
       }
-    ]).returning();
+      ]).returning();
+    }
 
     console.log("✅ Enhanced sample data created successfully!");
     console.log(`Created ${sampleAccounts.length} accounts`);
