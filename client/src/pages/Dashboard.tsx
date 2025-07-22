@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLocation } from 'wouter';
+import { useQuery } from '@tanstack/react-query';
 import { 
   Users, 
   Target, 
@@ -10,7 +11,6 @@ import {
   AlertCircle,
   Clock
 } from 'lucide-react';
-import { useData } from '../contexts/DataContext';
 import StatCard from '../components/Dashboard/StatCard';
 import RecentActivity from '../components/Dashboard/RecentActivity';
 import SalesFunnel from '../components/Dashboard/SalesFunnel';
@@ -18,17 +18,43 @@ import TaskOverview from '../components/Dashboard/TaskOverview';
 import LeadScoreChart from '../components/Dashboard/LeadScoreChart';
 
 const Dashboard: React.FC = () => {
-  const { leads, deals, tasks } = useData();
   const [location, setLocation] = useLocation();
+  
+  const { data: leads = [], isLoading: leadsLoading } = useQuery({
+    queryKey: ['/api/leads'],
+    enabled: true
+  });
+  
+  const { data: deals = [], isLoading: dealsLoading } = useQuery({
+    queryKey: ['/api/deals'],
+    enabled: true
+  });
+  
+  const { data: tasks = [], isLoading: tasksLoading } = useQuery({
+    queryKey: ['/api/tasks'],
+    enabled: true
+  });
+
+  const leadsArray = Array.isArray(leads) ? leads : [];
+  const dealsArray = Array.isArray(deals) ? deals : [];
+  const tasksArray = Array.isArray(tasks) ? tasks : [];
 
   const stats = {
-    totalLeads: leads.length,
-    qualifiedLeads: leads.filter(lead => lead.stage === 'qualified' || lead.stage === 'proposal').length,
-    totalDeals: deals.reduce((sum, deal) => sum + deal.value, 0),
-    wonDeals: deals.filter(deal => deal.stage === 'closed-won').length,
-    pendingTasks: tasks.filter(task => task.status === 'pending').length,
-    overdueTasks: tasks.filter(task => new Date(task.dueDate) < new Date() && task.status !== 'completed').length
+    totalLeads: leadsArray.length,
+    qualifiedLeads: leadsArray.filter((lead: any) => lead.stage === 'qualified' || lead.stage === 'proposal').length,
+    totalDeals: dealsArray.reduce((sum: number, deal: any) => sum + parseFloat(deal.value || 0), 0),
+    wonDeals: dealsArray.filter((deal: any) => deal.stage === 'closed-won').length,
+    pendingTasks: tasksArray.filter((task: any) => task.status === 'pending').length,
+    overdueTasks: tasksArray.filter((task: any) => new Date(task.dueDate) < new Date() && task.status !== 'completed').length
   };
+
+  if (leadsLoading || dealsLoading || tasksLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Loading dashboard...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -86,24 +112,57 @@ const Dashboard: React.FC = () => {
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Sales Funnel */}
-        <div className="lg:col-span-2">
-          <SalesFunnel />
+        {/* Recent Leads */}
+        <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Leads</h3>
+          <div className="space-y-3">
+            {leadsArray.slice(0, 5).map((lead: any) => (
+              <div key={lead.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                <div>
+                  <p className="font-medium text-gray-900">{lead.name}</p>
+                  <p className="text-sm text-gray-600">{lead.company} - {lead.stage}</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-medium text-gray-900">${parseInt(lead.value || 0).toLocaleString()}</p>
+                  <p className="text-sm text-gray-600">{lead.probability}% probability</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Task Overview */}
-        <div>
-          <TaskOverview />
+        {/* Recent Deals */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Deals</h3>
+          <div className="space-y-3">
+            {dealsArray.slice(0, 4).map((deal: any) => (
+              <div key={deal.id} className="p-3 bg-gray-50 rounded-md">
+                <p className="font-medium text-gray-900">{deal.name}</p>
+                <p className="text-sm text-gray-600">{deal.stage}</p>
+                <p className="text-sm font-medium text-green-600">${parseInt(deal.value || 0).toLocaleString()}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Secondary Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Lead Score Distribution */}
-        <LeadScoreChart />
-
-        {/* Recent Activity */}
-        <RecentActivity />
+      {/* Tasks Summary */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Tasks Summary</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="text-center p-4 bg-yellow-50 rounded-md">
+            <p className="text-2xl font-bold text-yellow-600">{stats.pendingTasks}</p>
+            <p className="text-sm text-yellow-600">Pending Tasks</p>
+          </div>
+          <div className="text-center p-4 bg-red-50 rounded-md">
+            <p className="text-2xl font-bold text-red-600">{stats.overdueTasks}</p>
+            <p className="text-sm text-red-600">Overdue Tasks</p>
+          </div>
+          <div className="text-center p-4 bg-green-50 rounded-md">
+            <p className="text-2xl font-bold text-green-600">{tasksArray.filter((task: any) => task.status === 'completed').length}</p>
+            <p className="text-sm text-green-600">Completed Tasks</p>
+          </div>
+        </div>
       </div>
 
       {/* Quick Actions */}
