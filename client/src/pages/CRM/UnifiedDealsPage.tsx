@@ -670,8 +670,9 @@ const UnifiedDealsPage = () => {
                 className="px-3 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm"
               >
                 <option value="all">All Owners</option>
-                {employees.map(emp => (
-                  <option key={emp.id} value={emp.id}>{emp.name}</option>
+                {/* Get unique owners from deals */}
+                {Array.from(new Set(unifiedDeals.map(deal => deal.ownerId).filter(Boolean))).map(ownerId => (
+                  <option key={ownerId} value={ownerId}>{getEmployeeName(ownerId)}</option>
                 ))}
               </select>
               
