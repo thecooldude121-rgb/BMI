@@ -1,17 +1,57 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Mail, Phone, Building, Calendar } from 'lucide-react';
+import React, { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Mail, Phone, Building, Calendar, CheckSquare, Square, Trash2 } from 'lucide-react';
+import { apiRequest } from '../../lib/queryClient';
 
 const ContactsPage: React.FC = () => {
+  const queryClient = useQueryClient();
   const { data: contacts = [], isLoading: contactsLoading } = useQuery({
     queryKey: ['/api/contacts'],
   });
   const { data: leads = [], isLoading: leadsLoading } = useQuery({
     queryKey: ['/api/leads'],
   });
+  const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+
+  const deleteContactsMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      return apiRequest('/api/contacts', {
+        method: 'DELETE',
+        body: { ids }
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/contacts'] });
+      setSelectedContacts([]);
+      setIsSelectionMode(false);
+    }
+  });
 
   const contactsArray = Array.isArray(contacts) ? contacts : [];
   const leadsArray = Array.isArray(leads) ? leads : [];
+
+  const handleSelectContact = (contactId: string) => {
+    setSelectedContacts(prev => 
+      prev.includes(contactId) 
+        ? prev.filter(id => id !== contactId)
+        : [...prev, contactId]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedContacts.length === contactsArray.length) {
+      setSelectedContacts([]);
+    } else {
+      setSelectedContacts(contactsArray.map((contact: any) => contact.id));
+    }
+  };
+
+  const handleDeleteSelected = () => {
+    if (selectedContacts.length > 0 && window.confirm(`Delete ${selectedContacts.length} selected contacts?`)) {
+      deleteContactsMutation.mutate(selectedContacts);
+    }
+  };
 
   if (contactsLoading || leadsLoading) {
     return (
@@ -40,6 +80,44 @@ const ContactsPage: React.FC = () => {
           <h2 className="text-2xl font-bold text-gray-900">Contacts</h2>
           <p className="text-gray-600">{allContacts.length} total contacts</p>
         </div>
+        <div className="flex space-x-3">
+          {isSelectionMode ? (
+            <>
+              <button
+                onClick={handleSelectAll}
+                className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50"
+              >
+                {selectedContacts.length === contactsArray.length ? <CheckSquare className="h-4 w-4 mr-2" /> : <Square className="h-4 w-4 mr-2" />}
+                Select All
+              </button>
+              <button
+                onClick={handleDeleteSelected}
+                disabled={selectedContacts.length === 0 || deleteContactsMutation.isPending}
+                className="flex items-center px-3 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 disabled:opacity-50"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete ({selectedContacts.length})
+              </button>
+              <button
+                onClick={() => {
+                  setIsSelectionMode(false);
+                  setSelectedContacts([]);
+                }}
+                className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => setIsSelectionMode(true)}
+              className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50"
+            >
+              <CheckSquare className="h-4 w-4 mr-2" />
+              Select
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Industry Groups */}
@@ -53,7 +131,20 @@ const ContactsPage: React.FC = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
             {(contacts as any[]).map((contact: any) => (
-              <div key={contact.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+              <div key={contact.id} className="relative border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                {isSelectionMode && contactsArray.some((c: any) => c.id === contact.id) && (
+                  <div className="absolute top-2 right-2 z-10">
+                    <button
+                      onClick={() => handleSelectContact(contact.id)}
+                      className="p-1 bg-white rounded-md shadow-md border border-gray-300 hover:bg-gray-50"
+                    >
+                      {selectedContacts.includes(contact.id) ? 
+                        <CheckSquare className="h-4 w-4 text-blue-600" /> : 
+                        <Square className="h-4 w-4 text-gray-400" />
+                      }
+                    </button>
+                  </div>
+                )}
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <h4 className="text-lg font-medium text-gray-900">
