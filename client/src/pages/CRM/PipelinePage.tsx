@@ -173,6 +173,7 @@ const PipelinePage: React.FC = () => {
       // Create new deal
       const stage = mockPipeline.stages.find(s => s.id === selectedStageId);
       addDeal({
+        name: dealData.name || 'New Deal',
         title: dealData.name || 'New Deal',
         leadId: dealData.contactId || '',
         value: dealData.value || 0,

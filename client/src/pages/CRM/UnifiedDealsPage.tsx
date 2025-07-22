@@ -592,7 +592,6 @@ const UnifiedDealsPage: React.FC = () => {
                   List
                 </button>
               </div>
-                onClick={() => navigate('/crm/deals/create')}
 
               <button 
                 onClick={() => navigate('/crm/deals/create')}

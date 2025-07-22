@@ -62,6 +62,7 @@ const AttendancePage: React.FC = () => {
       id: '5',
       employeeId: '5',
       date: selectedDate,
+      checkIn: '',
       status: 'absent',
       hoursWorked: 0,
       notes: 'Sick leave'
