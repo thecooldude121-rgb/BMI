@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Plus, Users, DollarSign, Target, TrendingUp, BarChart3 } from 'lucide-react';
+import { Plus, Users, DollarSign, Target, TrendingUp, BarChart3, Brain } from 'lucide-react';
+import AIInsightsSidebar from './AIInsightsSidebar';
 
 interface StatCardProps {
   title: string;
@@ -39,6 +40,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon, change, c
 
 export const SimpleDashboard: React.FC = () => {
   const [showWidgetSelector, setShowWidgetSelector] = useState(false);
+  const [showAIInsights, setShowAIInsights] = useState(false);
 
   const { data: leads = [], isLoading: leadsLoading, error: leadsError } = useQuery({
     queryKey: ['/api/leads'],
@@ -89,13 +91,22 @@ export const SimpleDashboard: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <button
-          onClick={() => setShowWidgetSelector(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors flex items-center space-x-2"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Add Widget</span>
-        </button>
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={() => setShowAIInsights(true)}
+            className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors flex items-center space-x-2"
+          >
+            <Brain className="h-4 w-4" />
+            <span>AI Insights</span>
+          </button>
+          <button
+            onClick={() => setShowWidgetSelector(true)}
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors flex items-center space-x-2"
+          >
+            <Plus className="h-4 w-4" />
+            <span>Add Widget</span>
+          </button>
+        </div>
       </div>
 
 
@@ -204,6 +215,12 @@ export const SimpleDashboard: React.FC = () => {
           ))}
         </div>
       </div>
+
+      {/* AI Insights Sidebar */}
+      <AIInsightsSidebar 
+        isOpen={showAIInsights}
+        onClose={() => setShowAIInsights(false)}
+      />
     </div>
   );
 };
