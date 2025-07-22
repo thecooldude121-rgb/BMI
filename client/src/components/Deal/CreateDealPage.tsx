@@ -1,25 +1,25 @@
 import React, { useState } from 'react';
 import { Plus, ArrowLeft } from 'lucide-react';
 import CreateDealWizard from './CreateDealWizard';
-import { Deal } from '../../types/deal';
-import { useNavigate } from 'react-router-dom';
+import { DealFormData } from '../../types/deal';
+import { useLocation } from 'wouter';
 
 const CreateDealPage: React.FC = () => {
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
   const [showWizard, setShowWizard] = useState(true);
 
-  const handleSaveDeal = async (dealData: Partial<Deal>) => {
+  const handleSaveDeal = async (dealData: Partial<DealFormData>) => {
     console.log('Saving deal:', dealData);
     // Here you would typically make an API call to save the deal
     // await createDeal(dealData);
     
     // For now, just navigate back to deals page
-    navigate('/crm/deals');
+    setLocation('/crm/deals');
   };
 
   const handleCloseWizard = () => {
     setShowWizard(false);
-    navigate('/crm/deals');
+    setLocation('/crm/deals');
   };
 
   if (!showWizard) {
@@ -28,7 +28,7 @@ const CreateDealPage: React.FC = () => {
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Deal Creation Cancelled</h2>
           <button
-            onClick={() => navigate('/crm/deals')}
+            onClick={() => setLocation('/crm/deals')}
             className="flex items-center space-x-2 bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />

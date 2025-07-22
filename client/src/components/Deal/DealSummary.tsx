@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import { X, DollarSign, User, Building, Calendar, Target, Zap, Save, Clock, CheckCircle } from 'lucide-react';
 import { DealFormData } from '../../types/deal';
 
@@ -10,9 +10,9 @@ interface DealSummaryProps {
 }
 
 const DealSummary: React.FC<DealSummaryProps> = ({ formData, onClose, isDraftSaved }) => {
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
   
-  const handleClose = onClose || (() => navigate('/crm/deals'));
+  const handleClose = onClose || (() => setLocation('/crm/deals'));
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',

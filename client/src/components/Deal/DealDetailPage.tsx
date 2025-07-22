@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useLocation, useRoute } from 'wouter';
 import { 
   ArrowLeft, Edit, Mail, Plus, MoreHorizontal, ChevronDown, ChevronUp,
   User, Building, Calendar, DollarSign, Target, Phone, Video, FileText,
@@ -14,11 +14,11 @@ interface DealDetailPageProps {
 }
 
 const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId: propDealId }) => {
-  const { id: paramDealId } = useParams();
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
+  const [match, params] = useRoute("/crm/deals/:id");
   const { deals, leads, employees, companies, contacts, activities, tasks } = useData();
   
-  const dealId = propDealId || paramDealId;
+  const dealId = propDealId || params?.id;
   const deal = deals.find(d => d.id === dealId);
   
   const [isEditing, setIsEditing] = useState(false);

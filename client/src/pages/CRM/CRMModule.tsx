@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, NavLink, Outlet } from 'react-router-dom';
+import { Switch, Route } from 'wouter';
 import LeadsPage from './LeadsPage';
 import ContactsPage from './ContactsPage';
 import CompaniesPage from './CompaniesPage';
@@ -11,16 +11,16 @@ import TasksPage from './TasksPage';
 const CRMModule = () => {
   return (
     <div className="h-full overflow-auto bg-gray-50 p-6">
-      <Routes>
-        <Route path="/" element={<LeadsPage />} />
-        <Route path="/leads" element={<LeadsPage />} />
-        <Route path="/contacts" element={<ContactsPage />} />
-        <Route path="/accounts" element={<CompaniesPage />} />
-        <Route path="/deals" element={<UnifiedDealsPage />} />
-        <Route path="/pipeline" element={<PipelinePage />} />
-        <Route path="/tasks" element={<TasksPage />} />
-        <Route path="/activities" element={<ActivitiesPage />} />
-      </Routes>
+      <Switch>
+        <Route path="/crm/leads" component={LeadsPage} />
+        <Route path="/crm/contacts" component={ContactsPage} />
+        <Route path="/crm/accounts" component={CompaniesPage} />
+        <Route path="/crm/deals" component={UnifiedDealsPage} />
+        <Route path="/crm/pipeline" component={PipelinePage} />
+        <Route path="/crm/tasks" component={TasksPage} />
+        <Route path="/crm/activities" component={ActivitiesPage} />
+        <Route path="/crm" component={LeadsPage} />
+      </Switch>
     </div>
   );
 };
