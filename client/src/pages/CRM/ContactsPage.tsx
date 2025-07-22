@@ -1,19 +1,36 @@
 import React from 'react';
-import { useData } from '../../contexts/DataContext';
+import { useQuery } from '@tanstack/react-query';
 import { Mail, Phone, Building, Calendar } from 'lucide-react';
 
 const ContactsPage: React.FC = () => {
-  const { leads } = useData();
+  const { data: contacts = [], isLoading: contactsLoading } = useQuery({
+    queryKey: ['/api/contacts'],
+  });
+  const { data: leads = [], isLoading: leadsLoading } = useQuery({
+    queryKey: ['/api/leads'],
+  });
+
+  const contactsArray = Array.isArray(contacts) ? contacts : [];
+  const leadsArray = Array.isArray(leads) ? leads : [];
+
+  if (contactsLoading || leadsLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Loading contacts...</div>
+      </div>
+    );
+  }
 
   // Group contacts by industry for better organization
-  const contactsByIndustry = leads.reduce((acc, lead) => {
-    const industry = lead.industry || 'Other';
+  const allContacts = [...contactsArray, ...leadsArray];
+  const contactsByIndustry = allContacts.reduce((acc: any, contact: any) => {
+    const industry = contact.industry || 'Other';
     if (!acc[industry]) {
       acc[industry] = [];
     }
-    acc[industry].push(lead);
+    acc[industry].push(contact);
     return acc;
-  }, {} as Record<string, typeof leads>);
+  }, {});
 
   return (
     <div className="space-y-6">
@@ -21,7 +38,7 @@ const ContactsPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Contacts</h2>
-          <p className="text-gray-600">{leads.length} total contacts</p>
+          <p className="text-gray-600">{allContacts.length} total contacts</p>
         </div>
       </div>
 
@@ -35,11 +52,11 @@ const ContactsPage: React.FC = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
-            {contacts.map((contact) => (
+            {contacts.map((contact: any) => (
               <div key={contact.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    <h4 className="text-lg font-medium text-gray-900">{contact.name}</h4>
+                    <h4 className="text-lg font-medium text-gray-900">{contact.name || contact.firstName + ' ' + contact.lastName}</h4>
                     <p className="text-sm text-gray-600">{contact.position}</p>
                   </div>
                   <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${

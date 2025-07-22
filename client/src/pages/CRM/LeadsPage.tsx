@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
 import { Plus, Filter, Download, Upload, Search } from 'lucide-react';
-import { useData } from '../../contexts/DataContext';
+import { useQuery } from '@tanstack/react-query';
 import LeadCard from '../../components/CRM/LeadCard';
 import LeadForm from '../../components/CRM/LeadForm';
 
 const LeadsPage: React.FC = () => {
-  const { leads } = useData();
+  const { data: leads = [], isLoading } = useQuery({
+    queryKey: ['/api/leads'],
+  });
   const [showForm, setShowForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [stageFilter, setStageFilter] = useState('all');
   const [sortBy, setSortBy] = useState('created');
 
-  const filteredLeads = leads
-    .filter(lead => {
+  const leadsArray = Array.isArray(leads) ? leads : [];
+  
+  const filteredLeads = leadsArray
+    .filter((lead: any) => {
       const matchesSearch = 
         lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         lead.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -20,18 +24,26 @@ const LeadsPage: React.FC = () => {
       const matchesStage = stageFilter === 'all' || lead.stage === stageFilter;
       return matchesSearch && matchesStage;
     })
-    .sort((a, b) => {
+    .sort((a: any, b: any) => {
       switch (sortBy) {
         case 'score':
-          return b.score - a.score;
+          return (b.score || 0) - (a.score || 0);
         case 'value':
-          return b.value - a.value;
+          return parseFloat(b.value || 0) - parseFloat(a.value || 0);
         case 'name':
           return a.name.localeCompare(b.name);
         default:
           return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
       }
     });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Loading leads...</div>
+      </div>
+    );
+  }
 
   const stages = ['all', 'new', 'contacted', 'qualified', 'proposal', 'won', 'lost'];
 
@@ -41,7 +53,7 @@ const LeadsPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Leads</h2>
-          <p className="text-gray-600">{filteredLeads.length} of {leads.length} leads</p>
+          <p className="text-gray-600">{filteredLeads.length} of {leadsArray.length} leads</p>
         </div>
         <div className="flex space-x-3">
           <button className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50">

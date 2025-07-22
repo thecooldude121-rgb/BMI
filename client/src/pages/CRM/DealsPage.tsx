@@ -1,9 +1,17 @@
 import React from 'react';
 import { DollarSign, TrendingUp, Calendar, User } from 'lucide-react';
-import { useData } from '../../contexts/DataContext';
+import { useQuery } from '@tanstack/react-query';
 
 const DealsPage: React.FC = () => {
-  const { deals, leads, employees } = useData();
+  const { data: deals = [], isLoading: dealsLoading } = useQuery({
+    queryKey: ['/api/deals'],
+  });
+  const { data: leads = [], isLoading: leadsLoading } = useQuery({
+    queryKey: ['/api/leads'],
+  });
+
+  const dealsArray = Array.isArray(deals) ? deals : [];
+  const leadsArray = Array.isArray(leads) ? leads : [];
 
   const getStageColor = (stage: string) => {
     const colors = {
@@ -16,18 +24,21 @@ const DealsPage: React.FC = () => {
   };
 
   const getLeadName = (leadId: string) => {
-    const lead = leads.find(l => l.id === leadId);
+    const lead = leadsArray.find((l: any) => l.id === leadId);
     return lead ? lead.name : 'Unknown Lead';
   };
 
-  const getEmployeeName = (employeeId: string) => {
-    const employee = employees.find(e => e.id === employeeId);
-    return employee ? employee.name : 'Unassigned';
-  };
+  const totalValue = dealsArray.reduce((sum: number, deal: any) => sum + parseFloat(deal.value || 0), 0);
+  const wonDeals = dealsArray.filter((deal: any) => deal.stage === 'closed-won');
+  const wonValue = wonDeals.reduce((sum: number, deal: any) => sum + parseFloat(deal.value || 0), 0);
 
-  const totalValue = deals.reduce((sum, deal) => sum + deal.value, 0);
-  const wonDeals = deals.filter(deal => deal.stage === 'closed-won');
-  const wonValue = wonDeals.reduce((sum, deal) => sum + deal.value, 0);
+  if (dealsLoading || leadsLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Loading deals...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -59,7 +70,7 @@ const DealsPage: React.FC = () => {
             <div className="ml-4">
               <p className="text-sm text-gray-600">Active Deals</p>
               <p className="text-2xl font-bold text-gray-900">
-                {deals.filter(d => !d.stage.startsWith('closed')).length}
+                {dealsArray.filter((d: any) => !d.stage.startsWith('closed')).length}
               </p>
             </div>
           </div>
@@ -71,7 +82,7 @@ const DealsPage: React.FC = () => {
             <div className="ml-4">
               <p className="text-sm text-gray-600">Win Rate</p>
               <p className="text-2xl font-bold text-gray-900">
-                {deals.length > 0 ? Math.round((wonDeals.length / deals.length) * 100) : 0}%
+                {dealsArray.length > 0 ? Math.round((wonDeals.length / dealsArray.length) * 100) : 0}%
               </p>
             </div>
           </div>
@@ -112,7 +123,7 @@ const DealsPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {deals.map((deal) => (
+              {dealsArray.map((deal: any) => (
                 <tr key={deal.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
@@ -127,7 +138,7 @@ const DealsPage: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">
-                      ${deal.value.toLocaleString()}
+                      ${parseInt(deal.value || 0).toLocaleString()}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -150,7 +161,7 @@ const DealsPage: React.FC = () => {
                     {new Date(deal.expectedCloseDate).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {getEmployeeName(deal.assignedTo)}
+                    {deal.assignedTo || 'Unassigned'}
                   </td>
                 </tr>
               ))}

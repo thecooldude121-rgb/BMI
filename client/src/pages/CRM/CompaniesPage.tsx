@@ -1,34 +1,54 @@
 import React, { useState } from 'react';
 import { Plus, Search, Building, Globe, Users, DollarSign, Filter, Download } from 'lucide-react';
-import { useData } from '../../contexts/DataContext';
+import { useQuery } from '@tanstack/react-query';
 import CompanyForm from '../../components/CRM/CompanyForm';
 
 const CompaniesPage: React.FC = () => {
-  const { companies, contacts, leads } = useData();
+  const { data: accounts = [], isLoading: accountsLoading } = useQuery({
+    queryKey: ['/api/accounts'],
+  });
+  const { data: contacts = [], isLoading: contactsLoading } = useQuery({
+    queryKey: ['/api/contacts'],
+  });
+  const { data: leads = [], isLoading: leadsLoading } = useQuery({
+    queryKey: ['/api/leads'],
+  });
+
+  const accountsArray = Array.isArray(accounts) ? accounts : [];
+  const contactsArray = Array.isArray(contacts) ? contacts : [];
+  const leadsArray = Array.isArray(leads) ? leads : [];
   const [showForm, setShowForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [industryFilter, setIndustryFilter] = useState('all');
   const [sizeFilter, setSizeFilter] = useState('all');
 
-  const filteredCompanies = companies.filter(company => {
+  if (accountsLoading || contactsLoading || leadsLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Loading companies...</div>
+      </div>
+    );
+  }
+
+  const filteredCompanies = accountsArray.filter((company: any) => {
     const matchesSearch = 
       company.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      company.industry.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (company.industry && company.industry.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (company.domain && company.domain.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesIndustry = industryFilter === 'all' || company.industry === industryFilter;
-    const matchesSize = sizeFilter === 'all' || company.size === sizeFilter;
+    const matchesSize = sizeFilter === 'all' || company.companySize === sizeFilter;
     return matchesSearch && matchesIndustry && matchesSize;
   });
 
-  const industries = Array.from(new Set(companies.map(c => c.industry)));
+  const industries = Array.from(new Set(accountsArray.map((c: any) => c.industry).filter(Boolean)));
   const sizes = ['1-10', '11-50', '51-200', '201-500', '501-1000', '1000+'];
 
   const getCompanyContacts = (companyId: string) => {
-    return contacts.filter(contact => contact.companyId === companyId);
+    return contactsArray.filter((contact: any) => contact.accountId === companyId);
   };
 
   const getCompanyLeads = (companyId: string) => {
-    return leads.filter(lead => lead.companyId === companyId);
+    return leadsArray.filter((lead: any) => lead.accountId === companyId);
   };
 
   const getSizeColor = (size: string) => {
@@ -49,7 +69,7 @@ const CompaniesPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Companies</h2>
-          <p className="text-gray-600">{filteredCompanies.length} of {companies.length} companies</p>
+          <p className="text-gray-600">{filteredCompanies.length} of {accountsArray.length} companies</p>
         </div>
         <div className="flex space-x-3">
           <button className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50">
