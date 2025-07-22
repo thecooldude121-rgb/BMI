@@ -75,6 +75,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/accounts/:id", async (req, res) => {
+    try {
+      const success = await storage.deleteAccount(req.params.id);
+      if (!success) return res.status(404).json({ error: "Account not found" });
+      res.json({ success: true });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.delete("/api/accounts", async (req, res) => {
+    try {
+      const { ids } = req.body;
+      if (!Array.isArray(ids)) {
+        return res.status(400).json({ error: "ids must be an array" });
+      }
+      const results = await Promise.all(ids.map(id => storage.deleteAccount(id)));
+      const deletedCount = results.filter(Boolean).length;
+      res.json({ success: true, deletedCount });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
   // Contact routes
   app.get("/api/contacts", async (req, res) => {
     try {
@@ -121,6 +145,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const contact = await storage.updateContact(req.params.id, req.body);
       res.json(contact);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.delete("/api/contacts/:id", async (req, res) => {
+    try {
+      const success = await storage.deleteContact(req.params.id);
+      if (!success) return res.status(404).json({ error: "Contact not found" });
+      res.json({ success: true });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.delete("/api/contacts", async (req, res) => {
+    try {
+      const { ids } = req.body;
+      if (!Array.isArray(ids)) {
+        return res.status(400).json({ error: "ids must be an array" });
+      }
+      const results = await Promise.all(ids.map(id => storage.deleteContact(id)));
+      const deletedCount = results.filter(Boolean).length;
+      res.json({ success: true, deletedCount });
     } catch (error) {
       handleError(error, res);
     }
@@ -187,6 +235,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/leads", async (req, res) => {
+    try {
+      const { ids } = req.body;
+      if (!Array.isArray(ids)) {
+        return res.status(400).json({ error: "ids must be an array" });
+      }
+      const results = await Promise.all(ids.map(id => storage.deleteLead(id)));
+      const deletedCount = results.filter(Boolean).length;
+      res.json({ success: true, deletedCount });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
   // Deal routes
   app.get("/api/deals", async (req, res) => {
     try {
@@ -233,6 +295,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const deal = await storage.updateDeal(req.params.id, req.body);
       res.json(deal);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.delete("/api/deals/:id", async (req, res) => {
+    try {
+      const success = await storage.deleteDeal(req.params.id);
+      if (!success) return res.status(404).json({ error: "Deal not found" });
+      res.json({ success: true });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.delete("/api/deals", async (req, res) => {
+    try {
+      const { ids } = req.body;
+      if (!Array.isArray(ids)) {
+        return res.status(400).json({ error: "ids must be an array" });
+      }
+      const results = await Promise.all(ids.map(id => storage.deleteDeal(id)));
+      const deletedCount = results.filter(Boolean).length;
+      res.json({ success: true, deletedCount });
     } catch (error) {
       handleError(error, res);
     }

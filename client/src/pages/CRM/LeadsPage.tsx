@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Plus, Filter, Download, Upload, Search } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { Plus, Filter, Download, Upload, Search, Trash2, CheckSquare, Square } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import LeadCard from '../../components/CRM/LeadCard';
 import LeadForm from '../../components/CRM/LeadForm';
+import { apiRequest } from '../../lib/queryClient';
 
 const LeadsPage: React.FC = () => {
+  const queryClient = useQueryClient();
   const { data: leads = [], isLoading } = useQuery({
     queryKey: ['/api/leads'],
   });
@@ -12,8 +14,46 @@ const LeadsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [stageFilter, setStageFilter] = useState('all');
   const [sortBy, setSortBy] = useState('created');
+  const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+
+  const deleteLeadsMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      return apiRequest('/api/leads', {
+        method: 'DELETE',
+        body: { ids }
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/leads'] });
+      setSelectedLeads([]);
+      setIsSelectionMode(false);
+    }
+  });
 
   const leadsArray = Array.isArray(leads) ? leads : [];
+
+  const handleSelectLead = (leadId: string) => {
+    setSelectedLeads(prev => 
+      prev.includes(leadId) 
+        ? prev.filter(id => id !== leadId)
+        : [...prev, leadId]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedLeads.length === filteredLeads.length) {
+      setSelectedLeads([]);
+    } else {
+      setSelectedLeads(filteredLeads.map((lead: any) => lead.id));
+    }
+  };
+
+  const handleDeleteSelected = () => {
+    if (selectedLeads.length > 0 && window.confirm(`Delete ${selectedLeads.length} selected leads?`)) {
+      deleteLeadsMutation.mutate(selectedLeads);
+    }
+  };
   
   const filteredLeads = leadsArray
     .filter((lead: any) => {
@@ -56,21 +96,59 @@ const LeadsPage: React.FC = () => {
           <p className="text-gray-600">{filteredLeads.length} of {leadsArray.length} leads</p>
         </div>
         <div className="flex space-x-3">
-          <button className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50">
-            <Upload className="h-4 w-4 mr-2" />
-            Import
-          </button>
-          <button className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50">
-            <Download className="h-4 w-4 mr-2" />
-            Export
-          </button>
-          <button
-            onClick={() => setShowForm(true)}
-            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Lead
-          </button>
+          {isSelectionMode ? (
+            <>
+              <button
+                onClick={handleSelectAll}
+                className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50"
+              >
+                {selectedLeads.length === filteredLeads.length ? <CheckSquare className="h-4 w-4 mr-2" /> : <Square className="h-4 w-4 mr-2" />}
+                Select All
+              </button>
+              <button
+                onClick={handleDeleteSelected}
+                disabled={selectedLeads.length === 0 || deleteLeadsMutation.isPending}
+                className="flex items-center px-3 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 disabled:opacity-50"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete ({selectedLeads.length})
+              </button>
+              <button
+                onClick={() => {
+                  setIsSelectionMode(false);
+                  setSelectedLeads([]);
+                }}
+                className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => setIsSelectionMode(true)}
+                className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50"
+              >
+                <CheckSquare className="h-4 w-4 mr-2" />
+                Select
+              </button>
+              <button className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50">
+                <Upload className="h-4 w-4 mr-2" />
+                Import
+              </button>
+              <button className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50">
+                <Download className="h-4 w-4 mr-2" />
+                Export
+              </button>
+              <button
+                onClick={() => setShowForm(true)}
+                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Lead
+              </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -115,8 +193,23 @@ const LeadsPage: React.FC = () => {
 
       {/* Leads Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredLeads.map(lead => (
-          <LeadCard key={lead.id} lead={lead} />
+        {filteredLeads.map((lead: any) => (
+          <div key={lead.id} className="relative">
+            {isSelectionMode && (
+              <div className="absolute top-2 left-2 z-10">
+                <button
+                  onClick={() => handleSelectLead(lead.id)}
+                  className="p-1 bg-white rounded-md shadow-md border border-gray-300 hover:bg-gray-50"
+                >
+                  {selectedLeads.includes(lead.id) ? 
+                    <CheckSquare className="h-4 w-4 text-blue-600" /> : 
+                    <Square className="h-4 w-4 text-gray-400" />
+                  }
+                </button>
+              </div>
+            )}
+            <LeadCard key={lead.id} lead={lead} />
+          </div>
         ))}
       </div>
 

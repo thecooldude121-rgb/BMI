@@ -100,6 +100,11 @@ export class DatabaseStorage implements IStorage {
     return accounts[0];
   }
 
+  async deleteAccount(id: string): Promise<boolean> {
+    const result = await db.delete(schema.accounts).where(eq(schema.accounts.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
   // Contact methods
   async getContacts(): Promise<schema.Contact[]> {
     return await db.select().from(schema.contacts);
@@ -122,6 +127,11 @@ export class DatabaseStorage implements IStorage {
   async updateContact(id: string, contact: Partial<schema.InsertContact>): Promise<schema.Contact> {
     const contacts = await db.update(schema.contacts).set(contact).where(eq(schema.contacts.id, id)).returning();
     return contacts[0];
+  }
+
+  async deleteContact(id: string): Promise<boolean> {
+    const result = await db.delete(schema.contacts).where(eq(schema.contacts.id, id));
+    return (result.rowCount || 0) > 0;
   }
 
   // Lead methods
@@ -175,6 +185,11 @@ export class DatabaseStorage implements IStorage {
   async updateDeal(id: string, deal: Partial<schema.InsertDeal>): Promise<schema.Deal> {
     const deals = await db.update(schema.deals).set(deal).where(eq(schema.deals.id, id)).returning();
     return deals[0];
+  }
+
+  async deleteDeal(id: string): Promise<boolean> {
+    const result = await db.delete(schema.deals).where(eq(schema.deals.id, id));
+    return (result.rowCount || 0) > 0;
   }
 
   // Task methods

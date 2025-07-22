@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Plus, Search, Building, Globe, Users, DollarSign, Filter, Download } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { Plus, Search, Building, Globe, Users, DollarSign, Filter, Download, CheckSquare, Square, Trash2 } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import CompanyForm from '../../components/CRM/CompanyForm';
+import { apiRequest } from '../../lib/queryClient';
 
 const CompaniesPage: React.FC = () => {
+  const queryClient = useQueryClient();
   const { data: accounts = [], isLoading: accountsLoading } = useQuery({
     queryKey: ['/api/accounts'],
   });
@@ -21,6 +23,22 @@ const CompaniesPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [industryFilter, setIndustryFilter] = useState('all');
   const [sizeFilter, setSizeFilter] = useState('all');
+  const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+
+  const deleteAccountsMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      return apiRequest('/api/accounts', {
+        method: 'DELETE',
+        body: { ids }
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/accounts'] });
+      setSelectedAccounts([]);
+      setIsSelectionMode(false);
+    }
+  });
 
   if (accountsLoading || contactsLoading || leadsLoading) {
     return (
@@ -51,6 +69,28 @@ const CompaniesPage: React.FC = () => {
     return leadsArray.filter((lead: any) => lead.accountId === companyId);
   };
 
+  const handleSelectAccount = (accountId: string) => {
+    setSelectedAccounts(prev => 
+      prev.includes(accountId) 
+        ? prev.filter(id => id !== accountId)
+        : [...prev, accountId]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedAccounts.length === filteredCompanies.length) {
+      setSelectedAccounts([]);
+    } else {
+      setSelectedAccounts(filteredCompanies.map((account: any) => account.id));
+    }
+  };
+
+  const handleDeleteSelected = () => {
+    if (selectedAccounts.length > 0 && window.confirm(`Delete ${selectedAccounts.length} selected companies?`)) {
+      deleteAccountsMutation.mutate(selectedAccounts);
+    }
+  };
+
   const getSizeColor = (size: string) => {
     const colors = {
       '1-10': 'bg-gray-100 text-gray-800',
@@ -72,17 +112,55 @@ const CompaniesPage: React.FC = () => {
           <p className="text-gray-600">{filteredCompanies.length} of {accountsArray.length} companies</p>
         </div>
         <div className="flex space-x-3">
-          <button className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50">
-            <Download className="h-4 w-4 mr-2" />
-            Export
-          </button>
-          <button
-            onClick={() => setShowForm(true)}
-            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Company
-          </button>
+          {isSelectionMode ? (
+            <>
+              <button
+                onClick={handleSelectAll}
+                className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50"
+              >
+                {selectedAccounts.length === filteredCompanies.length ? <CheckSquare className="h-4 w-4 mr-2" /> : <Square className="h-4 w-4 mr-2" />}
+                Select All
+              </button>
+              <button
+                onClick={handleDeleteSelected}
+                disabled={selectedAccounts.length === 0 || deleteAccountsMutation.isPending}
+                className="flex items-center px-3 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 disabled:opacity-50"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete ({selectedAccounts.length})
+              </button>
+              <button
+                onClick={() => {
+                  setIsSelectionMode(false);
+                  setSelectedAccounts([]);
+                }}
+                className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => setIsSelectionMode(true)}
+                className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50"
+              >
+                <CheckSquare className="h-4 w-4 mr-2" />
+                Select
+              </button>
+              <button className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50">
+                <Download className="h-4 w-4 mr-2" />
+                Export
+              </button>
+              <button
+                onClick={() => setShowForm(true)}
+                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Company
+              </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -131,7 +209,20 @@ const CompaniesPage: React.FC = () => {
           const companyLeads = getCompanyLeads(company.id);
           
           return (
-            <div key={company.id} className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer">
+            <div key={company.id} className="relative bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer">
+              {isSelectionMode && (
+                <div className="absolute top-2 right-2 z-10">
+                  <button
+                    onClick={() => handleSelectAccount(company.id)}
+                    className="p-1 bg-white rounded-md shadow-md border border-gray-300 hover:bg-gray-50"
+                  >
+                    {selectedAccounts.includes(company.id) ? 
+                      <CheckSquare className="h-4 w-4 text-blue-600" /> : 
+                      <Square className="h-4 w-4 text-gray-400" />
+                    }
+                  </button>
+                </div>
+              )}
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
