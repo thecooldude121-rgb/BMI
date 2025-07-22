@@ -76,8 +76,8 @@ const DealFinancialDetails: React.FC<DealFinancialDetailsProps> = ({ formData, s
   const feesTotal = formData.platformFee + formData.customFee + formData.licenseFee + formData.onboardingFee;
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center space-x-3 mb-6">
+    <div className="space-y-4">
+      <div className="flex items-center space-x-3 mb-4">
         <div className="p-3 bg-green-100 rounded-lg">
           <DollarSign className="h-6 w-6 text-green-600" />
         </div>
@@ -87,7 +87,7 @@ const DealFinancialDetails: React.FC<DealFinancialDetailsProps> = ({ formData, s
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
         {/* Left Column - Products */}
         <div className="xl:col-span-2 space-y-6">
           {/* Products Section */}

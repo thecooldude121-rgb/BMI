@@ -223,10 +223,10 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
   }
 
   const renderOverviewTab = () => (
-    <div className="space-y-8">
+    <div className="space-y-4">
       {/* Deal Information */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-6">Deal Information</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Deal Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <EditableField
             label="Deal Owner"
@@ -275,7 +275,7 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
       {/* Account & Contact Information */}
       {(account || contact) && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-6">Account & Contact</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Account & Contact</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {account && (
               <>
@@ -346,7 +346,7 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
 
       {/* Description */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-6">Description</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Description</h3>
         <EditableField
           label="Deal Description"
           value={deal.description || ''}
@@ -358,7 +358,7 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
 
       {/* Notes */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-6">Notes</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Notes</h3>
         <EditableField
           label="Deal Notes"
           value={deal.notes || ''}
@@ -430,7 +430,7 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
         </div>
 
         {/* Main Scrollable Content */}
-        <div className="flex-1 max-w-5xl mx-auto p-6 space-y-8">
+        <div className="flex-1 max-w-5xl mx-auto p-4 space-y-4">
           {/* Deal Overview Section */}
           <div id="overview">
             {renderOverviewTab()}
@@ -438,7 +438,7 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
 
         {/* Timeline Section - Zoho CRM Style */}
         <div id="timeline" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
               <Activity className="h-5 w-5 text-blue-600" />
               <h3 className="text-lg font-semibold text-gray-900">Timeline</h3>
@@ -461,7 +461,7 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
           </div>
 
           {/* Stage Timeline */}
-          <div className="relative mb-8">
+          <div className="relative mb-6">
             {/* Timeline Line */}
             <div className="absolute top-6 left-6 right-6 h-0.5 bg-gray-200"></div>
             
