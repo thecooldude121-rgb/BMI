@@ -1,10 +1,10 @@
 import React from 'react';
-import { CustomizableDashboard } from '../components/Dashboard/CustomizableDashboard';
+import { SimpleDashboard } from '../components/Dashboard/SimpleDashboard';
 
 const Dashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <CustomizableDashboard />
+      <SimpleDashboard />
     </div>
   );
 };
