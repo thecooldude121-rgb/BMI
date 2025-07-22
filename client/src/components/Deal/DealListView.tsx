@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'wouter';
 import { ChevronUp, ChevronDown, Filter, Download, Settings, Search, Eye, Edit, MoreHorizontal, Star, TrendingUp, Clock, DollarSign, CheckSquare, Square } from 'lucide-react';
 import { Deal, DealColumn, DealFilters, DEFAULT_DEAL_COLUMNS } from '../../types/dealManagement';
 import BulkActionsDropdown from '../CRM/BulkActionsDropdown';
@@ -24,6 +25,7 @@ const DealListView: React.FC<DealListViewProps> = ({
   isSelectionMode = false,
   onToggleSelectionMode = () => {}
 }) => {
+  const [, setLocation] = useLocation();
   const [columns, setColumns] = useState<DealColumn[]>(DEFAULT_DEAL_COLUMNS);
   const [sortBy, setSortBy] = useState<string>('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
@@ -409,7 +411,7 @@ const DealListView: React.FC<DealListViewProps> = ({
                           <div className="flex items-center space-x-2">
                             {priorityIcon}
                             <button
-                              onClick={() => onDealClick(deal)}
+                              onClick={() => setLocation(`/crm/deals/${deal.id}`)}
                               className="text-sm font-semibold text-blue-600 hover:text-blue-800 hover:underline transition-colors"
                             >
                               {deal.name}
@@ -476,7 +478,7 @@ const DealListView: React.FC<DealListViewProps> = ({
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-2">
                       <button
-                        onClick={() => onDealClick(deal)}
+                        onClick={() => setLocation(`/crm/deals/${deal.id}`)}
                         className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors"
                         title="View Deal"
                       >

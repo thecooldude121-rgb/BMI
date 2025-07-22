@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'wouter';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { Plus, MoreHorizontal, Filter, Search, Calendar, DollarSign, User, Clock, Target, ArrowUp, ArrowDown, Zap, Star, Briefcase, Globe, TrendingUp, CheckSquare, Square } from 'lucide-react';
 import { Deal, DealPipeline, DealStage, DealFilters } from '../../types/dealManagement';
@@ -31,6 +32,7 @@ const DealKanbanView: React.FC<DealKanbanViewProps> = ({
   isSelectionMode = false,
   onToggleSelectionMode = () => {}
 }) => {
+  const [, setLocation] = useLocation();
   const [filteredDeals, setFilteredDeals] = useState<Deal[]>(deals);
   const [searchTerm, setSearchTerm] = useState(filters.searchTerm || '');
   const [draggedDeal, setDraggedDeal] = useState<string | null>(null);
@@ -369,7 +371,7 @@ const DealKanbanView: React.FC<DealKanbanViewProps> = ({
                                     ref={provided.innerRef}
                                     {...provided.draggableProps}
                                     {...provided.dragHandleProps}
-                                    onClick={() => onDealClick(deal)}
+                                    onClick={() => setLocation(`/crm/deals/${deal.id}`)}
                                     className={`bg-white rounded-xl border border-gray-200 p-4 cursor-pointer transition-all duration-200 hover:shadow-lg hover:border-gray-300 group ${
                                       snapshot.isDragging 
                                         ? 'shadow-2xl rotate-3 scale-105 border-blue-300' 
