@@ -115,7 +115,19 @@ const EditableField: React.FC<EditableFieldProps> = ({
 
 const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
   const [, setLocation] = useLocation();
-  // Removed tab state - now showing all sections in scrollable view
+  const [activeSection, setActiveSection] = useState('overview');
+
+  // Section navigation for smooth scrolling
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+      setActiveSection(sectionId);
+    }
+  };
   const queryClient = useQueryClient();
 
   const { data: deal, isLoading } = useQuery({
@@ -165,7 +177,15 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
     updateDealMutation.mutate({ field, value });
   };
 
-  // Removed sidebar modules - now showing all sections in scrollable view
+  const sidebarModules = [
+    { id: 'overview', label: 'Deal Overview', icon: Briefcase },
+    { id: 'timeline', label: 'Timeline', icon: Activity },
+    { id: 'activities', label: 'Open Activities', icon: Target },
+    { id: 'engagement', label: 'Engagement Plan', icon: Users },
+    { id: 'stage-history', label: 'Stage History', icon: TrendingUp },
+    { id: 'attachments', label: 'Attachments', icon: Paperclip },
+    { id: 'emails', label: 'Email Communications', icon: Mail }
+  ];
 
   const stageOptions = [
     { value: 'qualification', label: 'Qualification' },
@@ -382,10 +402,39 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
         </div>
       </div>
 
-      {/* Single Scrollable Content */}
-      <div className="max-w-7xl mx-auto p-6 space-y-8">
-        {/* Deal Overview Section */}
-        {renderOverviewTab()}
+      <div className="flex">
+        {/* Left Sidebar Navigation */}
+        <div className="w-64 bg-white border-r border-gray-200 min-h-screen sticky top-16">
+          <div className="p-4">
+            <h2 className="text-sm font-semibold text-gray-900 mb-3">Deal Sections</h2>
+            <nav className="space-y-1">
+              {sidebarModules.map((module) => {
+                const Icon = module.icon;
+                return (
+                  <button
+                    key={module.id}
+                    onClick={() => scrollToSection(module.id)}
+                    className={`w-full flex items-center px-3 py-2 text-sm rounded-md transition-colors ${
+                      activeSection === module.id
+                        ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4 mr-3" />
+                    {module.label}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+        </div>
+
+        {/* Main Scrollable Content */}
+        <div className="flex-1 max-w-5xl mx-auto p-6 space-y-8">
+          {/* Deal Overview Section */}
+          <div id="overview">
+            {renderOverviewTab()}
+          </div>
 
         {/* Timeline Section */}
         <div id="timeline" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -588,6 +637,7 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
               <p className="text-gray-700 text-sm">Attached is our proposal for the project. Please review and let us know if you have any questions...</p>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>
