@@ -3,6 +3,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { DataProvider } from './contexts/DataContext';
 import Header from './components/Layout/Header';
 import Dashboard from './pages/Dashboard';
+import CRMModule from './pages/CRM/CRMModule';
 import LeadsPage from './pages/CRM/LeadsPage';
 import ContactsPage from './pages/CRM/ContactsPage';
 import CompaniesPage from './pages/CRM/CompaniesPage';
@@ -36,6 +37,7 @@ const App = () => {
               <Route path="/login" component={Login} />
               <Route path="/" component={Dashboard} />
               <Route path="/dashboard" component={Dashboard} />
+              <Route path="/crm" component={CRMModule} />
               <Route path="/crm/leads" component={LeadsPage} />
               <Route path="/crm/contacts" component={ContactsPage} />
               <Route path="/crm/accounts" component={CompaniesPage} />
