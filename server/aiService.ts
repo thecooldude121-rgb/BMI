@@ -113,7 +113,14 @@ Analyze the provided CRM data and respond with JSON only in this exact structure
                     description: { type: "string" },
                     impact: { type: "string" },
                     actionable: { type: "boolean" },
-                    data: { type: "object" }
+                    data: { 
+                      type: "object",
+                      properties: {
+                        value: { type: "number" },
+                        trend: { type: "string" },
+                        change: { type: "string" }
+                      }
+                    }
                   },
                   required: ["id", "type", "title", "description", "impact", "actionable"]
                 }
