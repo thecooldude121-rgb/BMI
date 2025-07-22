@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Search, Building, Globe, Users, DollarSign, Filter, Download, CheckSquare, Square, Trash2 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import CompanyForm from '../../components/CRM/CompanyForm';
+import BulkActionsDropdown from '../../components/CRM/BulkActionsDropdown';
 import { apiRequest } from '../../lib/queryClient';
 
 const CompaniesPage: React.FC = () => {
@@ -91,6 +92,22 @@ const CompaniesPage: React.FC = () => {
     }
   };
 
+  const handleBulkTransfer = () => {
+    alert(`Bulk Transfer feature for ${selectedAccounts.length} companies - Coming Soon!`);
+  };
+
+  const handleBulkUpdate = () => {
+    alert(`Bulk Update feature for ${selectedAccounts.length} companies - Coming Soon!`);
+  };
+
+  const handleBulkEmail = () => {
+    alert(`Bulk Email feature for ${selectedAccounts.length} companies - Coming Soon!`);
+  };
+
+  const handlePrintView = () => {
+    alert(`Print View feature for ${selectedAccounts.length} companies - Coming Soon!`);
+  };
+
   const getSizeColor = (size: string) => {
     const colors = {
       '1-10': 'bg-gray-100 text-gray-800',
@@ -121,14 +138,16 @@ const CompaniesPage: React.FC = () => {
                 {selectedAccounts.length === filteredCompanies.length ? <CheckSquare className="h-4 w-4 mr-2" /> : <Square className="h-4 w-4 mr-2" />}
                 Select All
               </button>
-              <button
-                onClick={handleDeleteSelected}
-                disabled={selectedAccounts.length === 0 || deleteAccountsMutation.isPending}
-                className="flex items-center px-3 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 disabled:opacity-50"
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete ({selectedAccounts.length})
-              </button>
+              <BulkActionsDropdown
+                selectedItems={selectedAccounts}
+                itemType="accounts"
+                onBulkTransfer={handleBulkTransfer}
+                onBulkUpdate={handleBulkUpdate}
+                onBulkDelete={handleDeleteSelected}
+                onBulkEmail={handleBulkEmail}
+                onPrintView={handlePrintView}
+                isVisible={true}
+              />
               <button
                 onClick={() => {
                   setIsSelectionMode(false);

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Mail, Phone, Building, Calendar, CheckSquare, Square, Trash2 } from 'lucide-react';
+import BulkActionsDropdown from '../../components/CRM/BulkActionsDropdown';
 import { apiRequest } from '../../lib/queryClient';
 
 const ContactsPage: React.FC = () => {
@@ -53,6 +54,22 @@ const ContactsPage: React.FC = () => {
     }
   };
 
+  const handleBulkTransfer = () => {
+    alert(`Bulk Transfer feature for ${selectedContacts.length} contacts - Coming Soon!`);
+  };
+
+  const handleBulkUpdate = () => {
+    alert(`Bulk Update feature for ${selectedContacts.length} contacts - Coming Soon!`);
+  };
+
+  const handleBulkEmail = () => {
+    alert(`Bulk Email feature for ${selectedContacts.length} contacts - Coming Soon!`);
+  };
+
+  const handlePrintView = () => {
+    alert(`Print View feature for ${selectedContacts.length} contacts - Coming Soon!`);
+  };
+
   if (contactsLoading || leadsLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -90,14 +107,16 @@ const ContactsPage: React.FC = () => {
                 {selectedContacts.length === contactsArray.length ? <CheckSquare className="h-4 w-4 mr-2" /> : <Square className="h-4 w-4 mr-2" />}
                 Select All
               </button>
-              <button
-                onClick={handleDeleteSelected}
-                disabled={selectedContacts.length === 0 || deleteContactsMutation.isPending}
-                className="flex items-center px-3 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 disabled:opacity-50"
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete ({selectedContacts.length})
-              </button>
+              <BulkActionsDropdown
+                selectedItems={selectedContacts}
+                itemType="contacts"
+                onBulkTransfer={handleBulkTransfer}
+                onBulkUpdate={handleBulkUpdate}
+                onBulkDelete={handleDeleteSelected}
+                onBulkEmail={handleBulkEmail}
+                onPrintView={handlePrintView}
+                isVisible={true}
+              />
               <button
                 onClick={() => {
                   setIsSelectionMode(false);
@@ -121,11 +140,11 @@ const ContactsPage: React.FC = () => {
       </div>
 
       {/* Industry Groups */}
-      {Object.entries(contactsByIndustry).map(([industry, contacts]: [string, any[]]) => (
+      {Object.entries(contactsByIndustry).map(([industry, contacts]) => (
         <div key={industry} className="bg-white rounded-lg border border-gray-200">
           <div className="px-6 py-4 border-b border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900">
-              {industry} ({contacts.length})
+              {industry} ({(contacts as any[]).length})
             </h3>
           </div>
           
