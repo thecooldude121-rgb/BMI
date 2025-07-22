@@ -1,19 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronUp, ChevronDown, Filter, Download, Settings, Search, Eye, Edit, MoreHorizontal, Star, TrendingUp, Clock, DollarSign } from 'lucide-react';
+import { ChevronUp, ChevronDown, Filter, Download, Settings, Search, Eye, Edit, MoreHorizontal, Star, TrendingUp, Clock, DollarSign, CheckSquare, Square } from 'lucide-react';
 import { Deal, DealColumn, DealFilters, DEFAULT_DEAL_COLUMNS } from '../../types/dealManagement';
+import BulkActionsDropdown from '../CRM/BulkActionsDropdown';
 
 interface DealListViewProps {
   deals: Deal[];
   filters: DealFilters;
   onDealClick: (deal: Deal) => void;
   onFiltersChange: (filters: DealFilters) => void;
+  selectedDeals?: string[];
+  onSelectedDealsChange?: (selectedDeals: string[]) => void;
+  isSelectionMode?: boolean;
+  onToggleSelectionMode?: () => void;
 }
 
 const DealListView: React.FC<DealListViewProps> = ({
   deals,
   filters,
   onDealClick,
-  onFiltersChange
+  onFiltersChange,
+  selectedDeals = [],
+  onSelectedDealsChange = () => {},
+  isSelectionMode = false,
+  onToggleSelectionMode = () => {}
 }) => {
   const [columns, setColumns] = useState<DealColumn[]>(DEFAULT_DEAL_COLUMNS);
   const [sortBy, setSortBy] = useState<string>('createdAt');
@@ -21,7 +30,6 @@ const DealListView: React.FC<DealListViewProps> = ({
   const [filteredDeals, setFilteredDeals] = useState<Deal[]>(deals);
   const [searchTerm, setSearchTerm] = useState(filters.searchTerm || '');
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedDeals, setSelectedDeals] = useState<string[]>([]);
 
   useEffect(() => {
     let filtered = deals;
@@ -55,13 +63,15 @@ const DealListView: React.FC<DealListViewProps> = ({
       let aValue = a[sortBy as keyof Deal];
       let bValue = b[sortBy as keyof Deal];
 
-      if (typeof aValue === 'string') {
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
         aValue = aValue.toLowerCase();
-        bValue = (bValue as string).toLowerCase();
+        bValue = bValue.toLowerCase();
       }
 
-      if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
-      if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+      if (aValue && bValue) {
+        if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+        if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+      }
       return 0;
     });
 
@@ -75,6 +85,43 @@ const DealListView: React.FC<DealListViewProps> = ({
       setSortBy(field);
       setSortOrder('asc');
     }
+  };
+
+  const handleSelectDeal = (dealId: string) => {
+    const newSelection = selectedDeals.includes(dealId)
+      ? selectedDeals.filter(id => id !== dealId)
+      : [...selectedDeals, dealId];
+    onSelectedDealsChange(newSelection);
+  };
+
+  const handleSelectAll = () => {
+    if (selectedDeals.length === filteredDeals.length) {
+      onSelectedDealsChange([]);
+    } else {
+      onSelectedDealsChange(filteredDeals.map(deal => deal.id));
+    }
+  };
+
+  const handleBulkTransfer = () => {
+    alert(`Bulk Transfer feature for ${selectedDeals.length} deals - Coming Soon!`);
+  };
+
+  const handleBulkUpdate = () => {
+    alert(`Bulk Update feature for ${selectedDeals.length} deals - Coming Soon!`);
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedDeals.length > 0 && window.confirm(`Delete ${selectedDeals.length} selected deals?`)) {
+      alert(`Bulk Delete feature for ${selectedDeals.length} deals - Coming Soon!`);
+    }
+  };
+
+  const handleBulkEmail = () => {
+    alert(`Bulk Email feature for ${selectedDeals.length} deals - Coming Soon!`);
+  };
+
+  const handlePrintView = () => {
+    alert(`Print View feature for ${selectedDeals.length} deals - Coming Soon!`);
   };
 
   const formatCurrency = (amount: number, currency = 'USD') => {
@@ -140,21 +187,7 @@ const DealListView: React.FC<DealListViewProps> = ({
     );
   };
 
-  const handleSelectDeal = (dealId: string) => {
-    setSelectedDeals(prev => 
-      prev.includes(dealId) 
-        ? prev.filter(id => id !== dealId)
-        : [...prev, dealId]
-    );
-  };
 
-  const handleSelectAll = () => {
-    if (selectedDeals.length === filteredDeals.length) {
-      setSelectedDeals([]);
-    } else {
-      setSelectedDeals(filteredDeals.map(deal => deal.id));
-    }
-  };
 
   const visibleColumns = columns.filter(col => col.visible);
 
@@ -196,6 +229,33 @@ const DealListView: React.FC<DealListViewProps> = ({
                 className="pl-10 pr-4 py-2.5 w-80 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm"
               />
             </div>
+            
+            {isSelectionMode && (
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={handleSelectAll}
+                  className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition-colors"
+                >
+                  {selectedDeals.length === filteredDeals.length ? (
+                    <CheckSquare className="h-4 w-4 text-blue-600" />
+                  ) : (
+                    <Square className="h-4 w-4 text-gray-600" />
+                  )}
+                  <span>Select All</span>
+                </button>
+                
+                {selectedDeals.length > 0 && (
+                  <BulkActionsDropdown
+                    selectedItems={selectedDeals}
+                    onBulkTransfer={handleBulkTransfer}
+                    onBulkUpdate={handleBulkUpdate}
+                    onBulkDelete={handleBulkDelete}
+                    onBulkEmail={handleBulkEmail}
+                    onPrintView={handlePrintView}
+                  />
+                )}
+              </div>
+            )}
             
             <button
               onClick={() => setShowFilters(!showFilters)}

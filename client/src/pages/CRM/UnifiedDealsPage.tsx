@@ -7,6 +7,9 @@ import {
   ChevronUp, ChevronDown, CheckSquare, Save
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import BulkActionsDropdown from '../../components/CRM/BulkActionsDropdown';
+import DealKanbanView from '../../components/Deal/DealKanbanView';
+import DealListView from '../../components/Deal/DealListView';
 // Dashboard metrics will be calculated from API data
 
 // Simplified types for the unified deals page
@@ -49,6 +52,8 @@ const UnifiedDealsPage = () => {
   const [ownerFilter, setOwnerFilter] = useState('all');
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [selectedDeals, setSelectedDeals] = useState<string[]>([]);
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
 
   // Define pipeline stages
   const stages: DealStage[] = [
@@ -372,7 +377,125 @@ const UnifiedDealsPage = () => {
     </div>
   );
 
-  const renderKanbanView = () => (
+  const renderKanbanView = () => {
+    // Create proper pipeline and deal filters for the kanban view
+    const mockPipeline = {
+      id: 'default',
+      name: 'Sales Pipeline',
+      stages: stages.map(s => ({ ...s, order: stages.indexOf(s) })),
+    };
+    
+    const dealFilters = {
+      searchTerm,
+      stageId: stageFilter !== 'all' ? stageFilter : undefined,
+      ownerId: ownerFilter !== 'all' ? ownerFilter : undefined,
+    };
+
+    const convertedDeals = filteredDeals.map(deal => ({
+      id: deal.id,
+      name: deal.name,
+      amount: deal.amount,
+      stageId: deal.stage,
+      ownerId: deal.ownerId,
+      probability: deal.probability,
+      createdAt: deal.createdAt,
+      closingDate: deal.expectedCloseDate,
+      dealNumber: `DEAL-${deal.id.slice(0, 8)}`,
+      country: 'US',
+      dealType: 'New Business',
+      tags: ['sample'],
+      customFields: {},
+      stageHistory: [{
+        id: `${deal.id}-history`,
+        dealId: deal.id,
+        fromStageId: null,
+        toStageId: deal.stage,
+        enteredAt: deal.createdAt,
+        exitedAt: null,
+        reason: 'Initial creation',
+      }],
+      tasks: [],
+      emails: [],
+    }));
+
+    return (
+      <DealKanbanView
+        pipeline={mockPipeline}
+        deals={convertedDeals}
+        filters={dealFilters}
+        onDealMove={(dealId, newStageId) => {
+          alert(`Move deal ${dealId} to stage ${newStageId} - Coming Soon!`);
+        }}
+        onDealClick={(deal) => handleDealClick(deal)}
+        onAddDeal={(stageId) => {
+          alert(`Add deal to stage ${stageId} - Coming Soon!`);
+        }}
+        onFiltersChange={(filters) => {
+          if (filters.searchTerm !== undefined) setSearchTerm(filters.searchTerm);
+          if (filters.stageId) setStageFilter(filters.stageId);
+          if (filters.ownerId) setOwnerFilter(filters.ownerId);
+        }}
+        selectedDeals={selectedDeals}
+        onSelectedDealsChange={setSelectedDeals}
+        isSelectionMode={isSelectionMode}
+        onToggleSelectionMode={() => setIsSelectionMode(!isSelectionMode)}
+      />
+    );
+  };
+
+  const renderListView = () => {
+    const dealFilters = {
+      searchTerm,
+      stageId: stageFilter !== 'all' ? stageFilter : undefined,
+      ownerId: ownerFilter !== 'all' ? ownerFilter : undefined,
+    };
+
+    const convertedDeals = filteredDeals.map(deal => ({
+      id: deal.id,
+      name: deal.name,
+      amount: deal.amount,
+      stageId: deal.stage,
+      ownerId: deal.ownerId,
+      probability: deal.probability,
+      createdAt: deal.createdAt,
+      closingDate: deal.expectedCloseDate,
+      dealNumber: `DEAL-${deal.id.slice(0, 8)}`,
+      country: 'US',
+      dealType: 'New Business',
+      tags: ['sample'],
+      customFields: {},
+      stageHistory: [{
+        id: `${deal.id}-history`,
+        dealId: deal.id,
+        fromStageId: null,
+        toStageId: deal.stage,
+        enteredAt: deal.createdAt,
+        exitedAt: null,
+        reason: 'Initial creation',
+      }],
+      tasks: [],
+      emails: [],
+    }));
+
+    return (
+      <DealListView
+        deals={convertedDeals}
+        filters={dealFilters}
+        onDealClick={(deal) => handleDealClick(deal)}
+        onFiltersChange={(filters) => {
+          if (filters.searchTerm !== undefined) setSearchTerm(filters.searchTerm);
+          if (filters.stageId) setStageFilter(filters.stageId);
+          if (filters.ownerId) setOwnerFilter(filters.ownerId);
+        }}
+        selectedDeals={selectedDeals}
+        onSelectedDealsChange={setSelectedDeals}
+        isSelectionMode={isSelectionMode}
+        onToggleSelectionMode={() => setIsSelectionMode(!isSelectionMode)}
+      />
+    );
+  };
+
+  const renderSimpleKanbanView = () => (
     <div className="flex h-full space-x-6 overflow-x-auto">
       {stages.map(stage => {
         const stageDeals = getStageDeals(stage.id);
@@ -458,7 +581,7 @@ const UnifiedDealsPage = () => {
     </div>
   );
 
-  const renderListView = () => (
+  const renderSimpleListView = () => (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
@@ -695,6 +818,36 @@ const UnifiedDealsPage = () => {
                 <Save className="h-4 w-4 mr-2" />
                 Continue Draft
               </button>
+              
+              <button
+                onClick={() => {
+                  setIsSelectionMode(!isSelectionMode);
+                  setSelectedDeals([]);
+                }}
+                className={`flex items-center px-4 py-2.5 rounded-xl text-sm transition-all shadow-sm ${
+                  isSelectionMode
+                    ? 'bg-green-600 text-white border border-green-600'
+                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                <CheckSquare className="h-4 w-4 mr-2" />
+                {isSelectionMode ? 'Exit Multi-Select' : 'Multi-Select'}
+              </button>
+              
+              {selectedDeals.length > 0 && (
+                <BulkActionsDropdown
+                  selectedItems={selectedDeals}
+                  onBulkTransfer={() => alert(`Bulk Transfer feature for ${selectedDeals.length} deals - Coming Soon!`)}
+                  onBulkUpdate={() => alert(`Bulk Update feature for ${selectedDeals.length} deals - Coming Soon!`)}
+                  onBulkDelete={() => {
+                    if (window.confirm(`Delete ${selectedDeals.length} selected deals?`)) {
+                      alert(`Bulk Delete feature for ${selectedDeals.length} deals - Coming Soon!`);
+                    }
+                  }}
+                  onBulkEmail={() => alert(`Bulk Email feature for ${selectedDeals.length} deals - Coming Soon!`)}
+                  onPrintView={() => alert(`Print View feature for ${selectedDeals.length} deals - Coming Soon!`)}
+                />
+              )}
             </div>
           )}
         </div>

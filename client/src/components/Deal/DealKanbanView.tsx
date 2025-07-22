@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
-import { Plus, MoreHorizontal, Filter, Search, Calendar, DollarSign, User, Clock, Target, ArrowUp, ArrowDown, Zap, Star, Briefcase, Globe, TrendingUp } from 'lucide-react';
+import { Plus, MoreHorizontal, Filter, Search, Calendar, DollarSign, User, Clock, Target, ArrowUp, ArrowDown, Zap, Star, Briefcase, Globe, TrendingUp, CheckSquare, Square } from 'lucide-react';
 import { Deal, DealPipeline, DealStage, DealFilters } from '../../types/dealManagement';
+import BulkActionsDropdown from '../CRM/BulkActionsDropdown';
 
 interface DealKanbanViewProps {
   pipeline: DealPipeline;
@@ -11,6 +12,10 @@ interface DealKanbanViewProps {
   onDealClick: (deal: Deal) => void;
   onAddDeal: (stageId: string) => void;
   onFiltersChange: (filters: DealFilters) => void;
+  selectedDeals?: string[];
+  onSelectedDealsChange?: (selectedDeals: string[]) => void;
+  isSelectionMode?: boolean;
+  onToggleSelectionMode?: () => void;
 }
 
 const DealKanbanView: React.FC<DealKanbanViewProps> = ({
@@ -20,7 +25,11 @@ const DealKanbanView: React.FC<DealKanbanViewProps> = ({
   onDealMove,
   onDealClick,
   onAddDeal,
-  onFiltersChange
+  onFiltersChange,
+  selectedDeals = [],
+  onSelectedDealsChange = () => {},
+  isSelectionMode = false,
+  onToggleSelectionMode = () => {}
 }) => {
   const [filteredDeals, setFilteredDeals] = useState<Deal[]>(deals);
   const [searchTerm, setSearchTerm] = useState(filters.searchTerm || '');
@@ -68,6 +77,43 @@ const DealKanbanView: React.FC<DealKanbanViewProps> = ({
 
     setFilteredDeals(filtered);
   }, [deals, filters, searchTerm]);
+
+  const handleSelectDeal = (dealId: string) => {
+    const newSelection = selectedDeals.includes(dealId)
+      ? selectedDeals.filter(id => id !== dealId)
+      : [...selectedDeals, dealId];
+    onSelectedDealsChange(newSelection);
+  };
+
+  const handleSelectAll = () => {
+    if (selectedDeals.length === filteredDeals.length) {
+      onSelectedDealsChange([]);
+    } else {
+      onSelectedDealsChange(filteredDeals.map(deal => deal.id));
+    }
+  };
+
+  const handleBulkTransfer = () => {
+    alert(`Bulk Transfer feature for ${selectedDeals.length} deals - Coming Soon!`);
+  };
+
+  const handleBulkUpdate = () => {
+    alert(`Bulk Update feature for ${selectedDeals.length} deals - Coming Soon!`);
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedDeals.length > 0 && window.confirm(`Delete ${selectedDeals.length} selected deals?`)) {
+      alert(`Bulk Delete feature for ${selectedDeals.length} deals - Coming Soon!`);
+    }
+  };
+
+  const handleBulkEmail = () => {
+    alert(`Bulk Email feature for ${selectedDeals.length} deals - Coming Soon!`);
+  };
+
+  const handlePrintView = () => {
+    alert(`Print View feature for ${selectedDeals.length} deals - Coming Soon!`);
+  };
 
   const handleDragStart = (start: any) => {
     setDraggedDeal(start.draggableId);
@@ -177,6 +223,14 @@ const DealKanbanView: React.FC<DealKanbanViewProps> = ({
                     {formatCurrency(filteredDeals.reduce((sum, deal) => sum + deal.amount, 0))}
                   </span>
                 </div>
+                {isSelectionMode && selectedDeals.length > 0 && (
+                  <div className="flex items-center space-x-2 px-3 py-2 bg-purple-50 rounded-lg">
+                    <CheckSquare className="h-4 w-4 text-purple-600" />
+                    <span className="text-purple-700 font-medium">
+                      {selectedDeals.length} selected
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
             
@@ -400,9 +454,9 @@ const DealKanbanView: React.FC<DealKanbanViewProps> = ({
                                             {deal.tasks.filter(t => t.status === 'open').length}T
                                           </span>
                                         )}
-                                        {deal.emails?.filter(e => e.status === 'draft').length > 0 && (
+                                        {deal.emails?.filter((e: any) => e.status === 'draft').length > 0 && (
                                           <span className="bg-blue-100 text-blue-700 text-xs px-1.5 py-0.5 rounded font-medium">
-                                            {deal.emails.filter(e => e.status === 'draft').length}E
+                                            {deal.emails.filter((e: any) => e.status === 'draft').length}E
                                           </span>
                                         )}
                                       </div>
@@ -438,7 +492,7 @@ const DealKanbanView: React.FC<DealKanbanViewProps> = ({
                                             <Calendar className="h-3 w-3" />
                                           </button>
                                           <button className="p-1 text-gray-400 hover:text-green-600 rounded">
-                                            <Phone className="h-3 w-3" />
+                                            <User className="h-3 w-3" />
                                           </button>
                                         </div>
                                         <span className="text-xs text-gray-400">
