@@ -123,7 +123,14 @@ const DealsPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {dealsArray.map((deal: any) => (
+              {dealsArray.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
+                    No deals found
+                  </td>
+                </tr>
+              ) : (
+                dealsArray.map((deal: any) => (
                 <tr key={deal.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
@@ -164,7 +171,8 @@ const DealsPage: React.FC = () => {
                     {deal.assignedTo || 'Unassigned'}
                   </td>
                 </tr>
-              ))}
+                ))
+              )}
             </tbody>
           </table>
         </div>
