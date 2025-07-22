@@ -45,6 +45,14 @@ app.use((req, res, next) => {
     console.log("Database already seeded or error occurred:", error.message);
   }
 
+  // Seed gamification data
+  try {
+    const { seedGamificationData } = await import("./gamification-seeder");
+    await seedGamificationData();
+  } catch (error: any) {
+    console.log("Gamification seeding error:", error.message);
+  }
+
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

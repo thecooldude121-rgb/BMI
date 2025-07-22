@@ -17,6 +17,7 @@ import HRMSModule from './pages/HRMS/HRMSModule';
 import Analytics from './pages/Analytics/Analytics';
 import Calendar from './pages/Calendar/Calendar';
 import LeadGeneration from './pages/LeadGeneration/LeadGeneration';
+import GamificationPage from './pages/Gamification/GamificationPage';
 import Settings from './pages/Settings/Settings';
 import Login from './pages/Auth/Login';
 
@@ -51,6 +52,7 @@ const App = () => {
               <Route path="/analytics" component={Analytics} />
               <Route path="/calendar" component={Calendar} />
               <Route path="/lead-generation" component={LeadGeneration} />
+              <Route path="/gamification" component={GamificationPage} />
               <Route path="/settings" component={Settings} />
             </Switch>
           </main>
