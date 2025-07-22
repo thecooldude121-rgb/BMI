@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import { 
   Users, 
   Target, 
@@ -19,7 +19,7 @@ import LeadScoreChart from '../components/Dashboard/LeadScoreChart';
 
 const Dashboard: React.FC = () => {
   const { leads, deals, tasks } = useData();
-  const navigate = useNavigate();
+  const [location, setLocation] = useLocation();
 
   const stats = {
     totalLeads: leads.length,
@@ -40,7 +40,7 @@ const Dashboard: React.FC = () => {
             Add Lead
           </button>
           <button 
-            onClick={() => navigate('/crm/deals/create')}
+            onClick={() => setLocation('/crm/deals/create')}
             className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
           >
             Create Deal
