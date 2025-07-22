@@ -115,7 +115,7 @@ const EditableField: React.FC<EditableFieldProps> = ({
 
 const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
   const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState('overview');
+  // Removed tab state - now showing all sections in scrollable view
   const queryClient = useQueryClient();
 
   const { data: deal, isLoading } = useQuery({
@@ -165,21 +165,7 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
     updateDealMutation.mutate({ field, value });
   };
 
-  const sidebarModules = [
-    { id: 'overview', label: 'Overview', icon: FileText },
-    { id: 'timeline', label: 'Timeline', icon: Clock },
-    { id: 'notes', label: 'Notes', icon: MessageSquare },
-    { id: 'activities', label: 'Open Activities', icon: Activity },
-    { id: 'closed-activities', label: 'Closed Activities', icon: CheckCircle },
-    { id: 'engagement', label: 'Engagement Plan', icon: Target },
-    { id: 'attachments', label: 'Attachments', icon: Paperclip },
-    { id: 'proposal', label: 'Request for Proposal', icon: FileText },
-    { id: 'data', label: 'Request for Data', icon: Briefcase },
-    { id: 'contracts', label: 'Request for Contracts', icon: FileText },
-    { id: 'stage-history', label: 'Stage History', icon: TrendingUp },
-    { id: 'competitors', label: 'Competitors', icon: Users },
-    { id: 'emails', label: 'Emails', icon: Mail }
-  ];
+  // Removed sidebar modules - now showing all sections in scrollable view
 
   const stageOptions = [
     { value: 'qualification', label: 'Qualification' },
@@ -364,21 +350,12 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
     </div>
   );
 
-  const renderPlaceholderTab = (title: string, description: string) => (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
-      <p className="text-gray-600 mb-4">{description}</p>
-      <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
-        <Plus className="h-4 w-4 inline mr-2" />
-        Add New
-      </button>
-    </div>
-  );
+  // Removed placeholder tab function - now showing actual content sections
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-white border-b border-gray-200 px-6 py-4 sticky top-0 z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
@@ -405,48 +382,212 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
         </div>
       </div>
 
-      <div className="flex">
-        {/* Sidebar */}
-        <div className="w-64 bg-white border-r border-gray-200 min-h-screen">
-          <div className="p-4">
-            <h2 className="text-sm font-semibold text-gray-900 mb-3">Related List</h2>
-            <nav className="space-y-1">
-              {sidebarModules.map((module) => {
-                const Icon = module.icon;
-                return (
-                  <button
-                    key={module.id}
-                    onClick={() => setActiveTab(module.id)}
-                    className={`w-full flex items-center px-3 py-2 text-sm rounded-md transition-colors ${
-                      activeTab === module.id
-                        ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700'
-                        : 'text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    <Icon className="h-4 w-4 mr-3" />
-                    {module.label}
-                  </button>
-                );
-              })}
-            </nav>
+      {/* Single Scrollable Content */}
+      <div className="max-w-7xl mx-auto p-6 space-y-8">
+        {/* Deal Overview Section */}
+        {renderOverviewTab()}
+
+        {/* Timeline Section */}
+        <div id="timeline" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-3">
+              <Activity className="h-5 w-5 text-blue-600" />
+              <h3 className="text-lg font-semibold text-gray-900">Timeline</h3>
+            </div>
+            <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+              <Plus className="h-4 w-4 inline mr-2" />
+              Add Activity
+            </button>
+          </div>
+          <div className="space-y-4">
+            <div className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
+              <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium text-gray-900">Deal Created</h4>
+                  <span className="text-sm text-gray-500">{new Date(deal.createdAt).toLocaleDateString()}</span>
+                </div>
+                <p className="text-gray-600 text-sm mt-1">Initial deal created in the system</p>
+              </div>
+            </div>
+            <div className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
+              <Clock className="h-5 w-5 text-orange-600 mt-0.5" />
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium text-gray-900">Follow-up Scheduled</h4>
+                  <span className="text-sm text-gray-500">Tomorrow</span>
+                </div>
+                <p className="text-gray-600 text-sm mt-1">Next follow-up call scheduled with prospect</p>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="flex-1 p-6">
-          {activeTab === 'overview' && renderOverviewTab()}
-          {activeTab === 'timeline' && renderPlaceholderTab('Timeline', 'Track all activities and milestones for this deal')}
-          {activeTab === 'notes' && renderPlaceholderTab('Notes', 'Add notes and comments about this deal')}
-          {activeTab === 'activities' && renderPlaceholderTab('Open Activities', 'Manage upcoming tasks and activities')}
-          {activeTab === 'closed-activities' && renderPlaceholderTab('Closed Activities', 'View completed activities')}
-          {activeTab === 'engagement' && renderPlaceholderTab('Engagement Plan', 'Plan customer engagement activities')}
-          {activeTab === 'attachments' && renderPlaceholderTab('Attachments', 'Upload and manage deal documents')}
-          {activeTab === 'proposal' && renderPlaceholderTab('Request for Proposal', 'Manage proposal requests')}
-          {activeTab === 'data' && renderPlaceholderTab('Request for Data', 'Track data requests')}
-          {activeTab === 'contracts' && renderPlaceholderTab('Request for Contracts', 'Manage contract requests')}
-          {activeTab === 'stage-history' && renderPlaceholderTab('Stage History', 'View deal progression through stages')}
-          {activeTab === 'competitors' && renderPlaceholderTab('Competitors', 'Track competitive information')}
-          {activeTab === 'emails' && renderPlaceholderTab('Emails', 'Manage email communications')}
+        {/* Activities Section */}
+        <div id="activities" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-3">
+              <Target className="h-5 w-5 text-green-600" />
+              <h3 className="text-lg font-semibold text-gray-900">Open Activities</h3>
+            </div>
+            <button className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+              <Plus className="h-4 w-4 inline mr-2" />
+              Add Task
+            </button>
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+              <div className="flex items-center space-x-3">
+                <input type="checkbox" className="h-4 w-4 text-blue-600" />
+                <div>
+                  <h4 className="font-medium text-gray-900">Follow up with decision maker</h4>
+                  <p className="text-sm text-gray-600">Due: Tomorrow</p>
+                </div>
+              </div>
+              <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">High Priority</span>
+            </div>
+            <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+              <div className="flex items-center space-x-3">
+                <input type="checkbox" className="h-4 w-4 text-blue-600" />
+                <div>
+                  <h4 className="font-medium text-gray-900">Send proposal document</h4>
+                  <p className="text-sm text-gray-600">Due: Next week</p>
+                </div>
+              </div>
+              <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium">Medium Priority</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Engagement Plan Section */}
+        <div id="engagement" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-3">
+              <Users className="h-5 w-5 text-purple-600" />
+              <h3 className="text-lg font-semibold text-gray-900">Engagement Plan</h3>
+            </div>
+            <button className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors">
+              <Plus className="h-4 w-4 inline mr-2" />
+              Add Engagement
+            </button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="p-4 border border-gray-200 rounded-lg">
+              <h4 className="font-medium text-gray-900 mb-2">Discovery Phase</h4>
+              <p className="text-sm text-gray-600">Understand customer needs and pain points</p>
+              <div className="mt-3">
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="bg-purple-600 h-2 rounded-full" style={{ width: '75%' }}></div>
+                </div>
+                <span className="text-xs text-gray-500 mt-1 block">75% Complete</span>
+              </div>
+            </div>
+            <div className="p-4 border border-gray-200 rounded-lg">
+              <h4 className="font-medium text-gray-900 mb-2">Proposal Phase</h4>
+              <p className="text-sm text-gray-600">Present solution and pricing</p>
+              <div className="mt-3">
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="bg-purple-600 h-2 rounded-full" style={{ width: '50%' }}></div>
+                </div>
+                <span className="text-xs text-gray-500 mt-1 block">50% Complete</span>
+              </div>
+            </div>
+            <div className="p-4 border border-gray-200 rounded-lg">
+              <h4 className="font-medium text-gray-900 mb-2">Negotiation Phase</h4>
+              <p className="text-sm text-gray-600">Finalize terms and close deal</p>
+              <div className="mt-3">
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="bg-purple-600 h-2 rounded-full" style={{ width: '25%' }}></div>
+                </div>
+                <span className="text-xs text-gray-500 mt-1 block">25% Complete</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Stage History Section */}
+        <div id="stage-history" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-3">
+              <TrendingUp className="h-5 w-5 text-blue-600" />
+              <h3 className="text-lg font-semibold text-gray-900">Stage History</h3>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <div className="flex items-center space-x-4 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-600">
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium text-gray-900">{deal.stage}</h4>
+                  <span className="text-sm text-gray-500">Current Stage</span>
+                </div>
+                <p className="text-gray-600 text-sm mt-1">Deal is currently in this stage</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium text-gray-900">Qualification</h4>
+                  <span className="text-sm text-gray-500">{new Date(deal.createdAt).toLocaleDateString()}</span>
+                </div>
+                <p className="text-gray-600 text-sm mt-1">Initial qualification completed</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Attachments Section */}
+        <div id="attachments" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-3">
+              <Paperclip className="h-5 w-5 text-gray-600" />
+              <h3 className="text-lg font-semibold text-gray-900">Attachments</h3>
+            </div>
+            <button className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors">
+              <Plus className="h-4 w-4 inline mr-2" />
+              Upload File
+            </button>
+          </div>
+          <div className="text-center py-8">
+            <Paperclip className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+            <p className="text-gray-500">No attachments yet</p>
+            <p className="text-gray-400 text-sm">Upload documents, images, or other files related to this deal</p>
+          </div>
+        </div>
+
+        {/* Emails Section */}
+        <div id="emails" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-3">
+              <Mail className="h-5 w-5 text-indigo-600" />
+              <h3 className="text-lg font-semibold text-gray-900">Email Communications</h3>
+            </div>
+            <button className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">
+              <Plus className="h-4 w-4 inline mr-2" />
+              Compose Email
+            </button>
+          </div>
+          <div className="space-y-4">
+            <div className="p-4 border border-gray-200 rounded-lg">
+              <div className="flex items-start justify-between mb-2">
+                <div>
+                  <h4 className="font-medium text-gray-900">Re: Proposal Discussion</h4>
+                  <p className="text-sm text-gray-600">From: {contact?.email || 'prospect@company.com'}</p>
+                </div>
+                <span className="text-sm text-gray-500">2 days ago</span>
+              </div>
+              <p className="text-gray-700 text-sm">Thanks for the detailed proposal. We'll review it with our team and get back to you by end of week...</p>
+            </div>
+            <div className="p-4 border border-gray-200 rounded-lg">
+              <div className="flex items-start justify-between mb-2">
+                <div>
+                  <h4 className="font-medium text-gray-900">Proposal Sent</h4>
+                  <p className="text-sm text-gray-600">To: {contact?.email || 'prospect@company.com'}</p>
+                </div>
+                <span className="text-sm text-gray-500">1 week ago</span>
+              </div>
+              <p className="text-gray-700 text-sm">Attached is our proposal for the project. Please review and let us know if you have any questions...</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
