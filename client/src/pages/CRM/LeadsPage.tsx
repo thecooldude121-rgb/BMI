@@ -3,6 +3,7 @@ import { Plus, Filter, Download, Upload, Search, Trash2, CheckSquare, Square } f
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import LeadCard from '../../components/CRM/LeadCard';
 import LeadForm from '../../components/CRM/LeadForm';
+import BulkActionsDropdown from '../../components/CRM/BulkActionsDropdown';
 import { apiRequest } from '../../lib/queryClient';
 
 const LeadsPage: React.FC = () => {
@@ -53,6 +54,22 @@ const LeadsPage: React.FC = () => {
     if (selectedLeads.length > 0 && window.confirm(`Delete ${selectedLeads.length} selected leads?`)) {
       deleteLeadsMutation.mutate(selectedLeads);
     }
+  };
+
+  const handleBulkTransfer = () => {
+    alert(`Bulk Transfer feature for ${selectedLeads.length} leads - Coming Soon!`);
+  };
+
+  const handleBulkUpdate = () => {
+    alert(`Bulk Update feature for ${selectedLeads.length} leads - Coming Soon!`);
+  };
+
+  const handleBulkEmail = () => {
+    alert(`Bulk Email feature for ${selectedLeads.length} leads - Coming Soon!`);
+  };
+
+  const handlePrintView = () => {
+    alert(`Print View feature for ${selectedLeads.length} leads - Coming Soon!`);
   };
   
   const filteredLeads = leadsArray
@@ -105,14 +122,16 @@ const LeadsPage: React.FC = () => {
                 {selectedLeads.length === filteredLeads.length ? <CheckSquare className="h-4 w-4 mr-2" /> : <Square className="h-4 w-4 mr-2" />}
                 Select All
               </button>
-              <button
-                onClick={handleDeleteSelected}
-                disabled={selectedLeads.length === 0 || deleteLeadsMutation.isPending}
-                className="flex items-center px-3 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 disabled:opacity-50"
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete ({selectedLeads.length})
-              </button>
+              <BulkActionsDropdown
+                selectedItems={selectedLeads}
+                itemType="leads"
+                onBulkTransfer={handleBulkTransfer}
+                onBulkUpdate={handleBulkUpdate}
+                onBulkDelete={handleDeleteSelected}
+                onBulkEmail={handleBulkEmail}
+                onPrintView={handlePrintView}
+                isVisible={true}
+              />
               <button
                 onClick={() => {
                   setIsSelectionMode(false);

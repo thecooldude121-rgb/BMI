@@ -1,13 +1,32 @@
-import React from 'react';
-import { DollarSign, TrendingUp, Calendar, User } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useState } from 'react';
+import { DollarSign, TrendingUp, Calendar, User, CheckSquare, Square } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import BulkActionsDropdown from '../../components/CRM/BulkActionsDropdown';
+import { apiRequest } from '../../lib/queryClient';
 
 const DealsPage: React.FC = () => {
+  const queryClient = useQueryClient();
   const { data: deals = [], isLoading: dealsLoading } = useQuery({
     queryKey: ['/api/deals'],
   });
   const { data: leads = [], isLoading: leadsLoading } = useQuery({
     queryKey: ['/api/leads'],
+  });
+  const [selectedDeals, setSelectedDeals] = useState<string[]>([]);
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+
+  const deleteDealsMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      return apiRequest('/api/deals', {
+        method: 'DELETE',
+        body: { ids }
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/deals'] });
+      setSelectedDeals([]);
+      setIsSelectionMode(false);
+    }
   });
 
   const dealsArray = Array.isArray(deals) ? deals : [];
@@ -31,6 +50,44 @@ const DealsPage: React.FC = () => {
   const totalValue = dealsArray.reduce((sum: number, deal: any) => sum + parseFloat(deal.value || 0), 0);
   const wonDeals = dealsArray.filter((deal: any) => deal.stage === 'closed-won');
   const wonValue = wonDeals.reduce((sum: number, deal: any) => sum + parseFloat(deal.value || 0), 0);
+
+  const handleSelectDeal = (dealId: string) => {
+    setSelectedDeals(prev => 
+      prev.includes(dealId) 
+        ? prev.filter(id => id !== dealId)
+        : [...prev, dealId]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedDeals.length === dealsArray.length) {
+      setSelectedDeals([]);
+    } else {
+      setSelectedDeals(dealsArray.map((deal: any) => deal.id));
+    }
+  };
+
+  const handleDeleteSelected = () => {
+    if (selectedDeals.length > 0 && window.confirm(`Delete ${selectedDeals.length} selected deals?`)) {
+      deleteDealsMutation.mutate(selectedDeals);
+    }
+  };
+
+  const handleBulkTransfer = () => {
+    alert(`Bulk Transfer feature for ${selectedDeals.length} deals - Coming Soon!`);
+  };
+
+  const handleBulkUpdate = () => {
+    alert(`Bulk Update feature for ${selectedDeals.length} deals - Coming Soon!`);
+  };
+
+  const handleBulkEmail = () => {
+    alert(`Bulk Email feature for ${selectedDeals.length} deals - Coming Soon!`);
+  };
+
+  const handlePrintView = () => {
+    alert(`Print View feature for ${selectedDeals.length} deals - Coming Soon!`);
+  };
 
   if (dealsLoading || leadsLoading) {
     return (
@@ -89,16 +146,69 @@ const DealsPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">All Deals</h2>
+          <p className="text-gray-600">{dealsArray.length} deals</p>
+        </div>
+        <div className="flex space-x-3">
+          {isSelectionMode ? (
+            <>
+              <button
+                onClick={handleSelectAll}
+                className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50"
+              >
+                {selectedDeals.length === dealsArray.length ? <CheckSquare className="h-4 w-4 mr-2" /> : <Square className="h-4 w-4 mr-2" />}
+                Select All
+              </button>
+              <BulkActionsDropdown
+                selectedItems={selectedDeals}
+                itemType="deals"
+                onBulkTransfer={handleBulkTransfer}
+                onBulkUpdate={handleBulkUpdate}
+                onBulkDelete={handleDeleteSelected}
+                onBulkEmail={handleBulkEmail}
+                onPrintView={handlePrintView}
+                isVisible={true}
+              />
+              <button
+                onClick={() => {
+                  setIsSelectionMode(false);
+                  setSelectedDeals([]);
+                }}
+                className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => setIsSelectionMode(true)}
+              className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50"
+            >
+              <CheckSquare className="h-4 w-4 mr-2" />
+              Select
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* Deals List */}
       <div className="bg-white rounded-lg border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">All Deals</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Deals ({dealsArray.length})</h3>
         </div>
         
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
+                {isSelectionMode && (
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12">
+                    <CheckSquare className="h-4 w-4" />
+                  </th>
+                )}
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Deal
                 </th>
@@ -125,13 +235,26 @@ const DealsPage: React.FC = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {dealsArray.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
+                  <td colSpan={isSelectionMode ? 8 : 7} className="px-6 py-8 text-center text-gray-500">
                     No deals found
                   </td>
                 </tr>
               ) : (
                 dealsArray.map((deal: any) => (
                 <tr key={deal.id} className="hover:bg-gray-50">
+                  {isSelectionMode && (
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <button
+                        onClick={() => handleSelectDeal(deal.id)}
+                        className="text-gray-400 hover:text-blue-600"
+                      >
+                        {selectedDeals.includes(deal.id) ? 
+                          <CheckSquare className="h-5 w-5 text-blue-600" /> : 
+                          <Square className="h-5 w-5" />
+                        }
+                      </button>
+                    </td>
+                  )}
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
                       <div className="text-sm font-medium text-gray-900">{deal.title || deal.name}</div>
