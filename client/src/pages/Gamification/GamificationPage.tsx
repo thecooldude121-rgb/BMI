@@ -8,7 +8,7 @@ const GamificationPage: React.FC = () => {
   const currentUserId = "f310c13c-3edf-4f46-a6ec-46503ed02377";
 
   return (
-    <div className="space-y-6">
+    <div className="p-4 space-y-6">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-6 text-white">
         <div className="flex items-center justify-between">

@@ -10,7 +10,7 @@ import TasksPage from './TasksPage';
 
 const CRMModule = () => {
   return (
-    <div className="h-full overflow-auto bg-gray-50 p-6">
+    <div className="h-full overflow-auto bg-gray-50">
       <Switch>
         <Route path="/crm/leads" component={LeadsPage} />
         <Route path="/crm/contacts" component={ContactsPage} />
