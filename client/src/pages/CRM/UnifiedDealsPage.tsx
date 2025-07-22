@@ -717,11 +717,11 @@ const UnifiedDealsPage = () => {
   );
 
   return (
-    <div className="h-full flex flex-col bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="h-full flex flex-col bg-gradient-to-br from-gray-50 to-gray-100 -mt-1">
       {/* Unified Header */}
       <div className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between mb-4">
+        <div className="px-4 py-2">
+          <div className="flex items-center justify-between mb-2">
             <div className="flex items-center space-x-4">
               <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl">
                 <DollarSign className="h-8 w-8 text-white" />
@@ -865,7 +865,7 @@ const UnifiedDealsPage = () => {
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 overflow-hidden p-4">
+      <div className="flex-1 overflow-hidden p-2">
         {viewMode === 'overview' && renderOverviewView()}
         {viewMode === 'kanban' && renderKanbanView()}
         {viewMode === 'list' && renderListView()}

@@ -373,9 +373,9 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
   // Removed placeholder tab function - now showing actual content sections
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 -mt-1">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4 sticky top-0 z-10">
+      <div className="bg-white border-b border-gray-200 px-4 py-2 sticky top-0 z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
@@ -404,8 +404,8 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
 
       <div className="flex">
         {/* Left Sidebar Navigation */}
-        <div className="w-64 bg-white border-r border-gray-200 min-h-screen sticky top-16">
-          <div className="p-4">
+        <div className="w-64 bg-white border-r border-gray-200 min-h-screen sticky top-12">
+          <div className="p-3">
             <h2 className="text-sm font-semibold text-gray-900 mb-3">Deal Sections</h2>
             <nav className="space-y-1">
               {sidebarModules.map((module) => {
@@ -430,7 +430,7 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
         </div>
 
         {/* Main Scrollable Content */}
-        <div className="flex-1 max-w-5xl mx-auto p-4 space-y-4">
+        <div className="flex-1 max-w-5xl mx-auto p-2 space-y-3">
           {/* Deal Overview Section */}
           <div id="overview">
             {renderOverviewTab()}
