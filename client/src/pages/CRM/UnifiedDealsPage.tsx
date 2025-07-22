@@ -7,7 +7,7 @@ import {
   ChevronUp, ChevronDown, CheckSquare, Save
 } from 'lucide-react';
 import { useData } from '../../contexts/DataContext';
-import { calculateDashboardMetrics } from '../../utils/sampleDeals';
+// Dashboard metrics will be calculated from API data
 
 // Simplified types for the unified deals page
 interface UnifiedDeal {

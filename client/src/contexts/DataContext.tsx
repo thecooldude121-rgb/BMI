@@ -1,6 +1,4 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { generateSampleData } from '../utils/sampleData';
-import { sampleDeals } from '../utils/sampleDeals';
 
 export interface Company {
   id: string;
@@ -220,28 +218,17 @@ interface DataProviderProps {
 }
 
 export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
-  const sampleData = generateSampleData();
-  
-  // Add sample deals to existing deals
-  const initialDeals = [
-    ...sampleData.deals,
-    ...sampleDeals.map(deal => ({
-      id: `sample-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      createdAt: new Date().toISOString(),
-      ...deal
-    }))
-  ];
-  
-  const [leads, setLeads] = useState<Lead[]>(sampleData.leads);
-  const [companies, setCompanies] = useState<Company[]>(sampleData.companies);
-  const [contacts, setContacts] = useState<Contact[]>(sampleData.contacts);
-  const [activities, setActivities] = useState<Activity[]>(sampleData.activities);
-  const [emailTemplates, setEmailTemplates] = useState<EmailTemplate[]>(sampleData.emailTemplates);
-  const [sequences, setSequences] = useState<Sequence[]>(sampleData.sequences);
-  const [deals, setDeals] = useState<Deal[]>(initialDeals);
-  const [tasks, setTasks] = useState<Task[]>(sampleData.tasks);
-  const [employees, setEmployees] = useState<Employee[]>(sampleData.employees);
-  const [meetings, setMeetings] = useState<Meeting[]>(sampleData.meetings);
+  // Initialize with empty arrays - data will be fetched from API
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [emailTemplates, setEmailTemplates] = useState<EmailTemplate[]>([]);
+  const [sequences, setSequences] = useState<Sequence[]>([]);
+  const [deals, setDeals] = useState<Deal[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [meetings, setMeetings] = useState<Meeting[]>([]);
 
   const addLead = (lead: Omit<Lead, 'id' | 'createdAt'>) => {
     const newLead: Lead = {

@@ -9,8 +9,11 @@ const client = new Client({
   connectionString: process.env.DATABASE_URL,
 });
 
-// Connect to database
-client.connect().catch(console.error);
+// Connect to database with error handling
+client.connect().catch((error) => {
+  console.error("Database connection error:", error.message);
+  process.exit(1);
+});
 
 export const db = drizzle(client, { schema });
 
