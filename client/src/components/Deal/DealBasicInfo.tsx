@@ -44,8 +44,8 @@ const DealBasicInfo: React.FC<DealBasicInfoProps> = ({ formData, setFormData, er
   );
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center space-x-3 mb-6">
+    <div className="space-y-4">
+      <div className="flex items-center space-x-3 mb-4">
         <div className="p-3 bg-green-100 rounded-lg">
           <Briefcase className="h-6 w-6 text-green-600" />
         </div>

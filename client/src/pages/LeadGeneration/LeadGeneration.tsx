@@ -74,7 +74,7 @@ const LeadGeneration: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -94,7 +94,7 @@ const LeadGeneration: React.FC = () => {
       </div>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-white p-6 rounded-lg border border-gray-200">
           <div className="flex items-center">
             <div className="p-3 rounded-lg bg-blue-100">

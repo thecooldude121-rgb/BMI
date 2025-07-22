@@ -112,8 +112,8 @@ const DealActivityPlanning: React.FC<DealActivityPlanningProps> = ({ formData, s
   };
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center space-x-3 mb-6">
+    <div className="space-y-4">
+      <div className="flex items-center space-x-3 mb-4">
         <div className="p-3 bg-purple-100 rounded-lg">
           <Target className="h-6 w-6 text-purple-600" />
         </div>
@@ -123,7 +123,7 @@ const DealActivityPlanning: React.FC<DealActivityPlanningProps> = ({ formData, s
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Left Column - Current Activities */}
         <div className="space-y-6">
           {/* Next Steps */}

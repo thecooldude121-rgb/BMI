@@ -88,8 +88,8 @@ const DealManagementPage: React.FC = () => {
     <div className="h-full flex flex-col bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Enhanced Header */}
       <div className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="px-8 py-6">
-          <div className="flex items-center justify-between mb-6">
+        <div className="px-6 py-4">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-4">
               <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl">
                 <Target className="h-8 w-8 text-white" />

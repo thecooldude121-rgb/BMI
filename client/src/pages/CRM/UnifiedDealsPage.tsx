@@ -214,7 +214,7 @@ const UnifiedDealsPage = () => {
   }
 
   const renderOverviewView = () => (
-    <div className="space-y-8">
+    <div className="space-y-4">
       {/* Test Results Summary */}
       <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-xl p-6">
         <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
@@ -241,7 +241,7 @@ const UnifiedDealsPage = () => {
       </div>
 
       {/* Key Metrics Dashboard */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
@@ -512,7 +512,7 @@ const UnifiedDealsPage = () => {
   };
 
   const renderSimpleKanbanView = () => (
-    <div className="flex h-full space-x-6 overflow-x-auto">
+    <div className="flex h-full space-x-4 overflow-x-auto">
       {stages.map(stage => {
         const stageDeals = getStageDeals(stage.id);
         const stageValue = getStageValue(stage.id);
@@ -720,8 +720,8 @@ const UnifiedDealsPage = () => {
     <div className="h-full flex flex-col bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Unified Header */}
       <div className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="px-8 py-6">
-          <div className="flex items-center justify-between mb-6">
+        <div className="px-6 py-4">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-4">
               <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl">
                 <DollarSign className="h-8 w-8 text-white" />
@@ -865,7 +865,7 @@ const UnifiedDealsPage = () => {
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 overflow-hidden p-6">
+      <div className="flex-1 overflow-hidden p-4">
         {viewMode === 'overview' && renderOverviewView()}
         {viewMode === 'kanban' && renderKanbanView()}
         {viewMode === 'list' && renderListView()}
