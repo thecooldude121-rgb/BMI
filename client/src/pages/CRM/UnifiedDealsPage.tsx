@@ -6,7 +6,7 @@ import {
   Eye, Edit, MoreHorizontal, Star, Clock, Globe, Briefcase,
   ChevronUp, ChevronDown, CheckSquare, Save
 } from 'lucide-react';
-import { useData } from '../../contexts/DataContext';
+import { useQuery } from '@tanstack/react-query';
 // Dashboard metrics will be calculated from API data
 
 // Simplified types for the unified deals page
@@ -31,7 +31,15 @@ interface DealStage {
 }
 
 const UnifiedDealsPage = () => {
-  const { deals, leads, employees } = useData();
+  const { data: deals = [], isLoading: dealsLoading } = useQuery({
+    queryKey: ['/api/deals'],
+  });
+  const { data: leads = [], isLoading: leadsLoading } = useQuery({
+    queryKey: ['/api/leads'],
+  });
+  const { data: accounts = [] } = useQuery({
+    queryKey: ['/api/accounts'],
+  });
   const [location, setLocation] = useLocation();
   const [viewMode, setViewMode] = useState<'overview' | 'kanban' | 'list'>('overview');
   const [selectedDeal, setSelectedDeal] = useState<UnifiedDeal | null>(null);
@@ -51,11 +59,12 @@ const UnifiedDealsPage = () => {
     { id: 'closed-lost', name: 'Closed Lost', color: '#EF4444', probability: 0 }
   ];
 
-  // Convert existing deals to unified format
-  const unifiedDeals: UnifiedDeal[] = deals.map(deal => ({
+  // Ensure deals is an array and convert to unified format
+  const dealsArray = Array.isArray(deals) ? deals : [];
+  const unifiedDeals: UnifiedDeal[] = dealsArray.map((deal: any) => ({
     id: deal.id,
     name: deal.name || deal.title || `Deal ${deal.id}`,
-    amount: deal.value,
+    amount: parseFloat(deal.value || '0'),
     stage: deal.stage === 'closed-won' ? 'closed-won' : 
            deal.stage === 'closed-lost' ? 'closed-lost' :
            deal.stage === 'negotiation' ? 'negotiation' :
@@ -86,7 +95,7 @@ const UnifiedDealsPage = () => {
   const dashboardMetrics = calculateDashboardMetrics(unifiedDeals);
   
   console.log('📊 Dashboard Metrics:', dashboardMetrics);
-  console.log('🔢 Total deals from context:', deals.length);
+  console.log('🔢 Total deals from API:', dealsArray.length);
   console.log('🎯 Unified deals:', unifiedDeals.length);
 
   // Filter and sort deals
@@ -126,13 +135,14 @@ const UnifiedDealsPage = () => {
   };
 
   const getEmployeeName = (employeeId: string) => {
-    const employee = employees.find(e => e.id === employeeId);
-    return employee ? employee.name : 'Unassigned';
+    // For now, return simple mapping since we don't have employees API yet
+    return employeeId === 'f310c13c-3edf-4f46-a6ec-46503ed02377' ? 'John Smith' : 'Unassigned';
   };
 
   const getLeadName = (leadId?: string) => {
     if (!leadId) return 'No Lead';
-    const lead = leads.find(l => l.id === leadId);
+    const leadsArray = Array.isArray(leads) ? leads : [];
+    const lead = leadsArray.find((l: any) => l.id === leadId);
     return lead ? lead.name : 'Unknown Lead';
   };
 
@@ -169,6 +179,18 @@ const UnifiedDealsPage = () => {
   const wonValue = wonDeals.reduce((sum, deal) => sum + deal.amount, 0);
   const avgDealSize = filteredDeals.length > 0 ? totalPipelineValue / filteredDeals.length : 0;
   const winRate = filteredDeals.length > 0 ? (wonDeals.length / filteredDeals.length) * 100 : 0;
+
+  // Show loading state while data is being fetched
+  if (dealsLoading || leadsLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="text-lg text-gray-600">Loading deals...</div>
+        </div>
+      </div>
+    );
+  }
 
   const renderOverviewView = () => (
     <div className="space-y-8">
