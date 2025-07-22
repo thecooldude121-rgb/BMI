@@ -19,7 +19,7 @@ const Header: React.FC = () => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   
-  const isCRMPage = location.startsWith('/crm');
+  const isCRMPage = location?.startsWith('/crm') || false;
 
   const crmNavigation = [
     { name: 'Leads', href: '/crm/leads', icon: UserPlus },
@@ -70,20 +70,18 @@ const Header: React.FC = () => {
               {crmNavigation.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <NavLink
+                  <Link
                     key={item.name}
-                    to={item.href}
-                    className={({ isActive }) =>
-                      `group inline-flex items-center py-2 px-3 rounded-lg font-medium text-sm transition-all duration-200 ${
-                        isActive
-                          ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                      }`
-                    }
+                    href={item.href}
+                    className={`group inline-flex items-center py-2 px-3 rounded-lg font-medium text-sm transition-all duration-200 ${
+                      location === item.href
+                        ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                    }`}
                   >
                     <Icon className="mr-2 h-4 w-4" />
                     {item.name}
-                  </NavLink>
+                  </Link>
                 );
               })}
               
@@ -108,15 +106,15 @@ const Header: React.FC = () => {
                     {moreNavigation.map((item) => {
                       const Icon = item.icon;
                       return (
-                        <NavLink
+                        <Link
                           key={item.name}
-                          to={item.href}
+                          href={item.href}
                           onClick={() => setShowMoreMenu(false)}
                           className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors"
                         >
                           <Icon className="mr-3 h-4 w-4 text-gray-400" />
                           {item.name}
-                        </NavLink>
+                        </Link>
                       );
                     })}
                   </div>

@@ -4,16 +4,44 @@ const { Client } = pkg;
 import * as schema from "@shared/schema";
 import { eq, and } from "drizzle-orm";
 
-// Initialize database connection
+// Initialize database connection with better error handling and reconnection
 const client = new Client({
   connectionString: process.env.DATABASE_URL,
 });
 
-// Connect to database with error handling
-client.connect().catch((error) => {
-  console.error("Database connection error:", error.message);
-  process.exit(1);
+// Connect to database with error handling and reconnection logic
+let isConnected = false;
+
+const connectWithRetry = async () => {
+  try {
+    if (!isConnected) {
+      await client.connect();
+      isConnected = true;
+      console.log("Database connected successfully");
+    }
+  } catch (error: any) {
+    console.error("Database connection error:", error.message);
+    isConnected = false;
+    // Retry connection after 5 seconds
+    setTimeout(connectWithRetry, 5000);
+  }
+};
+
+// Handle connection errors and reconnect
+client.on('error', (error) => {
+  console.error('Database connection lost:', error.message);
+  isConnected = false;
+  connectWithRetry();
 });
+
+client.on('end', () => {
+  console.log('Database connection ended');
+  isConnected = false;
+  connectWithRetry();
+});
+
+// Initial connection
+connectWithRetry();
 
 export const db = drizzle(client, { schema });
 
@@ -165,7 +193,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteLead(id: string): Promise<boolean> {
     const result = await db.delete(schema.leads).where(eq(schema.leads.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount || 0) > 0;
   }
 
   // Deal methods
