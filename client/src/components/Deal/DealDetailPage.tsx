@@ -48,7 +48,7 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId: propDealId }) =
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Deal Not Found</h2>
           <button
-            onClick={() => navigate('/crm/deals')}
+            onClick={() => setLocation('/crm/deals')}
             className="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-colors"
           >
             Back to Deals
@@ -202,7 +202,7 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId: propDealId }) =
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-4">
               <button
-                onClick={() => navigate('/crm/deals')}
+                onClick={() => setLocation('/crm/deals')}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 <ArrowLeft className="h-5 w-5 text-gray-600" />
