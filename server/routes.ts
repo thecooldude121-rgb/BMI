@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import * as schema from "@shared/schema";
 import { z } from "zod";
+import { aiInsightsService } from "./aiService";
 
 // Helper function for error handling
 const handleError = (error: unknown, res: any) => {
@@ -377,6 +378,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const meeting = await storage.updateMeeting(req.params.id, req.body);
       res.json(meeting);
     } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // AI Insights route
+  app.post("/api/ai/analyze-sales", async (req, res) => {
+    try {
+      const { deals, leads, accounts } = req.body;
+      
+      if (!Array.isArray(deals) || !Array.isArray(leads) || !Array.isArray(accounts)) {
+        return res.status(400).json({ error: "Invalid data format. Expected arrays for deals, leads, and accounts." });
+      }
+
+      const analysis = await aiInsightsService.analyzeSalesData(deals, leads, accounts);
+      res.json(analysis);
+    } catch (error) {
+      console.error("AI Analysis Error:", error);
       handleError(error, res);
     }
   });
