@@ -4,6 +4,12 @@ import { storage } from "./storage";
 import * as schema from "@shared/schema";
 import { z } from "zod";
 
+// Helper function for error handling
+const handleError = (error: unknown, res: any) => {
+  const message = error instanceof Error ? error.message : 'An unknown error occurred';
+  res.status(500).json({ error: message });
+};
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // User routes
   app.get("/api/users/:id", async (req, res) => {
@@ -12,7 +18,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!user) return res.status(404).json({ error: "User not found" });
       res.json(user);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -22,7 +28,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const users = await storage.getAccounts();
       res.json(users);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -32,7 +38,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const accounts = await storage.getAccounts();
       res.json(accounts);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -42,7 +48,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!account) return res.status(404).json({ error: "Account not found" });
       res.json(account);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -55,7 +61,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const account = await storage.createAccount(result.data);
       res.status(201).json(account);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -64,7 +70,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const account = await storage.updateAccount(req.params.id, req.body);
       res.json(account);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -74,7 +80,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const contacts = await storage.getContacts();
       res.json(contacts);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -84,7 +90,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!contact) return res.status(404).json({ error: "Contact not found" });
       res.json(contact);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -93,7 +99,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const contacts = await storage.getContactsByAccount(req.params.accountId);
       res.json(contacts);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -106,7 +112,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const contact = await storage.createContact(result.data);
       res.status(201).json(contact);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -115,7 +121,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const contact = await storage.updateContact(req.params.id, req.body);
       res.json(contact);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -125,7 +131,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const leads = await storage.getLeads();
       res.json(leads);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -135,7 +141,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!lead) return res.status(404).json({ error: "Lead not found" });
       res.json(lead);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -144,7 +150,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const leads = await storage.getLeadsByAssignee(req.params.assigneeId);
       res.json(leads);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -157,7 +163,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const lead = await storage.createLead(result.data);
       res.status(201).json(lead);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -166,7 +172,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const lead = await storage.updateLead(req.params.id, req.body);
       res.json(lead);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -174,9 +180,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const success = await storage.deleteLead(req.params.id);
       if (!success) return res.status(404).json({ error: "Lead not found" });
-      res.status(204).send();
+      res.json({ success: true });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -186,7 +192,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const deals = await storage.getDeals();
       res.json(deals);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -196,7 +202,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!deal) return res.status(404).json({ error: "Deal not found" });
       res.json(deal);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -205,7 +211,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const deals = await storage.getDealsByAssignee(req.params.assigneeId);
       res.json(deals);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -218,7 +224,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const deal = await storage.createDeal(result.data);
       res.status(201).json(deal);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -227,7 +233,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const deal = await storage.updateDeal(req.params.id, req.body);
       res.json(deal);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -237,7 +243,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const tasks = await storage.getTasks();
       res.json(tasks);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -247,7 +253,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!task) return res.status(404).json({ error: "Task not found" });
       res.json(task);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -256,7 +262,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const tasks = await storage.getTasksByAssignee(req.params.assigneeId);
       res.json(tasks);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -269,7 +275,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const task = await storage.createTask(result.data);
       res.status(201).json(task);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -278,7 +284,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const task = await storage.updateTask(req.params.id, req.body);
       res.json(task);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -288,7 +294,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const activities = await storage.getActivities();
       res.json(activities);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -298,7 +304,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!activity) return res.status(404).json({ error: "Activity not found" });
       res.json(activity);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -307,7 +313,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const activities = await storage.getActivitiesByAssignee(req.params.assigneeId);
       res.json(activities);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -320,7 +326,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const activity = await storage.createActivity(result.data);
       res.status(201).json(activity);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -329,7 +335,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const activity = await storage.updateActivity(req.params.id, req.body);
       res.json(activity);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -339,27 +345,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const meetings = await storage.getMeetings();
       res.json(meetings);
     } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  });
-
-  // Enhanced Sample Data Generation
-  app.post("/api/generate-sample-data", async (req, res) => {
-    try {
-      const { createEnhancedSampleData } = await import("./enhanced-seed");
-      const result = await createEnhancedSampleData();
-      res.json({ 
-        success: true, 
-        message: "Enhanced sample data created successfully",
-        data: result
-      });
-    } catch (error: any) {
-      console.error("Error generating sample data:", error);
-      res.status(500).json({ 
-        success: false, 
-        error: "Failed to generate sample data",
-        details: error.message
-      });
+      handleError(error, res);
     }
   });
 
@@ -369,7 +355,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!meeting) return res.status(404).json({ error: "Meeting not found" });
       res.json(meeting);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -382,7 +368,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const meeting = await storage.createMeeting(result.data);
       res.status(201).json(meeting);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
@@ -391,11 +377,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const meeting = await storage.updateMeeting(req.params.id, req.body);
       res.json(meeting);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      handleError(error, res);
     }
   });
 
-  const httpServer = createServer(app);
+  const server = createServer(app);
 
-  return httpServer;
+  return server;
 }

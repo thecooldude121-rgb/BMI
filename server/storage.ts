@@ -9,11 +9,39 @@ const client = new Client({
   connectionString: process.env.DATABASE_URL,
 });
 
-// Connect to database with error handling
-client.connect().catch((error) => {
-  console.error("Database connection error:", error.message);
-  process.exit(1);
+// Connect to database with error handling and retry logic
+let connectionAttempts = 0;
+const maxAttempts = 3;
+
+const connectWithRetry = async () => {
+  try {
+    await client.connect();
+    console.log("✅ Database connected successfully");
+  } catch (error: any) {
+    connectionAttempts++;
+    console.error(`❌ Database connection attempt ${connectionAttempts} failed:`, error.message);
+    
+    if (connectionAttempts < maxAttempts) {
+      console.log(`🔄 Retrying connection in 2 seconds...`);
+      setTimeout(connectWithRetry, 2000);
+    } else {
+      console.error("💥 Max connection attempts reached. Exiting...");
+      process.exit(1);
+    }
+  }
+};
+
+// Handle connection errors
+client.on('error', (err) => {
+  console.error('Database connection error:', err);
 });
+
+client.on('end', () => {
+  console.log('Database connection ended');
+});
+
+// Start connection
+connectWithRetry();
 
 export const db = drizzle(client, { schema });
 
