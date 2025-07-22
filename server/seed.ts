@@ -29,7 +29,7 @@ export async function seedDatabase() {
 
     const userId = sampleUser[0].id;
 
-    // Create sample accounts
+    // Create sample accounts (5 companies)
     const sampleAccounts = await db.insert(schema.accounts).values([
       {
         name: 'TechCorp Solutions',
@@ -39,7 +39,8 @@ export async function seedDatabase() {
         annualRevenue: '5000000',
         website: 'https://techcorp.com',
         phone: '+1-555-0123',
-        description: 'Leading technology solutions provider',
+        description: 'Leading technology solutions provider specializing in enterprise software',
+        address: { street: '123 Tech Ave', city: 'San Francisco', state: 'CA', zip: '94102', country: 'USA' },
         ownerId: userId
       },
       {
@@ -50,7 +51,8 @@ export async function seedDatabase() {
         annualRevenue: '50000000',
         website: 'https://globalmfg.com',
         phone: '+1-555-0124',
-        description: 'Industrial manufacturing company',
+        description: 'Industrial manufacturing company with worldwide operations',
+        address: { street: '456 Industrial Blvd', city: 'Detroit', state: 'MI', zip: '48201', country: 'USA' },
         ownerId: userId
       },
       {
@@ -61,12 +63,37 @@ export async function seedDatabase() {
         annualRevenue: '500000',
         website: 'https://startupx.io',
         phone: '+1-555-0125',
-        description: 'Innovative startup in the AI space',
+        description: 'Innovative startup in the AI space focused on machine learning solutions',
+        address: { street: '789 Innovation St', city: 'Austin', state: 'TX', zip: '73301', country: 'USA' },
+        ownerId: userId
+      },
+      {
+        name: 'HealthTech Innovations',
+        domain: 'healthtech.com',
+        industry: 'Healthcare',
+        companySize: '201-500',
+        annualRevenue: '15000000',
+        website: 'https://healthtech.com',
+        phone: '+1-555-0126',
+        description: 'Healthcare technology company developing medical devices and software',
+        address: { street: '321 Medical Dr', city: 'Boston', state: 'MA', zip: '02101', country: 'USA' },
+        ownerId: userId
+      },
+      {
+        name: 'Green Energy Corp',
+        domain: 'greenenergy.com',
+        industry: 'Energy',
+        companySize: '1000+',
+        annualRevenue: '100000000',
+        website: 'https://greenenergy.com',
+        phone: '+1-555-0127',
+        description: 'Renewable energy company focused on solar and wind power solutions',
+        address: { street: '654 Solar Way', city: 'Phoenix', state: 'AZ', zip: '85001', country: 'USA' },
         ownerId: userId
       }
     ]).returning();
 
-    // Create sample contacts
+    // Create sample contacts (5 contacts)
     const sampleContacts = await db.insert(schema.contacts).values([
       {
         accountId: sampleAccounts[0].id,
@@ -74,9 +101,12 @@ export async function seedDatabase() {
         lastName: 'Johnson',
         email: 'sarah.johnson@techcorp.com',
         phone: '+1-555-0123',
-        position: 'CTO',
+        mobile: '+1-555-0223',
+        position: 'Chief Technology Officer',
         department: 'Technology',
+        linkedinUrl: 'https://linkedin.com/in/sarah-johnson-tech',
         isPrimary: true,
+        status: 'active',
         ownerId: userId
       },
       {
@@ -85,9 +115,12 @@ export async function seedDatabase() {
         lastName: 'Chen',
         email: 'michael.chen@globalmfg.com',
         phone: '+1-555-0124',
+        mobile: '+1-555-0224',
         position: 'VP Operations',
         department: 'Operations',
+        linkedinUrl: 'https://linkedin.com/in/michael-chen-ops',
         isPrimary: true,
+        status: 'active',
         ownerId: userId
       },
       {
@@ -96,14 +129,45 @@ export async function seedDatabase() {
         lastName: 'Wilson',
         email: 'emma.wilson@startupx.io',
         phone: '+1-555-0125',
-        position: 'CEO',
+        mobile: '+1-555-0225',
+        position: 'Chief Executive Officer',
         department: 'Executive',
+        linkedinUrl: 'https://linkedin.com/in/emma-wilson-ceo',
         isPrimary: true,
+        status: 'active',
+        ownerId: userId
+      },
+      {
+        accountId: sampleAccounts[3].id,
+        firstName: 'Dr. Robert',
+        lastName: 'Martinez',
+        email: 'robert.martinez@healthtech.com',
+        phone: '+1-555-0126',
+        mobile: '+1-555-0226',
+        position: 'Chief Medical Officer',
+        department: 'Medical',
+        linkedinUrl: 'https://linkedin.com/in/dr-robert-martinez',
+        isPrimary: true,
+        status: 'active',
+        ownerId: userId
+      },
+      {
+        accountId: sampleAccounts[4].id,
+        firstName: 'Lisa',
+        lastName: 'Thompson',
+        email: 'lisa.thompson@greenenergy.com',
+        phone: '+1-555-0127',
+        mobile: '+1-555-0227',
+        position: 'VP of Business Development',
+        department: 'Sales',
+        linkedinUrl: 'https://linkedin.com/in/lisa-thompson-energy',
+        isPrimary: true,
+        status: 'active',
         ownerId: userId
       }
     ]).returning();
 
-    // Create sample leads
+    // Create sample leads (5 leads)
     const sampleLeads = await db.insert(schema.leads).values([
       {
         contactId: sampleContacts[0].id,
@@ -112,16 +176,20 @@ export async function seedDatabase() {
         email: 'sarah.johnson@techcorp.com',
         phone: '+1-555-0123',
         company: 'TechCorp Solutions',
-        position: 'CTO',
+        position: 'Chief Technology Officer',
         industry: 'Technology',
         stage: 'qualified',
         status: 'active',
         score: 85,
         value: '250000',
         probability: 75,
+        expectedCloseDate: new Date('2025-03-15'),
         source: 'Website',
         assignedTo: userId,
-        notes: 'Interested in enterprise solution'
+        lastContact: new Date('2025-01-20'),
+        notes: 'Interested in enterprise solution for team collaboration',
+        tags: ['enterprise', 'high-value', 'technology'],
+        customFields: { budget: '200k-300k', timeline: 'Q1 2025', decision_makers: 3 }
       },
       {
         contactId: sampleContacts[1].id,
@@ -137,17 +205,87 @@ export async function seedDatabase() {
         score: 92,
         value: '500000',
         probability: 80,
+        expectedCloseDate: new Date('2025-02-28'),
         source: 'Referral',
         assignedTo: userId,
-        notes: 'Large scale implementation needed'
+        lastContact: new Date('2025-01-21'),
+        notes: 'Large scale implementation needed for factory automation',
+        tags: ['manufacturing', 'automation', 'high-value'],
+        customFields: { budget: '400k-600k', timeline: 'Q1 2025', decision_makers: 5 }
+      },
+      {
+        contactId: sampleContacts[2].id,
+        accountId: sampleAccounts[2].id,
+        name: 'Emma Wilson',
+        email: 'emma.wilson@startupx.io',
+        phone: '+1-555-0125',
+        company: 'StartupX',
+        position: 'Chief Executive Officer',
+        industry: 'Technology',
+        stage: 'new',
+        status: 'active',
+        score: 70,
+        value: '75000',
+        probability: 25,
+        expectedCloseDate: new Date('2025-04-30'),
+        source: 'Cold Outreach',
+        assignedTo: userId,
+        lastContact: new Date('2025-01-19'),
+        notes: 'Startup looking for AI/ML platform solutions',
+        tags: ['startup', 'ai', 'ml'],
+        customFields: { budget: '50k-100k', timeline: 'Q2 2025', decision_makers: 2 }
+      },
+      {
+        contactId: sampleContacts[3].id,
+        accountId: sampleAccounts[3].id,
+        name: 'Dr. Robert Martinez',
+        email: 'robert.martinez@healthtech.com',
+        phone: '+1-555-0126',
+        company: 'HealthTech Innovations',
+        position: 'Chief Medical Officer',
+        industry: 'Healthcare',
+        stage: 'contacted',
+        status: 'active',
+        score: 88,
+        value: '350000',
+        probability: 60,
+        expectedCloseDate: new Date('2025-05-15'),
+        source: 'Trade Show',
+        assignedTo: userId,
+        lastContact: new Date('2025-01-18'),
+        notes: 'Healthcare technology integration for patient management system',
+        tags: ['healthcare', 'medical', 'compliance'],
+        customFields: { budget: '300k-400k', timeline: 'Q2 2025', decision_makers: 4 }
+      },
+      {
+        contactId: sampleContacts[4].id,
+        accountId: sampleAccounts[4].id,
+        name: 'Lisa Thompson',
+        email: 'lisa.thompson@greenenergy.com',
+        phone: '+1-555-0127',
+        company: 'Green Energy Corp',
+        position: 'VP of Business Development',
+        industry: 'Energy',
+        stage: 'qualified',
+        status: 'active',
+        score: 95,
+        value: '750000',
+        probability: 85,
+        expectedCloseDate: new Date('2025-03-30'),
+        source: 'Partner Referral',
+        assignedTo: userId,
+        lastContact: new Date('2025-01-22'),
+        notes: 'Large enterprise solution for energy management and reporting',
+        tags: ['energy', 'enterprise', 'sustainability'],
+        customFields: { budget: '600k-800k', timeline: 'Q1 2025', decision_makers: 6 }
       }
     ]).returning();
 
-    // Create sample deals
+    // Create sample deals (5 deals)
     const sampleDeals = await db.insert(schema.deals).values([
       {
         name: 'TechCorp Enterprise License',
-        title: 'TechCorp Enterprise License',
+        title: 'Enterprise Software Platform Implementation',
         leadId: sampleLeads[0].id,
         accountId: sampleAccounts[0].id,
         contactId: sampleContacts[0].id,
@@ -156,12 +294,13 @@ export async function seedDatabase() {
         probability: 75,
         expectedCloseDate: new Date('2025-03-15'),
         assignedTo: userId,
-        description: 'Enterprise software license deal',
-        notes: 'Negotiating terms and pricing'
+        description: 'Complete enterprise software platform with custom integrations and training',
+        nextStep: 'Schedule final pricing discussion with procurement team',
+        notes: 'Negotiating terms and pricing. Customer very interested, budget approved.'
       },
       {
         name: 'Manufacturing Software Suite',
-        title: 'Manufacturing Software Suite',
+        title: 'Global Manufacturing Automation Platform',
         leadId: sampleLeads[1].id,
         accountId: sampleAccounts[1].id,
         contactId: sampleContacts[1].id,
@@ -170,8 +309,54 @@ export async function seedDatabase() {
         probability: 80,
         expectedCloseDate: new Date('2025-02-28'),
         assignedTo: userId,
-        description: 'Complete manufacturing management system',
-        notes: 'Proposal submitted, awaiting review'
+        description: 'Complete manufacturing management system with IoT integration and real-time analytics',
+        nextStep: 'Present proposal to board of directors',
+        notes: 'Proposal submitted, awaiting review. Strong technical fit, procurement approved.'
+      },
+      {
+        name: 'StartupX AI Platform',
+        title: 'AI/ML Development Platform',
+        leadId: sampleLeads[2].id,
+        accountId: sampleAccounts[2].id,
+        contactId: sampleContacts[2].id,
+        value: '75000',
+        stage: 'qualification',
+        probability: 25,
+        expectedCloseDate: new Date('2025-04-30'),
+        assignedTo: userId,
+        description: 'AI/ML platform for startup development with scalable infrastructure',
+        nextStep: 'Conduct technical demo and proof of concept',
+        notes: 'Early stage discussion. Need to validate technical requirements and budget.'
+      },
+      {
+        name: 'HealthTech Integration',
+        title: 'Healthcare Management System Integration',
+        leadId: sampleLeads[3].id,
+        accountId: sampleAccounts[3].id,
+        contactId: sampleContacts[3].id,
+        value: '350000',
+        stage: 'proposal',
+        probability: 60,
+        expectedCloseDate: new Date('2025-05-15'),
+        assignedTo: userId,
+        description: 'Healthcare technology integration for patient management with HIPAA compliance',
+        nextStep: 'Address compliance questions and provide security documentation',
+        notes: 'Medical team excited about solution. Compliance review in progress.'
+      },
+      {
+        name: 'Green Energy Analytics',
+        title: 'Enterprise Energy Management Platform',
+        leadId: sampleLeads[4].id,
+        accountId: sampleAccounts[4].id,
+        contactId: sampleContacts[4].id,
+        value: '750000',
+        stage: 'negotiation',
+        probability: 85,
+        expectedCloseDate: new Date('2025-03-30'),
+        assignedTo: userId,
+        description: 'Large enterprise solution for energy management, reporting, and sustainability tracking',
+        nextStep: 'Finalize contract terms and implementation timeline',
+        notes: 'Very strong opportunity. Verbal commitment received, finalizing paperwork.'
       }
     ]).returning();
 
@@ -250,7 +435,7 @@ export async function seedDatabase() {
     ]);
 
     console.log("✅ Database seeded successfully!");
-    console.log(`Created ${sampleUser.length} users`);
+    console.log(`Created/Used ${sampleUser.length} users`);
     console.log(`Created ${sampleAccounts.length} accounts`);
     console.log(`Created ${sampleContacts.length} contacts`);
     console.log(`Created ${sampleLeads.length} leads`);
