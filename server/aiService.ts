@@ -1,8 +1,8 @@
-import OpenAI from "openai";
+import { GoogleGenAI } from "@google/genai";
 
-// the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-const openai = new OpenAI({ 
-  apiKey: process.env.OPENAI_API_KEY
+// Note that the newest Gemini model series is "gemini-2.5-flash" or "gemini-2.5-pro"
+const genai = new GoogleGenAI({ 
+  apiKey: process.env.GEMINI_API_KEY || ""
 });
 
 export interface SalesInsight {
@@ -71,24 +71,72 @@ export class AIInsightsService {
         Generate 4-6 specific, actionable insights based on the actual data patterns.
       `;
 
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "system",
-            content: "You are an expert sales analytics AI that provides data-driven insights in JSON format. Always respond with valid JSON only."
-          },
-          {
-            role: "user",
-            content: prompt
+      const systemPrompt = `You are an expert sales analytics AI that provides data-driven insights in JSON format. 
+Analyze the provided CRM data and respond with JSON only in this exact structure:
+{
+  "insights": [
+    {
+      "id": "unique_id",
+      "type": "trend|opportunity|warning|recommendation", 
+      "title": "Brief insight title",
+      "description": "Detailed explanation",
+      "impact": "high|medium|low",
+      "actionable": true|false,
+      "data": {}
+    }
+  ],
+  "summary": "2-3 sentence executive summary",
+  "keyMetrics": {
+    "conversionRate": number,
+    "averageDealSize": number, 
+    "salesVelocity": number,
+    "pipelineHealth": number
+  }
+}`;
+
+      const response = await genai.models.generateContent({
+        model: "gemini-2.5-pro",
+        config: {
+          systemInstruction: systemPrompt,
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: "object",
+            properties: {
+              insights: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    id: { type: "string" },
+                    type: { type: "string" },
+                    title: { type: "string" },
+                    description: { type: "string" },
+                    impact: { type: "string" },
+                    actionable: { type: "boolean" },
+                    data: { type: "object" }
+                  },
+                  required: ["id", "type", "title", "description", "impact", "actionable"]
+                }
+              },
+              summary: { type: "string" },
+              keyMetrics: {
+                type: "object",
+                properties: {
+                  conversionRate: { type: "number" },
+                  averageDealSize: { type: "number" },
+                  salesVelocity: { type: "number" },
+                  pipelineHealth: { type: "number" }
+                },
+                required: ["conversionRate", "averageDealSize", "salesVelocity", "pipelineHealth"]
+              }
+            },
+            required: ["insights", "summary", "keyMetrics"]
           }
-        ],
-        response_format: { type: "json_object" },
-        temperature: 0.3,
-        max_tokens: 2000
+        },
+        contents: prompt,
       });
 
-      const analysisResult = JSON.parse(response.choices[0].message.content || '{}');
+      const analysisResult = JSON.parse(response.text || '{}');
       
       // Add timestamps and IDs if missing
       if (analysisResult.insights) {
