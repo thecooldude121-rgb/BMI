@@ -43,7 +43,7 @@ const ContactsPage: React.FC = () => {
       </div>
 
       {/* Industry Groups */}
-      {Object.entries(contactsByIndustry).map(([industry, contacts]) => (
+      {Object.entries(contactsByIndustry).map(([industry, contacts]: [string, any[]]) => (
         <div key={industry} className="bg-white rounded-lg border border-gray-200">
           <div className="px-6 py-4 border-b border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900">
@@ -52,7 +52,7 @@ const ContactsPage: React.FC = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
-            {contacts.map((contact: any) => (
+            {(contacts as any[]).map((contact: any) => (
               <div key={contact.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                 <div className="flex items-start justify-between mb-3">
                   <div>
