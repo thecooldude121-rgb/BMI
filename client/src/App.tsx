@@ -12,6 +12,7 @@ import PipelinePage from './pages/CRM/PipelinePage';
 import ActivitiesPage from './pages/CRM/ActivitiesPage';
 import TasksPage from './pages/CRM/TasksPage';
 import CreateDealWizard from './components/Deal/CreateDealWizard';
+
 import DealDetailPage from './components/Deal/DealDetailPage';
 import HRMSModule from './pages/HRMS/HRMSModule';
 import Analytics from './pages/Analytics/Analytics';

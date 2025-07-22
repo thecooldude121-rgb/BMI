@@ -442,7 +442,7 @@ const UnifiedDealsPage = () => {
         onDealMove={(dealId, newStageId) => {
           alert(`Move deal ${dealId} to stage ${newStageId} - Coming Soon!`);
         }}
-        onDealClick={(deal) => handleDealClick(deal)}
+        onDealClick={(deal) => console.log('Deal clicked:', deal.id)}
         onAddDeal={(stageId) => {
           alert(`Add deal to stage ${stageId} - Coming Soon!`);
         }}
@@ -497,7 +497,7 @@ const UnifiedDealsPage = () => {
       <DealListView
         deals={convertedDeals}
         filters={dealFilters}
-        onDealClick={(deal) => handleDealClick(deal)}
+        onDealClick={(deal) => console.log('Deal clicked:', deal.id)}
         onFiltersChange={(filters) => {
           if (filters.searchTerm !== undefined) setSearchTerm(filters.searchTerm);
           if (filters.stageId) setStageFilter(filters.stageId);
@@ -548,11 +548,13 @@ const UnifiedDealsPage = () => {
                 {stageDeals.map(deal => (
                   <div
                     key={deal.id}
-                    onClick={() => handleDealClick(deal)}
                     className="bg-white rounded-xl border border-gray-200 p-4 cursor-pointer hover:shadow-lg transition-all duration-200 hover:border-gray-300 group shadow-sm"
                   >
                     <div className="flex items-start justify-between mb-3">
-                      <h4 className="font-semibold text-gray-900 text-sm line-clamp-2 group-hover:text-blue-600 transition-colors">
+                      <h4 
+                        className="font-semibold text-gray-900 text-sm line-clamp-2 group-hover:text-blue-600 transition-colors cursor-pointer"
+                        onClick={() => setLocation(`/crm/deals/${deal.id}`)}
+                      >
                         {deal.name}
                       </h4>
                     </div>
