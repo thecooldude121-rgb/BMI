@@ -343,6 +343,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Enhanced Sample Data Generation
+  app.post("/api/generate-sample-data", async (req, res) => {
+    try {
+      const { createEnhancedSampleData } = await import("./enhanced-seed");
+      const result = await createEnhancedSampleData();
+      res.json({ 
+        success: true, 
+        message: "Enhanced sample data created successfully",
+        data: result
+      });
+    } catch (error: any) {
+      console.error("Error generating sample data:", error);
+      res.status(500).json({ 
+        success: false, 
+        error: "Failed to generate sample data",
+        details: error.message
+      });
+    }
+  });
+
   app.get("/api/meetings/:id", async (req, res) => {
     try {
       const meeting = await storage.getMeeting(req.params.id);

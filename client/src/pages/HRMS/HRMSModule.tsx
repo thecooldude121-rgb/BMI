@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, NavLink } from 'react-router-dom';
+import { useLocation, Link, Switch, Route } from 'wouter';
 import { Users, UserCheck, Clock, FileText } from 'lucide-react';
 import EmployeesPage from './EmployeesPage';
 import WorkflowsPage from './WorkflowsPage';
@@ -7,6 +7,7 @@ import AttendancePage from './AttendancePage';
 import ReportsPage from './ReportsPage';
 
 const HRMSModule: React.FC = () => {
+  const [location] = useLocation();
   const navigation = [
     { name: 'Employees', href: '/hrms/employees', icon: Users },
     { name: 'Workflows', href: '/hrms/workflows', icon: UserCheck },
@@ -27,33 +28,34 @@ const HRMSModule: React.FC = () => {
       {/* Navigation */}
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
-          {navigation.map((item) => (
-            <NavLink
-              key={item.name}
-              to={item.href}
-              className={({ isActive }) =>
-                `group inline-flex items-center py-2 px-1 border-b-2 font-medium text-sm ${
+          {navigation.map((item) => {
+            const isActive = location === item.href || (item.href === '/hrms/employees' && location === '/hrms');
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`group inline-flex items-center py-2 px-1 border-b-2 font-medium text-sm ${
                   isActive
                     ? 'border-green-500 text-green-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`
-              }
-            >
-              <item.icon className="mr-2 h-5 w-5" />
-              {item.name}
-            </NavLink>
-          ))}
+                }`}
+              >
+                <item.icon className="mr-2 h-5 w-5" />
+                {item.name}
+              </Link>
+            );
+          })}
         </nav>
       </div>
 
       {/* Content */}
-      <Routes>
-        <Route path="/" element={<EmployeesPage />} />
-        <Route path="/employees" element={<EmployeesPage />} />
-        <Route path="/workflows" element={<WorkflowsPage />} />
-        <Route path="/attendance" element={<AttendancePage />} />
-        <Route path="/reports" element={<ReportsPage />} />
-      </Routes>
+      <Switch>
+        <Route path="/hrms/employees" component={EmployeesPage} />
+        <Route path="/hrms/workflows" component={WorkflowsPage} />
+        <Route path="/hrms/attendance" component={AttendancePage} />
+        <Route path="/hrms/reports" component={ReportsPage} />
+        <Route path="/hrms" component={EmployeesPage} />
+      </Switch>
     </div>
   );
 };
