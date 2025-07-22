@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLocation, useNavigate, NavLink } from 'react-router-dom';
+import { useLocation, Link } from 'wouter';
 import { 
   Bell, Search, Settings, Menu, Plus, Mail, Building2, 
   Users, UserPlus, DollarSign, Phone, Activity, LayoutDashboard,
@@ -13,14 +13,13 @@ interface HeaderProps {
 
 const Header: React.FC = () => {
   const { user, logout } = useAuth();
-  const location = useLocation();
-  const navigate = useNavigate();
+  const [location, setLocation] = useLocation();
   const [showCreateMenu, setShowCreateMenu] = useState(false);
   const [showAppMenu, setShowAppMenu] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   
-  const isCRMPage = location.pathname.startsWith('/crm');
+  const isCRMPage = location.startsWith('/crm');
 
   const crmNavigation = [
     { name: 'Leads', href: '/crm/leads', icon: UserPlus },
@@ -46,12 +45,12 @@ const Header: React.FC = () => {
   ];
 
   const createMenuItems = [
-    { name: 'Add Lead', action: () => navigate('/crm/leads/new'), icon: UserPlus },
-    { name: 'Create Deal', action: () => navigate('/deals/create'), icon: DollarSign },
-    { name: 'Add Contact', action: () => navigate('/crm/contacts/new'), icon: Users },
-    { name: 'Add Company', action: () => navigate('/crm/accounts/new'), icon: Building2 },
-    { name: 'Schedule Meeting', action: () => navigate('/calendar/new'), icon: Calendar },
-    { name: 'Add Task', action: () => navigate('/crm/tasks/new'), icon: Phone },
+    { name: 'Add Lead', action: () => setLocation('/crm/leads/new'), icon: UserPlus },
+    { name: 'Create Deal', action: () => setLocation('/crm/deals/create'), icon: DollarSign },
+    { name: 'Add Contact', action: () => setLocation('/crm/contacts/new'), icon: Users },
+    { name: 'Add Company', action: () => setLocation('/crm/accounts/new'), icon: Building2 },
+    { name: 'Schedule Meeting', action: () => setLocation('/calendar/new'), icon: Calendar },
+    { name: 'Add Task', action: () => setLocation('/crm/tasks/new'), icon: Phone },
   ];
 
   return (
@@ -193,7 +192,7 @@ const Header: React.FC = () => {
 
           {/* Settings */}
           <button 
-            onClick={() => navigate('/settings')}
+            onClick={() => setLocation('/settings')}
             className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <Settings className="h-5 w-5" />
@@ -220,7 +219,7 @@ const Header: React.FC = () => {
                       <button
                         key={module.name}
                         onClick={() => {
-                          navigate(module.href);
+                          setLocation(module.href);
                           setShowAppMenu(false);
                         }}
                         className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-md transition-colors"
@@ -261,7 +260,7 @@ const Header: React.FC = () => {
                 </div>
                 <button
                   onClick={() => {
-                    navigate('/settings');
+                    setLocation('/settings');
                     setShowProfileMenu(false);
                   }}
                   className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"

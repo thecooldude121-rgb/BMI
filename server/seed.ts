@@ -1,21 +1,31 @@
 import { db } from "./storage";
 import * as schema from "@shared/schema";
+import { eq } from "drizzle-orm";
 
 export async function seedDatabase() {
   try {
     console.log("🌱 Starting database seeding...");
 
-    // Create a sample user
-    const sampleUser = await db.insert(schema.users).values({
-      email: 'john.smith@company.com',
-      passwordHash: 'hashed_password_here',
-      firstName: 'John',
-      lastName: 'Smith',
-      role: 'admin',
-      department: 'Sales',
-      avatarUrl: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1',
-      isActive: true
-    }).returning();
+    // Check if user already exists
+    const existingUser = await db.select().from(schema.users).where(eq(schema.users.email, 'john.smith@company.com')).limit(1);
+    
+    let sampleUser;
+    if (existingUser.length > 0) {
+      sampleUser = existingUser;
+      console.log("👤 Using existing user data");
+    } else {
+      // Create a sample user
+      sampleUser = await db.insert(schema.users).values({
+        email: 'john.smith@company.com',
+        passwordHash: 'hashed_password_here',
+        firstName: 'John',
+        lastName: 'Smith',
+        role: 'admin',
+        department: 'Sales',
+        avatarUrl: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1',
+        isActive: true
+      }).returning();
+    }
 
     const userId = sampleUser[0].id;
 

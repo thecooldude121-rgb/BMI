@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import { useData } from '../../contexts/DataContext';
 import { 
   X, Save, ChevronRight, ChevronDown, User, Building, DollarSign, 
@@ -26,11 +26,11 @@ const CreateDealWizard: React.FC<CreateDealWizardProps> = ({
   onSave,
   existingDeal 
 }) => {
-  const navigate = useNavigate();
+  const [location, setLocation] = useLocation();
   const { addDeal } = useData();
   
   // Default handlers if not provided
-  const handleClose = onClose || (() => navigate('/crm/deals'));
+  const handleClose = onClose || (() => setLocation('/crm/deals'));
   const saveDealFunction = onSave || (async (dealData: Partial<Deal>) => {
     try {
       console.log('Creating deal with data:', dealData);
@@ -59,7 +59,7 @@ const CreateDealWizard: React.FC<CreateDealWizardProps> = ({
       
       // Navigate back to deals page
       setTimeout(() => {
-        navigate('/crm/deals');
+        setLocation('/crm/deals');
       }, 100);
     } catch (error) {
       console.error('Failed to create deal:', error);

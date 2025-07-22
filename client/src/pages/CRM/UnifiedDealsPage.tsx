@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useLocation } from 'wouter';
 import { 
   LayoutGrid, List, Plus, Settings, BarChart3, Filter, Search, 
   TrendingUp, DollarSign, Target, Users, Calendar, Download,
@@ -30,9 +30,9 @@ interface DealStage {
   probability: number;
 }
 
-const UnifiedDealsPage: React.FC = () => {
+const UnifiedDealsPage = () => {
   const { deals, leads, employees } = useData();
-  const navigate = useNavigate();
+  const [location, setLocation] = useLocation();
   const [viewMode, setViewMode] = useState<'overview' | 'kanban' | 'list'>('overview');
   const [selectedDeal, setSelectedDeal] = useState<UnifiedDeal | null>(null);
   const [showDealDetail, setShowDealDetail] = useState(false);
@@ -67,6 +67,20 @@ const UnifiedDealsPage: React.FC = () => {
     leadId: deal.leadId,
     customFields: {}
   }));
+  
+  // Calculate dashboard metrics function
+  const calculateDashboardMetrics = (deals: UnifiedDeal[]) => {
+    const totalValue = deals.reduce((sum, deal) => sum + deal.amount, 0);
+    const avgDealSize = deals.length > 0 ? totalValue / deals.length : 0;
+    const weightedValue = deals.reduce((sum, deal) => sum + (deal.amount * deal.probability / 100), 0);
+    
+    return {
+      totalValue,
+      avgDealSize,
+      weightedValue,
+      totalDeals: deals.length
+    };
+  };
   
   // Calculate dashboard metrics
   const dashboardMetrics = calculateDashboardMetrics(unifiedDeals);
@@ -137,7 +151,7 @@ const UnifiedDealsPage: React.FC = () => {
 
   const handleDealClick = (deal: UnifiedDeal) => {
     // Navigate to the full deal detail page
-    navigate(`/crm/deals/${deal.id}`);
+    setLocation(`/crm/deals/${deal.id}`);
   };
 
   const handleSort = (field: string) => {
@@ -594,7 +608,7 @@ const UnifiedDealsPage: React.FC = () => {
               </div>
 
               <button 
-                onClick={() => navigate('/crm/deals/create')}
+                onClick={() => setLocation('/crm/deals/create')}
                 className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm hover:from-blue-700 hover:to-purple-700 transition-all shadow-md"
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -648,7 +662,7 @@ const UnifiedDealsPage: React.FC = () => {
                 onClick={() => {
                   const savedDraft = localStorage.getItem('dealDraft');
                   if (savedDraft) {
-                    navigate('/crm/deals/create');
+                    setLocation('/crm/deals/create');
                   } else {
                     alert('No draft found. Create a new deal to save a draft.');
                   }

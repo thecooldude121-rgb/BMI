@@ -1,5 +1,4 @@
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Route, Switch } from 'wouter';
 import { AuthProvider } from './contexts/AuthContext';
 import { DataProvider } from './contexts/DataContext';
 import Header from './components/Layout/Header';
@@ -20,57 +19,40 @@ import LeadGeneration from './pages/LeadGeneration/LeadGeneration';
 import Settings from './pages/Settings/Settings';
 import Login from './pages/Auth/Login';
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
-      <main className="pt-16">
-        {children}
-      </main>
-    </div>
-  );
-};
+// Wrapper components for routes that need props
+const CreateDealWrapper = () => <CreateDealWizard />;
+const DealDetailWrapper = ({ params }: { params: { id: string } }) => <DealDetailPage dealId={params.id} />;
 
-const CRMRoutes = () => {
-  return (
-    <div className="h-full overflow-auto bg-gray-50 p-6">
-      <Routes>
-        <Route path="/" element={<LeadsPage />} />
-        <Route path="/leads" element={<LeadsPage />} />
-        <Route path="/contacts" element={<ContactsPage />} />
-        <Route path="/accounts" element={<CompaniesPage />} />
-        <Route path="/deals" element={<UnifiedDealsPage />} />
-        <Route path="/deals/create" element={<CreateDealWizard />} />
-        <Route path="/deals/:id" element={<DealDetailPage />} />
-        <Route path="/pipeline" element={<PipelinePage />} />
-        <Route path="/tasks" element={<TasksPage />} />
-        <Route path="/activities" element={<ActivitiesPage />} />
-      </Routes>
-    </div>
-  );
-};
+
 
 const App = () => {
   return (
     <AuthProvider>
       <DataProvider>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/*" element={
-            <Layout>
-              <Routes>
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/crm/*" element={<CRMRoutes />} />
-                <Route path="/hrms/*" element={<HRMSModule />} />
-                <Route path="/analytics" element={<Analytics />} />
-                <Route path="/calendar" element={<Calendar />} />
-                <Route path="/lead-generation" element={<LeadGeneration />} />
-                <Route path="/settings" element={<Settings />} />
-              </Routes>
-            </Layout>
-          } />
-        </Routes>
+        <div className="min-h-screen bg-gray-50">
+          <Header />
+          <main className="pt-16">
+            <Switch>
+              <Route path="/login" component={Login} />
+              <Route path="/" component={Dashboard} />
+              <Route path="/dashboard" component={Dashboard} />
+              <Route path="/crm/leads" component={LeadsPage} />
+              <Route path="/crm/contacts" component={ContactsPage} />
+              <Route path="/crm/accounts" component={CompaniesPage} />
+              <Route path="/crm/deals" component={UnifiedDealsPage} />
+              <Route path="/crm/deals/create" component={CreateDealWrapper} />
+              <Route path="/crm/deals/:id" component={DealDetailWrapper} />
+              <Route path="/crm/pipeline" component={PipelinePage} />
+              <Route path="/crm/tasks" component={TasksPage} />
+              <Route path="/crm/activities" component={ActivitiesPage} />
+              <Route path="/hrms" component={HRMSModule} />
+              <Route path="/analytics" component={Analytics} />
+              <Route path="/calendar" component={Calendar} />
+              <Route path="/lead-generation" component={LeadGeneration} />
+              <Route path="/settings" component={Settings} />
+            </Switch>
+          </main>
+        </div>
       </DataProvider>
     </AuthProvider>
   );
