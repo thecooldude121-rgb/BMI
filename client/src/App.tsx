@@ -34,7 +34,7 @@ const App = () => {
       <DataProvider>
         <div className="min-h-screen bg-gray-50">
           <Header />
-          <main className="pt-14 -mt-1">
+          <main>
             <Switch>
               <Route path="/login" component={Login} />
               <Route path="/" component={Dashboard} />
