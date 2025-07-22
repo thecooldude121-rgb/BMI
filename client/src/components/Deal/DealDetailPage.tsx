@@ -436,37 +436,184 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
             {renderOverviewTab()}
           </div>
 
-        {/* Timeline Section */}
+        {/* Timeline Section - Zoho CRM Style */}
         <div id="timeline" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-8">
             <div className="flex items-center space-x-3">
               <Activity className="h-5 w-5 text-blue-600" />
               <h3 className="text-lg font-semibold text-gray-900">Timeline</h3>
             </div>
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
-              <Plus className="h-4 w-4 inline mr-2" />
-              Add Activity
-            </button>
+            <div className="text-sm text-gray-500">
+              Last Updated: {new Date(deal.updatedAt || deal.createdAt).toLocaleDateString()}
+            </div>
           </div>
-          <div className="space-y-4">
-            <div className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
-              <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-medium text-gray-900">Deal Created</h4>
-                  <span className="text-sm text-gray-500">{new Date(deal.createdAt).toLocaleDateString()}</span>
+
+          {/* Timeline Header */}
+          <div className="flex items-center justify-between mb-6">
+            <div className="text-sm">
+              <span className="font-medium text-gray-900">START</span>
+              <div className="text-gray-500">{new Date(deal.createdAt).toLocaleDateString()}</div>
+            </div>
+            <div className="text-sm text-right">
+              <span className="font-medium text-gray-900">CLOSING</span>
+              <div className="text-gray-500">{deal.expectedCloseDate ? new Date(deal.expectedCloseDate).toLocaleDateString() : 'TBD'}</div>
+            </div>
+          </div>
+
+          {/* Stage Timeline */}
+          <div className="relative mb-8">
+            {/* Timeline Line */}
+            <div className="absolute top-6 left-6 right-6 h-0.5 bg-gray-200"></div>
+            
+            {/* Timeline Steps */}
+            <div className="flex justify-between items-start relative">
+              {/* Qualification Stage */}
+              <div className="flex flex-col items-center">
+                <div className={`w-12 h-12 rounded-full border-2 flex items-center justify-center ${
+                  ['qualification', 'proposal', 'negotiation', 'closed-won', 'closed-lost'].includes(deal.stage) 
+                    ? 'bg-green-100 border-green-500' 
+                    : 'bg-gray-100 border-gray-300'
+                }`}>
+                  <CheckCircle className={`h-6 w-6 ${
+                    ['qualification', 'proposal', 'negotiation', 'closed-won', 'closed-lost'].includes(deal.stage)
+                      ? 'text-green-600' 
+                      : 'text-gray-400'
+                  }`} />
                 </div>
-                <p className="text-gray-600 text-sm mt-1">Initial deal created in the system</p>
+                <div className="mt-2 text-center">
+                  <div className="text-xs font-medium text-gray-900">1. Qualification</div>
+                  <div className="text-xs text-gray-500">{new Date(deal.createdAt).toLocaleDateString()}</div>
+                </div>
+              </div>
+
+              {/* Proposal Stage */}
+              <div className="flex flex-col items-center">
+                <div className={`w-12 h-12 rounded-full border-2 flex items-center justify-center ${
+                  ['proposal', 'negotiation', 'closed-won', 'closed-lost'].includes(deal.stage)
+                    ? 'bg-blue-100 border-blue-500' 
+                    : deal.stage === 'qualification' 
+                      ? 'bg-yellow-100 border-yellow-500' 
+                      : 'bg-gray-100 border-gray-300'
+                }`}>
+                  {['proposal', 'negotiation', 'closed-won', 'closed-lost'].includes(deal.stage) ? (
+                    <CheckCircle className="h-6 w-6 text-blue-600" />
+                  ) : deal.stage === 'qualification' ? (
+                    <Clock className="h-6 w-6 text-yellow-600" />
+                  ) : (
+                    <div className="w-3 h-3 rounded-full bg-gray-400"></div>
+                  )}
+                </div>
+                <div className="mt-2 text-center">
+                  <div className="text-xs font-medium text-gray-900">2. Proposal</div>
+                  <div className="text-xs text-gray-500">
+                    {deal.stage === 'proposal' ? 'Current' : deal.stage === 'qualification' ? 'Pending' : 'Completed'}
+                  </div>
+                </div>
+              </div>
+
+              {/* Negotiation Stage */}
+              <div className="flex flex-col items-center">
+                <div className={`w-12 h-12 rounded-full border-2 flex items-center justify-center ${
+                  ['negotiation', 'closed-won', 'closed-lost'].includes(deal.stage)
+                    ? 'bg-purple-100 border-purple-500' 
+                    : ['qualification', 'proposal'].includes(deal.stage)
+                      ? 'bg-gray-100 border-gray-300'
+                      : 'bg-gray-100 border-gray-300'
+                }`}>
+                  {['negotiation', 'closed-won', 'closed-lost'].includes(deal.stage) ? (
+                    deal.stage === 'negotiation' ? (
+                      <Activity className="h-6 w-6 text-purple-600" />
+                    ) : (
+                      <CheckCircle className="h-6 w-6 text-purple-600" />
+                    )
+                  ) : (
+                    <div className="w-3 h-3 rounded-full bg-gray-400"></div>
+                  )}
+                </div>
+                <div className="mt-2 text-center">
+                  <div className="text-xs font-medium text-gray-900">3. Negotiation</div>
+                  <div className="text-xs text-gray-500">
+                    {deal.stage === 'negotiation' ? 'Current' : ['qualification', 'proposal'].includes(deal.stage) ? 'Pending' : 'Completed'}
+                  </div>
+                </div>
+              </div>
+
+              {/* Closed Won/Lost Stage */}
+              <div className="flex flex-col items-center">
+                <div className={`w-12 h-12 rounded-full border-2 flex items-center justify-center ${
+                  deal.stage === 'closed-won' 
+                    ? 'bg-green-100 border-green-500' 
+                    : deal.stage === 'closed-lost'
+                      ? 'bg-red-100 border-red-500'
+                      : 'bg-gray-100 border-gray-300'
+                }`}>
+                  {deal.stage === 'closed-won' ? (
+                    <CheckCircle className="h-6 w-6 text-green-600" />
+                  ) : deal.stage === 'closed-lost' ? (
+                    <X className="h-6 w-6 text-red-600" />
+                  ) : (
+                    <div className="w-3 h-3 rounded-full bg-gray-400"></div>
+                  )}
+                </div>
+                <div className="mt-2 text-center">
+                  <div className="text-xs font-medium text-gray-900">4. Closed</div>
+                  <div className="text-xs text-gray-500">
+                    {deal.stage === 'closed-won' ? 'Won' : deal.stage === 'closed-lost' ? 'Lost' : 'Pending'}
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
-              <Clock className="h-5 w-5 text-orange-600 mt-0.5" />
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-medium text-gray-900">Follow-up Scheduled</h4>
-                  <span className="text-sm text-gray-500">Tomorrow</span>
+          </div>
+
+          {/* Deal Status Info */}
+          <div className="bg-gray-50 rounded-lg p-4 mb-6">
+            <h4 className="font-medium text-gray-900 mb-3">Current Status</h4>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+              <div>
+                <span className="text-gray-600">Stage:</span>
+                <div className="font-medium text-gray-900 capitalize">{deal.stage?.replace('-', ' ')}</div>
+              </div>
+              <div>
+                <span className="text-gray-600">Probability:</span>
+                <div className="font-medium text-gray-900">{deal.probability || 0}%</div>
+              </div>
+              <div>
+                <span className="text-gray-600">Amount:</span>
+                <div className="font-medium text-gray-900">${parseFloat(deal.value || '0').toLocaleString()}</div>
+              </div>
+              <div>
+                <span className="text-gray-600">Expected Close:</span>
+                <div className="font-medium text-gray-900">
+                  {deal.expectedCloseDate ? new Date(deal.expectedCloseDate).toLocaleDateString() : 'TBD'}
                 </div>
-                <p className="text-gray-600 text-sm mt-1">Next follow-up call scheduled with prospect</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Activities */}
+          <div>
+            <h4 className="font-medium text-gray-900 mb-4">Recent Activities</h4>
+            <div className="space-y-3">
+              <div className="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                <div className="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-900">Deal moved to {deal.stage?.replace('-', ' ')}</span>
+                    <span className="text-xs text-gray-500">{new Date(deal.updatedAt || deal.createdAt).toLocaleDateString()}</span>
+                  </div>
+                  <p className="text-xs text-gray-600 mt-1">Stage progression updated</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start space-x-3 p-3 bg-green-50 rounded-lg border-l-4 border-green-500">
+                <div className="w-2 h-2 bg-green-600 rounded-full mt-2"></div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-900">Deal created</span>
+                    <span className="text-xs text-gray-500">{new Date(deal.createdAt).toLocaleDateString()}</span>
+                  </div>
+                  <p className="text-xs text-gray-600 mt-1">Initial deal setup completed</p>
+                </div>
               </div>
             </div>
           </div>
