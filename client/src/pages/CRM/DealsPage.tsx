@@ -127,14 +127,14 @@ const DealsPage: React.FC = () => {
                 <tr key={deal.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
-                      <div className="text-sm font-medium text-gray-900">{deal.title}</div>
+                      <div className="text-sm font-medium text-gray-900">{deal.title || deal.name}</div>
                       <div className="text-sm text-gray-500">
                         Created {new Date(deal.createdAt).toLocaleDateString()}
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{getLeadName(deal.leadId)}</div>
+                    <div className="text-sm text-gray-900">{getLeadName(deal.leadId || deal.contactId)}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">
@@ -158,7 +158,7 @@ const DealsPage: React.FC = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {new Date(deal.expectedCloseDate).toLocaleDateString()}
+                    {deal.expectedCloseDate ? new Date(deal.expectedCloseDate).toLocaleDateString() : 'No date set'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {deal.assignedTo || 'Unassigned'}

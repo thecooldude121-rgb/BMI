@@ -56,8 +56,10 @@ const ContactsPage: React.FC = () => {
               <div key={contact.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    <h4 className="text-lg font-medium text-gray-900">{contact.name || contact.firstName + ' ' + contact.lastName}</h4>
-                    <p className="text-sm text-gray-600">{contact.position}</p>
+                    <h4 className="text-lg font-medium text-gray-900">
+                      {contact.name || (contact.firstName && contact.lastName ? `${contact.firstName} ${contact.lastName}` : 'Unknown Contact')}
+                    </h4>
+                    <p className="text-sm text-gray-600">{contact.position || 'No position'}</p>
                   </div>
                   <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                     contact.stage === 'won' 
@@ -73,23 +75,23 @@ const ContactsPage: React.FC = () => {
                 <div className="space-y-2">
                   <div className="flex items-center text-sm text-gray-600">
                     <Building className="h-4 w-4 mr-2" />
-                    {contact.company}
+                    {contact.company || 'No company'}
                   </div>
                   <div className="flex items-center text-sm text-gray-600">
                     <Mail className="h-4 w-4 mr-2" />
                     <a href={`mailto:${contact.email}`} className="hover:text-blue-600">
-                      {contact.email}
+                      {contact.email || 'No email'}
                     </a>
                   </div>
                   <div className="flex items-center text-sm text-gray-600">
                     <Phone className="h-4 w-4 mr-2" />
                     <a href={`tel:${contact.phone}`} className="hover:text-blue-600">
-                      {contact.phone}
+                      {contact.phone || 'No phone'}
                     </a>
                   </div>
                   <div className="flex items-center text-sm text-gray-500">
                     <Calendar className="h-4 w-4 mr-2" />
-                    Added {new Date(contact.createdAt).toLocaleDateString()}
+                    Added {contact.createdAt ? new Date(contact.createdAt).toLocaleDateString() : 'Unknown date'}
                   </div>
                 </div>
 
