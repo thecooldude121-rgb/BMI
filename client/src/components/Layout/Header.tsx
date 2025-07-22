@@ -41,6 +41,7 @@ const Header: React.FC = () => {
     { name: 'Lead Generation', href: '/lead-generation', icon: Target },
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },
     { name: 'Calendar', href: '/calendar', icon: Calendar },
+    { name: 'Gamification', href: '/gamification', icon: Target },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
 

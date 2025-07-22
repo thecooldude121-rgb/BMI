@@ -399,6 +399,100 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Gamification Routes
+  app.get("/api/leaderboard", async (req, res) => {
+    try {
+      const { type = 'all-time', year, month } = req.query;
+      
+      let leaderboard;
+      if (type === 'monthly' && year && month) {
+        leaderboard = await storage.getMonthlyLeaderboard(Number(year), Number(month));
+      } else {
+        leaderboard = await storage.getUserLeaderboard();
+      }
+      
+      res.json(leaderboard);
+    } catch (error) {
+      console.error('Error fetching leaderboard:', error);
+      res.status(500).json({ error: 'Failed to fetch leaderboard' });
+    }
+  });
+
+  app.get("/api/badges", async (req, res) => {
+    try {
+      const badges = await storage.getBadges();
+      res.json(badges);
+    } catch (error) {
+      console.error('Error fetching badges:', error);
+      res.status(500).json({ error: 'Failed to fetch badges' });
+    }
+  });
+
+  app.get("/api/user/:userId/badges", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const userBadges = await storage.getUserBadges(userId);
+      res.json(Array.isArray(userBadges) ? userBadges : []);
+    } catch (error) {
+      console.error('Error fetching user badges:', error);
+      res.json([]);
+    }
+  });
+
+  app.get("/api/user/:userId/points", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const points = await storage.getSalesPoints(userId);
+      const totalPoints = points.reduce((sum, p) => sum + p.points, 0);
+      res.json({ points, totalPoints });
+    } catch (error) {
+      console.error('Error fetching user points:', error);
+      res.status(500).json({ error: 'Failed to fetch user points' });
+    }
+  });
+
+  app.get("/api/user/:userId/achievements", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const achievements = await storage.getAchievements(userId);
+      res.json(Array.isArray(achievements) ? achievements : []);
+    } catch (error) {
+      console.error('Error fetching achievements:', error);
+      res.json([]);
+    }
+  });
+
+  app.get("/api/user/:userId/targets", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const targets = await storage.getSalesTargets(userId);
+      res.json(Array.isArray(targets) ? targets : []);
+    } catch (error) {
+      console.error('Error fetching sales targets:', error);
+      res.json([]);
+    }
+  });
+
+  app.post("/api/points", async (req, res) => {
+    try {
+      const points = await storage.createSalesPoints(req.body);
+      res.json(points);
+    } catch (error) {
+      console.error('Error creating sales points:', error);
+      res.status(500).json({ error: 'Failed to create sales points' });
+    }
+  });
+
+  app.post("/api/achievements", async (req, res) => {
+    try {
+      const achievement = await storage.createAchievement(req.body);
+      res.json(achievement);
+    } catch (error) {
+      console.error('Error creating achievement:', error);
+      res.status(500).json({ error: 'Failed to create achievement' });
+    }
+  });
+
   const server = createServer(app);
 
   return server;

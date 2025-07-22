@@ -1,6 +1,6 @@
 import { db } from "./db";
 import * as schema from "@shared/schema";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, sql, gte, lte } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -243,6 +243,125 @@ export class DatabaseStorage implements IStorage {
   async updateMeeting(id: string, meeting: Partial<schema.InsertMeeting>): Promise<schema.Meeting> {
     const meetings = await db.update(schema.meetings).set(meeting).where(eq(schema.meetings.id, id)).returning();
     return meetings[0];
+  }
+
+  // Gamification methods
+  async getSalesPoints(userId?: string): Promise<schema.SalesPoints[]> {
+    if (userId) {
+      return await db.select().from(schema.salesPoints).where(eq(schema.salesPoints.userId, userId));
+    }
+    return await db.select().from(schema.salesPoints);
+  }
+
+  async createSalesPoints(points: schema.InsertSalesPoints): Promise<schema.SalesPoints> {
+    const result = await db.insert(schema.salesPoints).values(points).returning();
+    return result[0];
+  }
+
+  async getBadges(): Promise<schema.Badge[]> {
+    return await db.select().from(schema.badges).where(eq(schema.badges.isActive, true));
+  }
+
+  async createBadge(badge: schema.InsertBadge): Promise<schema.Badge> {
+    const result = await db.insert(schema.badges).values(badge).returning();
+    return result[0];
+  }
+
+  async getUserBadges(userId: string): Promise<(schema.UserBadge & { badge: schema.Badge })[]> {
+    const result = await db.select({
+      id: schema.userBadges.id,
+      userId: schema.userBadges.userId,
+      badgeId: schema.userBadges.badgeId,
+      earnedAt: schema.userBadges.earnedAt,
+      progress: schema.userBadges.progress,
+      badge: {
+        id: schema.badges.id,
+        name: schema.badges.name,
+        description: schema.badges.description,
+        icon: schema.badges.icon,
+        color: schema.badges.color,
+        points: schema.badges.points
+      }
+    })
+    .from(schema.userBadges)
+    .leftJoin(schema.badges, eq(schema.userBadges.badgeId, schema.badges.id))
+    .where(eq(schema.userBadges.userId, userId));
+    
+    return result as any;
+  }
+
+  async awardBadge(userBadge: schema.InsertUserBadge): Promise<schema.UserBadge> {
+    const result = await db.insert(schema.userBadges).values(userBadge).returning();
+    return result[0];
+  }
+
+  async getSalesTargets(userId?: string): Promise<schema.SalesTarget[]> {
+    if (userId) {
+      return await db.select().from(schema.salesTargets).where(eq(schema.salesTargets.userId, userId));
+    }
+    return await db.select().from(schema.salesTargets);
+  }
+
+  async createSalesTarget(target: schema.InsertSalesTarget): Promise<schema.SalesTarget> {
+    const result = await db.insert(schema.salesTargets).values(target).returning();
+    return result[0];
+  }
+
+  async updateSalesTarget(id: string, updates: Partial<schema.InsertSalesTarget>): Promise<schema.SalesTarget> {
+    const result = await db.update(schema.salesTargets).set(updates).where(eq(schema.salesTargets.id, id)).returning();
+    return result[0];
+  }
+
+  async getAchievements(userId?: string): Promise<schema.Achievement[]> {
+    if (userId) {
+      return await db.select().from(schema.achievements).where(eq(schema.achievements.userId, userId));
+    }
+    return await db.select().from(schema.achievements);
+  }
+
+  async createAchievement(achievement: schema.InsertAchievement): Promise<schema.Achievement> {
+    const result = await db.insert(schema.achievements).values(achievement).returning();
+    return result[0];
+  }
+
+  // Leaderboard queries
+  async getUserLeaderboard(): Promise<any[]> {
+    const result = await db.select({
+      userId: schema.salesPoints.userId,
+      totalPoints: sql<number>`sum(${schema.salesPoints.points})`.as('total_points'),
+      userName: sql<string>`${schema.users.firstName} || ' ' || ${schema.users.lastName}`.as('user_name')
+    })
+    .from(schema.salesPoints)
+    .leftJoin(schema.users, eq(schema.salesPoints.userId, schema.users.id))
+    .groupBy(schema.salesPoints.userId, schema.users.firstName, schema.users.lastName)
+    .orderBy(sql`sum(${schema.salesPoints.points}) desc`)
+    .limit(10);
+    
+    return result;
+  }
+
+  async getMonthlyLeaderboard(year: number, month: number): Promise<any[]> {
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0, 23, 59, 59);
+    
+    const result = await db.select({
+      userId: schema.salesPoints.userId,
+      totalPoints: sql<number>`sum(${schema.salesPoints.points})`.as('total_points'),
+      userName: sql<string>`${schema.users.firstName} || ' ' || ${schema.users.lastName}`.as('user_name')
+    })
+    .from(schema.salesPoints)
+    .leftJoin(schema.users, eq(schema.salesPoints.userId, schema.users.id))
+    .where(
+      and(
+        gte(schema.salesPoints.earnedAt, startDate),
+        lte(schema.salesPoints.earnedAt, endDate)
+      )
+    )
+    .groupBy(schema.salesPoints.userId, schema.users.firstName, schema.users.lastName)
+    .orderBy(sql`sum(${schema.salesPoints.points}) desc`)
+    .limit(10);
+    
+    return result;
   }
 }
 

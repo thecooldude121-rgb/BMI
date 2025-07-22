@@ -165,6 +165,60 @@ export const meetings = pgTable("meetings", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+// Gamification Tables
+export const salesPoints = pgTable("sales_points", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id).notNull(),
+  points: integer("points").notNull().default(0),
+  activityType: text("activity_type").notNull(), // 'deal_closed', 'lead_converted', 'meeting_scheduled', etc.
+  activityId: uuid("activity_id"), // Reference to the specific deal, lead, etc.
+  description: text("description"),
+  earnedAt: timestamp("earned_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const badges = pgTable("badges", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  description: text("description"),
+  icon: text("icon"), // Icon name or emoji
+  color: text("color").default('blue'),
+  criteria: jsonb("criteria"), // JSON describing earning criteria
+  points: integer("points").default(0), // Points awarded for earning this badge
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const userBadges = pgTable("user_badges", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id).notNull(),
+  badgeId: uuid("badge_id").references(() => badges.id).notNull(),
+  earnedAt: timestamp("earned_at").notNull().defaultNow(),
+  progress: integer("progress").default(100), // Percentage progress towards earning (100 = earned)
+});
+
+export const salesTargets = pgTable("sales_targets", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id).notNull(),
+  targetType: text("target_type").notNull(), // 'monthly', 'quarterly', 'yearly'
+  targetValue: decimal("target_value", { precision: 12, scale: 2 }).notNull(),
+  currentValue: decimal("current_value", { precision: 12, scale: 2 }).default('0'),
+  targetPeriod: text("target_period").notNull(), // '2025-01', '2025-Q1', etc.
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const achievements = pgTable("achievements", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id).notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  type: text("type").notNull(), // 'milestone', 'streak', 'competition'
+  value: decimal("value", { precision: 12, scale: 2 }), // Deal value, number of activities, etc.
+  achievedAt: timestamp("achieved_at").notNull().defaultNow(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   ownedAccounts: many(accounts),
@@ -273,6 +327,30 @@ export const insertMeetingSchema = createInsertSchema(meetings).omit({
   updatedAt: true,
 });
 
+export const insertSalesPointsSchema = createInsertSchema(salesPoints).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertBadgeSchema = createInsertSchema(badges).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertUserBadgeSchema = createInsertSchema(userBadges).omit({
+  id: true,
+});
+
+export const insertSalesTargetSchema = createInsertSchema(salesTargets).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertAchievementSchema = createInsertSchema(achievements).omit({
+  id: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -297,3 +375,18 @@ export type Activity = typeof activities.$inferSelect;
 
 export type InsertMeeting = z.infer<typeof insertMeetingSchema>;
 export type Meeting = typeof meetings.$inferSelect;
+
+export type InsertSalesPoints = z.infer<typeof insertSalesPointsSchema>;
+export type SalesPoints = typeof salesPoints.$inferSelect;
+
+export type InsertBadge = z.infer<typeof insertBadgeSchema>;
+export type Badge = typeof badges.$inferSelect;
+
+export type InsertUserBadge = z.infer<typeof insertUserBadgeSchema>;
+export type UserBadge = typeof userBadges.$inferSelect;
+
+export type InsertSalesTarget = z.infer<typeof insertSalesTargetSchema>;
+export type SalesTarget = typeof salesTargets.$inferSelect;
+
+export type InsertAchievement = z.infer<typeof insertAchievementSchema>;
+export type Achievement = typeof achievements.$inferSelect;
