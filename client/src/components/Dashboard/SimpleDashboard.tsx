@@ -40,12 +40,12 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon, change, c
 export const SimpleDashboard: React.FC = () => {
   const [showWidgetSelector, setShowWidgetSelector] = useState(false);
 
-  const { data: leads = [], isLoading: leadsLoading } = useQuery({
+  const { data: leads = [], isLoading: leadsLoading, error: leadsError } = useQuery({
     queryKey: ['/api/leads'],
     enabled: true
   });
   
-  const { data: deals = [], isLoading: dealsLoading } = useQuery({
+  const { data: deals = [], isLoading: dealsLoading, error: dealsError } = useQuery({
     queryKey: ['/api/deals'],
     enabled: true
   });
@@ -72,6 +72,19 @@ export const SimpleDashboard: React.FC = () => {
     );
   }
 
+  if (leadsError || dealsError) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-red-600">
+          Error loading data: {(leadsError as any)?.message || (dealsError as any)?.message}
+        </div>
+      </div>
+    );
+  }
+
+  console.log('Dashboard raw data:', { leads, deals });
+  console.log('Dashboard processed data:', { leadsArray, dealsArray, stats });
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -84,6 +97,17 @@ export const SimpleDashboard: React.FC = () => {
           <Plus className="h-4 w-4" />
           <span>Add Widget</span>
         </button>
+      </div>
+
+      {/* Debug Info */}
+      <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-4">
+        <h4 className="font-medium text-yellow-800">Debug Info:</h4>
+        <p className="text-sm text-yellow-700">
+          Leads loaded: {leadsArray.length} | Deals loaded: {dealsArray.length}
+        </p>
+        <p className="text-sm text-yellow-700">
+          Loading states: Leads: {leadsLoading ? 'Loading' : 'Done'} | Deals: {dealsLoading ? 'Loading' : 'Done'}
+        </p>
       </div>
 
       {/* Stats Grid */}

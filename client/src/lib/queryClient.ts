@@ -51,10 +51,13 @@ export async function apiRequest(url: string, options: RequestOptions = {}) {
   return response.text();
 }
 
-// Default query function that will be used by TanStack Query
-queryClient.setQueryDefaults(['default'], {
+// Set default query function
+queryClient.setQueryDefaults([], {
   queryFn: async ({ queryKey }: any) => {
-    const url = Array.isArray(queryKey) ? queryKey.join('/') : queryKey;
-    return apiRequest(url);
+    const url = Array.isArray(queryKey) ? queryKey[0] : queryKey;
+    console.log('Fetching data from:', url);
+    const result = await apiRequest(url);
+    console.log('Query result:', result);
+    return result;
   },
 });
