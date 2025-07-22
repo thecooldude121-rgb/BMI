@@ -819,24 +819,10 @@ const UnifiedDealsPage = () => {
                 Continue Draft
               </button>
               
-              <button
-                onClick={() => {
-                  setIsSelectionMode(!isSelectionMode);
-                  setSelectedDeals([]);
-                }}
-                className={`flex items-center px-4 py-2.5 rounded-xl text-sm transition-all shadow-sm ${
-                  isSelectionMode
-                    ? 'bg-green-600 text-white border border-green-600'
-                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                }`}
-              >
-                <CheckSquare className="h-4 w-4 mr-2" />
-                {isSelectionMode ? 'Exit Multi-Select' : 'Multi-Select'}
-              </button>
-              
               {selectedDeals.length > 0 && (
                 <BulkActionsDropdown
                   selectedItems={selectedDeals}
+                  itemType="deals"
                   onBulkTransfer={() => alert(`Bulk Transfer feature for ${selectedDeals.length} deals - Coming Soon!`)}
                   onBulkUpdate={() => alert(`Bulk Update feature for ${selectedDeals.length} deals - Coming Soon!`)}
                   onBulkDelete={() => {
@@ -846,6 +832,7 @@ const UnifiedDealsPage = () => {
                   }}
                   onBulkEmail={() => alert(`Bulk Email feature for ${selectedDeals.length} deals - Coming Soon!`)}
                   onPrintView={() => alert(`Print View feature for ${selectedDeals.length} deals - Coming Soon!`)}
+                  isVisible={true}
                 />
               )}
             </div>
