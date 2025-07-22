@@ -15,8 +15,8 @@ import DealSummary from './DealSummary';
 
 interface CreateDealWizardProps {
   onClose?: () => void;
-  onSave?: (dealData: Partial<Deal>) => Promise<void>;
-  existingDeal?: Partial<Deal>;
+  onSave?: (dealData: Partial<DealFormData>) => Promise<void>;
+  existingDeal?: Partial<DealFormData>;
 }
 
 type WizardStep = 'ownership' | 'basic' | 'financial' | 'activities' | 'attachments';
@@ -31,17 +31,17 @@ const CreateDealWizard: React.FC<CreateDealWizardProps> = ({
   
   // Default handlers if not provided
   const handleClose = onClose || (() => setLocation('/crm/deals'));
-  const saveDealFunction = onSave || (async (dealData: Partial<Deal>) => {
+  const saveDealFunction = onSave || (async (dealData: Partial<DealFormData>) => {
     try {
       console.log('Creating deal with data:', dealData);
       
-      // Convert Deal format to the format expected by addDeal
+      // Convert DealFormData format to the format expected by addDeal
       const dealForContext = {
         title: dealData.name || 'Untitled Deal',
         name: dealData.name || 'Untitled Deal',
         leadId: dealData.contactId || '',
         value: dealData.amount || 0,
-        stage: dealData.stageId as 'qualification' | 'proposal' | 'negotiation' | 'closed-won' | 'closed-lost' || 'qualification',
+        stage: (dealData.stageId as 'qualification' | 'proposal' | 'negotiation' | 'closed-won' | 'closed-lost') || 'qualification',
         probability: dealData.probability || 10,
         expectedCloseDate: dealData.closingDate || '',
         assignedTo: dealData.ownerId || '1',
