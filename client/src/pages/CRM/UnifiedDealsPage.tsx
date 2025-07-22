@@ -6,7 +6,8 @@ import {
   Eye, Edit, MoreHorizontal, Star, Clock, Globe, Briefcase,
   ChevronUp, ChevronDown, CheckSquare, Save
 } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiRequest } from '@/lib/queryClient';
 import BulkActionsDropdown from '../../components/CRM/BulkActionsDropdown';
 import DealKanbanView from '../../components/Deal/DealKanbanView';
 import DealListView from '../../components/Deal/DealListView';
@@ -34,6 +35,7 @@ interface DealStage {
 }
 
 const UnifiedDealsPage = () => {
+  const queryClient = useQueryClient();
   const { data: deals = [], isLoading: dealsLoading } = useQuery({
     queryKey: ['/api/deals'],
   });
@@ -42,6 +44,20 @@ const UnifiedDealsPage = () => {
   });
   const { data: accounts = [] } = useQuery({
     queryKey: ['/api/accounts'],
+  });
+
+  // Delete deals mutation
+  const deleteDealsMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      return apiRequest('/api/deals', {
+        method: 'DELETE',
+        body: { ids }
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/deals'] });
+      setSelectedDeals([]);
+    }
   });
   const [location, setLocation] = useLocation();
   const [viewMode, setViewMode] = useState<'overview' | 'kanban' | 'list'>('overview');
@@ -825,9 +841,15 @@ const UnifiedDealsPage = () => {
                   itemType="deals"
                   onBulkTransfer={() => alert(`Bulk Transfer feature for ${selectedDeals.length} deals - Coming Soon!`)}
                   onBulkUpdate={() => alert(`Bulk Update feature for ${selectedDeals.length} deals - Coming Soon!`)}
-                  onBulkDelete={() => {
-                    if (window.confirm(`Delete ${selectedDeals.length} selected deals?`)) {
-                      alert(`Bulk Delete feature for ${selectedDeals.length} deals - Coming Soon!`);
+                  onBulkDelete={async () => {
+                    if (window.confirm(`Are you sure you want to delete ${selectedDeals.length} selected deals? This action cannot be undone.`)) {
+                      try {
+                        await deleteDealsMutation.mutateAsync(selectedDeals);
+                        console.log(`Successfully deleted ${selectedDeals.length} deals`);
+                      } catch (error) {
+                        console.error('Failed to delete deals:', error);
+                        alert('Failed to delete deals. Please try again.');
+                      }
                     }
                   }}
                   onBulkEmail={() => alert(`Bulk Email feature for ${selectedDeals.length} deals - Coming Soon!`)}
