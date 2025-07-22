@@ -26,6 +26,30 @@ export interface SalesAnalysis {
 export class AIInsightsService {
   async analyzeSalesData(deals: any[], leads: any[], accounts: any[]): Promise<SalesAnalysis> {
     try {
+      // Prepare minimal data for AI analysis to avoid payload size issues
+      const minimalDeals = deals.map(deal => ({
+        id: deal.id,
+        value: deal.value,
+        stage: deal.stage,
+        probability: deal.probability,
+        expectedCloseDate: deal.expectedCloseDate
+      }));
+      
+      const minimalLeads = leads.map(lead => ({
+        id: lead.id,
+        stage: lead.stage,
+        score: lead.score,
+        source: lead.source,
+        industry: lead.industry,
+        value: lead.value
+      }));
+      
+      const minimalAccounts = accounts.map(account => ({
+        id: account.id,
+        industry: account.industry,
+        companySize: account.companySize
+      }));
+
       // Make request to server-side AI analysis endpoint
       const response = await fetch(`${API_BASE}/api/ai/analyze-sales`, {
         method: 'POST',
@@ -33,9 +57,9 @@ export class AIInsightsService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          deals,
-          leads,
-          accounts
+          deals: minimalDeals,
+          leads: minimalLeads,
+          accounts: minimalAccounts
         })
       });
 
