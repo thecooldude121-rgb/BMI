@@ -6,6 +6,8 @@ import LeadDetailPanel from '../../components/CRM/LeadDetailPanel';
 import BulkActionsDropdown from '../../components/CRM/BulkActionsDropdown';
 import { apiRequest } from '../../lib/queryClient';
 import { useViewMode } from '../../hooks/useViewMode';
+import { useContextPreservation } from '../../hooks/useContextPreservation';
+import ContextIndicator from '../../components/CRM/ContextIndicator';
 
 const EnhancedLeadsPage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -16,20 +18,63 @@ const EnhancedLeadsPage: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingLead, setEditingLead] = useState<any>(null);
   const [selectedLead, setSelectedLead] = useState<any>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [stageFilter, setStageFilter] = useState('all');
-  const [sourceFilter, setSourceFilter] = useState('all');
-  const [priorityFilter, setPriorityFilter] = useState('all');
-  const [ratingFilter, setRatingFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('created');
+  
+  // Smart Context Preservation
+  const { context, isLoaded: contextLoaded, saveFilters, handleScroll, restoreScrollPosition } = useContextPreservation('leads');
+  
+  // Initialize state from context or defaults
+  const [searchTerm, setSearchTerm] = useState(() => context?.filters.searchTerm || '');
+  const [stageFilter, setStageFilter] = useState(() => context?.filters.filters.stage || 'all');
+  const [sourceFilter, setSourceFilter] = useState(() => context?.filters.filters.source || 'all');
+  const [priorityFilter, setPriorityFilter] = useState(() => context?.filters.filters.priority || 'all');
+  const [ratingFilter, setRatingFilter] = useState(() => context?.filters.filters.rating || 'all');
+  const [sortBy, setSortBy] = useState(() => context?.filters.sortBy || 'created');
   const { viewMode, setViewMode, isLoaded } = useViewMode('leadsViewMode', 'card');
-  const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
-  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [selectedLeads, setSelectedLeads] = useState<string[]>(() => context?.filters.selectedItems || []);
+  const [isSelectionMode, setIsSelectionMode] = useState(() => context?.filters.isSelectionMode || false);
 
-  // Log component mount
+  // Log component mount and restore context
   useEffect(() => {
     console.log('🚀 EnhancedLeadsPage component mounted/remounted at', new Date().toLocaleTimeString());
-  }, []);
+    
+    // Restore filters from context when component mounts
+    if (contextLoaded && context) {
+      setSearchTerm(context.filters.searchTerm || '');
+      setStageFilter(context.filters.filters.stage || 'all');
+      setSourceFilter(context.filters.filters.source || 'all');
+      setPriorityFilter(context.filters.filters.priority || 'all');
+      setRatingFilter(context.filters.filters.rating || 'all');
+      setSortBy(context.filters.sortBy || 'created');
+      setSelectedLeads(context.filters.selectedItems || []);
+      setIsSelectionMode(context.filters.isSelectionMode || false);
+      
+      console.log('🔄 [Context] Restored leads filters from context');
+    }
+  }, [contextLoaded]);
+
+  // Save filters to context when they change
+  useEffect(() => {
+    if (contextLoaded) {
+      saveFilters({
+        searchTerm,
+        filters: { stage: stageFilter, source: sourceFilter, priority: priorityFilter, rating: ratingFilter },
+        sortBy,
+        viewMode,
+        selectedItems: selectedLeads,
+        isSelectionMode
+      });
+    }
+  }, [searchTerm, stageFilter, sourceFilter, priorityFilter, ratingFilter, sortBy, viewMode, selectedLeads, isSelectionMode, contextLoaded, saveFilters]);
+
+  // Restore scroll position after data loads
+  useEffect(() => {
+    if (contextLoaded && !isLoading && context?.scroll) {
+      const container = document.querySelector('.leads-container');
+      if (container) {
+        setTimeout(() => restoreScrollPosition(container as HTMLElement), 100);
+      }
+    }
+  }, [contextLoaded, isLoading, context, restoreScrollPosition]);
 
   const deleteLeadsMutation = useMutation({
     mutationFn: async (ids: string[]) => {
@@ -166,13 +211,25 @@ const EnhancedLeadsPage: React.FC = () => {
   const ratings = ['all', '1', '2', '3', '4', '5'];
 
   return (
-    <div className="p-4 space-y-6">
+    <div 
+      className="p-4 space-y-6 leads-container" 
+      onScroll={handleScroll}
+      style={{ height: '100vh', overflowY: 'auto' }}
+    >
       {/* Enhanced Header with KPIs */}
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Leads Management</h1>
-            <p className="text-gray-600">{filteredLeads.length} of {leadsArray.length} leads</p>
+          <div className="flex flex-col space-y-2">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Leads Management</h1>
+              <p className="text-gray-600">{filteredLeads.length} of {leadsArray.length} leads</p>
+            </div>
+            <ContextIndicator 
+              hasContext={!!context}
+              contextAge={context ? Date.now() - context.timestamp : undefined}
+              filtersApplied={[searchTerm, stageFilter, sourceFilter, priorityFilter, ratingFilter].filter(f => f && f !== 'all').length}
+              viewMode={viewMode}
+            />
           </div>
           <div className="flex space-x-3">
             {isSelectionMode ? (
