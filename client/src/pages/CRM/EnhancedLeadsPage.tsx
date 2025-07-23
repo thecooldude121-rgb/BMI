@@ -16,6 +16,8 @@ const EnhancedLeadsPage: React.FC = () => {
     queryKey: ['/api/leads'],
   });
   
+  const leadsArray = Array.isArray(leads) ? leads : [];
+  
   const [showForm, setShowForm] = useState(false);
   const [editingLead, setEditingLead] = useState<any>(null);
   const [selectedLead, setSelectedLead] = useState<any>(null);
@@ -66,14 +68,14 @@ const EnhancedLeadsPage: React.FC = () => {
         isSelectionMode
       });
     }
-  }, [searchTerm, stageFilter, sourceFilter, priorityFilter, ratingFilter, sortBy, viewMode, selectedLeads, isSelectionMode, contextLoaded, saveFilters]);
+  }, [searchTerm, stageFilter, sourceFilter, priorityFilter, ratingFilter, sortBy, viewMode, selectedLeads, isSelectionMode, contextLoaded]);
 
   // Restore scroll position after data loads
   useEffect(() => {
     if (contextLoaded && !isLoading && context?.scroll) {
       const container = document.querySelector('.leads-container');
       if (container) {
-        setTimeout(() => restoreScrollPosition(container), 100);
+        setTimeout(() => restoreScrollPosition(container as HTMLElement), 100);
       }
     }
   }, [contextLoaded, isLoading, context?.scroll, restoreScrollPosition]);
@@ -93,7 +95,7 @@ const EnhancedLeadsPage: React.FC = () => {
   }, [showViewDropdown]);
 
   // Filter and sort leads
-  const filteredLeads = leads
+  const filteredLeads = leadsArray
     .filter((lead: any) => {
       const matchesSearch = !searchTerm || 
         lead.contact?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -118,7 +120,7 @@ const EnhancedLeadsPage: React.FC = () => {
         case 'rating':
           return (b.rating || 0) - (a.rating || 0);
         case 'priority':
-          const priorityOrder = { urgent: 4, high: 3, medium: 2, low: 1 };
+          const priorityOrder: { [key: string]: number } = { urgent: 4, high: 3, medium: 2, low: 1 };
           return (priorityOrder[b.priority] || 0) - (priorityOrder[a.priority] || 0);
         default:
           return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
@@ -314,7 +316,7 @@ const EnhancedLeadsPage: React.FC = () => {
             <Users className="h-8 w-8 text-blue-500" />
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-500">Total Leads</p>
-              <p className="text-2xl font-bold text-gray-900">{leads.length}</p>
+              <p className="text-2xl font-bold text-gray-900">{leadsArray.length}</p>
             </div>
           </div>
         </div>
@@ -324,7 +326,7 @@ const EnhancedLeadsPage: React.FC = () => {
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-500">Qualified</p>
               <p className="text-2xl font-bold text-gray-900">
-                {leads.filter((l: any) => l.stage === 'qualified').length}
+                {leadsArray.filter((l: any) => l.stage === 'qualified').length}
               </p>
             </div>
           </div>
@@ -335,7 +337,7 @@ const EnhancedLeadsPage: React.FC = () => {
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-500">High Priority</p>
               <p className="text-2xl font-bold text-gray-900">
-                {leads.filter((l: any) => l.priority === 'high' || l.priority === 'urgent').length}
+                {leadsArray.filter((l: any) => l.priority === 'high' || l.priority === 'urgent').length}
               </p>
             </div>
           </div>
@@ -346,7 +348,7 @@ const EnhancedLeadsPage: React.FC = () => {
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-500">This Month</p>
               <p className="text-2xl font-bold text-gray-900">
-                {leads.filter((l: any) => new Date(l.created_at).getMonth() === new Date().getMonth()).length}
+                {leadsArray.filter((l: any) => new Date(l.created_at).getMonth() === new Date().getMonth()).length}
               </p>
             </div>
           </div>
@@ -363,8 +365,13 @@ const EnhancedLeadsPage: React.FC = () => {
                 <span className="text-sm text-gray-600">{selectedLeads.length} selected</span>
                 <BulkActionsDropdown
                   selectedItems={selectedLeads}
-                  onDelete={() => deleteMutation.mutate(selectedLeads)}
-                  onExport={() => console.log('Export leads')}
+                  itemType="leads"
+                  onBulkTransfer={() => console.log('Bulk transfer leads')}
+                  onBulkUpdate={() => console.log('Bulk update leads')}
+                  onBulkDelete={() => deleteMutation.mutate(selectedLeads)}
+                  onBulkEmail={() => console.log('Send bulk emails')}
+                  onPrintView={() => console.log('Print view')}
+                  isVisible={selectedLeads.length > 0}
                 />
               </div>
             )}
@@ -571,8 +578,6 @@ const EnhancedLeadsPage: React.FC = () => {
       {showForm && (
         <EnhancedLeadForm
           onClose={() => setShowForm(false)}
-          onSubmit={(leadData) => createMutation.mutate(leadData)}
-          isLoading={createMutation.isPending}
         />
       )}
 
@@ -580,8 +585,6 @@ const EnhancedLeadsPage: React.FC = () => {
         <EnhancedLeadForm
           lead={editingLead}
           onClose={() => setEditingLead(null)}
-          onSubmit={(leadData) => updateMutation.mutate({ id: editingLead.id, ...leadData })}
-          isLoading={updateMutation.isPending}
         />
       )}
 
