@@ -9,6 +9,8 @@ export const companySizeEnum = pgEnum('company_size', ['1-10', '11-50', '51-200'
 export const contactStatusEnum = pgEnum('contact_status', ['active', 'inactive', 'bounced', 'unsubscribed']);
 export const leadStageEnum = pgEnum('lead_stage', ['new', 'contacted', 'qualified', 'proposal', 'won', 'lost']);
 export const leadStatusEnum = pgEnum('lead_status', ['active', 'inactive', 'nurturing']);
+export const leadPriorityEnum = pgEnum('lead_priority', ['low', 'medium', 'high', 'urgent']);
+export const leadSourceEnum = pgEnum('lead_source', ['website', 'social_media', 'email_campaign', 'referral', 'cold_call', 'trade_show', 'advertisement', 'partner']);
 export const dealStageEnum = pgEnum('deal_stage', ['qualification', 'proposal', 'negotiation', 'closed-won', 'closed-lost']);
 export const taskStatusEnum = pgEnum('task_status', ['pending', 'in-progress', 'completed']);
 export const taskPriorityEnum = pgEnum('task_priority', ['low', 'medium', 'high']);
@@ -32,7 +34,7 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const accounts = pgTable("accounts", {
+export const accounts: any = pgTable("accounts", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   domain: text("domain"),
@@ -43,6 +45,13 @@ export const accounts = pgTable("accounts", {
   phone: text("phone"),
   description: text("description"),
   address: jsonb("address"),
+  accountType: text("account_type").default('prospect'), // prospect, customer, partner
+  parentAccountId: uuid("parent_account_id").references(() => accounts.id),
+  employees: integer("employees"),
+  faxNumber: text("fax_number"),
+  billingAddress: jsonb("billing_address"),
+  shippingAddress: jsonb("shipping_address"),
+  documents: jsonb("documents"), // Array of uploaded document metadata
   ownerId: uuid("owner_id").references(() => users.id),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -82,7 +91,9 @@ export const leads = pgTable("leads", {
   value: decimal("value", { precision: 15, scale: 2 }).notNull().default('0'),
   probability: integer("probability").notNull().default(0),
   expectedCloseDate: timestamp("expected_close_date"),
-  source: text("source"),
+  source: leadSourceEnum("source").default('website'),
+  priority: leadPriorityEnum("priority").default('medium'),
+  rating: integer("rating").default(1), // 1-5 star rating
   assignedTo: uuid("assigned_to").references(() => users.id),
   lastContact: timestamp("last_contact"),
   notes: text("notes"),
