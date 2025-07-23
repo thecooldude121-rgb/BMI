@@ -28,12 +28,16 @@ const EnhancedAccountsPage: React.FC = () => {
 
   // Load saved view mode on component mount
   useEffect(() => {
+    console.log('🚀 EnhancedAccountsPage component mounted/remounted');
     try {
       const stored = localStorage.getItem('accountsViewMode');
       console.log('🔍 Loading accounts view mode from localStorage:', stored);
       if (stored && (stored === 'card' || stored === 'list')) {
-        setViewMode(stored);
+        console.log('🔄 Setting view mode from localStorage:', stored);
+        setViewMode(stored as 'card' | 'list');
         console.log('✅ Set accounts view mode to:', stored);
+      } else {
+        console.log('📝 No valid stored view mode found, using default: card');
       }
     } catch (error) {
       console.error('❌ Failed to load accounts view mode:', error);

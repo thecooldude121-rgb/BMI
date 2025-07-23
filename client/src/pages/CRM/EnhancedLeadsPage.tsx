@@ -27,12 +27,16 @@ const EnhancedLeadsPage: React.FC = () => {
 
   // Load saved view mode on component mount
   useEffect(() => {
+    console.log('🚀 EnhancedLeadsPage component mounted/remounted');
     try {
       const stored = localStorage.getItem('leadsViewMode');
       console.log('🔍 Loading leads view mode from localStorage:', stored);
       if (stored && (stored === 'list' || stored === 'card')) {
-        setViewMode(stored);
+        console.log('🔄 Setting view mode from localStorage:', stored);
+        setViewMode(stored as 'list' | 'card');
         console.log('✅ Set leads view mode to:', stored);
+      } else {
+        console.log('📝 No valid stored view mode found, using default: card');
       }
     } catch (error) {
       console.error('❌ Failed to load leads view mode:', error);
