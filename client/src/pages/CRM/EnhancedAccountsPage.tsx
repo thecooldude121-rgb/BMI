@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Search, Building, Users, DollarSign, Filter, Download, CheckSquare, Square, Eye, FileText, Phone, Mail, Globe } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '../../lib/queryClient';
@@ -22,11 +22,33 @@ const EnhancedAccountsPage: React.FC = () => {
   const [revenueFilter, setRevenueFilter] = useState('all');
   const [sortBy, setSortBy] = useState('name');
   const [viewMode, setViewMode] = useState<'card' | 'list'>(() => {
-    return (localStorage.getItem('accountsViewMode') as 'card' | 'list') || 'card';
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('accountsViewMode');
+      console.log('Loading accounts view mode from localStorage:', stored);
+      return (stored as 'card' | 'list') || 'card';
+    }
+    return 'card';
   });
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<any>(null);
+
+  // Use useEffect to ensure localStorage persists properly
+  useEffect(() => {
+    const handleViewModeChange = (mode: 'card' | 'list') => {
+      try {
+        localStorage.setItem('accountsViewMode', mode);
+        console.log('Persisted accounts view mode:', mode);
+      } catch (error) {
+        console.error('Failed to persist accounts view mode:', error);
+      }
+    };
+    
+    // Set up event listener for when the component is about to unmount
+    return () => {
+      handleViewModeChange(viewMode);
+    };
+  }, [viewMode]);
 
   const accountsArray = Array.isArray(accounts) ? accounts : [];
   const contactsArray = Array.isArray(contacts) ? contacts : [];
@@ -297,6 +319,7 @@ const EnhancedAccountsPage: React.FC = () => {
             <div className="flex border border-gray-300 rounded-md">
               <button
                 onClick={() => {
+                  console.log('Setting accounts view mode to card');
                   setViewMode('card');
                   localStorage.setItem('accountsViewMode', 'card');
                 }}
@@ -306,6 +329,7 @@ const EnhancedAccountsPage: React.FC = () => {
               </button>
               <button
                 onClick={() => {
+                  console.log('Setting accounts view mode to list');
                   setViewMode('list');
                   localStorage.setItem('accountsViewMode', 'list');
                 }}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Filter, Download, Upload, Search, Trash2, CheckSquare, Square, Star, Users, BarChart3, Eye } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import EnhancedLeadForm from '../../components/CRM/EnhancedLeadForm';
@@ -22,10 +22,32 @@ const EnhancedLeadsPage: React.FC = () => {
   const [ratingFilter, setRatingFilter] = useState('all');
   const [sortBy, setSortBy] = useState('created');
   const [viewMode, setViewMode] = useState<'list' | 'card'>(() => {
-    return (localStorage.getItem('leadsViewMode') as 'list' | 'card') || 'card';
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('leadsViewMode');
+      console.log('Loading leads view mode from localStorage:', stored);
+      return (stored as 'list' | 'card') || 'card';
+    }
+    return 'card';
   });
   const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
+
+  // Use useEffect to ensure localStorage persists properly
+  useEffect(() => {
+    const handleViewModeChange = (mode: 'list' | 'card') => {
+      try {
+        localStorage.setItem('leadsViewMode', mode);
+        console.log('Persisted leads view mode:', mode);
+      } catch (error) {
+        console.error('Failed to persist leads view mode:', error);
+      }
+    };
+    
+    // Set up event listener for when the component is about to unmount
+    return () => {
+      handleViewModeChange(viewMode);
+    };
+  }, [viewMode]);
 
   const deleteLeadsMutation = useMutation({
     mutationFn: async (ids: string[]) => {
@@ -356,6 +378,7 @@ const EnhancedLeadsPage: React.FC = () => {
             <div className="flex border border-gray-300 rounded-md">
               <button
                 onClick={() => {
+                  console.log('Setting leads view mode to card');
                   setViewMode('card');
                   localStorage.setItem('leadsViewMode', 'card');
                 }}
@@ -365,6 +388,7 @@ const EnhancedLeadsPage: React.FC = () => {
               </button>
               <button
                 onClick={() => {
+                  console.log('Setting leads view mode to list');
                   setViewMode('list');
                   localStorage.setItem('leadsViewMode', 'list');
                 }}
