@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Building, Users, DollarSign, Filter, Download, CheckSquare, Square, Eye, FileText, Phone, Mail, Globe } from 'lucide-react';
+import { Plus, Search, Building, Users, DollarSign, Filter, Download, CheckSquare, Square, Eye, FileText, Phone, Mail, Globe, ChevronDown, LayoutGrid, List, Columns } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '../../lib/queryClient';
 import { useViewMode } from '../../hooks/useViewMode';
 import { useContextPreservation } from '../../hooks/useContextPreservation';
-import ContextIndicator from '../../components/CRM/ContextIndicator';
 
 const EnhancedAccountsPage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -28,10 +27,11 @@ const EnhancedAccountsPage: React.FC = () => {
   const [typeFilter, setTypeFilter] = useState(() => context?.filters.filters.type || 'all');
   const [revenueFilter, setRevenueFilter] = useState(() => context?.filters.filters.revenue || 'all');
   const [sortBy, setSortBy] = useState(() => context?.filters.sortBy || 'name');
-  const { viewMode, setViewMode, isLoaded } = useViewMode('accountsViewMode', 'card');
+  const { viewMode, setViewMode, isLoaded } = useViewMode('accountsViewMode', 'tile');
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>(() => context?.filters.selectedItems || []);
   const [isSelectionMode, setIsSelectionMode] = useState(() => context?.filters.isSelectionMode || false);
   const [selectedAccount, setSelectedAccount] = useState<any>(null);
+  const [showViewDropdown, setShowViewDropdown] = useState(false);
 
   // Log component mount and restore context
   useEffect(() => {
@@ -75,6 +75,20 @@ const EnhancedAccountsPage: React.FC = () => {
       }
     }
   }, [contextLoaded, accountsLoading, context, restoreScrollPosition]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showViewDropdown) {
+        setShowViewDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showViewDropdown]);
 
   const accountsArray = Array.isArray(accounts) ? accounts : [];
   const contactsArray = Array.isArray(contacts) ? contacts : [];
@@ -181,57 +195,81 @@ const EnhancedAccountsPage: React.FC = () => {
       {/* Enhanced Header with KPIs */}
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
-          <div className="flex flex-col space-y-2">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Accounts Management</h1>
-              <p className="text-gray-600">{filteredAccounts.length} of {accountsArray.length} accounts</p>
-            </div>
-            <ContextIndicator 
-              hasContext={!!context}
-              contextAge={context ? Date.now() - context.timestamp : undefined}
-              filtersApplied={[searchTerm, industryFilter, sizeFilter, typeFilter, revenueFilter].filter(f => f && f !== 'all').length}
-              viewMode={viewMode}
-            />
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Accounts</h1>
+            <p className="text-gray-600">Manage your company accounts and prospects</p>
           </div>
-          <div className="flex space-x-3">
-            {isSelectionMode ? (
-              <>
-                <button
-                  onClick={handleSelectAll}
-                  className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50"
-                >
-                  {selectedAccounts.length === filteredAccounts.length ? <CheckSquare className="h-4 w-4 mr-2" /> : <Square className="h-4 w-4 mr-2" />}
-                  Select All
-                </button>
-                <button
-                  onClick={() => {
-                    setIsSelectionMode(false);
-                    setSelectedAccounts([]);
-                  }}
-                  className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={() => setIsSelectionMode(true)}
-                  className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50"
-                >
-                  <CheckSquare className="h-4 w-4 mr-2" />
-                  Select
-                </button>
-                <button className="flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-50">
-                  <Download className="h-4 w-4 mr-2" />
-                  Export
-                </button>
-                <button className="flex items-center px-3 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Account
-                </button>
-              </>
-            )}
+          <div className="flex items-center space-x-3">
+            {/* View Mode Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setShowViewDropdown(!showViewDropdown)}
+                className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-gray-50"
+              >
+                {viewMode === 'tile' && <LayoutGrid className="h-4 w-4" />}
+                {viewMode === 'list' && <List className="h-4 w-4" />}
+                {viewMode === 'kanban' && <Columns className="h-4 w-4" />}
+                <span className="capitalize">{viewMode}</span>
+                <ChevronDown className="h-4 w-4" />
+              </button>
+              
+              {showViewDropdown && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                  <div className="py-2">
+                    <button
+                      onClick={() => {
+                        setViewMode('tile');
+                        setShowViewDropdown(false);
+                      }}
+                      className={`w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 ${
+                        viewMode === 'tile' ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
+                      }`}
+                    >
+                      <LayoutGrid className="h-4 w-4" />
+                      <div>
+                        <div className="font-medium">Tile</div>
+                        <div className="text-sm text-gray-500">Visual card layout</div>
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setViewMode('list');
+                        setShowViewDropdown(false);
+                      }}
+                      className={`w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 ${
+                        viewMode === 'list' ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
+                      }`}
+                    >
+                      <List className="h-4 w-4" />
+                      <div>
+                        <div className="font-medium">List</div>
+                        <div className="text-sm text-gray-500">Detailed table format</div>
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setViewMode('kanban');
+                        setShowViewDropdown(false);
+                      }}
+                      className={`w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 ${
+                        viewMode === 'kanban' ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
+                      }`}
+                    >
+                      <Columns className="h-4 w-4" />
+                      <div>
+                        <div className="font-medium">Kanban</div>
+                        <div className="text-sm text-gray-500">Organized by status</div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-700">
+              <Plus className="h-4 w-4" />
+              <span>Add Account</span>
+            </button>
           </div>
         </div>
 
@@ -356,10 +394,10 @@ const EnhancedAccountsPage: React.FC = () => {
             <span className="text-sm text-gray-500">View:</span>
             <div className="flex border border-gray-300 rounded-md">
               <button
-                onClick={() => setViewMode('card')}
-                className={`px-3 py-1 text-sm ${viewMode === 'card' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-50'} rounded-l-md`}
+                onClick={() => setViewMode('tile')}
+                className={`px-3 py-1 text-sm ${viewMode === 'tile' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-50'} rounded-l-md`}
               >
-                Cards
+                Tile
               </button>
               <button
                 onClick={() => setViewMode('list')}
@@ -373,7 +411,7 @@ const EnhancedAccountsPage: React.FC = () => {
       </div>
 
       {/* Accounts Display */}
-      {viewMode === 'card' ? (
+      {viewMode === 'tile' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredAccounts.map((account: any) => {
             const accountContacts = getAccountContacts(account.id);
