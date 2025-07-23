@@ -41,6 +41,37 @@ const EnhancedLeadsPage: React.FC = () => {
 
   const leadsArray = Array.isArray(leads) ? leads : [];
 
+  const filteredLeads = leadsArray
+    .filter((lead: any) => {
+      const matchesSearch = 
+        lead.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        lead.company?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        lead.email?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStage = stageFilter === 'all' || lead.stage === stageFilter;
+      const matchesSource = sourceFilter === 'all' || lead.source === sourceFilter;
+      const matchesPriority = priorityFilter === 'all' || lead.priority === priorityFilter;
+      const matchesRating = ratingFilter === 'all' || lead.rating?.toString() === ratingFilter;
+      return matchesSearch && matchesStage && matchesSource && matchesPriority && matchesRating;
+    })
+    .sort((a: any, b: any) => {
+      switch (sortBy) {
+        case 'score':
+          return (b.score || 0) - (a.score || 0);
+        case 'value':
+          return parseFloat(b.value || 0) - parseFloat(a.value || 0);
+        case 'name':
+          return a.name?.localeCompare(b.name);
+        case 'rating':
+          return (b.rating || 0) - (a.rating || 0);
+        case 'priority':
+          const priorityOrder = { urgent: 4, high: 3, medium: 2, low: 1 };
+          return (priorityOrder[b.priority as keyof typeof priorityOrder] || 0) - 
+                 (priorityOrder[a.priority as keyof typeof priorityOrder] || 0);
+        default:
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+    });
+
   const handleSelectLead = (leadId: string) => {
     setSelectedLeads(prev => 
       prev.includes(leadId) 
@@ -78,37 +109,6 @@ const EnhancedLeadsPage: React.FC = () => {
   const handlePrintView = () => {
     alert(`Print View feature for ${selectedLeads.length} leads - Coming Soon!`);
   };
-  
-  const filteredLeads = leadsArray
-    .filter((lead: any) => {
-      const matchesSearch = 
-        lead.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        lead.company?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        lead.email?.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStage = stageFilter === 'all' || lead.stage === stageFilter;
-      const matchesSource = sourceFilter === 'all' || lead.source === sourceFilter;
-      const matchesPriority = priorityFilter === 'all' || lead.priority === priorityFilter;
-      const matchesRating = ratingFilter === 'all' || lead.rating?.toString() === ratingFilter;
-      return matchesSearch && matchesStage && matchesSource && matchesPriority && matchesRating;
-    })
-    .sort((a: any, b: any) => {
-      switch (sortBy) {
-        case 'score':
-          return (b.score || 0) - (a.score || 0);
-        case 'value':
-          return parseFloat(b.value || 0) - parseFloat(a.value || 0);
-        case 'name':
-          return a.name?.localeCompare(b.name);
-        case 'rating':
-          return (b.rating || 0) - (a.rating || 0);
-        case 'priority':
-          const priorityOrder = { urgent: 4, high: 3, medium: 2, low: 1 };
-          return (priorityOrder[b.priority as keyof typeof priorityOrder] || 0) - 
-                 (priorityOrder[a.priority as keyof typeof priorityOrder] || 0);
-        default:
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      }
-    });
 
   const getPriorityColor = (priority: string) => {
     const colors = {
