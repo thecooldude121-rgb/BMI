@@ -204,7 +204,7 @@ const EnhancedAccountsPage: React.FC = () => {
           </div>
           <div className="flex items-center space-x-3">
             {/* View Mode Dropdown */}
-            <div className="relative">
+            <div className="relative view-dropdown">
               <button
                 onClick={() => setShowViewDropdown(!showViewDropdown)}
                 className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-gray-50"
@@ -513,6 +513,153 @@ const EnhancedAccountsPage: React.FC = () => {
                     <Eye className="h-3 w-3 mr-1" />
                     View
                   </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : viewMode === 'list' ? (
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  {isSelectionMode && (
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <input
+                        type="checkbox"
+                        checked={selectedAccounts.length === filteredAccounts.length}
+                        onChange={handleSelectAll}
+                      />
+                    </th>
+                  )}
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Account</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Industry</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Size</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Revenue</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contacts</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deals</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredAccounts.map((account: any) => {
+                  const accountContacts = getAccountContacts(account.id);
+                  const accountDeals = getAccountDeals(account.id);
+                  const accountRevenue = getAccountRevenue(account.id);
+
+                  return (
+                    <tr key={account.id} className="hover:bg-gray-50">
+                      {isSelectionMode && (
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <input
+                            type="checkbox"
+                            checked={selectedAccounts.includes(account.id)}
+                            onChange={() => handleSelectAccount(account.id)}
+                          />
+                        </td>
+                      )}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">{account.name}</div>
+                            <div className="text-sm text-gray-500">{account.domain}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {account.industry || '-'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          account.accountType === 'customer' 
+                            ? 'bg-green-100 text-green-800' 
+                            : account.accountType === 'partner'
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {account.accountType?.charAt(0).toUpperCase() + account.accountType?.slice(1)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {account.companySize || '-'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        ${parseFloat(account.annualRevenue || '0').toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {accountContacts.length}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {accountDeals.length}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button
+                          onClick={() => setSelectedAccount(account)}
+                          className="text-blue-600 hover:text-blue-900"
+                        >
+                          View
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : viewMode === 'kanban' ? (
+        <div className="flex space-x-6 overflow-x-auto pb-4">
+          {['prospect', 'customer', 'partner'].map((type) => {
+            const typeAccounts = filteredAccounts.filter((account: any) => account.accountType === type);
+            return (
+              <div key={type} className="flex-shrink-0 w-80">
+                <div className="bg-gray-100 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-medium text-gray-900 capitalize">{type}s</h3>
+                    <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-sm">
+                      {typeAccounts.length}
+                    </span>
+                  </div>
+                  <div className="space-y-3">
+                    {typeAccounts.map((account: any) => {
+                      const accountContacts = getAccountContacts(account.id);
+                      const accountDeals = getAccountDeals(account.id);
+                      const accountRevenue = getAccountRevenue(account.id);
+
+                      return (
+                        <div
+                          key={account.id}
+                          className="bg-white rounded-lg p-3 shadow-sm border border-gray-200 cursor-pointer hover:shadow-md transition-shadow"
+                          onClick={() => setSelectedAccount(account)}
+                        >
+                          <div className="flex items-start justify-between mb-2">
+                            <h4 className="font-medium text-gray-900 text-sm truncate">{account.name}</h4>
+                            {isSelectionMode && (
+                              <input
+                                type="checkbox"
+                                checked={selectedAccounts.includes(account.id)}
+                                onChange={(e) => {
+                                  e.stopPropagation();
+                                  handleSelectAccount(account.id);
+                                }}
+                                className="ml-2"
+                              />
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-600 mb-2">{account.industry || 'No industry'}</p>
+                          <div className="flex items-center justify-between text-xs text-gray-500">
+                            <span>{accountContacts.length} contacts</span>
+                            <span>{accountDeals.length} deals</span>
+                          </div>
+                          <div className="mt-2 text-xs text-gray-900 font-medium">
+                            ${accountRevenue.toLocaleString()} revenue
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             );
