@@ -3,6 +3,8 @@ import { Plus, Search, Building, Users, DollarSign, Filter, Download, CheckSquar
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '../../lib/queryClient';
 import { useViewMode } from '../../hooks/useViewMode';
+import { useContextPreservation } from '../../hooks/useContextPreservation';
+import ContextIndicator from '../../components/CRM/ContextIndicator';
 
 const EnhancedAccountsPage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -16,21 +18,63 @@ const EnhancedAccountsPage: React.FC = () => {
     queryKey: ['/api/deals'],
   });
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [industryFilter, setIndustryFilter] = useState('all');
-  const [sizeFilter, setSizeFilter] = useState('all');
-  const [typeFilter, setTypeFilter] = useState('all');
-  const [revenueFilter, setRevenueFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('name');
+  // Smart Context Preservation
+  const { context, isLoaded: contextLoaded, saveFilters, handleScroll, restoreScrollPosition } = useContextPreservation('accounts');
+  
+  // Initialize state from context or defaults
+  const [searchTerm, setSearchTerm] = useState(() => context?.filters.searchTerm || '');
+  const [industryFilter, setIndustryFilter] = useState(() => context?.filters.filters.industry || 'all');
+  const [sizeFilter, setSizeFilter] = useState(() => context?.filters.filters.size || 'all');
+  const [typeFilter, setTypeFilter] = useState(() => context?.filters.filters.type || 'all');
+  const [revenueFilter, setRevenueFilter] = useState(() => context?.filters.filters.revenue || 'all');
+  const [sortBy, setSortBy] = useState(() => context?.filters.sortBy || 'name');
   const { viewMode, setViewMode, isLoaded } = useViewMode('accountsViewMode', 'card');
-  const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
-  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [selectedAccounts, setSelectedAccounts] = useState<string[]>(() => context?.filters.selectedItems || []);
+  const [isSelectionMode, setIsSelectionMode] = useState(() => context?.filters.isSelectionMode || false);
   const [selectedAccount, setSelectedAccount] = useState<any>(null);
 
-  // Log component mount
+  // Log component mount and restore context
   useEffect(() => {
     console.log('🚀 EnhancedAccountsPage component mounted/remounted at', new Date().toLocaleTimeString());
-  }, []);
+    
+    // Restore filters from context when component mounts
+    if (contextLoaded && context) {
+      setSearchTerm(context.filters.searchTerm || '');
+      setIndustryFilter(context.filters.filters.industry || 'all');
+      setSizeFilter(context.filters.filters.size || 'all');
+      setTypeFilter(context.filters.filters.type || 'all');
+      setRevenueFilter(context.filters.filters.revenue || 'all');
+      setSortBy(context.filters.sortBy || 'name');
+      setSelectedAccounts(context.filters.selectedItems || []);
+      setIsSelectionMode(context.filters.isSelectionMode || false);
+      
+      console.log('🔄 [Context] Restored accounts filters from context');
+    }
+  }, [contextLoaded]);
+
+  // Save filters to context when they change
+  useEffect(() => {
+    if (contextLoaded) {
+      saveFilters({
+        searchTerm,
+        filters: { industry: industryFilter, size: sizeFilter, type: typeFilter, revenue: revenueFilter },
+        sortBy,
+        viewMode,
+        selectedItems: selectedAccounts,
+        isSelectionMode
+      });
+    }
+  }, [searchTerm, industryFilter, sizeFilter, typeFilter, revenueFilter, sortBy, viewMode, selectedAccounts, isSelectionMode, contextLoaded, saveFilters]);
+
+  // Restore scroll position after data loads
+  useEffect(() => {
+    if (contextLoaded && !accountsLoading && context?.scroll) {
+      const container = document.querySelector('.accounts-container');
+      if (container) {
+        setTimeout(() => restoreScrollPosition(container as HTMLElement), 100);
+      }
+    }
+  }, [contextLoaded, accountsLoading, context, restoreScrollPosition]);
 
   const accountsArray = Array.isArray(accounts) ? accounts : [];
   const contactsArray = Array.isArray(contacts) ? contacts : [];
@@ -129,13 +173,25 @@ const EnhancedAccountsPage: React.FC = () => {
   }
 
   return (
-    <div className="p-4 space-y-6">
+    <div 
+      className="p-4 space-y-6 accounts-container" 
+      onScroll={handleScroll}
+      style={{ height: '100vh', overflowY: 'auto' }}
+    >
       {/* Enhanced Header with KPIs */}
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Accounts Management</h1>
-            <p className="text-gray-600">{filteredAccounts.length} of {accountsArray.length} accounts</p>
+          <div className="flex flex-col space-y-2">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Accounts Management</h1>
+              <p className="text-gray-600">{filteredAccounts.length} of {accountsArray.length} accounts</p>
+            </div>
+            <ContextIndicator 
+              hasContext={!!context}
+              contextAge={context ? Date.now() - context.timestamp : undefined}
+              filtersApplied={[searchTerm, industryFilter, sizeFilter, typeFilter, revenueFilter].filter(f => f && f !== 'all').length}
+              viewMode={viewMode}
+            />
           </div>
           <div className="flex space-x-3">
             {isSelectionMode ? (
