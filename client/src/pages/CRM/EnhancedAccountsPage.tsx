@@ -79,12 +79,15 @@ const EnhancedAccountsPage: React.FC = () => {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (showViewDropdown) {
+      const target = event.target as HTMLElement;
+      if (showViewDropdown && !target.closest('.view-dropdown')) {
         setShowViewDropdown(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    if (showViewDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
