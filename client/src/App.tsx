@@ -6,7 +6,7 @@ import Dashboard from './pages/Dashboard';
 import CRMModule from './pages/CRM/CRMModule';
 import EnhancedLeadsPage from './pages/CRM/EnhancedLeadsPage';
 import ContactsPage from './pages/CRM/ContactsPage';
-import CompaniesPage from './pages/CRM/CompaniesPage';
+import EnhancedAccountsPage from './pages/CRM/EnhancedAccountsPage';
 import UnifiedDealsPage from './pages/CRM/UnifiedDealsPage';
 import PipelinePage from './pages/CRM/PipelinePage';
 import ActivitiesPage from './pages/CRM/ActivitiesPage';
@@ -42,7 +42,7 @@ const App = () => {
               <Route path="/crm" component={CRMModule} />
               <Route path="/crm/leads" component={EnhancedLeadsPage} />
               <Route path="/crm/contacts" component={ContactsPage} />
-              <Route path="/crm/accounts" component={CompaniesPage} />
+              <Route path="/crm/accounts" component={EnhancedAccountsPage} />
               <Route path="/crm/deals" component={UnifiedDealsPage} />
               <Route path="/crm/deals/create" component={CreateDealWrapper} />
               <Route path="/crm/deals/:id" component={DealDetailWrapper} />
