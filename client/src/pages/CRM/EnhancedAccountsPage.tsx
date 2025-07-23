@@ -21,33 +21,33 @@ const EnhancedAccountsPage: React.FC = () => {
   const [typeFilter, setTypeFilter] = useState('all');
   const [revenueFilter, setRevenueFilter] = useState('all');
   const [sortBy, setSortBy] = useState('name');
-  const [viewMode, setViewMode] = useState<'card' | 'list'>(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('accountsViewMode');
-      console.log('Loading accounts view mode from localStorage:', stored);
-      return (stored as 'card' | 'list') || 'card';
-    }
-    return 'card';
-  });
+  const [viewMode, setViewMode] = useState<'card' | 'list'>('card');
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<any>(null);
 
-  // Use useEffect to ensure localStorage persists properly
+  // Load saved view mode on component mount
   useEffect(() => {
-    const handleViewModeChange = (mode: 'card' | 'list') => {
-      try {
-        localStorage.setItem('accountsViewMode', mode);
-        console.log('Persisted accounts view mode:', mode);
-      } catch (error) {
-        console.error('Failed to persist accounts view mode:', error);
+    try {
+      const stored = localStorage.getItem('accountsViewMode');
+      console.log('🔍 Loading accounts view mode from localStorage:', stored);
+      if (stored && (stored === 'card' || stored === 'list')) {
+        setViewMode(stored);
+        console.log('✅ Set accounts view mode to:', stored);
       }
-    };
-    
-    // Set up event listener for when the component is about to unmount
-    return () => {
-      handleViewModeChange(viewMode);
-    };
+    } catch (error) {
+      console.error('❌ Failed to load accounts view mode:', error);
+    }
+  }, []);
+
+  // Save view mode whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('accountsViewMode', viewMode);
+      console.log('💾 Saved accounts view mode:', viewMode);
+    } catch (error) {
+      console.error('❌ Failed to save accounts view mode:', error);
+    }
   }, [viewMode]);
 
   const accountsArray = Array.isArray(accounts) ? accounts : [];
@@ -319,9 +319,8 @@ const EnhancedAccountsPage: React.FC = () => {
             <div className="flex border border-gray-300 rounded-md">
               <button
                 onClick={() => {
-                  console.log('Setting accounts view mode to card');
+                  console.log('🔄 User clicked: Setting accounts view mode to card');
                   setViewMode('card');
-                  localStorage.setItem('accountsViewMode', 'card');
                 }}
                 className={`px-3 py-1 text-sm ${viewMode === 'card' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-50'} rounded-l-md`}
               >
@@ -329,9 +328,8 @@ const EnhancedAccountsPage: React.FC = () => {
               </button>
               <button
                 onClick={() => {
-                  console.log('Setting accounts view mode to list');
+                  console.log('🔄 User clicked: Setting accounts view mode to list');
                   setViewMode('list');
-                  localStorage.setItem('accountsViewMode', 'list');
                 }}
                 className={`px-3 py-1 text-sm ${viewMode === 'list' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-50'} rounded-r-md border-l`}
               >
