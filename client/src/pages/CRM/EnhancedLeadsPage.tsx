@@ -58,7 +58,7 @@ const EnhancedLeadsPage: React.FC = () => {
 
   // Save filters to context when they change
   useEffect(() => {
-    if (contextLoaded) {
+    if (contextLoaded && isLoaded) {
       saveFilters({
         searchTerm,
         filters: { stage: stageFilter, source: sourceFilter, priority: priorityFilter, rating: ratingFilter },
@@ -68,7 +68,7 @@ const EnhancedLeadsPage: React.FC = () => {
         isSelectionMode
       });
     }
-  }, [searchTerm, stageFilter, sourceFilter, priorityFilter, ratingFilter, sortBy, viewMode, selectedLeads, isSelectionMode, contextLoaded]);
+  }, [searchTerm, stageFilter, sourceFilter, priorityFilter, ratingFilter, sortBy, viewMode, selectedLeads, isSelectionMode, contextLoaded, isLoaded]);
 
   // Restore scroll position after data loads
   useEffect(() => {
@@ -251,6 +251,7 @@ const EnhancedLeadsPage: React.FC = () => {
                 <div className="py-2">
                   <button
                     onClick={() => {
+                      console.log('🔄 [EnhancedLeadsPage] User clicked Kanban view button');
                       setViewMode('kanban');
                       setShowViewDropdown(false);
                     }}
@@ -266,6 +267,7 @@ const EnhancedLeadsPage: React.FC = () => {
                   </button>
                   <button
                     onClick={() => {
+                      console.log('🔄 [EnhancedLeadsPage] User clicked Tile view button');
                       setViewMode('tile');
                       setShowViewDropdown(false);
                     }}
@@ -281,6 +283,7 @@ const EnhancedLeadsPage: React.FC = () => {
                   </button>
                   <button
                     onClick={() => {
+                      console.log('🔄 [EnhancedLeadsPage] User clicked List view button');
                       setViewMode('list');
                       setShowViewDropdown(false);
                     }}
@@ -461,6 +464,10 @@ const EnhancedLeadsPage: React.FC = () => {
 
       {/* Leads Display */}
       <div className="bg-white rounded-lg border border-gray-200">
+        {(() => {
+          console.log('🔍 [EnhancedLeadsPage] Rendering with viewMode:', viewMode, 'isLoaded:', isLoaded);
+          return null;
+        })()}
         {viewMode === 'kanban' ? (
           <div className="p-6">
             <LeadsKanbanView
