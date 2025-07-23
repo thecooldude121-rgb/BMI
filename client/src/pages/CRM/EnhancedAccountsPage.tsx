@@ -379,7 +379,7 @@ const EnhancedAccountsPage: React.FC = () => {
             ))}
           </select>
         </div>
-        
+      </div>
 
       {/* Accounts Display */}
       {viewMode === 'tile' ? (
