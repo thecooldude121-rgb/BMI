@@ -5,7 +5,7 @@ interface ContextIndicatorProps {
   hasContext: boolean;
   contextAge?: number;
   filtersApplied: number;
-  viewMode: 'card' | 'list';
+  viewMode: 'kanban' | 'tile' | 'list';
 }
 
 const ContextIndicator: React.FC<ContextIndicatorProps> = ({ 
