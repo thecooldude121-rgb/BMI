@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Filter, Download, Upload, Search, Trash2, CheckSquare, Square, Star, Users, BarChart3, Eye } from 'lucide-react';
+import { Plus, Filter, Download, Upload, Search, Trash2, CheckSquare, Square, Star, Users, BarChart3, Eye, ChevronDown, LayoutGrid, List, Columns } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import EnhancedLeadForm from '../../components/CRM/EnhancedLeadForm';
 import LeadDetailPanel from '../../components/CRM/LeadDetailPanel';
@@ -34,6 +34,7 @@ const EnhancedLeadsPage: React.FC = () => {
   const { viewMode, setViewMode, isLoaded } = useViewMode('leadsViewMode', 'tile');
   const [selectedLeads, setSelectedLeads] = useState<string[]>(() => context?.filters.selectedItems || []);
   const [isSelectionMode, setIsSelectionMode] = useState(() => context?.filters.isSelectionMode || false);
+  const [showViewDropdown, setShowViewDropdown] = useState(false);
 
   // Log component mount and restore context
   useEffect(() => {
@@ -77,6 +78,20 @@ const EnhancedLeadsPage: React.FC = () => {
       }
     }
   }, [contextLoaded, isLoading, context?.scroll, restoreScrollPosition]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showViewDropdown) {
+        setShowViewDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showViewDropdown]);
 
   // Filter and sort leads
   const filteredLeads = leads
@@ -219,6 +234,72 @@ const EnhancedLeadsPage: React.FC = () => {
           <p className="text-gray-600">Manage your sales leads and prospects</p>
         </div>
         <div className="flex items-center space-x-3">
+          {/* View Mode Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setShowViewDropdown(!showViewDropdown)}
+              className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-gray-50"
+            >
+              {viewMode === 'kanban' && <Columns className="h-4 w-4" />}
+              {viewMode === 'tile' && <LayoutGrid className="h-4 w-4" />}
+              {viewMode === 'list' && <List className="h-4 w-4" />}
+              <span className="capitalize">{viewMode}</span>
+              <ChevronDown className="h-4 w-4" />
+            </button>
+            
+            {showViewDropdown && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                <div className="py-2">
+                  <button
+                    onClick={() => {
+                      setViewMode('kanban');
+                      setShowViewDropdown(false);
+                    }}
+                    className={`w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 ${
+                      viewMode === 'kanban' ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
+                    }`}
+                  >
+                    <Columns className="h-4 w-4" />
+                    <div>
+                      <div className="font-medium">Kanban</div>
+                      <div className="text-sm text-gray-500">Organize by stage columns</div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setViewMode('tile');
+                      setShowViewDropdown(false);
+                    }}
+                    className={`w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 ${
+                      viewMode === 'tile' ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
+                    }`}
+                  >
+                    <LayoutGrid className="h-4 w-4" />
+                    <div>
+                      <div className="font-medium">Tile</div>
+                      <div className="text-sm text-gray-500">Card-based visual layout</div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setViewMode('list');
+                      setShowViewDropdown(false);
+                    }}
+                    className={`w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 ${
+                      viewMode === 'list' ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
+                    }`}
+                  >
+                    <List className="h-4 w-4" />
+                    <div>
+                      <div className="font-medium">List</div>
+                      <div className="text-sm text-gray-500">Detailed table format</div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
           <button
             onClick={() => setShowForm(true)}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-700"
@@ -377,29 +458,7 @@ const EnhancedLeadsPage: React.FC = () => {
               <option value="priority">Priority</option>
             </select>
 
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-500">View:</span>
-              <div className="flex border border-gray-300 rounded-md">
-                <button
-                  onClick={() => setViewMode('kanban')}
-                  className={`px-3 py-1 text-sm ${viewMode === 'kanban' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-50'} rounded-l-md`}
-                >
-                  Kanban
-                </button>
-                <button
-                  onClick={() => setViewMode('tile')}
-                  className={`px-3 py-1 text-sm ${viewMode === 'tile' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-50'} border-l`}
-                >
-                  Tile
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`px-3 py-1 text-sm ${viewMode === 'list' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-50'} rounded-r-md border-l`}
-                >
-                  List
-                </button>
-              </div>
-            </div>
+
           </div>
         </div>
       </div>
