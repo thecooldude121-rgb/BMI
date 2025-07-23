@@ -4,7 +4,7 @@ interface FilterState {
   searchTerm: string;
   filters: Record<string, string>;
   sortBy: string;
-  viewMode: 'card' | 'list';
+  viewMode: 'kanban' | 'tile' | 'list';
   selectedItems: string[];
   isSelectionMode: boolean;
 }
@@ -65,7 +65,7 @@ export const useContextPreservation = (routeKey: string) => {
           searchTerm: '',
           filters: {},
           sortBy: 'created',
-          viewMode: 'card',
+          viewMode: 'tile',
           selectedItems: [],
           isSelectionMode: false
         },
@@ -89,7 +89,7 @@ export const useContextPreservation = (routeKey: string) => {
       searchTerm: '',
       filters: {},
       sortBy: 'created',
-      viewMode: 'card',
+      viewMode: 'tile',
       selectedItems: [],
       isSelectionMode: false
     };
@@ -128,8 +128,8 @@ export const useContextPreservation = (routeKey: string) => {
   }, [routeKey, storageKey]);
 
   // Auto-save scroll position on scroll
-  const handleScroll = useCallback((event: Event) => {
-    const element = event.target as HTMLElement;
+  const handleScroll = useCallback((event: React.UIEvent<HTMLDivElement>) => {
+    const element = event.currentTarget;
     if (element) {
       // Debounce scroll saves
       clearTimeout((window as any)[`scroll_timeout_${routeKey}`]);

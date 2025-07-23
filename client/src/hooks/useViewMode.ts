@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 
-type ViewMode = 'card' | 'list';
+type ViewMode = 'kanban' | 'tile' | 'list';
 
-export const useViewMode = (storageKey: string, defaultMode: ViewMode = 'card') => {
+export const useViewMode = (storageKey: string, defaultMode: ViewMode = 'tile') => {
   const [viewMode, setViewMode] = useState<ViewMode>(defaultMode);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -13,7 +13,7 @@ export const useViewMode = (storageKey: string, defaultMode: ViewMode = 'card') 
         const stored = localStorage.getItem(storageKey);
         console.log(`🔍 [${storageKey}] Loading view mode from localStorage:`, stored);
         
-        if (stored && (stored === 'card' || stored === 'list')) {
+        if (stored && (stored === 'kanban' || stored === 'tile' || stored === 'list')) {
           console.log(`🔄 [${storageKey}] Setting view mode from localStorage:`, stored);
           setViewMode(stored);
           console.log(`✅ [${storageKey}] Successfully loaded view mode:`, stored);
@@ -46,7 +46,9 @@ export const useViewMode = (storageKey: string, defaultMode: ViewMode = 'card') 
   }, [viewMode, storageKey, isLoaded]);
 
   const toggleViewMode = () => {
-    const newMode = viewMode === 'card' ? 'list' : 'card';
+    const modes: ViewMode[] = ['kanban', 'tile', 'list'];
+    const currentIndex = modes.indexOf(viewMode);
+    const newMode = modes[(currentIndex + 1) % modes.length];
     console.log(`🔄 [${storageKey}] Toggling view mode:`, viewMode, '->', newMode);
     setViewMode(newMode);
   };
