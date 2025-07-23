@@ -1,64 +1,100 @@
-import OpenAI from "openai";
-import fs from "fs";
+import OpenAI from 'openai';
+import fs from 'fs';
 
-// the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-const openai = new OpenAI({ 
-  apiKey: process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY_ENV_VAR || ""
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
-export async function transcribeAudio(audioFilePath: string): Promise<{ text: string, duration: number }> {
+export async function transcribeAudio(filePath: string): Promise<string> {
   try {
-    const audioReadStream = fs.createReadStream(audioFilePath);
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OpenAI API key not configured');
+    }
 
+    const audioFile = fs.createReadStream(filePath);
+    
     const transcription = await openai.audio.transcriptions.create({
-      file: audioReadStream,
-      model: "whisper-1",
+      file: audioFile,
+      model: 'whisper-1',
+      response_format: 'text',
     });
 
-    return {
-      text: transcription.text,
-      duration: 0, // Whisper doesn't return duration
-    };
-  } catch (error) {
+    return transcription;
+  } catch (error: any) {
+    console.error('Transcription error:', error);
     throw new Error(`Transcription failed: ${error.message}`);
   }
 }
 
 export async function analyzeMeeting(transcript: string): Promise<{
   summary: string;
-  keyOutcomes: string[];
+  outcomes: string[];
+  actionItems: string[];
   painPoints: string[];
   objections: string[];
 }> {
   try {
-    const prompt = `You're a smart AI sales assistant. Analyze this meeting transcript and provide insights in JSON format.
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OpenAI API key not configured');
+    }
 
-    Please analyze the following meeting transcript and return a JSON object with these exact fields:
-    - summary: A concise meeting summary (2-3 sentences)
-    - keyOutcomes: Array of key outcomes and next steps
-    - painPoints: Array of pain points mentioned by the prospect
-    - objections: Array of objections or follow-up questions
+    const prompt = `
+Analyze this sales meeting transcript and provide:
 
-    Transcript:
-    ${transcript}
+1. A concise summary (2-3 sentences)
+2. Key outcomes achieved
+3. Action items mentioned
+4. Pain points discussed by the prospect
+5. Objections raised by the prospect
 
-    Respond with valid JSON only.`;
+Format your response as JSON with the following structure:
+{
+  "summary": "Brief meeting summary",
+  "outcomes": ["outcome1", "outcome2"],
+  "actionItems": ["action1", "action2"],
+  "painPoints": ["pain1", "pain2"],
+  "objections": ["objection1", "objection2"]
+}
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-      messages: [{ role: "user", content: prompt }],
-      response_format: { type: "json_object" },
+Transcript:
+${transcript}
+`;
+
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are an expert sales analyst. Analyze meeting transcripts and extract key business insights. Always respond with valid JSON.'
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      temperature: 0.3,
     });
 
-    const result = JSON.parse(response.choices[0].message.content);
+    const responseContent = completion.choices[0]?.message?.content;
+    if (!responseContent) {
+      throw new Error('No response from OpenAI');
+    }
 
-    return {
-      summary: result.summary || "No summary available",
-      keyOutcomes: Array.isArray(result.keyOutcomes) ? result.keyOutcomes : [],
-      painPoints: Array.isArray(result.painPoints) ? result.painPoints : [],
-      objections: Array.isArray(result.objections) ? result.objections : []
-    };
-  } catch (error) {
-    throw new Error(`Meeting analysis failed: ${error.message}`);
+    try {
+      const analysis = JSON.parse(responseContent);
+      return {
+        summary: analysis.summary || '',
+        outcomes: Array.isArray(analysis.outcomes) ? analysis.outcomes : [],
+        actionItems: Array.isArray(analysis.actionItems) ? analysis.actionItems : [],
+        painPoints: Array.isArray(analysis.painPoints) ? analysis.painPoints : [],
+        objections: Array.isArray(analysis.objections) ? analysis.objections : [],
+      };
+    } catch (parseError) {
+      console.error('Failed to parse OpenAI response:', responseContent);
+      throw new Error('Invalid response format from OpenAI');
+    }
+  } catch (error: any) {
+    console.error('Analysis error:', error);
+    throw new Error(`Analysis failed: ${error.message}`);
   }
 }
