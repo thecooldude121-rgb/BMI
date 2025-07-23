@@ -1,0 +1,150 @@
+Create a fully functional web app on Replit that replicates Zoho CRM's Leads, Accounts, and Activity pages, focusing on intuitive design, workflow automation, filtering, and best layout practices. The app should support core CRM functionalities and an optimized user experience for managing leads, accounts, and activities efficiently. Below is a detailed prompt tailored for these modules:
+
+1. Leads Page
+Core Features
+Lead Capture Form:
+
+Fields for lead name, contact information, source, status, lead owner, and priority.
+
+Dropdowns and autocompletes for source and status.
+
+Ability to attach notes or assign lead ratings.
+
+Lead List View:
+
+Tabular or card-style display showing key fields like name, status, source, owner, and creation date.
+
+Color-coded status indicators for quick recognition.
+
+Click to open lead details in a side panel or modal.
+
+Filters & Search:
+
+Multi-criteria filtering by status, source, owner, rating, and date range.
+
+Search bar for quick lookup by lead name or contact.
+
+Screen Layout & Usability:
+
+Clean, sectioned layout with fields grouped logically (e.g., contact info, lead details, activity).
+
+Responsive design for desktop and mobile.
+
+Sections limited to 10-12 fields for clarity.
+
+Drag-and-drop field ordering for custom layouts.
+
+Expand/collapse sections for focused views.
+
+Workflow Automation:
+
+Auto-assignment of leads based on rules (region, source, etc.).
+
+Automated reminders or follow-up tasks based on lead status and activity.
+
+Layout rules to show/hide sections conditionally.
+
+2. Account Page
+Core Features
+Account Details Form:
+
+Field inputs for company name, industry, account owner, size, revenue, contacts linked, and notes.
+
+Dropdowns for industry and account type.
+
+Ability to upload related documents or contracts.
+
+Account List & Overview:
+
+Table or card view showing accounts with key metrics (name, industry, revenue, owner).
+
+Search by account name or owner.
+
+Filters & Sorting:
+
+Filter accounts by industry, revenue range, owner, and account status.
+
+Sort by name, revenue, or recently updated.
+
+Layout & Usability:
+
+Modular layout with clear sections for company info, contacts, deals related to the account, and activity log.
+
+Sidebar or tabs for quick navigation between contacts, deals, and activities linked to the account.
+
+Clean, minimalistic, and responsive design.
+
+Workflow and Customization:
+
+Role-based visibility and editing permissions.
+
+Ability to customize layout by adding/removing fields or sections.
+
+Automation rules for account status updates or notifications.
+
+3. Activity Page
+Core Features
+Activity Tracking & Management:
+
+Log activities such as calls, emails, meetings, tasks, and notes.
+
+Fields for activity type, subject, related lead/account/deal, date, duration, and status.
+
+Option to add attachments or detailed notes.
+
+Views & Filters:
+
+Multiple views: list, calendar, and Kanban style for visual workflow management.
+
+Filters by activity type, date range, status, owner, and related record.
+
+User Interaction & Layout:
+
+Clickable activity items that open detailed views with editing options.
+
+Timeline or feed showing activity history for leads, accounts, or deals.
+
+Notifications or reminders for upcoming or overdue activities.
+
+Automation & Integration:
+
+Auto-create follow-up activities based on activity outcomes.
+
+Link activities to related CRM records for a unified customer view.
+
+Responsive Design:
+
+Accessible on mobile and desktop.
+
+Easy navigation with sidebar filters and top search.
+
+Suggested Tech Stack and Design Tips
+Frontend: React with Material-UI or Bootstrap for forms, cards, tables, and responsive layouts.
+
+Backend: Node.js/Express with in-memory data or MongoDB.
+
+State Management: Redux or React Context API.
+
+Authentication: Simple user login with role-based permissions.
+
+UX/UI Best Practices:
+
+Logical grouping of fields and sections.
+
+Consistent color coding for statuses and priority.
+
+Clear calls to action (e.g., Add Lead, Log Activity).
+
+Avoid clutter—use white space and collapsible sections.
+
+Real-time filtering and search updates.
+
+Mobile-first responsive design.
+
+Example Page Layout Summary
+Page	Key Sections	Features	Extra UI Elements
+Leads	Lead info, Contact details, Activity	Filtering, Search, Auto-assignment	Color-coded status, Expand sections
+Accounts	Company info, Contacts, Deals, Notes	Filters, Sorting, Document upload	Tabs/sidebar navigation
+Activity	Activity log, Filters, Calendar view	Multiple views (list/Kanban)	Timeline feed, Notifications
+Goal:
+Develop an extendable and user-friendly CRM web app on Replit that closely mimics Zoho CRM’s leads, accounts, and activity pages, with efficient data handling, clear workflows, and responsive design optimized for sales and support teams.
