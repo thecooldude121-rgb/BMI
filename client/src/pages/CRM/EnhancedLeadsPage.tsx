@@ -5,6 +5,7 @@ import EnhancedLeadForm from '../../components/CRM/EnhancedLeadForm';
 import LeadDetailPanel from '../../components/CRM/LeadDetailPanel';
 import BulkActionsDropdown from '../../components/CRM/BulkActionsDropdown';
 import { apiRequest } from '../../lib/queryClient';
+import { useViewMode } from '../../hooks/useViewMode';
 
 const EnhancedLeadsPage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -21,37 +22,14 @@ const EnhancedLeadsPage: React.FC = () => {
   const [priorityFilter, setPriorityFilter] = useState('all');
   const [ratingFilter, setRatingFilter] = useState('all');
   const [sortBy, setSortBy] = useState('created');
-  const [viewMode, setViewMode] = useState<'list' | 'card'>('card');
+  const { viewMode, setViewMode, isLoaded } = useViewMode('leadsViewMode', 'card');
   const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
 
-  // Load saved view mode on component mount
+  // Log component mount
   useEffect(() => {
-    console.log('🚀 EnhancedLeadsPage component mounted/remounted');
-    try {
-      const stored = localStorage.getItem('leadsViewMode');
-      console.log('🔍 Loading leads view mode from localStorage:', stored);
-      if (stored && (stored === 'list' || stored === 'card')) {
-        console.log('🔄 Setting view mode from localStorage:', stored);
-        setViewMode(stored as 'list' | 'card');
-        console.log('✅ Set leads view mode to:', stored);
-      } else {
-        console.log('📝 No valid stored view mode found, using default: card');
-      }
-    } catch (error) {
-      console.error('❌ Failed to load leads view mode:', error);
-    }
+    console.log('🚀 EnhancedLeadsPage component mounted/remounted at', new Date().toLocaleTimeString());
   }, []);
-
-  // Save view mode whenever it changes
-  useEffect(() => {
-    try {
-      localStorage.setItem('leadsViewMode', viewMode);
-      console.log('💾 Saved leads view mode:', viewMode);
-    } catch (error) {
-      console.error('❌ Failed to save leads view mode:', error);
-    }
-  }, [viewMode]);
 
   const deleteLeadsMutation = useMutation({
     mutationFn: async (ids: string[]) => {
@@ -381,19 +359,13 @@ const EnhancedLeadsPage: React.FC = () => {
             <span className="text-sm text-gray-500">View:</span>
             <div className="flex border border-gray-300 rounded-md">
               <button
-                onClick={() => {
-                  console.log('🔄 User clicked: Setting leads view mode to card');
-                  setViewMode('card');
-                }}
+                onClick={() => setViewMode('card')}
                 className={`px-3 py-1 text-sm ${viewMode === 'card' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-50'} rounded-l-md`}
               >
                 Cards
               </button>
               <button
-                onClick={() => {
-                  console.log('🔄 User clicked: Setting leads view mode to list');
-                  setViewMode('list');
-                }}
+                onClick={() => setViewMode('list')}
                 className={`px-3 py-1 text-sm ${viewMode === 'list' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-50'} rounded-r-md border-l`}
               >
                 List
