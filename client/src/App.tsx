@@ -4,7 +4,7 @@ import { DataProvider } from './contexts/DataContext';
 import Header from './components/Layout/Header';
 import Dashboard from './pages/Dashboard';
 import CRMModule from './pages/CRM/CRMModule';
-import LeadsPage from './pages/CRM/LeadsPage';
+import EnhancedLeadsPage from './pages/CRM/EnhancedLeadsPage';
 import ContactsPage from './pages/CRM/ContactsPage';
 import CompaniesPage from './pages/CRM/CompaniesPage';
 import UnifiedDealsPage from './pages/CRM/UnifiedDealsPage';
@@ -40,7 +40,7 @@ const App = () => {
               <Route path="/" component={Dashboard} />
               <Route path="/dashboard" component={Dashboard} />
               <Route path="/crm" component={CRMModule} />
-              <Route path="/crm/leads" component={LeadsPage} />
+              <Route path="/crm/leads" component={EnhancedLeadsPage} />
               <Route path="/crm/contacts" component={ContactsPage} />
               <Route path="/crm/accounts" component={CompaniesPage} />
               <Route path="/crm/deals" component={UnifiedDealsPage} />
