@@ -7,7 +7,6 @@ import BulkActionsDropdown from '../../components/CRM/BulkActionsDropdown';
 import { apiRequest } from '../../lib/queryClient';
 import { useViewMode } from '../../hooks/useViewMode';
 import { useContextPreservation } from '../../hooks/useContextPreservation';
-import ContextIndicator from '../../components/CRM/ContextIndicator';
 import LeadsKanbanView from '../../components/CRM/LeadsKanbanView';
 import LeadsTileView from '../../components/CRM/LeadsTileView';
 
@@ -208,8 +207,6 @@ const EnhancedLeadsPage: React.FC = () => {
     (priorityFilter !== 'all' ? 1 : 0) + 
     (ratingFilter !== 'all' ? 1 : 0);
 
-  const contextAge = context ? Math.floor((Date.now() - new Date(context.timestamp).getTime()) / 1000) : 0;
-
   if (isLoading && !contextLoaded) {
     return (
       <div className="p-6">
@@ -309,14 +306,6 @@ const EnhancedLeadsPage: React.FC = () => {
           </button>
         </div>
       </div>
-
-      {/* Context Indicator */}
-      <ContextIndicator 
-        hasContext={!!context} 
-        contextAge={contextAge}
-        filtersApplied={filtersApplied}
-        viewMode={viewMode}
-      />
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
