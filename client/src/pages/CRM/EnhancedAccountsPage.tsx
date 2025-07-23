@@ -379,39 +379,7 @@ const EnhancedAccountsPage: React.FC = () => {
             ))}
           </select>
         </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-500">Sort by:</span>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="name">Name</option>
-              <option value="revenue">Revenue</option>
-              <option value="employees">Employees</option>
-              <option value="created">Recently Created</option>
-            </select>
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-500">View:</span>
-            <div className="flex border border-gray-300 rounded-md">
-              <button
-                onClick={() => setViewMode('tile')}
-                className={`px-3 py-1 text-sm ${viewMode === 'tile' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-50'} rounded-l-md`}
-              >
-                Tile
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`px-3 py-1 text-sm ${viewMode === 'list' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-50'} rounded-r-md border-l`}
-              >
-                List
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+        
 
       {/* Accounts Display */}
       {viewMode === 'tile' ? (
