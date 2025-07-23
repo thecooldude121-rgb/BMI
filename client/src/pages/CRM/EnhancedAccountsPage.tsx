@@ -21,7 +21,9 @@ const EnhancedAccountsPage: React.FC = () => {
   const [typeFilter, setTypeFilter] = useState('all');
   const [revenueFilter, setRevenueFilter] = useState('all');
   const [sortBy, setSortBy] = useState('name');
-  const [viewMode, setViewMode] = useState<'card' | 'list'>('card');
+  const [viewMode, setViewMode] = useState<'card' | 'list'>(() => {
+    return (localStorage.getItem('accountsViewMode') as 'card' | 'list') || 'card';
+  });
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<any>(null);
@@ -294,13 +296,19 @@ const EnhancedAccountsPage: React.FC = () => {
             <span className="text-sm text-gray-500">View:</span>
             <div className="flex border border-gray-300 rounded-md">
               <button
-                onClick={() => setViewMode('card')}
+                onClick={() => {
+                  setViewMode('card');
+                  localStorage.setItem('accountsViewMode', 'card');
+                }}
                 className={`px-3 py-1 text-sm ${viewMode === 'card' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-50'} rounded-l-md`}
               >
                 Cards
               </button>
               <button
-                onClick={() => setViewMode('list')}
+                onClick={() => {
+                  setViewMode('list');
+                  localStorage.setItem('accountsViewMode', 'list');
+                }}
                 className={`px-3 py-1 text-sm ${viewMode === 'list' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-50'} rounded-r-md border-l`}
               >
                 List

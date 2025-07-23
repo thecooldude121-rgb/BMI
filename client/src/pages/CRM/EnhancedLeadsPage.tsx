@@ -21,7 +21,9 @@ const EnhancedLeadsPage: React.FC = () => {
   const [priorityFilter, setPriorityFilter] = useState('all');
   const [ratingFilter, setRatingFilter] = useState('all');
   const [sortBy, setSortBy] = useState('created');
-  const [viewMode, setViewMode] = useState<'list' | 'card'>('card');
+  const [viewMode, setViewMode] = useState<'list' | 'card'>(() => {
+    return (localStorage.getItem('leadsViewMode') as 'list' | 'card') || 'card';
+  });
   const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
 
@@ -353,13 +355,19 @@ const EnhancedLeadsPage: React.FC = () => {
             <span className="text-sm text-gray-500">View:</span>
             <div className="flex border border-gray-300 rounded-md">
               <button
-                onClick={() => setViewMode('card')}
+                onClick={() => {
+                  setViewMode('card');
+                  localStorage.setItem('leadsViewMode', 'card');
+                }}
                 className={`px-3 py-1 text-sm ${viewMode === 'card' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-50'} rounded-l-md`}
               >
                 Cards
               </button>
               <button
-                onClick={() => setViewMode('list')}
+                onClick={() => {
+                  setViewMode('list');
+                  localStorage.setItem('leadsViewMode', 'list');
+                }}
                 className={`px-3 py-1 text-sm ${viewMode === 'list' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-50'} rounded-r-md border-l`}
               >
                 List
