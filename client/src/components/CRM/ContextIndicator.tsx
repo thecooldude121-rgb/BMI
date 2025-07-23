@@ -26,25 +26,7 @@ const ContextIndicator: React.FC<ContextIndicatorProps> = ({
     return `${hours} hours ago`;
   };
 
-  return (
-    <div className="flex items-center space-x-2 px-3 py-1 bg-blue-50 border border-blue-200 rounded-lg text-xs text-blue-700">
-      <Clock className="h-3 w-3" />
-      <span>Context restored</span>
-      {contextAge && (
-        <span className="text-blue-500">({formatAge(contextAge)})</span>
-      )}
-      {filtersApplied > 0 && (
-        <div className="flex items-center space-x-1 ml-2">
-          <Filter className="h-3 w-3" />
-          <span>{filtersApplied} filter{filtersApplied !== 1 ? 's' : ''}</span>
-        </div>
-      )}
-      <div className="flex items-center space-x-1 ml-2">
-        <Eye className="h-3 w-3" />
-        <span>{viewMode} view</span>
-      </div>
-    </div>
-  );
+  return null;
 };
 
 export default ContextIndicator;
