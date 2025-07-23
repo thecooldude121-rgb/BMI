@@ -1,5 +1,6 @@
 import React from 'react';
 import { Switch, Route } from 'wouter';
+import CRMGamificationPage from './CRMGamificationPage';
 import EnhancedLeadsPage from './EnhancedLeadsPage';
 import ContactsPage from './ContactsPage';
 import EnhancedAccountsPage from './EnhancedAccountsPage';
@@ -12,6 +13,9 @@ const CRMModule = () => {
   return (
     <div className="h-full overflow-auto bg-gray-50">
       <Switch>
+        <Route path="/crm/gamification">
+          <CRMGamificationPage key="crm-gamification" />
+        </Route>
         <Route path="/crm/leads">
           <EnhancedLeadsPage key="enhanced-leads" />
         </Route>
@@ -24,7 +28,7 @@ const CRMModule = () => {
         <Route path="/crm/tasks" component={TasksPage} />
         <Route path="/crm/activities" component={EnhancedActivitiesPage} />
         <Route path="/crm">
-          <EnhancedLeadsPage key="enhanced-leads" />
+          <CRMGamificationPage key="crm-gamification" />
         </Route>
       </Switch>
     </div>

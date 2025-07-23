@@ -4,7 +4,7 @@ import {
   Bell, Search, Settings, Menu, Plus, Mail, Building2, 
   Users, UserPlus, DollarSign, Phone, Activity, LayoutDashboard,
   UserCheck, Target, BarChart3, Calendar, ChevronDown, X, MoreHorizontal,
-  Building
+  Building, Trophy
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -22,6 +22,7 @@ const Header: React.FC = () => {
   const isCRMPage = location?.startsWith('/crm') || false;
 
   const crmNavigation = [
+    { name: 'Gamification', href: '/crm/gamification', icon: Trophy },
     { name: 'Leads', href: '/crm/leads', icon: UserPlus },
     { name: 'Accounts', href: '/crm/accounts', icon: Building },
     { name: 'Deals', href: '/crm/deals', icon: DollarSign },
@@ -41,7 +42,6 @@ const Header: React.FC = () => {
     { name: 'Lead Generation', href: '/lead-generation', icon: Target },
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },
     { name: 'Calendar', href: '/calendar', icon: Calendar },
-    { name: 'Gamification', href: '/gamification', icon: Target },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
