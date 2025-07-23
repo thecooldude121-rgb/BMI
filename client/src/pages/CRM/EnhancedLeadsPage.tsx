@@ -32,7 +32,15 @@ const EnhancedLeadsPage: React.FC = () => {
   const [priorityFilter, setPriorityFilter] = useState(() => context?.filters.filters.priority || 'all');
   const [ratingFilter, setRatingFilter] = useState(() => context?.filters.filters.rating || 'all');
   const [sortBy, setSortBy] = useState(() => context?.filters.sortBy || 'created');
-  const { viewMode, setViewMode, isLoaded } = useViewMode('leadsViewMode', 'tile');
+  // Use a simple local state for viewMode to avoid conflicts
+  const [viewMode, setViewMode] = useState<'kanban' | 'tile' | 'list'>(() => {
+    try {
+      const stored = localStorage.getItem('leadsViewMode');
+      return (stored === 'kanban' || stored === 'tile' || stored === 'list') ? stored : 'tile';
+    } catch {
+      return 'tile';
+    }
+  });
   const [selectedLeads, setSelectedLeads] = useState<string[]>(() => context?.filters.selectedItems || []);
   const [isSelectionMode, setIsSelectionMode] = useState(() => context?.filters.isSelectionMode || false);
   const [showViewDropdown, setShowViewDropdown] = useState(false);
@@ -58,7 +66,7 @@ const EnhancedLeadsPage: React.FC = () => {
 
   // Save filters to context when they change
   useEffect(() => {
-    if (contextLoaded && isLoaded) {
+    if (contextLoaded) {
       saveFilters({
         searchTerm,
         filters: { stage: stageFilter, source: sourceFilter, priority: priorityFilter, rating: ratingFilter },
@@ -68,7 +76,17 @@ const EnhancedLeadsPage: React.FC = () => {
         isSelectionMode
       });
     }
-  }, [searchTerm, stageFilter, sourceFilter, priorityFilter, ratingFilter, sortBy, viewMode, selectedLeads, isSelectionMode, contextLoaded, isLoaded]);
+  }, [searchTerm, stageFilter, sourceFilter, priorityFilter, ratingFilter, sortBy, viewMode, selectedLeads, isSelectionMode, contextLoaded]);
+
+  // Save viewMode to localStorage when it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('leadsViewMode', viewMode);
+      console.log('💾 [EnhancedLeadsPage] Saved view mode to localStorage:', viewMode);
+    } catch (error) {
+      console.error('Failed to save view mode:', error);
+    }
+  }, [viewMode]);
 
   // Restore scroll position after data loads
   useEffect(() => {
@@ -236,7 +254,10 @@ const EnhancedLeadsPage: React.FC = () => {
           {/* View Mode Dropdown */}
           <div className="relative">
             <button
-              onClick={() => setShowViewDropdown(!showViewDropdown)}
+              onClick={() => {
+                console.log('🔄 [EnhancedLeadsPage] View dropdown clicked, current state:', showViewDropdown);
+                setShowViewDropdown(!showViewDropdown);
+              }}
               className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-gray-50"
             >
               {viewMode === 'kanban' && <Columns className="h-4 w-4" />}
@@ -247,10 +268,15 @@ const EnhancedLeadsPage: React.FC = () => {
             </button>
             
             {showViewDropdown && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+              <div 
+                className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-[9999]"
+                style={{zIndex: 9999}}
+              >
                 <div className="py-2">
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
                       console.log('🔄 [EnhancedLeadsPage] User clicked Kanban view button');
                       setViewMode('kanban');
                       setShowViewDropdown(false);
@@ -266,7 +292,9 @@ const EnhancedLeadsPage: React.FC = () => {
                     </div>
                   </button>
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
                       console.log('🔄 [EnhancedLeadsPage] User clicked Tile view button');
                       setViewMode('tile');
                       setShowViewDropdown(false);
@@ -282,7 +310,9 @@ const EnhancedLeadsPage: React.FC = () => {
                     </div>
                   </button>
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
                       console.log('🔄 [EnhancedLeadsPage] User clicked List view button');
                       setViewMode('list');
                       setShowViewDropdown(false);
@@ -465,7 +495,7 @@ const EnhancedLeadsPage: React.FC = () => {
       {/* Leads Display */}
       <div className="bg-white rounded-lg border border-gray-200">
         {(() => {
-          console.log('🔍 [EnhancedLeadsPage] Rendering with viewMode:', viewMode, 'isLoaded:', isLoaded);
+          console.log('🔍 [EnhancedLeadsPage] Rendering with viewMode:', viewMode);
           return null;
         })()}
         {viewMode === 'kanban' ? (
