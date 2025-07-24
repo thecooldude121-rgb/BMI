@@ -201,7 +201,6 @@ export default function SimpleAdvancedDealsModule() {
             <span>{new Date(deal.expectedCloseDate).toLocaleDateString()}</span>
           </div>
           <div className="text-blue-600 hover:text-blue-800 flex items-center space-x-1">
-            <span>View Details</span>
             <ArrowRight className="w-3 h-3" />
           </div>
         </div>
