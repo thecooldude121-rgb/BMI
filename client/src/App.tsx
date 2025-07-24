@@ -43,15 +43,8 @@ const App = () => {
               <Route path="/" component={Analytics} />
               <Route path="/dashboard" component={Dashboard} />
               <Route path="/crm" component={CRMModule} />
-              <Route path="/crm/leads" component={EnhancedLeadsPage} />
-              <Route path="/crm/contacts" component={ContactsPage} />
-              <Route path="/crm/accounts" component={EnhancedAccountsPage} />
-              <Route path="/crm/deals" component={UnifiedDealsPage} />
               <Route path="/crm/deals/create" component={CreateDealWrapper} />
               <Route path="/crm/deals/:id" component={DealDetailWrapper} />
-              <Route path="/crm/pipeline" component={PipelinePage} />
-              <Route path="/crm/tasks" component={TasksPage} />
-              <Route path="/crm/activities" component={ActivitiesPage} />
               <Route path="/hrms" component={HRMSModule} />
               <Route path="/analytics" component={Analytics} />
               <Route path="/calendar" component={Calendar} />
