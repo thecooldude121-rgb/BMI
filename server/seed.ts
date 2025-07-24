@@ -9,7 +9,7 @@ export async function seedDatabase() {
     // Check if user already exists
     const existingUser = await db.select().from(schema.users).where(eq(schema.users.email, 'john.smith@company.com')).limit(1);
     
-    let sampleUser;
+    let sampleUser: schema.User[];
     if (existingUser.length > 0) {
       sampleUser = existingUser;
       console.log("👤 Using existing user data");
@@ -30,7 +30,7 @@ export async function seedDatabase() {
     const userId = sampleUser[0].id;
 
     // Create sample accounts (5 companies)
-    const sampleAccounts = await db.insert(schema.accounts).values([
+    const sampleAccounts: schema.Account[] = await db.insert(schema.accounts).values([
       {
         name: 'TechCorp Solutions',
         domain: 'techcorp.com',
@@ -94,7 +94,7 @@ export async function seedDatabase() {
     ]).returning();
 
     // Create sample contacts (5 contacts)
-    const sampleContacts = await db.insert(schema.contacts).values([
+    const sampleContacts: schema.Contact[] = await db.insert(schema.contacts).values([
       {
         accountId: sampleAccounts[0].id,
         firstName: 'Sarah',
@@ -168,7 +168,7 @@ export async function seedDatabase() {
     ]).returning();
 
     // Create sample leads (5 leads)
-    const sampleLeads = await db.insert(schema.leads).values([
+    const sampleLeads: schema.Lead[] = await db.insert(schema.leads).values([
       {
         contactId: sampleContacts[0].id,
         accountId: sampleAccounts[0].id,
@@ -282,7 +282,7 @@ export async function seedDatabase() {
     ]).returning();
 
     // Create sample deals (5 deals)
-    const sampleDeals = await db.insert(schema.deals).values([
+    const sampleDeals: schema.Deal[] = await db.insert(schema.deals).values([
       {
         name: 'TechCorp Enterprise License',
         title: 'Enterprise Software Platform Implementation',
@@ -434,7 +434,7 @@ export async function seedDatabase() {
     ]);
 
     console.log("✅ Database seeded successfully!");
-    console.log(`Created/Used ${sampleUser.length} users`);
+    console.log(`Created/Used ${Array.isArray(sampleUser) ? sampleUser.length : 1} users`);
     console.log(`Created ${sampleAccounts.length} accounts`);
     console.log(`Created ${sampleContacts.length} contacts`);
     console.log(`Created ${sampleLeads.length} leads`);
