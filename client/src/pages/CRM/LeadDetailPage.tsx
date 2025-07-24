@@ -35,43 +35,104 @@ import {
 
 interface Lead {
   id: string;
-  firstName: string;
-  lastName: string;
+  contactId?: string;
+  accountId?: string;
+  name?: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
-  phone: string;
-  company: string;
-  jobTitle: string;
-  leadSource: string;
-  leadStatus: string;
-  leadScore: number;
-  industry: string;
-  annualRevenue: string;
-  employees: string;
-  assignedTo: string;
+  phone?: string;
+  company?: string;
+  position?: string;
+  jobTitle?: string;
+  leadSource?: string;
+  leadStatus?: string;
+  leadScore?: number;
+  industry?: string;
+  stage?: string;
+  status?: string;
+  score?: number;
+  value?: string;
+  probability?: number;
+  expectedCloseDate?: string;
+  source?: string;
+  priority?: string;
+  rating?: number;
+  assignedTo?: string;
+  lastContact?: string;
+  notes?: string;
+  tags?: string[];
+  customFields?: any;
+  engagementScore?: number;
+  fitScore?: number;
+  intentScore?: number;
+  qualification?: any;
+  channel?: string;
+  sentiment?: string;
+  webActivity?: any;
+  emailActivity?: any;
+  socialActivity?: any;
+  nurturingCampaignId?: string;
+  nurturingStage?: string;
+  autoAssignmentRules?: any;
+  assignmentHistory?: any;
+  enrichmentStatus?: string;
+  enrichmentData?: any;
+  consentStatus?: string;
+  consentTimestamp?: string;
+  communicationPreferences?: any;
+  attachments?: any;
+  linkedinUrl?: string;
+  twitterUrl?: string;
+  companyLinkedinUrl?: string;
+  timezone?: string;
+  locale?: string;
+  companySize?: string;
+  annualRevenue?: string;
+  employees?: string;
+  technologies?: any;
+  competitors?: any;
+  painPoints?: any;
+  interests?: any;
+  websiteVisits?: number;
+  emailOpens?: number;
+  emailClicks?: number;
+  contentDownloads?: number;
+  demoRequests?: number;
+  nextAction?: string;
+  nextActionDate?: string;
+  lastActivityType?: string;
+  responseTime?: number;
+  campaignId?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  utmContent?: string;
+  utmTerm?: string;
+  firstTouchpoint?: string;
+  lastTouchpoint?: string;
+  aiInsights?: any;
+  autoNurturing?: boolean;
+  sequenceId?: string;
+  gdprConsent?: boolean;
+  emailOptIn?: boolean;
+  smsOptIn?: boolean;
+  dataProcessingConsent?: string;
   createdAt: string;
-  lastContactDate: string;
-  nextFollowUp: string;
-  description: string;
-  interest: string;
-  budget: string;
-  timeline: string;
-  website: string;
-  linkedinProfile: string;
-  city: string;
-  state: string;
-  country: string;
-  zipCode: string;
-  conversionProbability: number;
-  sentiment: string;
-  webActivity: any;
-  emailActivity: any;
-  socialActivity: any;
-  nurturingCampaignId: string;
-  nurturingStage: string;
-  enrichmentStatus: string;
-  enrichmentData: any;
-  consentStatus: string;
-  communicationPreferences: any;
+  updatedAt?: string;
+  lastContactDate?: string;
+  nextFollowUp?: string;
+  description?: string;
+  interest?: string;
+  budget?: string;
+  timeline?: string;
+  website?: string;
+  linkedinProfile?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  zipCode?: string;
+  conversionProbability?: number;
 }
 
 const LEAD_STATUSES = [
@@ -94,7 +155,7 @@ export default function LeadDetailPage() {
 
   // Fetch lead details
   const { data: lead, isLoading, error, refetch } = useQuery({
-    queryKey: ['/api/leads', id],
+    queryKey: [`/api/leads/${id}`],
     enabled: !!id,
     retry: 3,
     retryDelay: 1000
@@ -113,7 +174,11 @@ export default function LeadDetailPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/leads'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/leads', id] });
+      queryClient.invalidateQueries({ queryKey: [`/api/leads/${id}`] });
+      setEditingField(null);
+    },
+    onError: (error) => {
+      console.error('Failed to update lead:', error);
       setEditingField(null);
     }
   });
@@ -210,8 +275,9 @@ export default function LeadDetailPage() {
   const calculateLeadHealth = (lead: Lead) => {
     if (!lead) return { status: 'neutral', color: 'gray', icon: '📊', label: 'Neutral' };
     
-    const daysSinceContact = Math.ceil((new Date().getTime() - new Date(lead.lastContactDate).getTime()) / (1000 * 60 * 60 * 24));
-    const score = lead.leadScore || 0;
+    const lastContactDate = lead.lastContactDate || lead.lastContact || lead.createdAt;
+    const daysSinceContact = Math.ceil((new Date().getTime() - new Date(lastContactDate).getTime()) / (1000 * 60 * 60 * 24));
+    const score = lead.leadScore || lead.score || 0;
     
     if (score >= 80) return { status: 'hot', color: 'red', icon: '🔥', label: 'Hot Lead' };
     if (score >= 60) return { status: 'warm', color: 'yellow', icon: '⚡', label: 'Warm Lead' };
@@ -254,7 +320,7 @@ export default function LeadDetailPage() {
   }
 
   const health = calculateLeadHealth(lead as Lead);
-  const statusConfig = LEAD_STATUSES.find(s => s.id === (lead as Lead)?.leadStatus) || LEAD_STATUSES[0];
+  const statusConfig = LEAD_STATUSES.find(s => s.id === (lead as Lead)?.status) || LEAD_STATUSES[0];
 
   return (
     <div className="h-full flex flex-col bg-gray-50">
@@ -270,7 +336,7 @@ export default function LeadDetailPage() {
             </button>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                {(lead as Lead)?.firstName} {(lead as Lead)?.lastName}
+                {(lead as Lead)?.firstName || (lead as Lead)?.name?.split(' ')[0] || 'Unknown'} {(lead as Lead)?.lastName || (lead as Lead)?.name?.split(' ')[1] || ''}
               </h1>
               <div className="flex items-center space-x-3 mt-1">
                 <span className={`px-3 py-1 text-sm rounded-full ${statusConfig.color}`}>
@@ -281,7 +347,7 @@ export default function LeadDetailPage() {
                   <span>{health.label}</span>
                 </span>
                 <span className="text-sm text-gray-600">
-                  Score: <span className="font-semibold text-orange-600">{(lead as Lead)?.leadScore}</span>
+                  Score: <span className="font-semibold text-orange-600">{(lead as Lead)?.leadScore || (lead as Lead)?.score || 0}</span>
                 </span>
               </div>
             </div>
@@ -315,30 +381,30 @@ export default function LeadDetailPage() {
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
               <div className="bg-white p-4 rounded-lg border">
-                <div className="text-2xl font-bold text-orange-600">{(lead as Lead)?.leadScore}</div>
+                <div className="text-2xl font-bold text-orange-600">{(lead as Lead)?.score || 0}</div>
                 <div className="text-sm text-gray-600">Lead Score</div>
                 <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
                   <div 
                     className="bg-orange-500 h-2 rounded-full"
-                    style={{ width: `${(lead as Lead)?.leadScore}%` }}
+                    style={{ width: `${(lead as Lead)?.score || 0}%` }}
                   ></div>
                 </div>
               </div>
               <div className="bg-white p-4 rounded-lg border">
-                <div className="text-2xl font-bold text-blue-600">{(lead as Lead)?.conversionProbability}%</div>
+                <div className="text-2xl font-bold text-blue-600">{(lead as Lead)?.probability || 0}%</div>
                 <div className="text-sm text-gray-600">Conversion Probability</div>
                 <div className="text-xs text-gray-500 mt-1">
-                  {((lead as Lead)?.conversionProbability || 0) >= 75 ? 'High potential' : 
-                   ((lead as Lead)?.conversionProbability || 0) >= 50 ? 'Medium potential' : 'Low potential'}
+                  {((lead as Lead)?.probability || 0) >= 75 ? 'High potential' : 
+                   ((lead as Lead)?.probability || 0) >= 50 ? 'Medium potential' : 'Low potential'}
                 </div>
               </div>
               <div className="bg-white p-4 rounded-lg border">
                 <div className="text-2xl font-bold text-green-600">
-                  {Math.ceil((new Date((lead as Lead)?.nextFollowUp || new Date()).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))}
+                  {Math.ceil((new Date((lead as Lead)?.expectedCloseDate || new Date()).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))}
                 </div>
-                <div className="text-sm text-gray-600">Days to Follow-up</div>
+                <div className="text-sm text-gray-600">Days to Close</div>
                 <div className="text-xs text-gray-500 mt-1">
-                  Next: {new Date((lead as Lead)?.nextFollowUp || new Date()).toLocaleDateString()}
+                  Expected: {new Date((lead as Lead)?.expectedCloseDate || new Date()).toLocaleDateString()}
                 </div>
               </div>
               <div className="bg-white p-4 rounded-lg border">
@@ -357,17 +423,15 @@ export default function LeadDetailPage() {
               <div className="p-6">
                 <h2 className="text-lg font-semibold mb-4">Lead Information</h2>
                 <div className="space-y-0">
-                  {renderEditableField('firstName', 'First Name', (lead as Lead)?.firstName)}
-                  {renderEditableField('lastName', 'Last Name', (lead as Lead)?.lastName)}
+                  {renderEditableField('name', 'Full Name', (lead as Lead)?.name)}
                   {renderEditableField('email', 'Email', (lead as Lead)?.email, 'email')}
                   {renderEditableField('phone', 'Phone', (lead as Lead)?.phone, 'tel')}
                   {renderEditableField('company', 'Company', (lead as Lead)?.company)}
-                  {renderEditableField('jobTitle', 'Job Title', (lead as Lead)?.jobTitle)}
-                  {renderEditableField('leadStatus', 'Status', (lead as Lead)?.leadStatus, 'select', LEAD_STATUSES)}
-                  {renderEditableField('leadSource', 'Lead Source', (lead as Lead)?.leadSource)}
+                  {renderEditableField('position', 'Position', (lead as Lead)?.position)}
+                  {renderEditableField('status', 'Status', (lead as Lead)?.status, 'select', LEAD_STATUSES)}
+                  {renderEditableField('source', 'Lead Source', (lead as Lead)?.source)}
                   {renderEditableField('industry', 'Industry', (lead as Lead)?.industry)}
-                  {renderEditableField('website', 'Website', (lead as Lead)?.website)}
-                  {renderEditableField('description', 'Description', (lead as Lead)?.description, 'textarea')}
+                  {renderEditableField('notes', 'Notes', (lead as Lead)?.notes, 'textarea')}
                 </div>
               </div>
             </div>
@@ -422,7 +486,7 @@ export default function LeadDetailPage() {
                     <div className="flex-1">
                       <div className="font-medium">Lead Created</div>
                       <div className="text-sm text-gray-600">
-                        Lead was created from {(lead as Lead)?.leadSource}
+                        Lead was created from {(lead as Lead)?.source}
                       </div>
                       <div className="text-xs text-gray-500 mt-1">
                         {new Date((lead as Lead)?.createdAt || new Date()).toLocaleString()}
@@ -440,7 +504,7 @@ export default function LeadDetailPage() {
                         Last contacted via email
                       </div>
                       <div className="text-xs text-gray-500 mt-1">
-                        {new Date((lead as Lead)?.lastContactDate || new Date()).toLocaleString()}
+                        {new Date((lead as Lead)?.lastContact || new Date()).toLocaleString()}
                       </div>
                     </div>
                   </div>
@@ -452,7 +516,7 @@ export default function LeadDetailPage() {
                     <div className="flex-1">
                       <div className="font-medium">Score Updated</div>
                       <div className="text-sm text-gray-600">
-                        Lead score increased to {(lead as Lead)?.leadScore}
+                        Lead score increased to {(lead as Lead)?.score}
                       </div>
                       <div className="text-xs text-gray-500 mt-1">
                         2 hours ago
@@ -516,16 +580,16 @@ export default function LeadDetailPage() {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Lead Score</span>
-                    <span className="font-medium">{(lead as Lead)?.leadScore}/100</span>
+                    <span className="font-medium">{(lead as Lead)?.score}/100</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Conversion Probability</span>
-                    <span className="font-medium">{(lead as Lead)?.conversionProbability}%</span>
+                    <span className="font-medium">{(lead as Lead)?.probability}%</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Days Since Contact</span>
                     <span className="font-medium">
-                      {Math.ceil((new Date().getTime() - new Date((lead as Lead)?.lastContactDate || new Date()).getTime()) / (1000 * 60 * 60 * 24))}
+                      {Math.ceil((new Date().getTime() - new Date((lead as Lead)?.lastContact || new Date()).getTime()) / (1000 * 60 * 60 * 24))}
                     </span>
                   </div>
                 </div>
