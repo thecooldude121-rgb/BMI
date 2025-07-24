@@ -236,13 +236,23 @@ const SimpleDealsPage: React.FC = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="flex gap-2">
-                  <button className="px-3 py-1 text-sm border rounded hover:bg-gray-50">
-                    View
-                  </button>
-                  <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">
-                    Edit
-                  </button>
+                <div className="flex flex-col gap-1">
+                  <div className="flex gap-2">
+                    <button className="px-3 py-1 text-sm border rounded hover:bg-gray-50">
+                      View
+                    </button>
+                    <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">
+                      Edit
+                    </button>
+                  </div>
+                  <div className="flex gap-2">
+                    <button className="px-2 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200">
+                      Follow Up
+                    </button>
+                    <button className="px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200">
+                      Schedule
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
