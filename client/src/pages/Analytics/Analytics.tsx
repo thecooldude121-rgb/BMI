@@ -75,8 +75,8 @@ const Analytics: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Business Intelligence</h1>
-          <p className="text-gray-600">Comprehensive analytics and performance insights</p>
+          <h1 className="text-3xl font-bold text-gray-900">BI Board</h1>
+          <p className="text-gray-600">Comprehensive business intelligence and performance insights</p>
         </div>
         <div className="flex items-center space-x-3">
           <select
