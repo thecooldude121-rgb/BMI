@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useLocation } from 'wouter';
 import Fuse from 'fuse.js';
 import { 
   Plus, 
@@ -102,6 +103,7 @@ export default function NextGenLeadsModule() {
 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
+  const [, setLocation] = useLocation();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
 
@@ -189,7 +191,10 @@ export default function NextGenLeadsModule() {
       <div
         key={lead.id}
         className="bg-white border rounded-lg p-4 hover:shadow-md transition-shadow relative cursor-pointer"
-        onClick={() => window.location.href = `/crm/leads/${lead.id}`}
+        onClick={(e) => {
+          e.stopPropagation();
+          setLocation(`/crm/leads/${lead.id}`);
+        }}
       >
         {/* Multi-select checkbox */}
         <div className="absolute top-3 left-3 z-10">
@@ -367,7 +372,7 @@ export default function NextGenLeadsModule() {
 
             <button 
               className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium flex items-center"
-              onClick={() => window.location.href = '/crm/leads/new'}
+              onClick={() => setLocation('/crm/leads/new')}
             >
               <Plus className="w-4 h-4 mr-2" />
               New Lead
@@ -607,7 +612,7 @@ export default function NextGenLeadsModule() {
               {(!searchTerm && filterStatus === 'all' && filterSource === 'all') && (
                 <button 
                   className="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
-                  onClick={() => window.location.href = '/crm/leads/new'}
+                  onClick={() => setLocation('/crm/leads/new')}
                 >
                   Create Lead
                 </button>
