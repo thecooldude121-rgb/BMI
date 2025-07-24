@@ -5,6 +5,7 @@ import * as schema from "@shared/schema";
 import { z } from "zod";
 import { aiInsightsService } from "./aiService";
 import { meetingIntelligenceService } from "./meetingIntelligence";
+import { aiGrowthService, AccountAnalysisData } from "./services/aiGrowthService";
 
 // Helper function for error handling
 const handleError = (error: unknown, res: any) => {
@@ -818,6 +819,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI Growth Recommendations Routes
+  app.get("/api/accounts/:id/growth-recommendations", async (req, res) => {
+    try {
+      const accountId = req.params.id;
+      const recommendations = await storage.getAccountGrowthRecommendations(accountId);
+      res.json(recommendations);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/accounts/:id/growth-recommendations/generate", async (req, res) => {
+    try {
+      const accountId = req.params.id;
+      const analysis = await storage.generateGrowthRecommendations(accountId);
+      res.json(analysis);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/accounts/:id/growth-recommendations/:recommendationId/implement", async (req, res) => {
+    try {
+      const { id: accountId, recommendationId } = req.params;
+      const result = await storage.implementGrowthRecommendation(accountId, recommendationId);
+      res.json(result);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
   // Enhanced Activity Module Routes
   app.get("/api/activities/metrics", async (req, res) => {
     try {
@@ -1379,6 +1411,145 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const followUps = await storage.getMeetingFollowUps(req.params.id);
       res.json(followUps);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // AI Growth Recommendations Routes
+  app.get("/api/growth-recommendations", async (req, res) => {
+    try {
+      const accountId = req.query.accountId as string;
+      const recommendations = await storage.getGrowthRecommendations(accountId);
+      res.json(recommendations);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/growth-recommendations/:id", async (req, res) => {
+    try {
+      const recommendation = await storage.getGrowthRecommendation(req.params.id);
+      if (!recommendation) return res.status(404).json({ error: "Recommendation not found" });
+      res.json(recommendation);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/accounts/:accountId/generate-recommendations", async (req, res) => {
+    try {
+      const accountId = req.params.accountId;
+      const userId = req.body.userId || '1'; // TODO: Get from auth
+      
+      // Fetch comprehensive account data for AI analysis
+      const account = await storage.getAccount(accountId);
+      if (!account) return res.status(404).json({ error: "Account not found" });
+      
+      const deals = await storage.getDealsByAccount(accountId);
+      const activities = await storage.getActivitiesByAccount(accountId);
+      const contacts = await storage.getContactsByAccount(accountId);
+      const leads = await storage.getLeadsByAccount(accountId);
+      
+      // Calculate key metrics for AI analysis
+      const totalRevenue = deals
+        .filter(d => d.stage === 'closed-won')
+        .reduce((sum, d) => sum + Number(d.value || 0), 0);
+      
+      const avgDealSize = deals.length > 0 ? totalRevenue / deals.length : 0;
+      const dealCloseRate = deals.length > 0 
+        ? (deals.filter(d => d.stage === 'closed-won').length / deals.length) * 100 
+        : 0;
+      
+      const lastActivityDate = activities.length > 0 
+        ? new Date(Math.max(...activities.map(a => new Date(a.createdAt).getTime())))
+        : null;
+      
+      const engagementScore = Math.min(100, activities.length * 10); // Simple engagement scoring
+      const healthScore = Math.round((dealCloseRate + Math.min(engagementScore, 100)) / 2);
+      
+      const analysisData: AccountAnalysisData = {
+        account,
+        deals,
+        activities,
+        contacts,
+        leads,
+        totalRevenue,
+        avgDealSize,
+        dealCloseRate,
+        lastActivityDate,
+        engagementScore,
+        healthScore
+      };
+      
+      // Generate AI recommendations
+      const aiRecommendations = await aiGrowthService.generateGrowthRecommendations({
+        accountId,
+        analysisData,
+        userId
+      });
+      
+      // Save recommendations to database
+      const savedRecommendations = [];
+      for (const rec of aiRecommendations) {
+        const saved = await storage.createGrowthRecommendation(rec);
+        savedRecommendations.push(saved);
+      }
+      
+      res.json({
+        accountAnalysis: {
+          totalRevenue,
+          avgDealSize,
+          dealCloseRate,
+          healthScore,
+          engagementScore,
+          lastActivityDate
+        },
+        recommendations: savedRecommendations
+      });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.patch("/api/growth-recommendations/:id", async (req, res) => {
+    try {
+      const recommendation = await storage.updateGrowthRecommendation(req.params.id, req.body);
+      res.json(recommendation);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.patch("/api/growth-recommendations/:id/implement", async (req, res) => {
+    try {
+      const { userId, actualRevenue, actualTimeframe } = req.body;
+      const recommendation = await storage.implementGrowthRecommendation(
+        req.params.id, 
+        userId || '1', // TODO: Get from auth
+        actualRevenue,
+        actualTimeframe
+      );
+      res.json(recommendation);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.delete("/api/growth-recommendations/:id", async (req, res) => {
+    try {
+      const deleted = await storage.deleteGrowthRecommendation(req.params.id);
+      if (!deleted) return res.status(404).json({ error: "Recommendation not found" });
+      res.json({ success: true });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/accounts/:accountId/growth-potential", async (req, res) => {
+    try {
+      const analysis = await aiGrowthService.analyzeAccountGrowthPotential(req.params.accountId);
+      res.json(analysis);
     } catch (error) {
       handleError(error, res);
     }
