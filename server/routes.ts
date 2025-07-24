@@ -270,6 +270,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/deals/:id/activities", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const activities = await storage.getActivities();
+      const dealActivities = activities.filter(activity => activity.dealId === id);
+      res.json(dealActivities);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
   app.get("/api/deals/by-assignee/:assigneeId", async (req, res) => {
     try {
       const deals = await storage.getDealsByAssignee(req.params.assigneeId);
