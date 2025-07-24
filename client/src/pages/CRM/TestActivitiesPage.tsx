@@ -7,31 +7,35 @@ const TestActivitiesPage: React.FC = () => {
 
   useEffect(() => {
     // Direct fetch without any processing
+    console.log('🔥 TestActivitiesPage mounted, starting fetch...');
+    
     fetch('/api/activities')
       .then(response => {
-        console.log('Response:', response);
+        console.log('📡 Response status:', response.status);
+        console.log('📡 Response headers:', response.headers);
         return response.text(); // Get as text first
       })
       .then(text => {
-        console.log('Response text length:', text.length);
-        console.log('First 200 chars:', text.substring(0, 200));
+        console.log('📄 Response text length:', text.length);
+        console.log('📄 First 200 chars:', text.substring(0, 200));
         
         try {
           const json = JSON.parse(text);
-          console.log('Parsed JSON:', json);
-          console.log('Is Array?', Array.isArray(json));
-          console.log('Length:', json.length);
+          console.log('✅ Parsed JSON successfully');
+          console.log('📊 Is Array?', Array.isArray(json));
+          console.log('📊 Array Length:', Array.isArray(json) ? json.length : 'N/A');
           setData(json);
         } catch (e) {
-          console.error('JSON parse error:', e);
+          console.error('❌ JSON parse error:', e);
           setError('Failed to parse response as JSON');
         }
       })
       .catch(err => {
-        console.error('Fetch error:', err);
+        console.error('❌ Fetch error:', err);
         setError(String(err));
       })
       .finally(() => {
+        console.log('✅ Fetch complete');
         setLoading(false);
       });
   }, []);
