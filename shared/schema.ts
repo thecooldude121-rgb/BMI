@@ -18,6 +18,11 @@ export const activityTypeEnum = pgEnum('activity_type', ['call', 'email', 'meeti
 export const activityStatusEnum = pgEnum('activity_status', ['planned', 'completed', 'cancelled']);
 export const activityPriorityEnum = pgEnum('activity_priority', ['low', 'medium', 'high', 'urgent']);
 export const employeeStatusEnum = pgEnum('employee_status', ['active', 'inactive']);
+export const meetingStatusEnum = pgEnum('meeting_status', ['scheduled', 'ongoing', 'completed', 'cancelled']);
+export const meetingTypeEnum = pgEnum('meeting_type', ['call', 'video', 'in-person', 'presentation', 'demo']);
+export const participantStatusEnum = pgEnum('participant_status', ['invited', 'accepted', 'declined', 'tentative']);
+export const transcriptionStatusEnum = pgEnum('transcription_status', ['pending', 'processing', 'completed', 'failed']);
+export const insightTypeEnum = pgEnum('insight_type', ['action_item', 'sentiment', 'key_decision', 'follow_up', 'risk', 'opportunity']);
 
 // Core Tables
 export const users = pgTable("users", {
