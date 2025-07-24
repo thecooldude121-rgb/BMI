@@ -1,2 +1,2 @@
 [dev]
-command = "./start-server.sh"
+run = "npm run dev"
