@@ -1,6 +1,7 @@
 import { db } from "./db";
 import * as schema from "@shared/schema";
 import { eq, and, desc, sql, gte, lte } from "drizzle-orm";
+import OpenAI from "openai";
 
 export interface IStorage {
   // User methods
@@ -409,6 +410,22 @@ export class DatabaseStorage implements IStorage {
   // Deal methods
   async getDeals(): Promise<schema.Deal[]> {
     return await db.select().from(schema.deals);
+  }
+
+  async getDealsByAccount(accountId: string): Promise<schema.Deal[]> {
+    return await db.select().from(schema.deals)
+      .where(eq(schema.deals.accountId, accountId));
+  }
+
+  async getContactsByAccount(accountId: string): Promise<schema.Contact[]> {
+    return await db.select().from(schema.contacts)
+      .where(eq(schema.contacts.accountId, accountId));
+  }
+
+  async getActivitiesByAccount(accountId: string): Promise<schema.Activity[]> {
+    return await db.select().from(schema.activities)
+      .where(eq(schema.activities.accountId, accountId))
+      .orderBy(desc(schema.activities.createdAt));
   }
 
   async getDeal(id: string): Promise<schema.Deal | undefined> {
@@ -926,7 +943,6 @@ export class DatabaseStorage implements IStorage {
 
   private async generateAIRecommendations(accountData: any): Promise<any[]> {
     try {
-      const OpenAI = require('openai');
       const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
       const prompt = `You are an expert CRM growth strategist. Analyze the following account data and provide 4-6 personalized growth recommendations in JSON format.
