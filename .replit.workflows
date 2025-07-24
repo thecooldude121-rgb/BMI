@@ -1,2 +1,2 @@
 [dev]
-command = "node direct-server.js"
+command = "npm run start"

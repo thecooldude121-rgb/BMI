@@ -36,41 +36,49 @@ app.use((req, res, next) => {
   next();
 });
 
-(async () => {
-  const server = await registerRoutes(app);
+// Error handling middleware
+app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  const status = err.status || err.statusCode || 500;
+  const message = err.message || "Internal Server Error";
+  console.error('Server error:', err);
+  res.status(status).json({ message });
+});
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+// Start server setup
+async function startServer() {
+  try {
+    const server = await registerRoutes(app);
 
-    res.status(status).json({ message });
-    throw err;
-  });
-
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
-  }
-
-  // Use port 5000 for Replit preview (maps to external port 80)
-  const port = parseInt(process.env.PORT || '5000', 10);
-  const host = '0.0.0.0';
-  
-  server.listen(port, host, () => {
-    log(`serving on ${host}:${port}`);
-    console.log(`🚀 BMI Platform ready at http://${host}:${port}`);
-  }).on('error', (err: any) => {
-    console.error('Server error:', err);
-    if (err.code === 'EADDRINUSE') {
-      console.log(`Port ${port} is busy, trying port ${port + 1}`);
-      server.listen(port + 1, host, () => {
-        log(`serving on ${host}:${port + 1}`);
-        console.log(`🚀 BMI Platform ready at http://${host}:${port + 1}`);
-      });
+    // Setup static files or development server
+    if (process.env.NODE_ENV === "production") {
+      serveStatic(app);
+    } else {
+      await setupVite(app, server);
     }
-  });
-})();
+
+    // Use port from environment or default to 5000
+    const port = parseInt(process.env.PORT || '5000', 10);
+    const host = '0.0.0.0';
+    
+    server.listen(port, host, () => {
+      log(`serving on ${host}:${port}`);
+      console.log(`🚀 BMI Platform ready at http://${host}:${port}`);
+    }).on('error', (err: any) => {
+      console.error('Server startup error:', err);
+      if (err.code === 'EADDRINUSE') {
+        console.log(`Port ${port} is busy, trying port ${port + 1}`);
+        server.listen(port + 1, host, () => {
+          log(`serving on ${host}:${port + 1}`);
+          console.log(`🚀 BMI Platform ready at http://${host}:${port + 1}`);
+        });
+      } else {
+        process.exit(1);
+      }
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+startServer();
