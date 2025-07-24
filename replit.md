@@ -13,8 +13,8 @@ Preferred communication style: Simple, everyday language.
 ✓ Successfully integrated AI Meeting App as separate module within BMI platform
 ✓ Added comprehensive Meeting Intelligence module to navigation
 ✓ Created meeting upload, transcription, and analysis components
-✓ Integrated OpenAI Whisper for speech-to-text transcription  
-✓ Implemented GPT-4o for intelligent meeting analysis and insights
+✓ Integrated Google Gemini 1.5 Pro for speech-to-text transcription  
+✓ Implemented Gemini AI for intelligent meeting analysis and insights
 ✓ Configured file upload system supporting MP3, WAV, M4A, MP4 formats
 ✓ Built meeting dashboard with statistics and processing status
 ✓ Added meeting detail modal with insights display and transcript download
@@ -72,8 +72,8 @@ Preferred communication style: Simple, everyday language.
 - **Export Functionality**: Transcript download capabilities
 
 ### AI Integration
-- **Transcription**: OpenAI Whisper for accurate speech recognition
-- **Analysis**: GPT-4o for intelligent content analysis including:
+- **Transcription**: Google Gemini 1.5 Pro for accurate speech recognition
+- **Analysis**: Gemini AI for intelligent content analysis including:
   - Meeting summaries
   - Key outcomes and action items
   - Pain points identification
@@ -83,15 +83,15 @@ Preferred communication style: Simple, everyday language.
 
 1. **Upload**: User uploads audio file with meeting metadata
 2. **Storage**: File saved to local filesystem, meeting record created
-3. **Transcription**: Audio sent to OpenAI Whisper API
-4. **Analysis**: Transcript processed by GPT-4o for insights
+3. **Transcription**: Audio sent to Google Gemini API
+4. **Analysis**: Transcript processed by Gemini AI for insights
 5. **Storage Update**: Results saved to meeting record
 6. **Display**: Real-time status updates shown to user
 
 ## External Dependencies
 
 ### AI Services
-- **OpenAI API**: Whisper for transcription, GPT-4o for analysis
+- **Google Gemini API**: Gemini 1.5 Pro for transcription and analysis
 - **Configuration**: API key management through environment variables
 
 ### Frontend Libraries
