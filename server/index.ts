@@ -56,8 +56,8 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // Try port 3000 for better Replit compatibility
-  const port = parseInt(process.env.PORT || '3000', 10);
+  // Use port 5000 for Replit preview (maps to external port 80)
+  const port = parseInt(process.env.PORT || '5000', 10);
   const host = '0.0.0.0';
   
   server.listen(port, host, () => {
