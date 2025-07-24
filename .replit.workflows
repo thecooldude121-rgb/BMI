@@ -1,2 +1,2 @@
 [dev]
-command = "npm run dev"
+command = "node direct-server.js"
