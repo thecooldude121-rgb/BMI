@@ -22,7 +22,7 @@ export async function createSampleContacts() {
         email: 'sarah.johnson@techcorp.com',
         phone: '+1-555-0123',
         mobile: '+1-555-0223',
-        workPhone: '+1-555-0323',
+
         position: 'Chief Technology Officer',
         department: 'Technology',
         linkedinUrl: 'https://linkedin.com/in/sarah-johnson-tech',
@@ -44,7 +44,7 @@ export async function createSampleContacts() {
         email: 'michael.chen@company.com',
         phone: '+1-555-0124',
         mobile: '+1-555-0224',
-        workPhone: '+1-555-0324',
+
         position: 'VP Operations',
         department: 'Operations',
         linkedinUrl: 'https://linkedin.com/in/michael-chen',
@@ -66,7 +66,7 @@ export async function createSampleContacts() {
         email: 'emma.wilson@startup.com',
         phone: '+1-555-0125',
         mobile: '+1-555-0225',
-        workPhone: '+1-555-0325',
+
         position: 'CEO',
         department: 'Executive',
         linkedinUrl: 'https://linkedin.com/in/emma-wilson',

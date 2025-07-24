@@ -545,159 +545,30 @@ export async function seedDatabase() {
       sampleAccounts = existingAccounts.slice(0, 10);
     }
 
-    // Create sample contacts (limit to 10, only if less than 10 exist)
-    if (existingContacts.length < 10 && sampleAccounts.length > 0) {
-      const contactsToCreate = Math.min(10 - existingContacts.length, 10);
+    // Create simplified contacts with only basic required fields
+    if (existingContacts.length < 3 && sampleAccounts.length > 0) {
       const contactValues = [
-      {
-        accountId: sampleAccounts[0].id,
-        firstName: 'Sarah',
-        lastName: 'Johnson',
-        email: 'sarah.johnson@techcorp.com',
-        phone: '+1-555-0123',
-        mobile: '+1-555-0223',
-        workPhone: '+1-555-0323',
-        position: 'Chief Technology Officer',
-        department: 'Technology',
-        linkedinUrl: 'https://linkedin.com/in/sarah-johnson-tech',
-        isPrimary: true,
-        status: 'active' as const,
-        engagementStatus: 'active' as const,
-        persona: 'decision_maker' as const,
-        preferredChannel: 'email' as const,
-        relationshipScore: 85,
-        influenceLevel: 9,
-        decisionMakingPower: 10,
-        responseRate: '75.5',
-        ownerId: userId
-      },
-      {
-        accountId: sampleAccounts[1].id,
-        firstName: 'Michael',
-        lastName: 'Chen',
-        email: 'michael.chen@globalmfg.com',
-        phone: '+1-555-0124',
-        mobile: '+1-555-0224',
-        position: 'VP Operations',
-        department: 'Operations',
-        linkedinUrl: 'https://linkedin.com/in/michael-chen-ops',
-        isPrimary: true,
-        status: 'active',
-        ownerId: userId
-      },
-      {
-        accountId: sampleAccounts[2].id,
-        firstName: 'Emma',
-        lastName: 'Wilson',
-        email: 'emma.wilson@startupx.io',
-        phone: '+1-555-0125',
-        mobile: '+1-555-0225',
-        position: 'Chief Executive Officer',
-        department: 'Executive',
-        linkedinUrl: 'https://linkedin.com/in/emma-wilson-ceo',
-        isPrimary: true,
-        status: 'active',
-        ownerId: userId
-      },
-      {
-        accountId: sampleAccounts[3].id,
-        firstName: 'Dr. Robert',
-        lastName: 'Martinez',
-        email: 'robert.martinez@healthtech.com',
-        phone: '+1-555-0126',
-        mobile: '+1-555-0226',
-        position: 'Chief Medical Officer',
-        department: 'Medical',
-        linkedinUrl: 'https://linkedin.com/in/dr-robert-martinez',
-        isPrimary: true,
-        status: 'active',
-        ownerId: userId
-      },
-      {
-        accountId: sampleAccounts[4].id,
-        firstName: 'Lisa',
-        lastName: 'Thompson',
-        email: 'lisa.thompson@greenenergy.com',
-        phone: '+1-555-0127',
-        mobile: '+1-555-0227',
-        position: 'VP of Business Development',
-        department: 'Sales',
-        linkedinUrl: 'https://linkedin.com/in/lisa-thompson-energy',
-        isPrimary: true,
-        status: 'active',
-        ownerId: userId
-      },
-      {
-        accountId: sampleAccounts[5]?.id || sampleAccounts[0].id,
-        firstName: 'David',
-        lastName: 'Anderson',
-        email: 'david.anderson@dataflow.com',
-        phone: '+1-555-0128',
-        mobile: '+1-555-0228',
-        position: 'Chief Data Officer',
-        department: 'Technology',
-        linkedinUrl: 'https://linkedin.com/in/david-anderson-data',
-        isPrimary: true,
-        status: 'active',
-        ownerId: userId
-      },
-      {
-        accountId: sampleAccounts[6]?.id || sampleAccounts[0].id,
-        firstName: 'Jennifer',
-        lastName: 'Lee',
-        email: 'jennifer.lee@edutech.com',
-        phone: '+1-555-0129',
-        mobile: '+1-555-0229',
-        position: 'VP of Product',
-        department: 'Product',
-        linkedinUrl: 'https://linkedin.com/in/jennifer-lee-edutech',
-        isPrimary: true,
-        status: 'active',
-        ownerId: userId
-      },
-      {
-        accountId: sampleAccounts[7]?.id || sampleAccounts[0].id,
-        firstName: 'Mark',
-        lastName: 'Williams',
-        email: 'mark.williams@translogistics.com',
-        phone: '+1-555-0130',
-        mobile: '+1-555-0230',
-        position: 'Director of Operations',
-        department: 'Operations',
-        linkedinUrl: 'https://linkedin.com/in/mark-williams-logistics',
-        isPrimary: true,
-        status: 'active',
-        ownerId: userId
-      },
-      {
-        accountId: sampleAccounts[8]?.id || sampleAccounts[0].id,
-        firstName: 'Dr. Anna',
-        lastName: 'Rodriguez',
-        email: 'anna.rodriguez@bioinnovate.com',
-        phone: '+1-555-0131',
-        mobile: '+1-555-0231',
-        position: 'Research Director',
-        department: 'Research',
-        linkedinUrl: 'https://linkedin.com/in/dr-anna-rodriguez-bio',
-        isPrimary: true,
-        status: 'active',
-        ownerId: userId
-      },
-      {
-        accountId: sampleAccounts[9]?.id || sampleAccounts[0].id,
-        firstName: 'Sophie',
-        lastName: 'Brown',
-        email: 'sophie.brown@fashionforward.com',
-        phone: '+1-555-0132',
-        mobile: '+1-555-0232',
-        position: 'Creative Director',
-        department: 'Design',
-        linkedinUrl: 'https://linkedin.com/in/sophie-brown-fashion',
-        isPrimary: true,
-        status: 'active',
-        ownerId: userId
-      }
-      ].slice(0, contactsToCreate);
+        {
+          firstName: 'Sarah',
+          lastName: 'Johnson',
+          email: 'sarah.johnson@techcorp.com',
+          phone: '+1-555-0123',
+          position: 'CTO',
+          isPrimary: true,
+          ownerId: userId,
+          accountId: sampleAccounts[0].id
+        },
+        {
+          firstName: 'Michael',
+          lastName: 'Chen',
+          email: 'michael.chen@company.com',
+          phone: '+1-555-0124',
+          position: 'VP Operations',
+          isPrimary: true,
+          ownerId: userId,
+          accountId: sampleAccounts[1]?.id || sampleAccounts[0].id
+        }
+      ];
       
       sampleContacts = await db.insert(schema.contacts).values(contactValues).returning();
     } else {
