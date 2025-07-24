@@ -1,9 +1,9 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Note that the newest Gemini model series is "gemini-2.5-flash" or "gemini-2.5-pro"
-const genai = new GoogleGenAI({ 
-  apiKey: process.env.GEMINI_API_KEY || ""
-});
+const genai = new GoogleGenerativeAI(
+  process.env.GEMINI_API_KEY || ""
+);
 
 export interface SalesInsight {
   id: string;
@@ -94,56 +94,13 @@ Analyze the provided CRM data and respond with JSON only in this exact structure
   }
 }`;
 
-      const response = await genai.models.generateContent({
-        model: "gemini-2.5-pro",
-        config: {
-          systemInstruction: systemPrompt,
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: "object",
-            properties: {
-              insights: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    id: { type: "string" },
-                    type: { type: "string" },
-                    title: { type: "string" },
-                    description: { type: "string" },
-                    impact: { type: "string" },
-                    actionable: { type: "boolean" },
-                    data: { 
-                      type: "object",
-                      properties: {
-                        value: { type: "number" },
-                        trend: { type: "string" },
-                        change: { type: "string" }
-                      }
-                    }
-                  },
-                  required: ["id", "type", "title", "description", "impact", "actionable"]
-                }
-              },
-              summary: { type: "string" },
-              keyMetrics: {
-                type: "object",
-                properties: {
-                  conversionRate: { type: "number" },
-                  averageDealSize: { type: "number" },
-                  salesVelocity: { type: "number" },
-                  pipelineHealth: { type: "number" }
-                },
-                required: ["conversionRate", "averageDealSize", "salesVelocity", "pipelineHealth"]
-              }
-            },
-            required: ["insights", "summary", "keyMetrics"]
-          }
-        },
-        contents: prompt,
+      const model = genai.getGenerativeModel({ 
+        model: "gemini-1.5-pro",
+        systemInstruction: systemPrompt
       });
 
-      const analysisResult = JSON.parse(response.text || '{}');
+      const response = await model.generateContent(prompt);
+      const analysisResult = JSON.parse(response.response.text() || '{}');
       
       // Add timestamps and IDs if missing
       if (analysisResult.insights) {
