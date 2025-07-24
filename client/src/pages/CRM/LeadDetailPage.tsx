@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useLocation } from 'wouter';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowLeft, 
   Edit, 
@@ -323,9 +324,20 @@ export default function LeadDetailPage() {
   const statusConfig = LEAD_STATUSES.find(s => s.id === (lead as Lead)?.status) || LEAD_STATUSES[0];
 
   return (
-    <div className="h-full flex flex-col bg-gray-50">
+    <motion.div 
+      className="h-full flex flex-col bg-gray-50"
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+    >
       {/* Header */}
-      <div className="bg-white border-b px-6 py-4">
+      <motion.div 
+        className="bg-white border-b px-6 py-4"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+      >
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
@@ -372,9 +384,15 @@ export default function LeadDetailPage() {
             </button>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="flex-1 flex overflow-hidden">
+      {/* Content */}
+      <motion.div 
+        className="flex-1 overflow-auto p-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.2 }}
+      >
         {/* Main Content */}
         <div className="flex-1 overflow-auto">
           <div className="p-6">
@@ -610,7 +628,7 @@ export default function LeadDetailPage() {
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
