@@ -12,6 +12,7 @@ import WorkingActivitiesPage from './WorkingActivitiesPage';
 import TestActivitiesPage from './TestActivitiesPage';
 import TasksPage from './TasksPage';
 import CRMTestPage from './CRMTestPage';
+import SimpleTest from './SimpleTest';
 
 const CRMModule = () => {
   return (
@@ -35,6 +36,9 @@ const CRMModule = () => {
         </Route>
         <Route path="/crm/test">
           <CRMTestPage />
+        </Route>
+        <Route path="/crm/simple">
+          <SimpleTest />
         </Route>
         <Route path="/crm">
           <CRMGamificationPage key="crm-gamification" />
