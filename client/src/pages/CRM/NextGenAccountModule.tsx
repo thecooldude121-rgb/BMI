@@ -211,6 +211,13 @@ const NextGenAccountModule: React.FC = () => {
               <Upload className="w-4 h-4 mr-2" />
               Import
             </button>
+            <button 
+              onClick={() => window.location.href = '/crm/accounts/health'}
+              className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors flex items-center"
+            >
+              <Brain className="w-4 h-4 mr-2" />
+              Health Dashboard
+            </button>
             <button className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors flex items-center">
               <Settings className="w-4 h-4 mr-2" />
               Configure
