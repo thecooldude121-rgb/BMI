@@ -1,0 +1,89 @@
+Build a next-generation Activities Module for our CRM platform. The module must deeply integrate with the Leads and Deals modules (already developed), ensuring a unified view of all business interactions. It should introduce features, workflows, and analytics that address the gaps of top CRMs and set a new standard for usability and productivity.
+
+1. Unified Activities Dashboard
+Central dashboard showing all activities (tasks, calls, meetings, emails, SMS, custom types).
+
+Filter and search by type, owner, due date, related lead/deal/account, priority, status.
+
+Widgets highlight “My Activities,” team workloads, unresolved or overdue, upcoming for the week, and recent completions.
+
+Allow custom saved views per user or team.
+
+2. Bi-Directional Integration
+Link every activity to Leads, Deals, Accounts, and Contacts.
+
+From the Activities dashboard, instantly navigate to the full profile or detail page of any related entity.
+
+Display a unified activity timeline in the details view of Leads, Deals, Accounts that auto-syncs and color-codes all associated activities.
+
+Enable creating a new activity directly from any lead or deal—context is pre-filled.
+
+3. Advanced Activity Types & Details
+Support core types: Task, Call, Meeting, Email, WhatsApp/SMS, Note, LinkedIn Touch, plus custom user-defined types.
+
+Each activity captures subject/title, description, due and complete dates, owner, outcome/result, status, priority, participants, attachments, recurrence, and next action.
+
+Allow recurring/sequence rules (e.g., “call every two weeks until deal closes”).
+
+Fast, in-line logging and mark-complete from any view.
+
+4. AI-Powered Automation & Insights
+Smart reminders: proactive, AI-driven “next best action” and overdue notifications.
+
+Workflow triggers to auto-create activities based on CRM events (e.g., move deal to “Negotiation” = schedule next call).
+
+AI-generated meeting and call summaries, automatic follow-up task suggestions, and assignment recommendations.
+
+5. Collaboration & Ownership
+Internal comments and @mentions on all activities, visible in the feed and timeline.
+
+Assign activities or share with followers/teams. Permission control for sensitive items.
+
+Full audit/change log for every activity (assignments, completions, edits).
+
+6. Native Integration & Logging
+Two-way sync with Gmail/Outlook and Google/Outlook Calendar for meetings and emails.
+
+Auto-log email threads, call histories, and meeting notes; include integration for click-to-call and recording storage.
+
+Third-party integration support via API/webhooks for Slack, WhatsApp, and LinkedIn.
+
+7. Analytics & Reporting
+Dashboards show activity volume/completion rates, efficiency, bottlenecks, and type mix by user/pipeline/deal.
+
+Conversion impact: correlate activity touchpoints with conversion rates and pipeline progress.
+
+Exportable activity reports and visualizations.
+
+8. User Experience
+One-click activity creation and completion from anywhere.
+
+Real-time, color-coded status (open, in progress, overdue, completed, recurring).
+
+Bulk activity actions: assign, reassign, snooze, complete, or comment.
+
+Fully responsive and mobile-ready; fast UI for field reps.
+
+9. Schema & API Requirements
+Entities for Activity, ActivityType, Timeline, AuditLog, with foreign key relationships to Lead, Deal, Account, Contact.
+
+Complete REST CRUD for activities, bulk editing, reporting endpoints, and webhook/event triggers for automation.
+
+Endpoints and code samples for seamless linkages: activity ↔ lead, activity ↔ deal, activity timeline fetch.
+
+10. Code & Setup
+Return React frontend with Material UI or Ant Design components for all dashboards, timelines, editing, and analytics.
+
+Node.js+Express (or Python FastAPI) backend, with clean code, code comments, and extension points.
+
+Setup instructions and code examples for activity-deal and activity-lead relationship management.
+
+Modular project ready for new activity types and expanded workflow automation.
+
+After generation, ensure that:
+
+All activities across CRM are instantly visible and actionable.
+
+Every lead or deal's detail page shows the full chronological, filterable activity timeline.
+
+Activity creation is frictionless and context-aware—pushing collaboration, automation, and reporting far ahead of leading CRM platforms

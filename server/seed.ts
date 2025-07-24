@@ -2,6 +2,383 @@ import { db } from "./db";
 import * as schema from "@shared/schema";
 import { eq } from "drizzle-orm";
 
+async function seedEnhancedActivities(userId: string, accountIds: string[], contactIds: string[], leadIds: string[], dealIds: string[]) {
+  console.log("🎯 Starting enhanced activities seeding...");
+  
+  // Check if activities already exist
+  const existingActivities = await db.select().from(schema.activities);
+  if (existingActivities.length >= 20) {
+    console.log("✅ Activities already seeded");
+    return;
+  }
+  
+  const enhancedActivities = [
+    // Lead follow-up activities
+    {
+      subject: "Initial Outreach - TechCorp Lead",
+      type: "call",
+      direction: "outbound",
+      status: "completed",
+      priority: "high",
+      description: "Cold call to introduce our enterprise solution",
+      outcome: "Positive response, scheduled demo meeting",
+      duration: 15,
+      scheduledAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      completedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      createdBy: userId,
+      assignedTo: userId,
+      leadId: leadIds[0],
+      relatedToType: "lead",
+      relatedToId: leadIds[0],
+      callType: "outgoing",
+      phoneNumber: "+1-555-0123",
+      callResult: "answered",
+      source: "manual",
+      tags: ["lead-qualification", "initial-contact"]
+    },
+    {
+      subject: "Demo Presentation - Enterprise Solution",
+      type: "meeting",
+      direction: "outbound", 
+      status: "completed",
+      priority: "high",
+      description: "Product demonstration focusing on enterprise features",
+      outcome: "Strong interest shown, proposal requested",
+      duration: 45,
+      scheduledAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+      completedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+      createdBy: userId,
+      assignedTo: userId,
+      leadId: leadIds[0],
+      dealId: dealIds[0],
+      relatedToType: "deal",
+      relatedToId: dealIds[0],
+      meetingType: "video",
+      location: "Zoom Meeting",
+      attendees: [
+        { name: "John Smith", email: "john@techcorp.com", role: "CTO" },
+        { name: "Sarah Johnson", email: "sarah@ourcompany.com", role: "Sales Rep" }
+      ],
+      tags: ["demo", "enterprise", "high-value"]
+    },
+    {
+      subject: "Proposal Follow-up Email",
+      type: "email",
+      direction: "outbound",
+      status: "completed",
+      priority: "medium",
+      description: "Follow-up email with detailed proposal attached",
+      outcome: "Email opened, proposal downloaded",
+      scheduledAt: new Date(Date.now() - 12 * 60 * 60 * 1000),
+      completedAt: new Date(Date.now() - 12 * 60 * 60 * 1000),
+      createdBy: userId,
+      assignedTo: userId,
+      dealId: dealIds[0],
+      contactId: contactIds[0],
+      relatedToType: "deal",
+      relatedToId: dealIds[0],
+      emailSubject: "Enterprise Solution Proposal - TechCorp",
+      emailTo: "john@techcorp.com",
+      emailFrom: "sarah@ourcompany.com",
+      tags: ["proposal", "follow-up", "email-campaign"]
+    },
+    // Account management activities
+    {
+      subject: "Quarterly Business Review - GlobalMFG",
+      type: "meeting",
+      direction: "outbound",
+      status: "in_progress",
+      priority: "high",
+      description: "Quarterly review of account performance and future planning",
+      scheduledAt: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+      createdBy: userId,
+      assignedTo: userId,
+      accountId: accountIds[1],
+      relatedToType: "account",
+      relatedToId: accountIds[1],
+      meetingType: "in-person",
+      location: "Global Manufacturing HQ, Detroit",
+      tags: ["qbr", "account-management", "strategic"]
+    },
+    {
+      subject: "Support Ticket Resolution Follow-up",
+      type: "task",
+      direction: "inbound",
+      status: "open",
+      priority: "medium",
+      description: "Follow up on recent support ticket resolution and ensure customer satisfaction",
+      dueDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+      createdBy: userId,
+      assignedTo: userId,
+      accountId: accountIds[1],
+      contactId: contactIds[1],
+      relatedToType: "account",
+      relatedToId: accountIds[1],
+      taskStatus: "pending",
+      tags: ["support", "customer-success", "follow-up"]
+    },
+    // Additional 15 more activities for comprehensive testing...
+    {
+      subject: "LinkedIn Connection Request",
+      type: "linkedin",
+      direction: "outbound",
+      status: "completed",
+      priority: "low",
+      description: "Connect with prospect on LinkedIn with personalized message",
+      outcome: "Connection accepted, engaged with content",
+      completedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+      createdBy: userId,
+      assignedTo: userId,
+      leadId: leadIds[2] || leadIds[0],
+      relatedToType: "lead",
+      relatedToId: leadIds[2] || leadIds[0],
+      tags: ["social-selling", "linkedin", "lead-nurturing"]
+    },
+    {
+      subject: "Contract Negotiation Call",
+      type: "call",
+      direction: "outbound",
+      status: "completed",
+      priority: "critical",
+      description: "Discussion on contract terms and pricing negotiations",
+      outcome: "Agreed on revised terms, contract pending legal review",
+      duration: 60,
+      scheduledAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+      completedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+      createdBy: userId,
+      assignedTo: userId,
+      dealId: dealIds[1] || dealIds[0],
+      accountId: accountIds[0],
+      relatedToType: "deal",
+      relatedToId: dealIds[1] || dealIds[0],
+      callType: "outgoing",
+      phoneNumber: "+1-555-0124",
+      callResult: "answered",
+      tags: ["negotiation", "contract", "legal-review"]
+    },
+    {
+      subject: "Technical Requirements Assessment",
+      type: "meeting",
+      direction: "outbound",
+      status: "open",
+      priority: "high",
+      description: "Deep dive into technical requirements and integration needs",
+      scheduledAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+      createdBy: userId,
+      assignedTo: userId,
+      dealId: dealIds[2] || dealIds[0],
+      contactId: contactIds[2] || contactIds[0],
+      relatedToType: "deal",
+      relatedToId: dealIds[2] || dealIds[0],
+      meetingType: "video",
+      location: "Microsoft Teams",
+      attendees: [
+        { name: "Tech Lead", email: "tech@prospect.com", role: "Technical Lead" },
+        { name: "Solutions Engineer", email: "se@ourcompany.com", role: "Solutions Engineer" }
+      ],
+      tags: ["technical", "requirements", "integration"]
+    },
+    {
+      subject: "Implementation Kickoff Meeting",
+      type: "meeting",
+      direction: "outbound",
+      status: "completed",
+      priority: "high",
+      description: "Project kickoff with implementation team and customer stakeholders",
+      outcome: "Project timeline approved, team introductions completed",
+      duration: 90,
+      scheduledAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+      completedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+      createdBy: userId,
+      assignedTo: userId,
+      accountId: accountIds[2] || accountIds[0],
+      relatedToType: "account",
+      relatedToId: accountIds[2] || accountIds[0],
+      meetingType: "video",
+      location: "Zoom Meeting",
+      tags: ["implementation", "kickoff", "project-management"]
+    },
+    {
+      subject: "Cold Email Campaign - Healthcare Prospects",
+      type: "email",
+      direction: "outbound",
+      status: "in_progress",
+      priority: "medium",
+      description: "Targeted email campaign to healthcare industry prospects",
+      scheduledAt: new Date(Date.now() + 6 * 60 * 60 * 1000),
+      createdBy: userId,
+      assignedTo: userId,
+      relatedToType: "lead",
+      relatedToId: leadIds[3] || leadIds[0],
+      emailSubject: "Transforming Healthcare Operations with Smart Technology",
+      emailTo: "prospects@healthcare.com",
+      emailFrom: "sales@ourcompany.com",
+      tags: ["prospecting", "healthcare", "email-campaign"]
+    },
+    {
+      subject: "Industry Conference Follow-up",
+      type: "task",
+      direction: "outbound",
+      status: "open",
+      priority: "medium",
+      description: "Follow up with contacts met at the recent industry conference",
+      dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+      createdBy: userId,
+      assignedTo: userId,
+      taskStatus: "pending",
+      tags: ["conference", "networking", "follow-up"]
+    },
+    {
+      subject: "Competitive Analysis Research",
+      type: "task",
+      direction: "inbound",
+      status: "completed",
+      priority: "medium",
+      description: "Research competitor pricing and feature comparison",
+      outcome: "Compiled comprehensive competitive analysis report",
+      completedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      createdBy: userId,
+      assignedTo: userId,
+      taskStatus: "completed",
+      tags: ["competitive-intelligence", "research", "analysis"]
+    },
+    {
+      subject: "Customer Satisfaction Survey Follow-up",
+      type: "call",
+      direction: "outbound",
+      status: "completed",
+      priority: "medium",
+      description: "Follow up on recent customer satisfaction survey results",
+      outcome: "Discussed improvement areas, customer satisfied with response",
+      duration: 25,
+      scheduledAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
+      completedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
+      createdBy: userId,
+      assignedTo: userId,
+      accountId: accountIds[3] || accountIds[0],
+      contactId: contactIds[3] || contactIds[0],
+      relatedToType: "account",
+      relatedToId: accountIds[3] || accountIds[0],
+      callType: "outgoing",
+      callResult: "answered",
+      tags: ["customer-satisfaction", "feedback", "improvement"]
+    },
+    {
+      subject: "MQL Qualification Call",
+      type: "call",
+      direction: "outbound",
+      status: "open",
+      priority: "high",
+      description: "Qualify marketing qualified lead and assess sales readiness",
+      scheduledAt: new Date(Date.now() + 4 * 60 * 60 * 1000),
+      createdBy: userId,
+      assignedTo: userId,
+      leadId: leadIds[4] || leadIds[0],
+      relatedToType: "lead",
+      relatedToId: leadIds[4] || leadIds[0],
+      callType: "outgoing",
+      phoneNumber: "+1-555-0199",
+      tags: ["mql", "qualification", "lead-scoring"]
+    },
+    {
+      subject: "Partner Channel Discussion",
+      type: "meeting",
+      direction: "outbound",
+      status: "completed",
+      priority: "medium",
+      description: "Explore partnership opportunities and channel strategy",
+      outcome: "Identified mutual opportunities, next steps defined",
+      duration: 45,
+      scheduledAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000),
+      completedAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000),
+      createdBy: userId,
+      assignedTo: userId,
+      meetingType: "in-person",
+      location: "Partner Office",
+      tags: ["partnership", "channel", "strategy"]
+    },
+    {
+      subject: "Contract Renewal Discussion",
+      type: "meeting",
+      direction: "outbound",
+      status: "open",
+      priority: "critical",
+      description: "Discuss contract renewal and potential expansion opportunities",
+      scheduledAt: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+      createdBy: userId,
+      assignedTo: userId,
+      accountId: accountIds[4] || accountIds[0],
+      contactId: contactIds[4] || contactIds[0],
+      relatedToType: "account",
+      relatedToId: accountIds[4] || accountIds[0],
+      meetingType: "video",
+      location: "Google Meet",
+      tags: ["renewal", "expansion", "retention"]
+    },
+    {
+      subject: "Product Training Session",
+      type: "training",
+      direction: "outbound",
+      status: "completed",
+      priority: "medium",
+      description: "Provide product training to customer team",
+      outcome: "Training completed successfully, team confident with product",
+      duration: 120,
+      scheduledAt: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
+      completedAt: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
+      createdBy: userId,
+      assignedTo: userId,
+      accountId: accountIds[1] || accountIds[0],
+      relatedToType: "account",
+      relatedToId: accountIds[1] || accountIds[0],
+      meetingType: "video",
+      location: "Training Platform",
+      tags: ["training", "education", "onboarding"]
+    },
+    {
+      subject: "LinkedIn Article Engagement",
+      type: "linkedin",
+      direction: "outbound",
+      status: "completed",
+      priority: "low",
+      description: "Engage with prospect's LinkedIn content and share relevant insights",
+      outcome: "Meaningful conversation started, relationship building in progress",
+      completedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+      createdBy: userId,
+      assignedTo: userId,
+      leadId: leadIds[1] || leadIds[0],
+      relatedToType: "lead",
+      relatedToId: leadIds[1] || leadIds[0],
+      tags: ["social-selling", "engagement", "relationship-building"]
+    },
+    {
+      subject: "Urgent: Contract Signature Required",
+      type: "task",
+      direction: "outbound",
+      status: "overdue",
+      priority: "urgent",
+      description: "Follow up on pending contract signature - deal at risk",
+      dueDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+      createdBy: userId,
+      assignedTo: userId,
+      dealId: dealIds[3] || dealIds[0],
+      relatedToType: "deal",
+      relatedToId: dealIds[3] || dealIds[0],
+      taskStatus: "pending",
+      tags: ["urgent", "contract", "at-risk", "signature"]
+    }
+  ];
+  
+  // Insert activities in batches to avoid potential issues
+  const batchSize = 5;
+  for (let i = 0; i < enhancedActivities.length; i += batchSize) {
+    const batch = enhancedActivities.slice(i, i + batchSize);
+    await db.insert(schema.activities).values(batch);
+  }
+  
+  console.log(`✅ Created ${enhancedActivities.length} enhanced activities`);
+}
+
 export async function seedDatabase() {
   try {
     console.log("🌱 Starting database seeding...");
@@ -732,38 +1109,14 @@ export async function seedDatabase() {
       }
     ]);
 
-    // Create sample activities
-    await db.insert(schema.activities).values([
-      {
-        subject: 'Initial Discovery Call',
-        type: 'call',
-        direction: 'outbound',
-        status: 'completed',
-        priority: 'medium',
-        description: 'Initial discovery call with TechCorp team',
-        duration: 45,
-        completedAt: new Date('2025-01-20'),
-        createdBy: userId,
-        assignedTo: userId,
-        leadId: sampleLeads[0].id,
-        dealId: sampleDeals[0].id,
-        contactId: sampleContacts[0].id
-      },
-      {
-        subject: 'Proposal Email',
-        type: 'email',
-        direction: 'outbound',
-        status: 'completed',
-        priority: 'high',
-        description: 'Sent detailed proposal to manufacturing client',
-        completedAt: new Date('2025-01-21'),
-        createdBy: userId,
-        assignedTo: userId,
-        leadId: sampleLeads[1].id,
-        dealId: sampleDeals[1].id,
-        contactId: sampleContacts[1].id
-      }
-    ]);
+    // Create enhanced activities for the next-generation Activities Module
+    await seedEnhancedActivities(
+      userId, 
+      sampleAccounts.map(a => a.id), 
+      sampleContacts.map(c => c.id), 
+      sampleLeads.map(l => l.id), 
+      sampleDeals.map(d => d.id)
+    );
 
     // Create sample meeting
     await db.insert(schema.meetings).values([

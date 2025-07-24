@@ -7,6 +7,7 @@ import NextGenAccountModule from './NextGenAccountModule';
 import AccountDetailPage from './AccountDetailPage';
 import AccountHealthDashboard from './AccountHealthDashboard';
 import SimpleAdvancedDealsModule from './SimpleAdvancedDealsModule';
+import NextGenActivitiesModule from './NextGenActivitiesModule';
 import WorkingActivitiesPage from './WorkingActivitiesPage';
 import DiagnosticPage from './DiagnosticPage';
 
@@ -28,7 +29,7 @@ const CRMModule = () => {
           <SimpleAdvancedDealsModule />
         </Route>
         <Route path="/crm/activities">
-          <WorkingActivitiesPage />
+          <NextGenActivitiesModule />
         </Route>
         <Route path="/crm/gamification">
           <div className="p-6">

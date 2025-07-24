@@ -16,9 +16,12 @@ export const dealTypeEnum = pgEnum('deal_type', ['new_business', 'existing_busin
 export const dealHealthEnum = pgEnum('deal_health', ['healthy', 'at_risk', 'critical', 'hot_opportunity', 'stalled']);
 export const taskStatusEnum = pgEnum('task_status', ['pending', 'in-progress', 'completed']);
 export const taskPriorityEnum = pgEnum('task_priority', ['low', 'medium', 'high']);
-export const activityTypeEnum = pgEnum('activity_type', ['call', 'email', 'meeting', 'task', 'note', 'demo', 'proposal']);
-export const activityStatusEnum = pgEnum('activity_status', ['planned', 'completed', 'cancelled']);
-export const activityPriorityEnum = pgEnum('activity_priority', ['low', 'medium', 'high', 'urgent']);
+// Enhanced Activity Module Enums
+export const activityTypeEnum = pgEnum('activity_type', ['task', 'call', 'meeting', 'email', 'sms', 'whatsapp', 'note', 'linkedin', 'demo', 'proposal', 'follow_up', 'presentation', 'training', 'webinar', 'custom']);
+export const activityStatusEnum = pgEnum('activity_status', ['open', 'in_progress', 'completed', 'overdue', 'cancelled', 'on_hold', 'recurring']);
+export const activityPriorityEnum = pgEnum('activity_priority', ['low', 'medium', 'high', 'urgent', 'critical']);
+export const activityRecurrenceEnum = pgEnum('activity_recurrence', ['none', 'daily', 'weekly', 'monthly', 'quarterly', 'yearly', 'custom']);
+export const activityOutcomeEnum = pgEnum('activity_outcome', ['successful', 'no_answer', 'voicemail', 'busy', 'wrong_number', 'bounced', 'unsubscribed', 'interested', 'not_interested', 'rescheduled', 'completed', 'partial', 'cancelled']);
 export const employeeStatusEnum = pgEnum('employee_status', ['active', 'inactive']);
 export const meetingStatusEnum = pgEnum('meeting_status', ['scheduled', 'ongoing', 'completed', 'cancelled']);
 export const meetingTypeEnum = pgEnum('meeting_type', ['call', 'video', 'in-person', 'presentation', 'demo']);
@@ -33,7 +36,6 @@ export const dealSourceEnum = pgEnum('deal_source', ['inbound', 'outbound', 'ref
 export const leadQualificationEnum = pgEnum('lead_qualification', ['MQL', 'SQL', 'SAL', 'opportunity', 'customer']);
 export const leadChannelEnum = pgEnum('lead_channel', ['organic_search', 'paid_search', 'social_media', 'email', 'direct', 'referral', 'content', 'webinar', 'event']);
 export const leadSentimentEnum = pgEnum('lead_sentiment', ['positive', 'neutral', 'negative', 'unknown']);
-export const activityOutcomeEnum = pgEnum('activity_outcome', ['successful', 'no_answer', 'voicemail', 'busy', 'wrong_number', 'bounced', 'unsubscribed', 'interested', 'not_interested']);
 
 // Core Tables
 export const users = pgTable("users", {
@@ -452,12 +454,12 @@ export const tasks = pgTable("tasks", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const activities = pgTable("activities", {
+export const activities: any = pgTable("activities", {
   id: uuid("id").primaryKey().defaultRandom(),
   subject: text("subject").notNull(),
   type: activityTypeEnum("type").notNull(),
   direction: text("direction").notNull().default('outbound'), // inbound, outbound
-  status: activityStatusEnum("status").notNull().default('planned'),
+  status: activityStatusEnum("status").notNull().default('open'),
   priority: activityPriorityEnum("priority").notNull().default('medium'),
   description: text("description"),
   outcome: text("outcome"),
@@ -500,8 +502,63 @@ export const activities = pgTable("activities", {
   taskStatus: text("task_status"), // pending, in-progress, completed
   dueDate: timestamp("due_date"),
   
+  // Enhanced Activity Module Fields
+  recurrence: activityRecurrenceEnum("recurrence").default('none'),
+  recurrenceRule: text("recurrence_rule"), // JSON string for complex recurrence patterns
+  parentActivityId: uuid("parent_activity_id"), // For recurring activities
+  nextAction: text("next_action"), // AI-suggested next best action
+  attachments: jsonb("attachments"), // Array of attachment objects
+  tags: text("tags").array(), // Activity tags
+  followers: text("followers").array(), // Array of user IDs following this activity
+  externalId: text("external_id"), // For integration with external systems
+  source: text("source").default('manual'), // manual, email, calendar, integration
+  confidence: integer("confidence"), // AI confidence score for automated activities
+  automationTriggered: boolean("automation_triggered").default(false),
+  reminderSent: boolean("reminder_sent").default(false),
+  lastReminderAt: timestamp("last_reminder_at"),
+  
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Activity Comments and Collaboration
+export const activityComments = pgTable("activity_comments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  activityId: uuid("activity_id").references(() => activities.id).notNull(),
+  authorId: uuid("author_id").references(() => users.id).notNull(),
+  content: text("content").notNull(),
+  mentions: text("mentions").array(), // Array of user IDs mentioned in comment
+  isInternal: boolean("is_internal").default(true), // Internal team comment vs client-visible
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Activity Audit Log
+export const activityAuditLog = pgTable("activity_audit_log", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  activityId: uuid("activity_id").references(() => activities.id).notNull(),
+  userId: uuid("user_id").references(() => users.id).notNull(),
+  action: text("action").notNull(), // created, updated, completed, deleted, assigned, etc.
+  oldValues: jsonb("old_values"), // Previous field values
+  newValues: jsonb("new_values"), // New field values
+  changedFields: text("changed_fields").array(), // Array of field names that changed
+  timestamp: timestamp("timestamp").notNull().defaultNow(),
+});
+
+// Activity Templates for automation
+export const activityTemplates = pgTable("activity_templates", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  type: activityTypeEnum("type").notNull(),
+  description: text("description"),
+  subjectTemplate: text("subject_template").notNull(),
+  descriptionTemplate: text("description_template"),
+  priority: activityPriorityEnum("priority").default('medium'),
+  estimatedDuration: integer("estimated_duration"), // in minutes
+  tags: text("tags").array(),
+  isActive: boolean("is_active").default(true),
+  createdBy: uuid("created_by").references(() => users.id).notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 // AI Meeting Intelligence Tables

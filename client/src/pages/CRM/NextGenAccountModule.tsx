@@ -369,9 +369,7 @@ const NextGenAccountModule: React.FC = () => {
               </button>
             </div>
             
-            <button className="text-gray-600 hover:text-gray-900 p-2">
-              <MoreHorizontal className="w-4 h-4" />
-            </button>
+
           </div>
         </div>
 
