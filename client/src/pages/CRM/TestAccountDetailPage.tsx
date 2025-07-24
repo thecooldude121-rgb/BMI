@@ -1,57 +1,30 @@
 import React from 'react';
 import { useParams } from 'wouter';
-import { Building, ArrowLeft, Brain } from 'lucide-react';
 
 const TestAccountDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
   return (
-    <div className="h-full bg-gray-50 p-6">
-      {/* Header */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-        <div className="flex items-center space-x-4 mb-4">
-          <button
-            onClick={() => window.history.back()}
-            className="text-gray-600 hover:text-gray-900 p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Building className="w-6 h-6 text-blue-600" />
-            </div>
-            
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Test Account Detail</h1>
-              <p className="text-gray-600">Account ID: {id}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="text-center py-8">
-          <p className="text-lg font-medium text-green-600 mb-2">✅ Account Detail Page is Working!</p>
-          <p className="text-gray-600">Navigation successful. Now testing AI Growth feature below.</p>
-        </div>
+    <div style={{ padding: '20px', backgroundColor: '#f0f0f0', minHeight: '100vh' }}>
+      <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
+        <h1 style={{ color: '#2563eb', fontSize: '24px', marginBottom: '10px' }}>
+          ACCOUNT DETAIL PAGE WORKING!
+        </h1>
+        <p style={{ color: '#666', fontSize: '16px' }}>
+          Account ID: {id || 'No ID found'}
+        </p>
+        <p style={{ color: '#10b981', fontSize: '14px', marginTop: '10px' }}>
+          Navigation successful - routing is working correctly!
+        </p>
       </div>
-
-      {/* AI Growth Recommendations */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <div className="flex items-center space-x-2 mb-4">
-          <Brain className="w-5 h-5 text-blue-600" />
-          <h2 className="text-lg font-semibold text-gray-900">AI Growth Recommendations</h2>
-          <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-medium">
-            AI Powered
-          </span>
-        </div>
-        
-        <div className="text-center py-8">
-          <p className="text-lg font-medium text-blue-600 mb-2">🧠 AI Growth Recommendations</p>
-          <p className="text-gray-600 mb-4">Testing AI-powered growth analysis for Account ID: {id}</p>
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-            Generate AI Recommendations
-          </button>
-        </div>
+      
+      <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px' }}>
+        <h2 style={{ color: '#1f2937', fontSize: '18px', marginBottom: '10px' }}>
+          AI Growth Test Area
+        </h2>
+        <p style={{ color: '#666', fontSize: '14px' }}>
+          Ready to test AI recommendations for account {id}
+        </p>
       </div>
     </div>
   );
