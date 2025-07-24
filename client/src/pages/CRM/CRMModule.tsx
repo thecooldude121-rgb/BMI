@@ -32,7 +32,7 @@ const CRMModule = () => {
         <Route path="/crm/pipeline" component={PipelinePage} />
         <Route path="/crm/tasks" component={TasksPage} />
         <Route path="/crm/activities">
-          <TestActivitiesPage />
+          <SyncedActivitiesPage />
         </Route>
         <Route path="/crm/test">
           <CRMTestPage />
