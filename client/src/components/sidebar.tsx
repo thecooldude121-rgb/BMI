@@ -5,13 +5,15 @@ import {
   Upload, 
   BarChart3, 
   Settings, 
-  Mic,
+  Building2,
+  Users,
   User
 } from "lucide-react";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: Home },
-  { name: "Meetings", href: "/meetings", icon: Mic },
+  { name: "CRM", href: "/crm", icon: Users },
+  { name: "HRMS", href: "/hrms", icon: Building2 },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
@@ -25,9 +27,9 @@ export default function Sidebar() {
         <Link href="/">
           <div className="flex items-center space-x-3 cursor-pointer">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Mic className="w-4 h-4 text-white" />
+              <Building2 className="w-4 h-4 text-white" />
             </div>
-            <h1 className="text-xl font-bold text-gray-900">MeetingAI</h1>
+            <h1 className="text-xl font-bold text-gray-900">BMI Platform</h1>
           </div>
         </Link>
       </div>

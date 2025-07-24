@@ -8,7 +8,6 @@ import { DataProvider } from "./contexts/DataContext";
 import Header from "./components/Layout/Header";
 import Dashboard from "@/pages/Dashboard";
 import CRMModule from "./pages/CRM/CRMModule";
-import MeetingModule from "./pages/Meeting/MeetingModule";
 import HRMSModule from "./pages/HRMS/HRMSModule";
 import NotFound from "@/pages/not-found";
 
@@ -21,8 +20,6 @@ function Router() {
           <Route path="/" component={Dashboard} />
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/crm/:rest*" component={CRMModule} />
-          <Route path="/meetings/:rest*" component={MeetingModule} />
-          <Route path="/meetings" component={MeetingModule} />
           <Route path="/hrms/:rest*" component={HRMSModule} />
           <Route path="/hrms" component={HRMSModule} />
           <Route path="/analytics" component={() => <div className="p-8"><h1 className="text-2xl font-bold">Analytics Coming Soon</h1></div>} />
