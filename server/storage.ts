@@ -48,8 +48,14 @@ export interface IStorage {
   getActivities(): Promise<schema.Activity[]>;
   getActivity(id: string): Promise<schema.Activity | undefined>;
   getActivitiesByAssignee(assigneeId: string): Promise<schema.Activity[]>;
+  getActivitiesByLead(leadId: string): Promise<schema.Activity[]>;
+  getActivitiesByDeal(dealId: string): Promise<schema.Activity[]>;
+  getActivitiesByContact(contactId: string): Promise<schema.Activity[]>;
+  getActivitiesByAccount(accountId: string): Promise<schema.Activity[]>;
+  getActivitiesByRelatedEntity(entityType: string, entityId: string): Promise<schema.Activity[]>;
   createActivity(activity: schema.InsertActivity): Promise<schema.Activity>;
   updateActivity(id: string, activity: Partial<schema.InsertActivity>): Promise<schema.Activity>;
+  completeActivity(id: string, outcome?: string): Promise<schema.Activity>;
 
   // Meeting methods
   getMeetings(): Promise<schema.Meeting[]>;
@@ -238,7 +244,7 @@ export class DatabaseStorage implements IStorage {
 
   // Activity methods
   async getActivities(): Promise<schema.Activity[]> {
-    return await db.select().from(schema.activities);
+    return await db.select().from(schema.activities).orderBy(desc(schema.activities.createdAt));
   }
 
   async getActivity(id: string): Promise<schema.Activity | undefined> {
@@ -256,7 +262,56 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateActivity(id: string, activity: Partial<schema.InsertActivity>): Promise<schema.Activity> {
-    const activities = await db.update(schema.activities).set(activity).where(eq(schema.activities.id, id)).returning();
+    const activities = await db.update(schema.activities)
+      .set({ ...activity, updatedAt: new Date() })
+      .where(eq(schema.activities.id, id))
+      .returning();
+    return activities[0];
+  }
+
+  async getActivitiesByLead(leadId: string): Promise<schema.Activity[]> {
+    return await db.select().from(schema.activities)
+      .where(eq(schema.activities.leadId, leadId))
+      .orderBy(desc(schema.activities.createdAt));
+  }
+
+  async getActivitiesByDeal(dealId: string): Promise<schema.Activity[]> {
+    return await db.select().from(schema.activities)
+      .where(eq(schema.activities.dealId, dealId))
+      .orderBy(desc(schema.activities.createdAt));
+  }
+
+  async getActivitiesByContact(contactId: string): Promise<schema.Activity[]> {
+    return await db.select().from(schema.activities)
+      .where(eq(schema.activities.contactId, contactId))
+      .orderBy(desc(schema.activities.createdAt));
+  }
+
+  async getActivitiesByAccount(accountId: string): Promise<schema.Activity[]> {
+    return await db.select().from(schema.activities)
+      .where(eq(schema.activities.accountId, accountId))
+      .orderBy(desc(schema.activities.createdAt));
+  }
+
+  async getActivitiesByRelatedEntity(entityType: string, entityId: string): Promise<schema.Activity[]> {
+    return await db.select().from(schema.activities)
+      .where(and(
+        eq(schema.activities.relatedToType, entityType),
+        eq(schema.activities.relatedToId, entityId)
+      ))
+      .orderBy(desc(schema.activities.createdAt));
+  }
+
+  async completeActivity(id: string, outcome?: string): Promise<schema.Activity> {
+    const activities = await db.update(schema.activities)
+      .set({ 
+        status: 'completed',
+        completedAt: new Date(),
+        outcome: outcome,
+        updatedAt: new Date()
+      })
+      .where(eq(schema.activities.id, id))
+      .returning();
     return activities[0];
   }
 

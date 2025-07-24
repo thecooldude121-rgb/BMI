@@ -6,7 +6,7 @@ import ContactsPage from './ContactsPage';
 import EnhancedAccountsPage from './EnhancedAccountsPage';
 import UnifiedDealsPage from './UnifiedDealsPage';
 import PipelinePage from './PipelinePage';
-import EnhancedActivitiesPage from './EnhancedActivitiesPage';
+import SyncedActivitiesPage from './SyncedActivitiesPage';
 import TasksPage from './TasksPage';
 
 const CRMModule = () => {
@@ -26,7 +26,7 @@ const CRMModule = () => {
         <Route path="/crm/deals" component={UnifiedDealsPage} />
         <Route path="/crm/pipeline" component={PipelinePage} />
         <Route path="/crm/tasks" component={TasksPage} />
-        <Route path="/crm/activities" component={EnhancedActivitiesPage} />
+        <Route path="/crm/activities" component={SyncedActivitiesPage} />
         <Route path="/crm">
           <CRMGamificationPage key="crm-gamification" />
         </Route>

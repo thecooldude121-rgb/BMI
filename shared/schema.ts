@@ -148,19 +148,50 @@ export const activities = pgTable("activities", {
   id: uuid("id").primaryKey().defaultRandom(),
   subject: text("subject").notNull(),
   type: activityTypeEnum("type").notNull(),
-  direction: text("direction").notNull().default('outbound'),
+  direction: text("direction").notNull().default('outbound'), // inbound, outbound
   status: activityStatusEnum("status").notNull().default('planned'),
   priority: activityPriorityEnum("priority").notNull().default('medium'),
   description: text("description"),
   outcome: text("outcome"),
-  duration: integer("duration"),
+  duration: integer("duration"), // in minutes
   scheduledAt: timestamp("scheduled_at"),
   completedAt: timestamp("completed_at"),
   createdBy: uuid("created_by").references(() => users.id),
   assignedTo: uuid("assigned_to").references(() => users.id),
+  
+  // Multi-module relationships - activities can be linked to any CRM entity
   leadId: uuid("lead_id").references(() => leads.id),
   dealId: uuid("deal_id").references(() => deals.id),
   contactId: uuid("contact_id").references(() => contacts.id),
+  accountId: uuid("account_id").references(() => accounts.id),
+  taskId: uuid("task_id").references(() => tasks.id),
+  meetingId: uuid("meeting_id").references(() => meetings.id),
+  
+  // Additional sync fields
+  relatedToType: text("related_to_type"), // 'lead', 'deal', 'contact', 'account', 'task', 'meeting'
+  relatedToId: uuid("related_to_id"),
+  
+  // Email specific fields
+  emailSubject: text("email_subject"),
+  emailTo: text("email_to"),
+  emailFrom: text("email_from"),
+  emailCc: text("email_cc"),
+  emailBcc: text("email_bcc"),
+  
+  // Call specific fields
+  callType: text("call_type"), // incoming, outgoing
+  phoneNumber: text("phone_number"),
+  callResult: text("call_result"), // answered, voicemail, busy, no_answer
+  
+  // Meeting specific fields
+  meetingType: text("meeting_type"), // video, phone, in-person
+  location: text("location"),
+  attendees: jsonb("attendees"), // Array of participant objects
+  
+  // Task specific fields
+  taskStatus: text("task_status"), // pending, in-progress, completed
+  dueDate: timestamp("due_date"),
+  
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

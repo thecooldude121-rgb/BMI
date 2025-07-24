@@ -427,6 +427,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Cross-module activity sync routes
+  app.get("/api/leads/:leadId/activities", async (req, res) => {
+    try {
+      const activities = await storage.getActivitiesByLead(req.params.leadId);
+      res.json(activities);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/deals/:dealId/activities", async (req, res) => {
+    try {
+      const activities = await storage.getActivitiesByDeal(req.params.dealId);
+      res.json(activities);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/contacts/:contactId/activities", async (req, res) => {
+    try {
+      const activities = await storage.getActivitiesByContact(req.params.contactId);
+      res.json(activities);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/accounts/:accountId/activities", async (req, res) => {
+    try {
+      const activities = await storage.getActivitiesByAccount(req.params.accountId);
+      res.json(activities);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.patch("/api/activities/:id/complete", async (req, res) => {
+    try {
+      const { outcome } = req.body;
+      const activity = await storage.completeActivity(req.params.id, outcome);
+      res.json(activity);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
   // Meeting routes
   app.get("/api/meetings", async (req, res) => {
     try {

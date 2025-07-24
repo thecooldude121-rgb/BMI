@@ -160,8 +160,62 @@ export async function seedVariedCRMData() {
     }
     console.log(`✅ Created ${deals.length} deals`);
 
+    // Create comprehensive activities that sync across all CRM modules
+    console.log("🎯 Creating synchronized activities across all CRM modules...");
+    
+    const activitiesData = [
+      // Lead-related activities
+      { type: 'call', subject: 'Discovery call with TechCorp', leadId: leads[0].id, accountId: accounts[0].id, contactId: contacts[0].id, status: 'completed', outcome: 'Qualified opportunity', direction: 'outbound' },
+      { type: 'email', subject: 'Follow-up email to GreenEnergy', leadId: leads[1].id, accountId: accounts[1].id, contactId: contacts[1].id, status: 'completed', outcome: 'Proposal requested', direction: 'outbound' },
+      { type: 'meeting', subject: 'Product demo for Healthcare Partners', leadId: leads[2].id, accountId: accounts[2].id, contactId: contacts[2].id, status: 'planned', direction: 'outbound' },
+      
+      // Deal-related activities
+      { type: 'meeting', subject: 'Contract negotiation meeting', dealId: deals[0].id, accountId: accounts[0].id, contactId: contacts[0].id, status: 'completed', outcome: 'Terms agreed', direction: 'inbound' },
+      { type: 'call', subject: 'Closing call with decision maker', dealId: deals[1].id, accountId: accounts[1].id, contactId: contacts[1].id, status: 'planned', direction: 'outbound' },
+      { type: 'email', subject: 'Contract documents sent', dealId: deals[2].id, accountId: accounts[2].id, contactId: contacts[2].id, status: 'completed', outcome: 'Documents reviewed', direction: 'outbound' },
+      
+      // Contact-focused activities
+      { type: 'call', subject: 'Relationship building call', contactId: contacts[3].id, accountId: accounts[3].id, status: 'completed', outcome: 'Good rapport established', direction: 'outbound' },
+      { type: 'email', subject: 'Monthly check-in email', contactId: contacts[4].id, accountId: accounts[4].id, status: 'completed', outcome: 'Partnership discussed', direction: 'outbound' },
+      
+      // Account-focused activities
+      { type: 'meeting', subject: 'Quarterly business review', accountId: accounts[5].id, contactId: contacts[5].id, status: 'planned', direction: 'inbound' },
+      { type: 'email', subject: 'New product announcement', accountId: accounts[6].id, contactId: contacts[6].id, status: 'completed', outcome: 'Interest expressed', direction: 'outbound' },
+      
+      // Cross-module activities (lead to deal progression)
+      { type: 'task', subject: 'Convert qualified lead to deal', leadId: leads[3].id, dealId: deals[3].id, accountId: accounts[3].id, contactId: contacts[3].id, status: 'completed', outcome: 'Deal created successfully', direction: 'outbound' },
+      { type: 'note', subject: 'Customer feedback on proposal', dealId: deals[4].id, contactId: contacts[4].id, accountId: accounts[4].id, status: 'completed', outcome: 'Positive feedback received', direction: 'inbound' }
+    ];
+
+    const activities = [];
+    for (let i = 0; i < activitiesData.length; i++) {
+      const activityData = activitiesData[i];
+      const result = await db.insert(schema.activities).values({
+        subject: activityData.subject,
+        type: activityData.type as any,
+        direction: activityData.direction as any,
+        status: activityData.status as any,
+        priority: 'medium',
+        description: `${activityData.type.charAt(0).toUpperCase() + activityData.type.slice(1)} activity for ${activityData.subject}`,
+        outcome: activityData.outcome,
+        duration: Math.floor(Math.random() * 60) + 15, // 15-75 minutes
+        scheduledAt: new Date(Date.now() + Math.random() * 7 * 24 * 60 * 60 * 1000), // Next 7 days
+        completedAt: activityData.status === 'completed' ? new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000) : null, // Last 30 days
+        createdBy: userId,
+        assignedTo: userId,
+        leadId: activityData.leadId || null,
+        dealId: activityData.dealId || null,
+        contactId: activityData.contactId || null,
+        accountId: activityData.accountId || null,
+        relatedToType: activityData.leadId ? 'lead' : activityData.dealId ? 'deal' : activityData.contactId ? 'contact' : 'account',
+        relatedToId: activityData.leadId || activityData.dealId || activityData.contactId || activityData.accountId
+      }).returning();
+      activities.push(result[0]);
+    }
+    
+    console.log(`✅ Created ${activities.length} synchronized activities across all CRM modules`);
     console.log("🎉 Varied CRM data seeding completed successfully!");
-    return { accounts: accounts.length, contacts: contacts.length, leads: leads.length, deals: deals.length };
+    return { accounts: accounts.length, contacts: contacts.length, leads: leads.length, deals: deals.length, activities: activities.length };
 
   } catch (error) {
     console.error("❌ Error seeding varied CRM data:", error);
