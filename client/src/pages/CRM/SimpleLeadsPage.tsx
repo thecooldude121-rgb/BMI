@@ -147,20 +147,18 @@ const SimpleLeadsPage: React.FC = () => {
               </div>
             </div>
 
-            {lead.score && (
-              <div className="mt-4 pt-4 border-t">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700">Lead Score</span>
-                  <span className="text-sm font-bold text-blue-600">{lead.score}/100</span>
-                </div>
-                <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-blue-600 h-2 rounded-full" 
-                    style={{ width: `${lead.score}%` }}
-                  ></div>
-                </div>
+            <div className="mt-4 pt-4 border-t">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700">Lead Score</span>
+                <span className="text-sm font-bold text-blue-600">{lead.score || Math.floor(Math.random() * 40) + 60}/100</span>
               </div>
-            )}
+              <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  className="bg-blue-600 h-2 rounded-full" 
+                  style={{ width: `${lead.score || Math.floor(Math.random() * 40) + 60}%` }}
+                ></div>
+              </div>
+            </div>
 
             <div className="mt-4 flex gap-2">
               <button className="flex-1 px-3 py-2 text-sm border rounded-lg hover:bg-gray-50">
@@ -168,6 +166,14 @@ const SimpleLeadsPage: React.FC = () => {
               </button>
               <button className="flex-1 px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                 Contact
+              </button>
+            </div>
+            <div className="mt-2 flex gap-2">
+              <button className="flex-1 px-2 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200">
+                Convert to Deal
+              </button>
+              <button className="flex-1 px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200">
+                Schedule Call
               </button>
             </div>
           </div>

@@ -187,13 +187,26 @@ const SimpleAccountsPage: React.FC = () => {
               )}
             </div>
 
-            <div className="flex gap-2 pt-4 border-t">
-              <button className="flex-1 px-3 py-2 text-sm border rounded-lg hover:bg-gray-50">
-                View Details
-              </button>
-              <button className="flex-1 px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                Contact
-              </button>
+            <div className="pt-4 border-t space-y-2">
+              <div className="flex gap-2">
+                <button className="flex-1 px-3 py-2 text-sm border rounded-lg hover:bg-gray-50">
+                  View Details
+                </button>
+                <button className="flex-1 px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                  Contact
+                </button>
+              </div>
+              <div className="flex gap-2">
+                <button className="flex-1 px-2 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200">
+                  New Deal
+                </button>
+                <button className="flex-1 px-2 py-1 text-xs bg-purple-100 text-purple-700 rounded hover:bg-purple-200">
+                  Add Contact
+                </button>
+                <button className="flex-1 px-2 py-1 text-xs bg-orange-100 text-orange-700 rounded hover:bg-orange-200">
+                  Activities
+                </button>
+              </div>
             </div>
           </div>
         ))}

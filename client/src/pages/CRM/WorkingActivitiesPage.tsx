@@ -138,12 +138,29 @@ const WorkingActivitiesPage: React.FC = () => {
                       }`}>
                         {activity.priority}
                       </span>
+                      {(activity.leadId || activity.dealId || activity.contactId || activity.accountId) && (
+                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
+                          {activity.leadId ? 'Lead' : activity.dealId ? 'Deal' : activity.contactId ? 'Contact' : 'Account'}
+                        </span>
+                      )}
                     </div>
                   </div>
-                  <div className="text-sm text-gray-500">
-                    {activity.scheduledAt ? new Date(activity.scheduledAt).toLocaleDateString() : 
-                     activity.completedAt ? new Date(activity.completedAt).toLocaleDateString() : 
-                     'No date'}
+                  <div className="text-right">
+                    <div className="text-sm text-gray-500">
+                      {activity.scheduledAt ? new Date(activity.scheduledAt).toLocaleDateString() : 
+                       activity.completedAt ? new Date(activity.completedAt).toLocaleDateString() : 
+                       'No date'}
+                    </div>
+                    <div className="flex gap-1 mt-2">
+                      <button className="px-2 py-1 text-xs border rounded hover:bg-gray-50">
+                        View
+                      </button>
+                      {activity.status === 'planned' && (
+                        <button className="px-2 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200">
+                          Complete
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
