@@ -59,6 +59,11 @@ export const accountHealthEnum = pgEnum('account_health', ['excellent', 'good', 
 export const accountSegmentEnum = pgEnum('account_segment', ['enterprise', 'mid_market', 'smb', 'startup', 'government', 'non_profit']);
 export const industryEnum = pgEnum('industry', ['technology', 'healthcare', 'finance', 'education', 'manufacturing', 'retail', 'real_estate', 'consulting', 'media', 'transportation', 'energy', 'agriculture', 'biotechnology', 'fashion', 'other']);
 
+// AI Growth Recommendations enums
+export const recommendationTypeEnum = pgEnum('recommendation_type', ['upsell', 'cross_sell', 'expansion', 'retention', 'engagement', 'pricing', 'contract_renewal', 'product_adoption']);
+export const recommendationPriorityEnum = pgEnum('recommendation_priority', ['low', 'medium', 'high', 'critical']);
+export const recommendationStatusEnum = pgEnum('recommendation_status', ['pending', 'in_review', 'approved', 'implemented', 'rejected', 'expired']);
+
 export const accounts: any = pgTable("accounts", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
@@ -760,6 +765,45 @@ export const achievements = pgTable("achievements", {
   achievedAt: timestamp("achieved_at").notNull().defaultNow(),
 });
 
+// AI Growth Recommendations Table
+export const growthRecommendations = pgTable("growth_recommendations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  accountId: uuid("account_id").notNull().references(() => accounts.id),
+  type: recommendationTypeEnum("type").notNull(),
+  priority: recommendationPriorityEnum("priority").notNull().default('medium'),
+  status: recommendationStatusEnum("status").notNull().default('pending'),
+  
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  rationale: text("rationale").notNull(),
+  
+  // AI Analysis Data
+  confidence: decimal("confidence", { precision: 5, scale: 2 }), // 0-100% confidence
+  potentialRevenue: decimal("potential_revenue", { precision: 15, scale: 2 }),
+  estimatedTimeframe: text("estimated_timeframe"), // e.g., "3-6 months"
+  requiredActions: jsonb("required_actions"), // Array of action items
+  
+  // Implementation tracking
+  implementedAt: timestamp("implemented_at"),
+  implementedBy: uuid("implemented_by").references(() => users.id),
+  actualRevenue: decimal("actual_revenue", { precision: 15, scale: 2 }),
+  actualTimeframe: text("actual_timeframe"),
+  
+  // AI insights
+  aiInsights: jsonb("ai_insights"), // Detailed AI analysis
+  marketTrends: jsonb("market_trends"), // Relevant market data
+  competitorAnalysis: jsonb("competitor_analysis"),
+  
+  // Metadata
+  expiresAt: timestamp("expires_at"),
+  createdBy: uuid("created_by").references(() => users.id),
+  reviewedBy: uuid("reviewed_by").references(() => users.id),
+  reviewedAt: timestamp("reviewed_at"),
+  
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   ownedAccounts: many(accounts),
@@ -926,6 +970,12 @@ export const insertMeetingTranscriptSchema = createInsertSchema(meetingTranscrip
 export const insertMeetingSummarySchema = createInsertSchema(meetingSummaries).omit({
   id: true,
   createdAt: true,
+});
+
+export const insertGrowthRecommendationSchema = createInsertSchema(growthRecommendations).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
 });
 
 // Account Document Management Tables
@@ -1175,3 +1225,6 @@ export type LeadDuplicate = typeof leadDuplicates.$inferSelect;
 
 export type InsertLeadAssignmentRule = z.infer<typeof insertLeadAssignmentRuleSchema>;
 export type LeadAssignmentRule = typeof leadAssignmentRules.$inferSelect;
+
+export type GrowthRecommendation = typeof growthRecommendations.$inferSelect;
+export type InsertGrowthRecommendation = z.infer<typeof insertGrowthRecommendationSchema>;

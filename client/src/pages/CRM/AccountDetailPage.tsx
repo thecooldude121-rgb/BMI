@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
+import { GrowthRecommendations } from '@/components/GrowthRecommendations';
 
 interface Account {
   id: string;
@@ -327,6 +328,7 @@ const AccountDetailPage: React.FC = () => {
             { id: 'contacts', label: 'Contacts', icon: Users },
             { id: 'deals', label: 'Deals', icon: Target },
             { id: 'activities', label: 'Activities', icon: Activity },
+            { id: 'growth', label: 'AI Growth', icon: Brain },
             { id: 'documents', label: 'Documents', icon: FileText },
             { id: 'hierarchy', label: 'Hierarchy', icon: Link },
           ].map(tab => {
@@ -499,8 +501,13 @@ const AccountDetailPage: React.FC = () => {
           </div>
         )}
 
+        {/* Growth Recommendations Tab */}
+        {activeTab === 'growth' && (
+          <GrowthRecommendations accountId={id!} />
+        )}
+
         {/* Other tab content would go here */}
-        {activeTab !== 'overview' && (
+        {activeTab !== 'overview' && activeTab !== 'growth' && (
           <div className="bg-white rounded-lg border border-gray-200 p-6 text-center">
             <div className="py-12">
               <div className="text-gray-400 mb-4">
