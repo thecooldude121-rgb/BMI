@@ -29,6 +29,12 @@ export const dealRiskLevelEnum = pgEnum('deal_risk_level', ['low', 'medium', 'hi
 export const competitorEnum = pgEnum('competitor', ['salesforce', 'hubspot', 'pipedrive', 'zoho', 'monday', 'other', 'none']);
 export const dealSourceEnum = pgEnum('deal_source', ['inbound', 'outbound', 'referral', 'marketing', 'partner', 'existing_customer']);
 
+// Lead-specific enums
+export const leadQualificationEnum = pgEnum('lead_qualification', ['MQL', 'SQL', 'SAL', 'opportunity', 'customer']);
+export const leadChannelEnum = pgEnum('lead_channel', ['organic_search', 'paid_search', 'social_media', 'email', 'direct', 'referral', 'content', 'webinar', 'event']);
+export const leadSentimentEnum = pgEnum('lead_sentiment', ['positive', 'neutral', 'negative', 'unknown']);
+export const activityOutcomeEnum = pgEnum('activity_outcome', ['successful', 'no_answer', 'voicemail', 'busy', 'wrong_number', 'bounced', 'unsubscribed', 'interested', 'not_interested']);
+
 // Core Tables
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -109,6 +115,162 @@ export const leads = pgTable("leads", {
   notes: text("notes"),
   tags: jsonb("tags"),
   customFields: jsonb("custom_fields"),
+  
+  // Enhanced fields for next-gen lead management
+  leadScore: integer("lead_score").default(0), // AI-powered lead score 0-100
+  engagementScore: integer("engagement_score").default(0), // Email/website engagement
+  fitScore: integer("fit_score").default(0), // How well lead fits ICP
+  intentScore: integer("intent_score").default(0), // Purchase intent signals
+  
+  // Advanced lead qualification fields
+  qualification: leadQualificationEnum("qualification").default('MQL'),
+  channel: leadChannelEnum("channel").default('organic_search'),
+  sentiment: leadSentimentEnum("sentiment").default('unknown'),
+  webActivity: jsonb("web_activity"), // Website activity tracking
+  emailActivity: jsonb("email_activity"), // Email engagement tracking
+  socialActivity: jsonb("social_activity"), // Social media interactions
+  
+  // Lead nurturing and assignment
+  nurturingCampaignId: text("nurturing_campaign_id"),
+  nurturingStage: text("nurturing_stage"),
+  autoAssignmentRules: jsonb("auto_assignment_rules"),
+  assignmentHistory: jsonb("assignment_history"),
+  
+  // Deduplication and enrichment
+  duplicateOf: uuid("duplicate_of").references(() => leads.id),
+  enrichmentStatus: text("enrichment_status").default('pending'), // pending, enriched, failed
+  enrichmentData: jsonb("enrichment_data"), // Third-party enriched data
+  
+  // Contact and consent management
+  consentStatus: text("consent_status").default('unknown'), // opted_in, opted_out, unknown
+  consentTimestamp: timestamp("consent_timestamp"),
+  communicationPreferences: jsonb("communication_preferences"),
+  
+  // Lead attachments and documents
+  attachments: jsonb("attachments"), // Array of file metadata
+  linkedinUrl: text("linkedin_url"),
+  twitterUrl: text("twitter_url"),
+  companyLinkedinUrl: text("company_linkedin_url"),
+  timezone: text("timezone"),
+  locale: text("locale").default('en-US'),
+  
+  // Lead intelligence
+  companySize: companySizeEnum("company_size"),
+  annualRevenue: decimal("annual_revenue", { precision: 15, scale: 2 }),
+  technologies: jsonb("technologies"), // Tech stack used by company
+  competitors: jsonb("competitors"), // Known competitors they're evaluating
+  painPoints: jsonb("pain_points"), // Identified challenges
+  interests: jsonb("interests"), // Areas of interest
+  
+  // Behavioral tracking
+  websiteVisits: integer("website_visits").default(0),
+  emailOpens: integer("email_opens").default(0),
+  emailClicks: integer("email_clicks").default(0),
+  contentDownloads: integer("content_downloads").default(0),
+  demoRequests: integer("demo_requests").default(0),
+  
+  // Sales process
+  qualification: jsonb("qualification"), // BANT, MEDDIC, etc.
+  nextAction: text("next_action"),
+  nextActionDate: timestamp("next_action_date"),
+  lastActivityType: text("last_activity_type"),
+  responseTime: integer("response_time"), // Average response time in hours
+  
+  // Campaign & attribution
+  campaignId: text("campaign_id"),
+  utmSource: text("utm_source"),
+  utmMedium: text("utm_medium"),
+  utmCampaign: text("utm_campaign"),
+  utmContent: text("utm_content"),
+  utmTerm: text("utm_term"),
+  firstTouchpoint: text("first_touchpoint"),
+  lastTouchpoint: text("last_touchpoint"),
+  
+  // AI insights & automation
+  aiInsights: jsonb("ai_insights"), // AI-generated insights
+  autoNurturing: boolean("auto_nurturing").default(false),
+  sequenceId: text("sequence_id"), // Enrolled nurture sequence
+  
+  // Duplicate detection
+  duplicateOf: uuid("duplicate_of").references(() => leads.id),
+  duplicateScore: decimal("duplicate_score", { precision: 5, scale: 2 }), // Confidence in duplicate match
+  
+  // Consent & compliance
+  gdprConsent: boolean("gdpr_consent").default(false),
+  emailOptIn: boolean("email_opt_in").default(false),
+  smsOptIn: boolean("sms_opt_in").default(false),
+  dataProcessingConsent: timestamp("data_processing_consent"),
+  
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Lead Scoring Rules Table
+export const leadScoringRules = pgTable("lead_scoring_rules", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  description: text("description"),
+  condition: jsonb("condition").notNull(), // JSON rule condition
+  points: integer("points").notNull(),
+  isActive: boolean("is_active").default(true),
+  ruleType: text("rule_type").notNull(), // 'demographic', 'behavioral', 'engagement', 'firmographic'
+  priority: integer("priority").default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Lead Nurture Sequences Table
+export const leadNurtureSequences = pgTable("lead_nurture_sequences", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  description: text("description"),
+  trigger: jsonb("trigger").notNull(), // Conditions to start sequence
+  steps: jsonb("steps").notNull(), // Array of sequence steps
+  isActive: boolean("is_active").default(true),
+  createdBy: uuid("created_by").references(() => users.id),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Lead Activity Log Table  
+export const leadActivityLog = pgTable("lead_activity_log", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  leadId: uuid("lead_id").references(() => leads.id).notNull(),
+  activityType: activityTypeEnum("activity_type").notNull(),
+  activitySubtype: text("activity_subtype"), // email_open, link_click, form_fill, etc.
+  description: text("description").notNull(),
+  outcome: activityOutcomeEnum("outcome"),
+  metadata: jsonb("metadata"), // Additional activity data
+  performedBy: uuid("performed_by").references(() => users.id),
+  performedAt: timestamp("performed_at").notNull().defaultNow(),
+  sourceSystem: text("source_system"), // 'manual', 'email', 'website', 'api'
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+// Lead Duplicate Detection Table
+export const leadDuplicates = pgTable("lead_duplicates", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  leadId1: uuid("lead_id_1").references(() => leads.id).notNull(),
+  leadId2: uuid("lead_id_2").references(() => leads.id).notNull(),
+  similarityScore: decimal("similarity_score", { precision: 5, scale: 2 }).notNull(),
+  matchingFields: jsonb("matching_fields").notNull(), // Array of matching field names
+  status: text("status").default('pending'), // 'pending', 'merged', 'ignored', 'false_positive'
+  reviewedBy: uuid("reviewed_by").references(() => users.id),
+  reviewedAt: timestamp("reviewed_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+// Lead Assignment Rules Table
+export const leadAssignmentRules = pgTable("lead_assignment_rules", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  criteria: jsonb("criteria").notNull(), // Assignment criteria
+  assignTo: uuid("assign_to").references(() => users.id),
+  assignmentType: text("assignment_type").default('direct'), // 'direct', 'round_robin', 'load_balanced'
+  isActive: boolean("is_active").default(true),
+  priority: integer("priority").default(0),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -687,6 +849,35 @@ export const insertMeetingFollowUpSchema = createInsertSchema(meetingFollowUps).
   updatedAt: true,
 });
 
+// Enhanced Lead Schema validation
+export const insertLeadScoringRuleSchema = createInsertSchema(leadScoringRules).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertLeadNurtureSequenceSchema = createInsertSchema(leadNurtureSequences).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertLeadActivityLogSchema = createInsertSchema(leadActivityLog).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertLeadDuplicateSchema = createInsertSchema(leadDuplicates).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertLeadAssignmentRuleSchema = createInsertSchema(leadAssignmentRules).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const insertSalesPointsSchema = createInsertSchema(salesPoints).omit({
   id: true,
   createdAt: true,
@@ -774,3 +965,19 @@ export type SalesTarget = typeof salesTargets.$inferSelect;
 
 export type InsertAchievement = z.infer<typeof insertAchievementSchema>;
 export type Achievement = typeof achievements.$inferSelect;
+
+// Enhanced Lead Types
+export type InsertLeadScoringRule = z.infer<typeof insertLeadScoringRuleSchema>;
+export type LeadScoringRule = typeof leadScoringRules.$inferSelect;
+
+export type InsertLeadNurtureSequence = z.infer<typeof insertLeadNurtureSequenceSchema>;
+export type LeadNurtureSequence = typeof leadNurtureSequences.$inferSelect;
+
+export type InsertLeadActivityLog = z.infer<typeof insertLeadActivityLogSchema>;
+export type LeadActivityLog = typeof leadActivityLog.$inferSelect;
+
+export type InsertLeadDuplicate = z.infer<typeof insertLeadDuplicateSchema>;
+export type LeadDuplicate = typeof leadDuplicates.$inferSelect;
+
+export type InsertLeadAssignmentRule = z.infer<typeof insertLeadAssignmentRuleSchema>;
+export type LeadAssignmentRule = typeof leadAssignmentRules.$inferSelect;

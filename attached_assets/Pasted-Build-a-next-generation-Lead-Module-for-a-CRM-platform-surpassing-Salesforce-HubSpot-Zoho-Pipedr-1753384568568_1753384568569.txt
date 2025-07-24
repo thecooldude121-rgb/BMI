@@ -1,0 +1,75 @@
+Build a next-generation Lead Module for a CRM platform, surpassing Salesforce, HubSpot, Zoho, Pipedrive, and Salesnayak. Prioritize automation, actionable analytics, and seamless lead-to-deal workflow.
+
+Frontend (React + Material UI or Ant Design)
+1. Lead List & Pipeline Page
+
+Hybrid Kanban/list views with drag-and-drop stage movement.
+
+Advanced multi-filtering (by owner, source, lead score, status, segment).
+
+Bulk assign, tag, or trigger actions from the list; inline lead creation and editing.
+
+Duplicate detection and merge suggestions for suspected dupes.
+
+2. Lead Capture/Create Page
+
+Multi-source data enrichment (form, chat, API, manual entry).
+
+Dynamic fields that show/hide based on source, type, or logic.
+
+Inline deduplication as you type.
+
+Attachment upload, notes, and opt-in/consent logging.
+
+Real-time scoring and field validation.
+
+3. Lead Detail Page
+
+Profile: status, owner, priority, live score, and next action.
+
+Cross-linked account and contacts; show full organizational map.
+
+Unified activity timeline: calls, emails, campaigns, tasks, notes, meetings, web touches—all with inline logging.
+
+AI panel for next-best action and smart scheduling.
+
+Buttons for direct conversion/cloning or one-click deal creation (contacts/history/files carry over).
+
+Comprehensive audit trail (with who, when, why for every change).
+
+4. Lead Nurturing & Assignment
+
+Rule-driven auto-assignment and round-robin logic.
+
+Drip campaign/journey enrollment and tracking per lead.
+
+Trigger-based reminders (e.g., no response, overdue activity).
+
+5. Analytics & Reporting
+
+Interactive dashboards: stage conversion rates, bottlenecks, qualification ratios, campaign/source/channel attribution.
+
+Lead-to-Deal conversion metrics, with clickable links to all associated deals.
+
+Exportable reports with drill-down to individual lead details.
+
+Backend (Node.js + Express or Python FastAPI)
+REST endpoints for all Lead CRUD operations, activity logging, attachments, scoring, merging, and assignment logic.
+
+Event/webhook system: update Deals module on lead conversion and fetch all deals related to a lead.
+
+Business logic for automated deduplication, lead scoring, routing, and activity triggers.
+
+Role-based field and section security.
+
+Additional Specifications
+Mobile-first, highly responsive design.
+
+Modular structure for easy integration and future expansion.
+
+Provide code samples for cross-module linking (lead→deal, deal→lead).
+
+Ensure schema definitions for all entities (in JSON/SQL).
+
+Instructions:
+Return the full React frontend (with API integration), backend endpoints, schema, and key code samples for seamless lead-to-deal conversion and relationship mapping. Include setup and extension instructions.
