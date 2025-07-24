@@ -1,1 +1,1 @@
-npm run dev
+NODE_ENV=development tsx server/index.ts

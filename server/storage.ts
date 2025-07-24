@@ -50,7 +50,15 @@ export class MemStorage implements IStorage {
       ...insertMeeting, 
       id,
       createdAt: now,
-      updatedAt: now
+      updatedAt: now,
+      status: insertMeeting.status || "processing",
+      summary: insertMeeting.summary || null,
+      duration: insertMeeting.duration || null,
+      participants: insertMeeting.participants || null,
+      transcript: insertMeeting.transcript || null,
+      keyOutcomes: insertMeeting.keyOutcomes || null,
+      painPoints: insertMeeting.painPoints || null,
+      objections: insertMeeting.objections || null
     };
     this.meetings.set(id, meeting);
     return meeting;
