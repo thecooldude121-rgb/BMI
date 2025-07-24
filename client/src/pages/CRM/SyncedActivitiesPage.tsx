@@ -114,19 +114,19 @@ const SyncedActivitiesPage: React.FC = () => {
 
   const getRelatedEntityInfo = (activity: ActivityData) => {
     if (activity.leadId) {
-      const lead = leads.find(l => l.id === activity.leadId);
+      const lead = leads.find((l: any) => l.id === activity.leadId);
       return { type: 'Lead', name: lead?.name || 'Unknown Lead', icon: <UserPlus className="h-4 w-4 text-blue-600" /> };
     }
     if (activity.dealId) {
-      const deal = deals.find(d => d.id === activity.dealId);
+      const deal = deals.find((d: any) => d.id === activity.dealId);
       return { type: 'Deal', name: deal?.name || 'Unknown Deal', icon: <DollarSign className="h-4 w-4 text-green-600" /> };
     }
     if (activity.contactId) {
-      const contact = contacts.find(c => c.id === activity.contactId);
+      const contact = contacts.find((c: any) => c.id === activity.contactId);
       return { type: 'Contact', name: contact ? `${contact.firstName} ${contact.lastName}` : 'Unknown Contact', icon: <Users className="h-4 w-4 text-purple-600" /> };
     }
     if (activity.accountId) {
-      const account = accounts.find(a => a.id === activity.accountId);
+      const account = accounts.find((a: any) => a.id === activity.accountId);
       return { type: 'Account', name: account?.name || 'Unknown Account', icon: <Building className="h-4 w-4 text-orange-600" /> };
     }
     return { type: 'General', name: 'No specific relation', icon: <Activity className="h-4 w-4 text-gray-400" /> };

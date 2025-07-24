@@ -192,9 +192,9 @@ export async function seedVariedCRMData() {
       const activityData = activitiesData[i];
       const result = await db.insert(schema.activities).values({
         subject: activityData.subject,
-        type: activityData.type as any,
-        direction: activityData.direction as any,
-        status: activityData.status as any,
+        type: activityData.type,
+        direction: activityData.direction,
+        status: activityData.status,
         priority: 'medium',
         description: `${activityData.type.charAt(0).toUpperCase() + activityData.type.slice(1)} activity for ${activityData.subject}`,
         outcome: activityData.outcome,
