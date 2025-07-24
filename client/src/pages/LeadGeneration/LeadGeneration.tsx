@@ -190,7 +190,7 @@ const LeadGeneration: React.FC = () => {
                       <div className="text-right">
                         <p className="text-sm text-gray-500">Confidence</p>
                         <p className="text-lg font-bold text-blue-600">
-                          {Math.round(rec.confidence * 100)}%
+                          {Math.round((rec.confidence || 0) * 100)}%
                         </p>
                       </div>
                     </div>
@@ -300,12 +300,12 @@ const LeadGeneration: React.FC = () => {
                 <div className="mb-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium text-gray-700">AI Confidence</span>
-                    <span className="text-sm text-gray-600">{suggestion.confidence}%</span>
+                    <span className="text-sm text-gray-600">{suggestion.confidence || 0}%</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div
                       className="bg-green-500 h-2 rounded-full"
-                      style={{ width: `${suggestion.confidence}%` }}
+                      style={{ width: `${suggestion.confidence || 0}%` }}
                     ></div>
                   </div>
                 </div>

@@ -59,15 +59,18 @@ class AIEngine {
   scoreLeadFit(lead: any): number {
     let score = 50; // Base score
 
+    // Ensure lead has required properties
+    if (!lead || typeof lead !== 'object') return score;
+
     // Industry match
     const matchingPersona = this.personas.find(persona => 
-      persona.industry.includes(lead.industry)
+      persona.industry.includes(lead.industry || '')
     );
     if (matchingPersona) {
       score += 20;
       
       // Job title match
-      if (matchingPersona.jobTitles.some(title => 
+      if (lead.position && matchingPersona.jobTitles.some(title => 
         lead.position.toLowerCase().includes(title.toLowerCase())
       )) {
         score += 15;
@@ -170,6 +173,8 @@ class AIEngine {
   }
 
   private calculateSimilarity(lead1: any, lead2: any): number {
+    if (!lead1 || !lead2) return 0;
+    
     let similarity = 0;
     let factors = 0;
 
@@ -180,16 +185,20 @@ class AIEngine {
     factors += 0.3;
 
     // Position similarity
-    if (lead1.position.toLowerCase().includes('director') && lead2.position.toLowerCase().includes('director')) {
-      similarity += 0.2;
-    } else if (lead1.position.toLowerCase().includes('manager') && lead2.position.toLowerCase().includes('manager')) {
-      similarity += 0.15;
+    if (lead1.position && lead2.position) {
+      if (lead1.position.toLowerCase().includes('director') && lead2.position.toLowerCase().includes('director')) {
+        similarity += 0.2;
+      } else if (lead1.position.toLowerCase().includes('manager') && lead2.position.toLowerCase().includes('manager')) {
+        similarity += 0.15;
+      }
     }
     factors += 0.2;
 
     // Value range similarity
-    const valueDiff = Math.abs(lead1.value - lead2.value) / Math.max(lead1.value, lead2.value);
-    if (valueDiff < 0.3) similarity += 0.25;
+    if (lead1.value && lead2.value && (lead1.value > 0 || lead2.value > 0)) {
+      const valueDiff = Math.abs((lead1.value || 0) - (lead2.value || 0)) / Math.max(lead1.value || 1, lead2.value || 1);
+      if (valueDiff < 0.3) similarity += 0.25;
+    }
     factors += 0.25;
 
     // Source similarity
@@ -204,7 +213,7 @@ class AIEngine {
     }
     factors += 0.1;
 
-    return similarity / factors;
+    return factors > 0 ? similarity / factors : 0;
   }
 
   predictDealOutcome(deal: any, historicalDeals: any[]): { probability: number; timeToClose: number; recommendations: string[] } {
@@ -212,17 +221,17 @@ class AIEngine {
       d.stage === 'closed-won' || d.stage === 'closed-lost'
     );
 
-    const avgCloseTime = similarDeals.reduce((sum, d) => {
-      const daysDiff = (new Date(d.expectedCloseDate).getTime() - new Date(d.createdAt).getTime()) / (1000 * 60 * 60 * 24);
+    const avgCloseTime = similarDeals.length > 0 ? similarDeals.reduce((sum, d) => {
+      const daysDiff = (new Date(d.expectedCloseDate || new Date()).getTime() - new Date(d.createdAt || new Date()).getTime()) / (1000 * 60 * 60 * 24);
       return sum + daysDiff;
-    }, 0) / similarDeals.length;
+    }, 0) / similarDeals.length : 30;
 
-    const winRate = similarDeals.filter(d => d.stage === 'closed-won').length / similarDeals.length;
+    const winRate = similarDeals.length > 0 ? similarDeals.filter(d => d.stage === 'closed-won').length / similarDeals.length : 0.3;
 
-    let adjustedProbability = deal.probability / 100;
+    let adjustedProbability = (deal.probability || 0) / 100;
     
     // Adjust based on deal age
-    const dealAge = (new Date().getTime() - new Date(deal.createdAt).getTime()) / (1000 * 60 * 60 * 24);
+    const dealAge = (new Date().getTime() - new Date(deal.createdAt || new Date()).getTime()) / (1000 * 60 * 60 * 24);
     if (dealAge > avgCloseTime * 1.5) {
       adjustedProbability *= 0.8; // Reduce probability for stagnant deals
     }
