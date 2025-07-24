@@ -417,7 +417,7 @@ export async function seedDatabase() {
     // Create sample accounts (limit to 10, only if less than 10 exist)
     if (existingAccounts.length < 10) {
       const accountsToCreate = Math.min(10 - existingAccounts.length, 10);
-      sampleAccounts = await db.insert(schema.accounts).values([
+      const accountValues = [
         {
           name: 'TechCorp Solutions',
           domain: 'techcorp.com',
@@ -538,7 +538,9 @@ export async function seedDatabase() {
           address: { street: '123 Fashion Ave', city: 'New York', state: 'NY', zip: '10001', country: 'USA' },
           ownerId: userId
         }
-      ].slice(0, accountsToCreate)).returning();
+      ].slice(0, accountsToCreate);
+      
+      sampleAccounts = await db.insert(schema.accounts).values(accountValues).returning();
     } else {
       sampleAccounts = existingAccounts.slice(0, 10);
     }
@@ -546,7 +548,7 @@ export async function seedDatabase() {
     // Create sample contacts (limit to 10, only if less than 10 exist)
     if (existingContacts.length < 10 && sampleAccounts.length > 0) {
       const contactsToCreate = Math.min(10 - existingContacts.length, 10);
-      sampleContacts = await db.insert(schema.contacts).values([
+      const contactValues = [
       {
         accountId: sampleAccounts[0].id,
         firstName: 'Sarah',
@@ -554,11 +556,19 @@ export async function seedDatabase() {
         email: 'sarah.johnson@techcorp.com',
         phone: '+1-555-0123',
         mobile: '+1-555-0223',
+        workPhone: '+1-555-0323',
         position: 'Chief Technology Officer',
         department: 'Technology',
         linkedinUrl: 'https://linkedin.com/in/sarah-johnson-tech',
         isPrimary: true,
-        status: 'active',
+        status: 'active' as const,
+        engagementStatus: 'active' as const,
+        persona: 'decision_maker' as const,
+        preferredChannel: 'email' as const,
+        relationshipScore: 85,
+        influenceLevel: 9,
+        decisionMakingPower: 10,
+        responseRate: '75.5',
         ownerId: userId
       },
       {
@@ -687,7 +697,9 @@ export async function seedDatabase() {
         status: 'active',
         ownerId: userId
       }
-      ].slice(0, contactsToCreate)).returning();
+      ].slice(0, contactsToCreate);
+      
+      sampleContacts = await db.insert(schema.contacts).values(contactValues).returning();
     } else {
       sampleContacts = existingContacts.slice(0, 10);
     }
