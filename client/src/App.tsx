@@ -44,7 +44,7 @@ const App = () => {
               <Route path="/dashboard" component={Dashboard} />
               <Route path="/crm/deals/create" component={CreateDealWrapper} />
               <Route path="/crm/deals/:id" component={DealDetailWrapper} />
-              <Route path="/crm" component={CRMModule} />
+              <Route path="/crm/:rest*" component={CRMModule} />
               <Route path="/hrms" component={HRMSModule} />
               <Route path="/analytics" component={Analytics} />
               <Route path="/calendar" component={Calendar} />

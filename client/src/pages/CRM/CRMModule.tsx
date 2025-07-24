@@ -14,6 +14,7 @@ import TasksPage from './TasksPage';
 import CRMTestPage from './CRMTestPage';
 import SimpleTest from './SimpleTest';
 import DiagnosticPage from './DiagnosticPage';
+import MinimalTest from './MinimalTest';
 
 const CRMModule = () => {
   return (
@@ -49,7 +50,7 @@ const CRMModule = () => {
         <Route path="/crm/pipeline" component={PipelinePage} />
         <Route path="/crm/tasks" component={TasksPage} />
         <Route path="/crm/activities">
-          <WorkingActivitiesPage />
+          <MinimalTest />
         </Route>
         <Route path="/crm/test">
           <CRMTestPage />
