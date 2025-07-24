@@ -5,7 +5,7 @@ import {
   Grid3X3, List, MoreHorizontal, TrendingUp, AlertTriangle, CheckCircle,
   ExternalLink, FileText, Calendar, Target, Activity, Globe, Linkedin,
   Twitter, Star, Award, Zap, Brain, BarChart3, Download, Upload,
-  Edit, Eye, Archive, Copy, Trash2, Share2, Settings
+  Edit, Eye, Archive, Copy, Trash2, Share2, Settings, Columns, ChevronDown
 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
@@ -67,6 +67,7 @@ const NextGenAccountModule: React.FC = () => {
   const [selectedFilters, setSelectedFilters] = useState<any>({});
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
+  const [showViewDropdown, setShowViewDropdown] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -222,8 +223,71 @@ const NextGenAccountModule: React.FC = () => {
               <Settings className="w-4 h-4 mr-2" />
               Configure
             </button>
+            
+            {/* View Mode Selector */}
+            <div className="relative">
+              <button
+                onClick={() => setShowViewDropdown(!showViewDropdown)}
+                className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors flex items-center"
+              >
+                {viewMode === 'grid' && <Grid3X3 className="w-4 h-4 mr-2" />}
+                {viewMode === 'list' && <List className="w-4 h-4 mr-2" />}
+                {viewMode === 'kanban' && <Columns className="w-4 h-4 mr-2" />}
+                <span className="capitalize">{viewMode} View</span>
+                <ChevronDown className="w-4 h-4 ml-2" />
+              </button>
+              
+              {showViewDropdown && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                  <button
+                    onClick={() => { setViewMode('grid'); setShowViewDropdown(false); }}
+                    className={`w-full flex items-center px-4 py-2 text-sm hover:bg-gray-50 transition-colors ${
+                      viewMode === 'grid' ? 'text-blue-600 bg-blue-50' : 'text-gray-700'
+                    }`}
+                  >
+                    <Grid3X3 className="w-4 h-4 mr-3" />
+                    <div>
+                      <div className="font-medium">Grid View</div>
+                      <div className="text-xs text-gray-500">Card-based layout with rich details</div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => { setViewMode('list'); setShowViewDropdown(false); }}
+                    className={`w-full flex items-center px-4 py-2 text-sm hover:bg-gray-50 transition-colors ${
+                      viewMode === 'list' ? 'text-blue-600 bg-blue-50' : 'text-gray-700'
+                    }`}
+                  >
+                    <List className="w-4 h-4 mr-3" />
+                    <div>
+                      <div className="font-medium">List View</div>
+                      <div className="text-xs text-gray-500">Compact table format</div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => { setViewMode('kanban'); setShowViewDropdown(false); }}
+                    className={`w-full flex items-center px-4 py-2 text-sm hover:bg-gray-50 transition-colors ${
+                      viewMode === 'kanban' ? 'text-blue-600 bg-blue-50' : 'text-gray-700'
+                    }`}
+                  >
+                    <Columns className="w-4 h-4 mr-3" />
+                    <div>
+                      <div className="font-medium">Kanban View</div>
+                      <div className="text-xs text-gray-500">Organized by health status</div>
+                    </div>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
+        
+        {/* Click outside handler for view dropdown */}
+        {showViewDropdown && (
+          <div 
+            className="fixed inset-0 z-40" 
+            onClick={() => setShowViewDropdown(false)}
+          />
+        )}
 
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
@@ -355,6 +419,12 @@ const NextGenAccountModule: React.FC = () => {
                 className={`p-2 ${viewMode === 'list' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-50'}`}
               >
                 <List className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setViewMode('kanban')}
+                className={`p-2 ${viewMode === 'kanban' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-50'}`}
+              >
+                <Columns className="w-4 h-4" />
               </button>
             </div>
             
@@ -621,6 +691,141 @@ const NextGenAccountModule: React.FC = () => {
                   </tbody>
                 </table>
               </div>
+            </motion.div>
+          )}
+
+          {viewMode === 'kanban' && (
+            <motion.div
+              key="kanban"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="grid grid-cols-1 md:grid-cols-4 gap-6"
+            >
+              {[
+                { 
+                  status: 'excellent', 
+                  title: 'Excellent Health', 
+                  color: 'green', 
+                  accounts: filteredAccounts.filter((a: Account) => (a.healthScore || 0) >= 80) 
+                },
+                { 
+                  status: 'good', 
+                  title: 'Good Health', 
+                  color: 'blue', 
+                  accounts: filteredAccounts.filter((a: Account) => (a.healthScore || 0) >= 60 && (a.healthScore || 0) < 80) 
+                },
+                { 
+                  status: 'at_risk', 
+                  title: 'At Risk', 
+                  color: 'yellow', 
+                  accounts: filteredAccounts.filter((a: Account) => (a.healthScore || 0) >= 40 && (a.healthScore || 0) < 60) 
+                },
+                { 
+                  status: 'critical', 
+                  title: 'Critical', 
+                  color: 'red', 
+                  accounts: filteredAccounts.filter((a: Account) => (a.healthScore || 0) < 40) 
+                }
+              ].map((column) => (
+                <div key={column.status} className="bg-gray-50 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-semibold text-gray-900">{column.title}</h3>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium bg-${column.color}-100 text-${column.color}-700`}>
+                      {column.accounts.length}
+                    </span>
+                  </div>
+                  
+                  <div className="space-y-3 max-h-96 overflow-y-auto">
+                    {column.accounts.map((account: Account, index: number) => {
+                      const health = getAccountHealth(account);
+                      const HealthIcon = health.icon;
+                      
+                      return (
+                        <motion.div
+                          key={account.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.05 }}
+                          className="bg-white rounded-lg p-4 border border-gray-200 hover:border-blue-300 transition-colors cursor-pointer"
+                          onClick={() => window.location.href = `/crm/accounts/${account.id}`}
+                        >
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="flex items-center space-x-2">
+                              {account.logoUrl ? (
+                                <img src={account.logoUrl} alt={account.name} className="w-8 h-8 rounded object-cover" />
+                              ) : (
+                                <div className="w-8 h-8 bg-blue-100 rounded flex items-center justify-center">
+                                  <Building className="w-4 h-4 text-blue-600" />
+                                </div>
+                              )}
+                              <div>
+                                <h4 className="font-medium text-gray-900 text-sm truncate">{account.name}</h4>
+                                <p className="text-xs text-gray-500">{account.industry}</p>
+                              </div>
+                            </div>
+                            
+                            <div className={`px-2 py-1 rounded-full ${health.color} flex items-center space-x-1`}>
+                              <HealthIcon className="w-3 h-3" />
+                              <span className="text-xs font-medium">{account.healthScore || 0}</span>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-1 text-xs text-gray-600">
+                            {account.totalRevenue && parseFloat(account.totalRevenue) > 0 && (
+                              <div className="flex items-center">
+                                <DollarSign className="w-3 h-3 mr-1" />
+                                ${parseFloat(account.totalRevenue).toLocaleString()}
+                              </div>
+                            )}
+                            {account.employees && (
+                              <div className="flex items-center">
+                                <Users className="w-3 h-3 mr-1" />
+                                {account.employees.toLocaleString()} employees
+                              </div>
+                            )}
+                            {account.website && (
+                              <div className="flex items-center">
+                                <Globe className="w-3 h-3 mr-1" />
+                                <span className="truncate">{account.website}</span>
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div className="mt-3 flex items-center justify-between">
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              account.accountType === 'customer' ? 'bg-green-100 text-green-700' :
+                              account.accountType === 'prospect' ? 'bg-blue-100 text-blue-700' :
+                              'bg-gray-100 text-gray-700'
+                            }`}>
+                              {account.accountType}
+                            </span>
+                            
+                            <div className="flex items-center space-x-1">
+                              {account.linkedinUrl && (
+                                <Linkedin className="w-3 h-3 text-blue-600" />
+                              )}
+                              {account.twitterHandle && (
+                                <Twitter className="w-3 h-3 text-blue-400" />
+                              )}
+                              <button className="text-gray-400 hover:text-gray-600">
+                                <MoreHorizontal className="w-3 h-3" />
+                              </button>
+                            </div>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                    
+                    {column.accounts.length === 0 && (
+                      <div className="text-center py-8 text-gray-500">
+                        <Building className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                        <p className="text-sm">No accounts in this category</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
             </motion.div>
           )}
         </AnimatePresence>
