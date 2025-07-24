@@ -4,7 +4,7 @@ import {
   Bell, Search, Settings, Menu, Plus, Mail, Building2, 
   Users, UserPlus, DollarSign, Phone, Activity, LayoutDashboard,
   UserCheck, Target, BarChart3, Calendar, ChevronDown, X, MoreHorizontal,
-  Building, Trophy
+  Building, Trophy, Brain
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -38,6 +38,7 @@ const Header: React.FC = () => {
   const appModules = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'CRM', href: '/crm', icon: Users },
+    { name: 'AI Meeting Intelligence', href: '/meeting-intelligence', icon: Brain },
     { name: 'HRMS', href: '/hrms', icon: UserCheck },
     { name: 'Lead Generation', href: '/lead-generation', icon: Target },
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },

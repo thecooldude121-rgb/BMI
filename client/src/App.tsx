@@ -21,6 +21,7 @@ import LeadGeneration from './pages/LeadGeneration/LeadGeneration';
 import GamificationPage from './pages/Gamification/GamificationPage';
 import Settings from './pages/Settings/Settings';
 import Login from './pages/Auth/Login';
+import MeetingIntelligencePage from './pages/MeetingIntelligencePage';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
@@ -52,6 +53,7 @@ const App = () => {
               <Route path="/hrms" component={HRMSModule} />
               <Route path="/analytics" component={Analytics} />
               <Route path="/calendar" component={Calendar} />
+              <Route path="/meeting-intelligence" component={MeetingIntelligencePage} />
               <Route path="/lead-generation" component={LeadGeneration} />
               <Route path="/gamification" component={GamificationPage} />
               <Route path="/settings" component={Settings} />

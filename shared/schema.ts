@@ -165,18 +165,147 @@ export const activities = pgTable("activities", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+// AI Meeting Intelligence Tables
 export const meetings = pgTable("meetings", {
   id: uuid("id").primaryKey().defaultRandom(),
   title: text("title").notNull(),
-  date: timestamp("date").notNull(),
-  duration: integer("duration").notNull().default(30),
-  attendees: jsonb("attendees"),
-  type: text("type").notNull().default('internal'),
-  relatedToType: text("related_to_type"),
-  relatedToId: uuid("related_to_id"),
-  summary: text("summary"),
-  actionItems: jsonb("action_items"),
-  createdBy: uuid("created_by").references(() => users.id),
+  description: text("description"),
+  scheduledStart: timestamp("scheduled_start").notNull(),
+  scheduledEnd: timestamp("scheduled_end").notNull(),
+  actualStart: timestamp("actual_start"),
+  actualEnd: timestamp("actual_end"),
+  type: meetingTypeEnum("type").notNull().default('video'),
+  status: meetingStatusEnum("status").notNull().default('scheduled'),
+  platform: text("platform"), // 'zoom', 'teams', 'google-meet', 'in-person'
+  meetingUrl: text("meeting_url"),
+  recordingUrl: text("recording_url"),
+  calendarEventId: text("calendar_event_id"),
+  organizerId: uuid("organizer_id").references(() => users.id).notNull(),
+  dealId: uuid("deal_id").references(() => deals.id),
+  accountId: uuid("account_id").references(() => accounts.id),
+  leadId: uuid("lead_id").references(() => leads.id),
+  agenda: text("agenda"),
+  location: text("location"),
+  isRecorded: boolean("is_recorded").default(false),
+  aiProcessingStatus: text("ai_processing_status").default('pending'), // 'pending', 'processing', 'completed', 'failed'
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const meetingParticipants = pgTable("meeting_participants", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  meetingId: uuid("meeting_id").references(() => meetings.id).notNull(),
+  userId: uuid("user_id").references(() => users.id),
+  contactId: uuid("contact_id").references(() => contacts.id),
+  email: text("email").notNull(),
+  name: text("name").notNull(),
+  role: text("role"), // 'organizer', 'attendee', 'presenter'
+  status: participantStatusEnum("status").default('invited'),
+  joinedAt: timestamp("joined_at"),
+  leftAt: timestamp("left_at"),
+  duration: integer("duration"), // minutes participated
+  isExternal: boolean("is_external").default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const meetingTranscripts = pgTable("meeting_transcripts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  meetingId: uuid("meeting_id").references(() => meetings.id).notNull(),
+  rawTranscript: text("raw_transcript").notNull(),
+  speakerSegments: jsonb("speaker_segments"), // Array of {speaker, text, timestamp, duration}
+  language: text("language").default('en'),
+  confidence: decimal("confidence", { precision: 3, scale: 2 }), // AI confidence score
+  processingSource: text("processing_source"), // 'zoom', 'teams', 'google-meet', 'manual'
+  status: transcriptionStatusEnum("status").default('completed'),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const meetingSummaries = pgTable("meeting_summaries", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  meetingId: uuid("meeting_id").references(() => meetings.id).notNull(),
+  conciseSummary: text("concise_summary").notNull(),
+  keyTopics: jsonb("key_topics"), // Array of main discussion topics
+  meetingIntent: text("meeting_intent"),
+  attendeeRoles: jsonb("attendee_roles"), // Map of participant roles and contexts
+  duration: integer("duration"), // actual meeting duration in minutes
+  engagementScore: integer("engagement_score"), // 1-100 overall engagement
+  sentimentAnalysis: jsonb("sentiment_analysis"), // Overall meeting sentiment
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const meetingOutcomes = pgTable("meeting_outcomes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  meetingId: uuid("meeting_id").references(() => meetings.id).notNull(),
+  participantEmail: text("participant_email").notNull(),
+  participantName: text("participant_name").notNull(),
+  nextSteps: jsonb("next_steps"), // Array of actionable next steps
+  assignedTasks: jsonb("assigned_tasks"), // Specific tasks assigned to this participant
+  commitments: jsonb("commitments"), // Commitments made by this participant
+  followUpDate: timestamp("follow_up_date"),
+  priority: text("priority").default('medium'), // 'low', 'medium', 'high', 'urgent'
+  status: text("status").default('pending'), // 'pending', 'in-progress', 'completed'
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const meetingInsights = pgTable("meeting_insights", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  meetingId: uuid("meeting_id").references(() => meetings.id).notNull(),
+  type: insightTypeEnum("type").notNull(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  relatedParticipant: text("related_participant"), // Email or name
+  importance: text("importance").default('medium'), // 'low', 'medium', 'high', 'critical'
+  timestamp: integer("timestamp"), // Seconds into the meeting when this occurred
+  context: text("context"), // Surrounding conversation context
+  suggestedAction: text("suggested_action"),
+  isResolved: boolean("is_resolved").default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const meetingQuestions = pgTable("meeting_questions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  meetingId: uuid("meeting_id").references(() => meetings.id).notNull(),
+  question: text("question").notNull(),
+  askedBy: text("asked_by"), // Participant who asked
+  category: text("category"), // 'technical', 'pricing', 'timeline', 'process', 'other'
+  importance: text("importance").default('medium'),
+  timestamp: integer("timestamp"), // Seconds into meeting
+  isAnswered: boolean("is_answered").default(false),
+  answer: text("answer"),
+  answeredBy: text("answered_by"),
+  followUpRequired: boolean("follow_up_required").default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const meetingPainPoints = pgTable("meeting_pain_points", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  meetingId: uuid("meeting_id").references(() => meetings.id).notNull(),
+  painPoint: text("pain_point").notNull(),
+  participantName: text("participant_name"),
+  participantEmail: text("participant_email"),
+  category: text("category"), // 'technical', 'process', 'cost', 'timeline', 'resource', 'other'
+  severity: text("severity").default('medium'), // 'low', 'medium', 'high', 'critical'
+  timestamp: integer("timestamp"),
+  context: text("context"),
+  suggestedSolution: text("suggested_solution"),
+  isAddressed: boolean("is_addressed").default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const meetingFollowUps = pgTable("meeting_follow_ups", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  meetingId: uuid("meeting_id").references(() => meetings.id).notNull(),
+  type: text("type").notNull(), // 'meeting', 'email', 'call', 'demo', 'proposal'
+  title: text("title").notNull(),
+  description: text("description"),
+  assignedTo: text("assigned_to"), // Email or name
+  dueDate: timestamp("due_date"),
+  priority: text("priority").default('medium'),
+  status: text("status").default('pending'),
+  calendarEventCreated: boolean("calendar_event_created").default(false),
+  emailSent: boolean("email_sent").default(false),
+  crmUpdated: boolean("crm_updated").default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -290,8 +419,53 @@ export const activitiesRelations = relations(activities, ({ one }) => ({
   contact: one(contacts, { fields: [activities.contactId], references: [contacts.id] }),
 }));
 
-export const meetingsRelations = relations(meetings, ({ one }) => ({
-  creator: one(users, { fields: [meetings.createdBy], references: [users.id] }),
+export const meetingsRelations = relations(meetings, ({ one, many }) => ({
+  organizer: one(users, { fields: [meetings.organizerId], references: [users.id] }),
+  deal: one(deals, { fields: [meetings.dealId], references: [deals.id] }),
+  account: one(accounts, { fields: [meetings.accountId], references: [accounts.id] }),
+  lead: one(leads, { fields: [meetings.leadId], references: [leads.id] }),
+  participants: many(meetingParticipants),
+  transcripts: many(meetingTranscripts),
+  summaries: many(meetingSummaries),
+  outcomes: many(meetingOutcomes),
+  insights: many(meetingInsights),
+  questions: many(meetingQuestions),
+  painPoints: many(meetingPainPoints),
+  followUps: many(meetingFollowUps),
+}));
+
+export const meetingParticipantsRelations = relations(meetingParticipants, ({ one }) => ({
+  meeting: one(meetings, { fields: [meetingParticipants.meetingId], references: [meetings.id] }),
+  user: one(users, { fields: [meetingParticipants.userId], references: [users.id] }),
+  contact: one(contacts, { fields: [meetingParticipants.contactId], references: [contacts.id] }),
+}));
+
+export const meetingTranscriptsRelations = relations(meetingTranscripts, ({ one }) => ({
+  meeting: one(meetings, { fields: [meetingTranscripts.meetingId], references: [meetings.id] }),
+}));
+
+export const meetingSummariesRelations = relations(meetingSummaries, ({ one }) => ({
+  meeting: one(meetings, { fields: [meetingSummaries.meetingId], references: [meetings.id] }),
+}));
+
+export const meetingOutcomesRelations = relations(meetingOutcomes, ({ one }) => ({
+  meeting: one(meetings, { fields: [meetingOutcomes.meetingId], references: [meetings.id] }),
+}));
+
+export const meetingInsightsRelations = relations(meetingInsights, ({ one }) => ({
+  meeting: one(meetings, { fields: [meetingInsights.meetingId], references: [meetings.id] }),
+}));
+
+export const meetingQuestionsRelations = relations(meetingQuestions, ({ one }) => ({
+  meeting: one(meetings, { fields: [meetingQuestions.meetingId], references: [meetings.id] }),
+}));
+
+export const meetingPainPointsRelations = relations(meetingPainPoints, ({ one }) => ({
+  meeting: one(meetings, { fields: [meetingPainPoints.meetingId], references: [meetings.id] }),
+}));
+
+export const meetingFollowUpsRelations = relations(meetingFollowUps, ({ one }) => ({
+  meeting: one(meetings, { fields: [meetingFollowUps.meetingId], references: [meetings.id] }),
 }));
 
 // Insert schemas
@@ -338,6 +512,48 @@ export const insertActivitySchema = createInsertSchema(activities).omit({
 });
 
 export const insertMeetingSchema = createInsertSchema(meetings).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertMeetingParticipantSchema = createInsertSchema(meetingParticipants).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertMeetingTranscriptSchema = createInsertSchema(meetingTranscripts).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertMeetingSummarySchema = createInsertSchema(meetingSummaries).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertMeetingOutcomeSchema = createInsertSchema(meetingOutcomes).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertMeetingInsightSchema = createInsertSchema(meetingInsights).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertMeetingQuestionSchema = createInsertSchema(meetingQuestions).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertMeetingPainPointSchema = createInsertSchema(meetingPainPoints).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertMeetingFollowUpSchema = createInsertSchema(meetingFollowUps).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
@@ -391,6 +607,30 @@ export type Activity = typeof activities.$inferSelect;
 
 export type InsertMeeting = z.infer<typeof insertMeetingSchema>;
 export type Meeting = typeof meetings.$inferSelect;
+
+export type InsertMeetingParticipant = z.infer<typeof insertMeetingParticipantSchema>;
+export type MeetingParticipant = typeof meetingParticipants.$inferSelect;
+
+export type InsertMeetingTranscript = z.infer<typeof insertMeetingTranscriptSchema>;
+export type MeetingTranscript = typeof meetingTranscripts.$inferSelect;
+
+export type InsertMeetingSummary = z.infer<typeof insertMeetingSummarySchema>;
+export type MeetingSummary = typeof meetingSummaries.$inferSelect;
+
+export type InsertMeetingOutcome = z.infer<typeof insertMeetingOutcomeSchema>;
+export type MeetingOutcome = typeof meetingOutcomes.$inferSelect;
+
+export type InsertMeetingInsight = z.infer<typeof insertMeetingInsightSchema>;
+export type MeetingInsight = typeof meetingInsights.$inferSelect;
+
+export type InsertMeetingQuestion = z.infer<typeof insertMeetingQuestionSchema>;
+export type MeetingQuestion = typeof meetingQuestions.$inferSelect;
+
+export type InsertMeetingPainPoint = z.infer<typeof insertMeetingPainPointSchema>;
+export type MeetingPainPoint = typeof meetingPainPoints.$inferSelect;
+
+export type InsertMeetingFollowUp = z.infer<typeof insertMeetingFollowUpSchema>;
+export type MeetingFollowUp = typeof meetingFollowUps.$inferSelect;
 
 export type InsertSalesPoints = z.infer<typeof insertSalesPointsSchema>;
 export type SalesPoints = typeof salesPoints.$inferSelect;
