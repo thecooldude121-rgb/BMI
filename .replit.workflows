@@ -1,2 +1,2 @@
 [dev]
-command = "NODE_ENV=development tsx server/index.ts"
+command = "./keep-alive.sh"
