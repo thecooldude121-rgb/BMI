@@ -38,7 +38,6 @@ const Header: React.FC = () => {
   const appModules = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'CRM', href: '/crm', icon: Users },
-    { name: 'Meetings', href: '/meetings', icon: Phone },
     { name: 'HRMS', href: '/hrms', icon: UserCheck },
     { name: 'Lead Generation', href: '/lead-generation', icon: Target },
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },
