@@ -77,12 +77,22 @@ export default function SimpleAdvancedDealsModule() {
     queryKey: ['/api/deals'],
     queryFn: async () => {
       console.log('🚀 Fetching deals...');
-      const response = await fetch('/api/deals');
-      if (!response.ok) throw new Error('Failed to fetch deals');
-      const data = await response.json();
-      console.log('✅ Deals loaded:', data.length);
-      return data;
-    }
+      try {
+        const response = await fetch('/api/deals');
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Failed to fetch deals: ${response.status} ${response.statusText} - ${errorText}`);
+        }
+        const data = await response.json();
+        console.log('✅ Deals loaded:', data.length);
+        return data;
+      } catch (fetchError) {
+        console.error('❌ Error fetching deals:', fetchError);
+        throw fetchError;
+      }
+    },
+    retry: 3,
+    retryDelay: 1000
   });
 
   // Deal update mutation
