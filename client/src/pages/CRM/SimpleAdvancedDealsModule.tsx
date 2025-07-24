@@ -5,15 +5,15 @@ import {
   Search, 
   Filter, 
   Calendar, 
-  DollarSign, 
   TrendingUp,
-  AlertTriangle,
   Star,
-  Users,
-  Activity,
   Eye,
-  Edit,
-  MoreVertical
+  ChevronDown,
+  Check,
+  Trash2,
+  UserPlus,
+  ArrowRight,
+  Edit
 } from 'lucide-react';
 
 interface Deal {
@@ -61,6 +61,7 @@ export default function SimpleAdvancedDealsModule() {
   const [viewMode, setViewMode] = useState<'kanban' | 'list' | 'table'>('kanban');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDeals, setSelectedDeals] = useState<string[]>([]);
+  const [showActionsDropdown, setShowActionsDropdown] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -133,69 +134,85 @@ export default function SimpleAdvancedDealsModule() {
       key={deal.id}
       draggable
       onDragStart={(e) => handleDragStart(e, deal.id)}
-      className="bg-white border rounded-lg p-4 mb-3 cursor-move hover:shadow-md transition-shadow"
+      className="bg-white border rounded-lg p-4 mb-3 cursor-move hover:shadow-md transition-shadow relative"
     >
-      <div className="flex items-start justify-between mb-2">
-        <div className="flex-1">
-          <h4 className="font-semibold text-sm mb-1 line-clamp-2">{deal.name}</h4>
-          <p className="text-xs text-gray-600 mb-2 line-clamp-1">{deal.title}</p>
-        </div>
-        <div className="flex items-center space-x-1 ml-2">
-          <span className={`px-2 py-1 text-xs rounded-full ${DEAL_HEALTH_COLORS[deal.dealHealth as keyof typeof DEAL_HEALTH_COLORS]}`}>
-            {deal.dealHealth}
-          </span>
-        </div>
+      {/* Multi-select checkbox */}
+      <div className="absolute top-2 left-2 z-10">
+        <input
+          type="checkbox"
+          checked={selectedDeals.includes(deal.id)}
+          onChange={(e) => {
+            e.stopPropagation();
+            if (e.target.checked) {
+              setSelectedDeals([...selectedDeals, deal.id]);
+            } else {
+              setSelectedDeals(selectedDeals.filter(id => id !== deal.id));
+            }
+          }}
+          className="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500"
+        />
       </div>
 
-      <div className="flex items-center justify-between mb-3">
-        <div className="text-lg font-bold text-green-600">
-          ${parseInt(deal.value).toLocaleString()}
-        </div>
-        <div className="flex items-center space-x-1">
-          <TrendingUp className="w-3 h-3" />
-          <span className="text-xs">{deal.probability}%</span>
-        </div>
-      </div>
-
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center space-x-2">
-          <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-xs">
-            {deal.contact?.firstName?.[0]}{deal.contact?.lastName?.[0]}
+      {/* Clickable area for deal details */}
+      <div 
+        className="cursor-pointer pl-6"
+        onClick={() => window.location.href = `/crm/deals/${deal.id}`}
+      >
+        <div className="flex items-start justify-between mb-2">
+          <div className="flex-1">
+            <h4 className="font-semibold text-sm mb-1 line-clamp-2 hover:text-blue-600">{deal.name}</h4>
+            <p className="text-xs text-gray-600 mb-2 line-clamp-1">{deal.title}</p>
           </div>
-          <span className="text-xs text-gray-600">
-            {deal.contact?.firstName} {deal.contact?.lastName}
-          </span>
+          <div className="flex items-center space-x-1 ml-2">
+            <span className={`px-2 py-1 text-xs rounded-full ${DEAL_HEALTH_COLORS[deal.dealHealth as keyof typeof DEAL_HEALTH_COLORS]}`}>
+              {deal.dealHealth}
+            </span>
+          </div>
         </div>
-        <div className="flex items-center space-x-1">
-          <Star className={`w-3 h-3 ${deal.aiScore > 80 ? 'text-yellow-500 fill-current' : 'text-gray-300'}`} />
-          <span className="text-xs">{deal.aiScore}</span>
-        </div>
-      </div>
 
-      <div className="flex items-center justify-between text-xs text-gray-500">
-        <div className="flex items-center space-x-1">
-          <Calendar className="w-3 h-3" />
-          <span>{new Date(deal.expectedCloseDate).toLocaleDateString()}</span>
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-lg font-bold text-green-600">
+            ${parseInt(deal.value).toLocaleString()}
+          </div>
+          <div className="flex items-center space-x-1">
+            <TrendingUp className="w-3 h-3" />
+            <span className="text-xs">{deal.probability}%</span>
+          </div>
         </div>
-        <div className="flex items-center space-x-2">
-          <button 
-            className="p-1 hover:bg-gray-100 rounded"
-            onClick={() => window.location.href = `/crm/deals/${deal.id}`}
-          >
-            <Eye className="w-3 h-3" />
-          </button>
-          <button className="p-1 hover:bg-gray-100 rounded">
-            <Edit className="w-3 h-3" />
-          </button>
-        </div>
-      </div>
 
-      <div className="mt-2">
-        <div className="w-full bg-gray-200 rounded-full h-1">
-          <div 
-            className="bg-blue-500 h-1 rounded-full" 
-            style={{ width: `${deal.probability}%` }}
-          ></div>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center space-x-2">
+            <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-xs">
+              {deal.contact?.firstName?.[0]}{deal.contact?.lastName?.[0]}
+            </div>
+            <span className="text-xs text-gray-600">
+              {deal.contact?.firstName} {deal.contact?.lastName}
+            </span>
+          </div>
+          <div className="flex items-center space-x-1">
+            <Star className={`w-3 h-3 ${deal.aiScore > 80 ? 'text-yellow-500 fill-current' : 'text-gray-300'}`} />
+            <span className="text-xs">{deal.aiScore}</span>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+          <div className="flex items-center space-x-1">
+            <Calendar className="w-3 h-3" />
+            <span>{new Date(deal.expectedCloseDate).toLocaleDateString()}</span>
+          </div>
+          <div className="text-blue-600 hover:text-blue-800 flex items-center space-x-1">
+            <span>View Details</span>
+            <ArrowRight className="w-3 h-3" />
+          </div>
+        </div>
+
+        <div className="mt-2">
+          <div className="w-full bg-gray-200 rounded-full h-1">
+            <div 
+              className="bg-blue-500 h-1 rounded-full" 
+              style={{ width: `${deal.probability}%` }}
+            ></div>
+          </div>
         </div>
       </div>
     </div>
@@ -246,7 +263,7 @@ export default function SimpleAdvancedDealsModule() {
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 <input
                   type="checkbox"
-                  checked={selectedDeals.length === filteredDeals.length}
+                  checked={selectedDeals.length === filteredDeals.length && filteredDeals.length > 0}
                   onChange={(e) => {
                     if (e.target.checked) {
                       setSelectedDeals(filteredDeals.map((d: Deal) => d.id));
@@ -283,7 +300,12 @@ export default function SimpleAdvancedDealsModule() {
                 </td>
                 <td className="px-4 py-3">
                   <div>
-                    <div className="font-medium text-sm">{deal.name}</div>
+                    <div 
+                      className="font-medium text-sm cursor-pointer hover:text-blue-600"
+                      onClick={() => window.location.href = `/crm/deals/${deal.id}`}
+                    >
+                      {deal.name}
+                    </div>
                     <div className="text-xs text-gray-500">{deal.title}</div>
                   </div>
                 </td>
@@ -306,20 +328,12 @@ export default function SimpleAdvancedDealsModule() {
                   {new Date(deal.expectedCloseDate).toLocaleDateString()}
                 </td>
                 <td className="px-4 py-3">
-                  <div className="flex items-center space-x-2">
-                    <button 
-                      className="p-1 hover:bg-gray-100 rounded"
-                      onClick={() => window.location.href = `/crm/deals/${deal.id}`}
-                    >
-                      <Eye className="w-3 h-3" />
-                    </button>
-                    <button className="p-1 hover:bg-gray-100 rounded">
-                      <Edit className="w-3 h-3" />
-                    </button>
-                    <button className="p-1 hover:bg-gray-100 rounded">
-                      <MoreVertical className="w-3 h-3" />
-                    </button>
-                  </div>
+                  <button 
+                    className="p-1 hover:bg-gray-100 rounded text-blue-600"
+                    onClick={() => window.location.href = `/crm/deals/${deal.id}`}
+                  >
+                    <Eye className="w-3 h-3" />
+                  </button>
                 </td>
               </tr>
             ))}
@@ -345,6 +359,61 @@ export default function SimpleAdvancedDealsModule() {
             <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium">
               Configure
             </button>
+            
+            {/* Actions Dropdown */}
+            <div className="relative">
+              <button 
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium flex items-center space-x-2"
+                onClick={() => setShowActionsDropdown(!showActionsDropdown)}
+              >
+                <span>Actions</span>
+                <ChevronDown className="w-4 h-4" />
+              </button>
+              
+              {showActionsDropdown && (
+                <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-50">
+                  <div className="py-1">
+                    <button 
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+                      onClick={() => {
+                        console.log('Mass update:', selectedDeals);
+                        setShowActionsDropdown(false);
+                      }}
+                      disabled={selectedDeals.length === 0}
+                    >
+                      <Edit className="w-4 h-4 mr-2" />
+                      Mass Update
+                    </button>
+                    <button 
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+                      onClick={() => {
+                        console.log('Mass transfer:', selectedDeals);
+                        setShowActionsDropdown(false);
+                      }}
+                      disabled={selectedDeals.length === 0}
+                    >
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Mass Transfer
+                    </button>
+                    <button 
+                      className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
+                      onClick={() => {
+                        if (confirm(`Are you sure you want to delete ${selectedDeals.length} selected deals?`)) {
+                          console.log('Delete deals:', selectedDeals);
+                          setSelectedDeals([]);
+                        }
+                        setShowActionsDropdown(false);
+                      }}
+                      disabled={selectedDeals.length === 0}
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Delete Selected
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <button 
               className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium"
               onClick={() => window.location.href = '/crm/deals/new'}
@@ -374,14 +443,15 @@ export default function SimpleAdvancedDealsModule() {
             </button>
             {selectedDeals.length > 0 && (
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-gray-600 bg-blue-50 px-3 py-1 rounded-full">
+                  <Check className="w-3 h-3 inline mr-1" />
                   {selectedDeals.length} selected
                 </span>
-                <button className="px-3 py-1 bg-blue-100 text-blue-700 rounded text-sm">
-                  Assign
-                </button>
-                <button className="px-3 py-1 bg-blue-100 text-blue-700 rounded text-sm">
-                  Move Stage
+                <button 
+                  className="px-3 py-1 bg-blue-100 text-blue-700 rounded text-sm hover:bg-blue-200"
+                  onClick={() => setSelectedDeals([])}
+                >
+                  Clear Selection
                 </button>
               </div>
             )}
@@ -425,7 +495,7 @@ export default function SimpleAdvancedDealsModule() {
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <div className="text-red-500 mb-4">⚠️ Error loading deals</div>
-              <p className="text-gray-600">{error.toString()}</p>
+              <p className="text-gray-600">{error?.toString()}</p>
             </div>
           </div>
         ) : deals.length === 0 ? (
