@@ -1,234 +1,383 @@
-import { users, type User, type InsertUser } from "@shared/schema";
-
-// Define basic BMI Platform entities
-export interface Lead {
-  id: number;
-  name: string;
-  email: string;
-  company?: string;
-  stage: 'new' | 'qualified' | 'proposal' | 'closed-won' | 'closed-lost';
-  value?: number;
-  source?: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface Deal {
-  id: number;
-  title: string;
-  value: number;
-  stage: 'prospecting' | 'qualification' | 'proposal' | 'negotiation' | 'closed-won' | 'closed-lost';
-  probability: number;
-  leadId?: number;
-  accountId?: number;
-  ownerId?: number;
-  expectedCloseDate?: Date;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface Account {
-  id: number;
-  name: string;
-  industry?: string;
-  website?: string;
-  phone?: string;
-  address?: string;
-  revenue?: number;
-  employees?: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface Employee {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  department?: string;
-  position?: string;
-  salary?: number;
-  hireDate?: Date;
-  status: 'active' | 'inactive' | 'terminated';
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { db } from "./db";
+import * as schema from "@shared/schema";
+import { eq, and, desc, sql, gte, lte } from "drizzle-orm";
 
 export interface IStorage {
-  getUser(id: number): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
-  
-  // CRM methods
-  getAllLeads(): Promise<Lead[]>;
-  getAllDeals(): Promise<Deal[]>;
-  getAllAccounts(): Promise<Account[]>;
-  
-  // HRMS methods
-  getAllEmployees(): Promise<Employee[]>;
+  // User methods
+  getUser(id: string): Promise<schema.User | undefined>;
+  getUserByEmail(email: string): Promise<schema.User | undefined>;
+  createUser(user: schema.InsertUser): Promise<schema.User>;
+  updateUser(id: string, user: Partial<schema.InsertUser>): Promise<schema.User>;
+
+  // Account methods
+  getAccounts(): Promise<schema.Account[]>;
+  getAccount(id: string): Promise<schema.Account | undefined>;
+  createAccount(account: schema.InsertAccount): Promise<schema.Account>;
+  updateAccount(id: string, account: Partial<schema.InsertAccount>): Promise<schema.Account>;
+
+  // Contact methods
+  getContacts(): Promise<schema.Contact[]>;
+  getContact(id: string): Promise<schema.Contact | undefined>;
+  getContactsByAccount(accountId: string): Promise<schema.Contact[]>;
+  createContact(contact: schema.InsertContact): Promise<schema.Contact>;
+  updateContact(id: string, contact: Partial<schema.InsertContact>): Promise<schema.Contact>;
+
+  // Lead methods
+  getLeads(): Promise<schema.Lead[]>;
+  getLead(id: string): Promise<schema.Lead | undefined>;
+  getLeadsByAssignee(assigneeId: string): Promise<schema.Lead[]>;
+  createLead(lead: schema.InsertLead): Promise<schema.Lead>;
+  updateLead(id: string, lead: Partial<schema.InsertLead>): Promise<schema.Lead>;
+  deleteLead(id: string): Promise<boolean>;
+
+  // Deal methods
+  getDeals(): Promise<schema.Deal[]>;
+  getDeal(id: string): Promise<schema.Deal | undefined>;
+  getDealsByAssignee(assigneeId: string): Promise<schema.Deal[]>;
+  createDeal(deal: schema.InsertDeal): Promise<schema.Deal>;
+  updateDeal(id: string, deal: Partial<schema.InsertDeal>): Promise<schema.Deal>;
+
+  // Task methods
+  getTasks(): Promise<schema.Task[]>;
+  getTask(id: string): Promise<schema.Task | undefined>;
+  getTasksByAssignee(assigneeId: string): Promise<schema.Task[]>;
+  createTask(task: schema.InsertTask): Promise<schema.Task>;
+  updateTask(id: string, task: Partial<schema.InsertTask>): Promise<schema.Task>;
+
+  // Activity methods
+  getActivities(): Promise<schema.Activity[]>;
+  getActivity(id: string): Promise<schema.Activity | undefined>;
+  getActivitiesByAssignee(assigneeId: string): Promise<schema.Activity[]>;
+  createActivity(activity: schema.InsertActivity): Promise<schema.Activity>;
+  updateActivity(id: string, activity: Partial<schema.InsertActivity>): Promise<schema.Activity>;
+
+  // Meeting methods
+  getMeetings(): Promise<schema.Meeting[]>;
+  getMeeting(id: string): Promise<schema.Meeting | undefined>;
+  createMeeting(meeting: schema.InsertMeeting): Promise<schema.Meeting>;
+  updateMeeting(id: string, meeting: Partial<schema.InsertMeeting>): Promise<schema.Meeting>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private leads: Map<number, Lead>;
-  private deals: Map<number, Deal>;
-  private accounts: Map<number, Account>;
-  private employees: Map<number, Employee>;
-  private currentUserId: number;
-  private currentLeadId: number;
-  private currentDealId: number;
-  private currentAccountId: number;
-  private currentEmployeeId: number;
-
-  constructor() {
-    this.users = new Map();
-    this.leads = new Map();
-    this.deals = new Map();
-    this.accounts = new Map();
-    this.employees = new Map();
-    this.currentUserId = 1;
-    this.currentLeadId = 1;
-    this.currentDealId = 1;
-    this.currentAccountId = 1;
-    this.currentEmployeeId = 1;
-    
-    // Initialize with sample data
-    this.initializeSampleData();
+export class DatabaseStorage implements IStorage {
+  // User methods
+  async getUser(id: string): Promise<schema.User | undefined> {
+    const users = await db.select().from(schema.users).where(eq(schema.users.id, id));
+    return users[0];
   }
 
-  private initializeSampleData() {
-    const now = new Date();
-    
-    // Sample Leads
-    this.leads.set(1, {
-      id: 1,
-      name: "John Smith",
-      email: "john.smith@techcorp.com",
-      company: "TechCorp Inc",
-      stage: "qualified",
-      value: 50000,
-      source: "Website",
-      createdAt: now,
-      updatedAt: now
-    });
-    
-    this.leads.set(2, {
-      id: 2,
-      name: "Sarah Johnson",
-      email: "sarah@innovate.co",
-      company: "Innovate Solutions",
-      stage: "proposal",
-      value: 75000,
-      source: "Referral",
-      createdAt: now,
-      updatedAt: now
-    });
-    
-    // Sample Deals
-    this.deals.set(1, {
-      id: 1,
-      title: "Enterprise Software License",
-      value: 120000,
-      stage: "negotiation",
-      probability: 75,
-      expectedCloseDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      createdAt: now,
-      updatedAt: now
-    });
-    
-    this.deals.set(2, {
-      id: 2,
-      title: "Professional Services Contract",
-      value: 85000,
-      stage: "closed-won",
-      probability: 100,
-      createdAt: now,
-      updatedAt: now
-    });
-    
-    // Sample Accounts
-    this.accounts.set(1, {
-      id: 1,
-      name: "Global Enterprises",
-      industry: "Technology",
-      website: "https://globalent.com",
-      phone: "+1-555-0123",
-      revenue: 10000000,
-      employees: 500,
-      createdAt: now,
-      updatedAt: now
-    });
-    
-    // Sample Employees
-    this.employees.set(1, {
-      id: 1,
-      firstName: "Alice",
-      lastName: "Brown",
-      email: "alice.brown@company.com",
-      department: "Sales",
-      position: "Sales Manager",
-      salary: 85000,
-      status: "active",
-      createdAt: now,
-      updatedAt: now
-    });
-    
-    this.employees.set(2, {
-      id: 2,
-      firstName: "Bob",
-      lastName: "Wilson",
-      email: "bob.wilson@company.com",
-      department: "Engineering",
-      position: "Software Engineer",
-      salary: 95000,
-      status: "active",
-      createdAt: now,
-      updatedAt: now
-    });
+  async getUserByEmail(email: string): Promise<schema.User | undefined> {
+    const users = await db.select().from(schema.users).where(eq(schema.users.email, email));
+    return users[0];
   }
 
-  async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+  async createUser(user: schema.InsertUser): Promise<schema.User> {
+    const users = await db.insert(schema.users).values(user).returning();
+    return users[0];
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+  async updateUser(id: string, user: Partial<schema.InsertUser>): Promise<schema.User> {
+    const users = await db.update(schema.users).set(user).where(eq(schema.users.id, id)).returning();
+    return users[0];
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentUserId++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+  // Account methods
+  async getAccounts(): Promise<schema.Account[]> {
+    return await db.select().from(schema.accounts);
   }
 
-  // CRM methods
-  async getAllLeads(): Promise<Lead[]> {
-    return Array.from(this.leads.values()).sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+  async getAccount(id: string): Promise<schema.Account | undefined> {
+    const accounts = await db.select().from(schema.accounts).where(eq(schema.accounts.id, id));
+    return accounts[0];
   }
 
-  async getAllDeals(): Promise<Deal[]> {
-    return Array.from(this.deals.values()).sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+  async createAccount(account: schema.InsertAccount): Promise<schema.Account> {
+    const accounts = await db.insert(schema.accounts).values(account).returning();
+    return accounts[0];
   }
 
-  async getAllAccounts(): Promise<Account[]> {
-    return Array.from(this.accounts.values()).sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+  async updateAccount(id: string, account: Partial<schema.InsertAccount>): Promise<schema.Account> {
+    const accounts = await db.update(schema.accounts).set(account).where(eq(schema.accounts.id, id)).returning();
+    return accounts[0];
   }
 
-  // HRMS methods
-  async getAllEmployees(): Promise<Employee[]> {
-    return Array.from(this.employees.values()).sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+  async deleteAccount(id: string): Promise<boolean> {
+    const result = await db.delete(schema.accounts).where(eq(schema.accounts.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  // Contact methods
+  async getContacts(): Promise<schema.Contact[]> {
+    return await db.select().from(schema.contacts);
+  }
+
+  async getContact(id: string): Promise<schema.Contact | undefined> {
+    const contacts = await db.select().from(schema.contacts).where(eq(schema.contacts.id, id));
+    return contacts[0];
+  }
+
+  async getContactsByAccount(accountId: string): Promise<schema.Contact[]> {
+    return await db.select().from(schema.contacts).where(eq(schema.contacts.accountId, accountId));
+  }
+
+  async createContact(contact: schema.InsertContact): Promise<schema.Contact> {
+    const contacts = await db.insert(schema.contacts).values(contact).returning();
+    return contacts[0];
+  }
+
+  async updateContact(id: string, contact: Partial<schema.InsertContact>): Promise<schema.Contact> {
+    const contacts = await db.update(schema.contacts).set(contact).where(eq(schema.contacts.id, id)).returning();
+    return contacts[0];
+  }
+
+  async deleteContact(id: string): Promise<boolean> {
+    const result = await db.delete(schema.contacts).where(eq(schema.contacts.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  // Lead methods
+  async getLeads(): Promise<schema.Lead[]> {
+    return await db.select().from(schema.leads);
+  }
+
+  async getLead(id: string): Promise<schema.Lead | undefined> {
+    const leads = await db.select().from(schema.leads).where(eq(schema.leads.id, id));
+    return leads[0];
+  }
+
+  async getLeadsByAssignee(assigneeId: string): Promise<schema.Lead[]> {
+    return await db.select().from(schema.leads).where(eq(schema.leads.assignedTo, assigneeId));
+  }
+
+  async createLead(lead: schema.InsertLead): Promise<schema.Lead> {
+    const leads = await db.insert(schema.leads).values(lead).returning();
+    return leads[0];
+  }
+
+  async updateLead(id: string, lead: Partial<schema.InsertLead>): Promise<schema.Lead> {
+    const leads = await db.update(schema.leads).set(lead).where(eq(schema.leads.id, id)).returning();
+    return leads[0];
+  }
+
+  async deleteLead(id: string): Promise<boolean> {
+    const result = await db.delete(schema.leads).where(eq(schema.leads.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  // Deal methods
+  async getDeals(): Promise<schema.Deal[]> {
+    return await db.select().from(schema.deals);
+  }
+
+  async getDeal(id: string): Promise<schema.Deal | undefined> {
+    const deals = await db.select().from(schema.deals).where(eq(schema.deals.id, id));
+    return deals[0];
+  }
+
+  async getDealsByAssignee(assigneeId: string): Promise<schema.Deal[]> {
+    return await db.select().from(schema.deals).where(eq(schema.deals.assignedTo, assigneeId));
+  }
+
+  async createDeal(deal: schema.InsertDeal): Promise<schema.Deal> {
+    const deals = await db.insert(schema.deals).values(deal).returning();
+    return deals[0];
+  }
+
+  async updateDeal(id: string, deal: Partial<schema.InsertDeal>): Promise<schema.Deal> {
+    const deals = await db.update(schema.deals).set(deal).where(eq(schema.deals.id, id)).returning();
+    return deals[0];
+  }
+
+  async deleteDeal(id: string): Promise<boolean> {
+    const result = await db.delete(schema.deals).where(eq(schema.deals.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  // Task methods
+  async getTasks(): Promise<schema.Task[]> {
+    return await db.select().from(schema.tasks);
+  }
+
+  async getTask(id: string): Promise<schema.Task | undefined> {
+    const tasks = await db.select().from(schema.tasks).where(eq(schema.tasks.id, id));
+    return tasks[0];
+  }
+
+  async getTasksByAssignee(assigneeId: string): Promise<schema.Task[]> {
+    return await db.select().from(schema.tasks).where(eq(schema.tasks.assignedTo, assigneeId));
+  }
+
+  async createTask(task: schema.InsertTask): Promise<schema.Task> {
+    const tasks = await db.insert(schema.tasks).values(task).returning();
+    return tasks[0];
+  }
+
+  async updateTask(id: string, task: Partial<schema.InsertTask>): Promise<schema.Task> {
+    const tasks = await db.update(schema.tasks).set(task).where(eq(schema.tasks.id, id)).returning();
+    return tasks[0];
+  }
+
+  // Activity methods
+  async getActivities(): Promise<schema.Activity[]> {
+    return await db.select().from(schema.activities);
+  }
+
+  async getActivity(id: string): Promise<schema.Activity | undefined> {
+    const activities = await db.select().from(schema.activities).where(eq(schema.activities.id, id));
+    return activities[0];
+  }
+
+  async getActivitiesByAssignee(assigneeId: string): Promise<schema.Activity[]> {
+    return await db.select().from(schema.activities).where(eq(schema.activities.assignedTo, assigneeId));
+  }
+
+  async createActivity(activity: schema.InsertActivity): Promise<schema.Activity> {
+    const activities = await db.insert(schema.activities).values(activity).returning();
+    return activities[0];
+  }
+
+  async updateActivity(id: string, activity: Partial<schema.InsertActivity>): Promise<schema.Activity> {
+    const activities = await db.update(schema.activities).set(activity).where(eq(schema.activities.id, id)).returning();
+    return activities[0];
+  }
+
+  // Meeting methods
+  async getMeetings(): Promise<schema.Meeting[]> {
+    return await db.select().from(schema.meetings);
+  }
+
+  async getMeeting(id: string): Promise<schema.Meeting | undefined> {
+    const meetings = await db.select().from(schema.meetings).where(eq(schema.meetings.id, id));
+    return meetings[0];
+  }
+
+  async createMeeting(meeting: schema.InsertMeeting): Promise<schema.Meeting> {
+    const meetings = await db.insert(schema.meetings).values(meeting).returning();
+    return meetings[0];
+  }
+
+  async updateMeeting(id: string, meeting: Partial<schema.InsertMeeting>): Promise<schema.Meeting> {
+    const meetings = await db.update(schema.meetings).set(meeting).where(eq(schema.meetings.id, id)).returning();
+    return meetings[0];
+  }
+
+  // Gamification methods
+  async getSalesPoints(userId?: string): Promise<schema.SalesPoints[]> {
+    if (userId) {
+      return await db.select().from(schema.salesPoints).where(eq(schema.salesPoints.userId, userId));
+    }
+    return await db.select().from(schema.salesPoints);
+  }
+
+  async createSalesPoints(points: schema.InsertSalesPoints): Promise<schema.SalesPoints> {
+    const result = await db.insert(schema.salesPoints).values(points).returning();
+    return result[0];
+  }
+
+  async getBadges(): Promise<schema.Badge[]> {
+    return await db.select().from(schema.badges).where(eq(schema.badges.isActive, true));
+  }
+
+  async createBadge(badge: schema.InsertBadge): Promise<schema.Badge> {
+    const result = await db.insert(schema.badges).values(badge).returning();
+    return result[0];
+  }
+
+  async getUserBadges(userId: string): Promise<(schema.UserBadge & { badge: schema.Badge })[]> {
+    const result = await db.select({
+      id: schema.userBadges.id,
+      userId: schema.userBadges.userId,
+      badgeId: schema.userBadges.badgeId,
+      earnedAt: schema.userBadges.earnedAt,
+      progress: schema.userBadges.progress,
+      badge: {
+        id: schema.badges.id,
+        name: schema.badges.name,
+        description: schema.badges.description,
+        icon: schema.badges.icon,
+        color: schema.badges.color,
+        points: schema.badges.points
+      }
+    })
+    .from(schema.userBadges)
+    .leftJoin(schema.badges, eq(schema.userBadges.badgeId, schema.badges.id))
+    .where(eq(schema.userBadges.userId, userId));
+    
+    return result as any;
+  }
+
+  async awardBadge(userBadge: schema.InsertUserBadge): Promise<schema.UserBadge> {
+    const result = await db.insert(schema.userBadges).values(userBadge).returning();
+    return result[0];
+  }
+
+  async getSalesTargets(userId?: string): Promise<schema.SalesTarget[]> {
+    if (userId) {
+      return await db.select().from(schema.salesTargets).where(eq(schema.salesTargets.userId, userId));
+    }
+    return await db.select().from(schema.salesTargets);
+  }
+
+  async createSalesTarget(target: schema.InsertSalesTarget): Promise<schema.SalesTarget> {
+    const result = await db.insert(schema.salesTargets).values(target).returning();
+    return result[0];
+  }
+
+  async updateSalesTarget(id: string, updates: Partial<schema.InsertSalesTarget>): Promise<schema.SalesTarget> {
+    const result = await db.update(schema.salesTargets).set(updates).where(eq(schema.salesTargets.id, id)).returning();
+    return result[0];
+  }
+
+  async getAchievements(userId?: string): Promise<schema.Achievement[]> {
+    if (userId) {
+      return await db.select().from(schema.achievements).where(eq(schema.achievements.userId, userId));
+    }
+    return await db.select().from(schema.achievements);
+  }
+
+  async createAchievement(achievement: schema.InsertAchievement): Promise<schema.Achievement> {
+    const result = await db.insert(schema.achievements).values(achievement).returning();
+    return result[0];
+  }
+
+  // Leaderboard queries
+  async getUserLeaderboard(): Promise<any[]> {
+    const result = await db.select({
+      userId: schema.salesPoints.userId,
+      totalPoints: sql<number>`sum(${schema.salesPoints.points})`.as('total_points'),
+      userName: sql<string>`${schema.users.firstName} || ' ' || ${schema.users.lastName}`.as('user_name')
+    })
+    .from(schema.salesPoints)
+    .leftJoin(schema.users, eq(schema.salesPoints.userId, schema.users.id))
+    .groupBy(schema.salesPoints.userId, schema.users.firstName, schema.users.lastName)
+    .orderBy(sql`sum(${schema.salesPoints.points}) desc`)
+    .limit(10);
+    
+    return result;
+  }
+
+  async getMonthlyLeaderboard(year: number, month: number): Promise<any[]> {
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0, 23, 59, 59);
+    
+    const result = await db.select({
+      userId: schema.salesPoints.userId,
+      totalPoints: sql<number>`sum(${schema.salesPoints.points})`.as('total_points'),
+      userName: sql<string>`${schema.users.firstName} || ' ' || ${schema.users.lastName}`.as('user_name')
+    })
+    .from(schema.salesPoints)
+    .leftJoin(schema.users, eq(schema.salesPoints.userId, schema.users.id))
+    .where(
+      and(
+        gte(schema.salesPoints.earnedAt, startDate),
+        lte(schema.salesPoints.earnedAt, endDate)
+      )
+    )
+    .groupBy(schema.salesPoints.userId, schema.users.firstName, schema.users.lastName)
+    .orderBy(sql`sum(${schema.salesPoints.points}) desc`)
+    .limit(10);
+    
+    return result;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

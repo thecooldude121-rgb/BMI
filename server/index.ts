@@ -1,9 +1,10 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { seedDatabase } from "./seed";
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
@@ -36,49 +37,50 @@ app.use((req, res, next) => {
   next();
 });
 
-// Error handling middleware
-app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-  const status = err.status || err.statusCode || 500;
-  const message = err.message || "Internal Server Error";
-  console.error('Server error:', err);
-  res.status(status).json({ message });
-});
-
-// Start server setup
-async function startServer() {
+(async () => {
+  // Seed database if empty
   try {
-    const server = await registerRoutes(app);
-
-    // Setup static files or development server
-    if (process.env.NODE_ENV === "production") {
-      serveStatic(app);
-    } else {
-      await setupVite(app, server);
-    }
-
-    // Use port from environment or default to 5000
-    const port = parseInt(process.env.PORT || '5000', 10);
-    const host = '0.0.0.0';
-    
-    server.listen(port, host, () => {
-      log(`serving on ${host}:${port}`);
-      console.log(`🚀 BMI Platform ready at http://${host}:${port}`);
-    }).on('error', (err: any) => {
-      console.error('Server startup error:', err);
-      if (err.code === 'EADDRINUSE') {
-        console.log(`Port ${port} is busy, trying port ${port + 1}`);
-        server.listen(port + 1, host, () => {
-          log(`serving on ${host}:${port + 1}`);
-          console.log(`🚀 BMI Platform ready at http://${host}:${port + 1}`);
-        });
-      } else {
-        process.exit(1);
-      }
-    });
-  } catch (error) {
-    console.error('Failed to start server:', error);
-    process.exit(1);
+    await seedDatabase();
+  } catch (error: any) {
+    console.log("Database already seeded or error occurred:", error.message);
   }
-}
 
-startServer();
+  // Seed gamification data
+  try {
+    const { seedGamificationData } = await import("./gamification-seeder");
+    await seedGamificationData();
+  } catch (error: any) {
+    console.log("Gamification seeding error:", error.message);
+  }
+
+  const server = await registerRoutes(app);
+
+  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+    const status = err.status || err.statusCode || 500;
+    const message = err.message || "Internal Server Error";
+
+    res.status(status).json({ message });
+    throw err;
+  });
+
+  // importantly only setup vite in development and after
+  // setting up all the other routes so the catch-all route
+  // doesn't interfere with the other routes
+  if (app.get("env") === "development") {
+    await setupVite(app, server);
+  } else {
+    serveStatic(app);
+  }
+
+  // ALWAYS serve the app on port 5000
+  // this serves both the API and the client.
+  // It is the only port that is not firewalled.
+  const port = 5000;
+  server.listen({
+    port,
+    host: "0.0.0.0",
+    reusePort: true,
+  }, () => {
+    log(`serving on port ${port}`);
+  });
+})();
