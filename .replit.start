@@ -1,1 +1,1 @@
-./keep-alive.sh
+node server.mjs
