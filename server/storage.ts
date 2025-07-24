@@ -111,7 +111,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createAccount(account: schema.InsertAccount): Promise<schema.Account> {
-    const accounts = await db.insert(schema.accounts).values(account).returning();
+    const accounts: schema.Account[] = await db.insert(schema.accounts).values(account).returning();
     return accounts[0];
   }
 

@@ -456,7 +456,7 @@ Please provide a comprehensive analysis following the system instruction format.
   }
 
   private getFallbackAnalysis(input: MeetingAnalysisInput): MeetingAnalysisResult {
-    const attendees = input.meetingMetadata?.attendees || input.meetingMetadata?.participants || [];
+    const attendees = input.meetingMetadata?.attendees || [];
     
     return {
       summary: {
