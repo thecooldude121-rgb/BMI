@@ -93,10 +93,20 @@ const SyncedActivitiesPage: React.FC = () => {
   });
 
   // Debug log the data
-  console.log('Activities data:', activities);
-  console.log('Deals data:', deals);
-  console.log('Contacts data:', contacts);
-  console.log('Accounts data:', accounts);
+  console.log('🔢 Activities count:', activities.length);
+  console.log('💼 Deals count:', deals.length);
+  console.log('👥 Contacts count:', contacts.length);
+  console.log('🏢 Accounts count:', accounts.length);
+  
+  if (activities.length > 0) {
+    console.log('📋 Sample activity:', activities[0]);
+    console.log('🔗 Activity relationships:', {
+      dealId: activities[0]?.dealId,
+      leadId: activities[0]?.leadId,
+      contactId: activities[0]?.contactId,
+      accountId: activities[0]?.accountId
+    });
+  }
 
   const getActivityIcon = (type: string) => {
     switch (type) {
@@ -337,32 +347,36 @@ const SyncedActivitiesPage: React.FC = () => {
                       {/* Related Entity Information */}
                       <div className="bg-gray-50 rounded-lg p-3 mt-3">
                         <div className="text-xs font-medium text-gray-700 mb-2">Related CRM Data:</div>
-                        <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
+                        <div className="grid grid-cols-1 gap-2 text-xs text-gray-600">
                           {activity.dealId && (
                             <div className="flex items-center space-x-1">
                               <DollarSign className="h-3 w-3 text-green-600" />
-                              <span>Deal: {deals.find((d: any) => d.id === activity.dealId)?.name || activity.dealId}</span>
+                              <span>Deal: {deals.find((d: any) => d.id === activity.dealId)?.name || `ID: ${activity.dealId.substring(0, 8)}...`}</span>
                             </div>
                           )}
                           {activity.leadId && (
                             <div className="flex items-center space-x-1">
                               <UserPlus className="h-3 w-3 text-blue-600" />
-                              <span>Lead: {leads.find((l: any) => l.id === activity.leadId)?.company || activity.leadId}</span>
+                              <span>Lead: {leads.find((l: any) => l.id === activity.leadId)?.company || `ID: ${activity.leadId.substring(0, 8)}...`}</span>
                             </div>
                           )}
                           {activity.contactId && (
                             <div className="flex items-center space-x-1">
                               <Users className="h-3 w-3 text-purple-600" />
-                              <span>Contact: {contacts.find((c: any) => c.id === activity.contactId) ? 
-                                `${contacts.find((c: any) => c.id === activity.contactId)?.firstName} ${contacts.find((c: any) => c.id === activity.contactId)?.lastName}` : 
-                                activity.contactId}</span>
+                              <span>Contact: {(() => {
+                                const contact = contacts.find((c: any) => c.id === activity.contactId);
+                                return contact ? `${contact.firstName} ${contact.lastName}` : `ID: ${activity.contactId.substring(0, 8)}...`;
+                              })()}</span>
                             </div>
                           )}
                           {activity.accountId && (
                             <div className="flex items-center space-x-1">
                               <Building className="h-3 w-3 text-orange-600" />
-                              <span>Account: {accounts.find((a: any) => a.id === activity.accountId)?.name || activity.accountId}</span>
+                              <span>Account: {accounts.find((a: any) => a.id === activity.accountId)?.name || `ID: ${activity.accountId.substring(0, 8)}...`}</span>
                             </div>
+                          )}
+                          {!activity.dealId && !activity.leadId && !activity.contactId && !activity.accountId && (
+                            <div className="text-gray-500 italic">No specific CRM entity linked</div>
                           )}
                         </div>
                       </div>
