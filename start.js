@@ -1,32 +1,38 @@
 #!/usr/bin/env node
 
-// Simple startup script for BMI Platform
-import { spawn } from 'child_process';
+// Direct server startup for BMI Platform
+const { spawn } = require('child_process');
+const path = require('path');
 
 console.log('🚀 Starting BMI Platform...');
 
-// Set environment
-process.env.NODE_ENV = 'development';
-process.env.PORT = '5000';
-
-// Start the server
-const server = spawn('tsx', ['server/index.ts'], {
-  stdio: 'inherit',
-  env: process.env
+const serverProcess = spawn('tsx', ['server/index.ts'], {
+  cwd: __dirname,
+  env: {
+    ...process.env,
+    PORT: '5000',
+    NODE_ENV: 'development'
+  },
+  stdio: 'inherit'
 });
 
-server.on('close', (code) => {
-  console.log(`Server exited with code ${code}`);
-  process.exit(code);
+serverProcess.on('error', (error) => {
+  console.error('Failed to start server:', error);
 });
 
-// Handle termination
+serverProcess.on('close', (code) => {
+  console.log(`Server process exited with code ${code}`);
+});
+
+// Keep the process alive
 process.on('SIGINT', () => {
-  server.kill();
+  console.log('Received SIGINT, shutting down gracefully');
+  serverProcess.kill('SIGTERM');
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  server.kill();
+  console.log('Received SIGTERM, shutting down gracefully');
+  serverProcess.kill('SIGTERM');
   process.exit(0);
 });
