@@ -65,12 +65,15 @@ export default function SimpleAdvancedDealsModule() {
   const queryClient = useQueryClient();
 
   // Fetch deals data
-  const { data: deals = [], isLoading } = useQuery({
+  const { data: deals = [], isLoading, error } = useQuery({
     queryKey: ['/api/deals'],
     queryFn: async () => {
+      console.log('🚀 Fetching deals...');
       const response = await fetch('/api/deals');
       if (!response.ok) throw new Error('Failed to fetch deals');
-      return response.json();
+      const data = await response.json();
+      console.log('✅ Deals loaded:', data.length);
+      return data;
     }
   });
 
@@ -221,7 +224,7 @@ export default function SimpleAdvancedDealsModule() {
           </div>
 
           <div className="min-h-[200px]">
-            {column.deals.map((deal) => renderDealCard(deal))}
+            {column.deals.map((deal: Deal) => renderDealCard(deal))}
           </div>
         </div>
       ))}
@@ -246,7 +249,7 @@ export default function SimpleAdvancedDealsModule() {
                   checked={selectedDeals.length === filteredDeals.length}
                   onChange={(e) => {
                     if (e.target.checked) {
-                      setSelectedDeals(filteredDeals.map(d => d.id));
+                      setSelectedDeals(filteredDeals.map((d: Deal) => d.id));
                     } else {
                       setSelectedDeals([]);
                     }
@@ -416,6 +419,26 @@ export default function SimpleAdvancedDealsModule() {
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
               <p className="text-gray-600">Loading deals...</p>
+            </div>
+          </div>
+        ) : error ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="text-red-500 mb-4">⚠️ Error loading deals</div>
+              <p className="text-gray-600">{error.toString()}</p>
+            </div>
+          </div>
+        ) : deals.length === 0 ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="text-gray-400 mb-4">📋 No deals found</div>
+              <p className="text-gray-600">Create your first deal to get started</p>
+              <button 
+                className="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
+                onClick={() => window.location.href = '/crm/deals/new'}
+              >
+                Create Deal
+              </button>
             </div>
           </div>
         ) : (
