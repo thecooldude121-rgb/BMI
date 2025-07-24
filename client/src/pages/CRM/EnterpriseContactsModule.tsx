@@ -29,21 +29,10 @@ import {
   AlertTriangle,
   CheckCircle
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+// Using existing project components structure
 import Fuse from 'fuse.js';
 
-// Enhanced contact interface based on schema
+// Simplified contact interface based on existing schema
 interface Contact {
   id: string;
   firstName: string;
@@ -51,51 +40,21 @@ interface Contact {
   email?: string;
   phone?: string;
   mobile?: string;
-  workPhone?: string;
   position?: string;
-  title?: string;
   department?: string;
-  location?: string;
-  timezone?: string;
-  preferredChannel: 'email' | 'phone' | 'linkedin' | 'whatsapp' | 'sms' | 'in_person' | 'video_call';
   linkedinUrl?: string;
-  twitterHandle?: string;
-  personalWebsite?: string;
   isPrimary: boolean;
   status: 'active' | 'inactive';
-  engagementStatus: 'active' | 'at_risk' | 'do_not_contact' | 'recently_engaged' | 'dormant' | 'unresponsive';
-  relationshipScore: number;
-  lastTouchDate?: string;
-  lastResponseDate?: string;
-  responseRate: number;
-  persona: 'decision_maker' | 'champion' | 'influencer' | 'gatekeeper' | 'end_user' | 'technical_buyer' | 'economic_buyer';
-  influenceLevel: number;
-  decisionMakingPower: number;
   accountId?: string;
   accountName?: string;
   ownerId?: string;
   ownerName?: string;
-  birthday?: string;
-  anniversary?: string;
-  interests?: string[];
-  personalNotes?: string;
-  aiInsights?: any;
-  communicationStyle?: string;
-  emailOpens: number;
-  emailClicks: number;
-  meetingsAttended: number;
-  callsAnswered: number;
-  tags?: string[];
-  segments?: string[];
-  enrichmentStatus: string;
-  dataQualityScore: number;
-  gdprConsent: boolean;
-  emailOptIn: boolean;
-  marketingConsent: boolean;
-  profilePhoto?: string;
-  lastActivityDate?: string;
-  lastActivityType?: string;
+  // Mock additional fields for demo
+  relationshipScore: number;
+  engagementStatus: string;
   totalActivities: number;
+  responseRate: number;
+  tags?: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -144,27 +103,16 @@ const EnterpriseContactsModule = () => {
     // Apply segment filter
     if (selectedSegment !== 'all') {
       result = result.filter(contact => 
-        contact.segments?.includes(selectedSegment) || 
+        contact.status === selectedSegment ||
         contact.engagementStatus === selectedSegment ||
-        contact.persona === selectedSegment
+        contact.department === selectedSegment
       );
     }
 
     return result;
   }, [contacts, searchTerm, selectedSegment, fuse]);
 
-  const getPersonaColor = (persona: string) => {
-    const colors = {
-      decision_maker: 'bg-red-100 text-red-800',
-      champion: 'bg-green-100 text-green-800',
-      influencer: 'bg-blue-100 text-blue-800',
-      gatekeeper: 'bg-yellow-100 text-yellow-800',
-      end_user: 'bg-purple-100 text-purple-800',
-      technical_buyer: 'bg-indigo-100 text-indigo-800',
-      economic_buyer: 'bg-pink-100 text-pink-800',
-    };
-    return colors[persona as keyof typeof colors] || 'bg-gray-100 text-gray-800';
-  };
+  // Helper function for engagement status colors
 
   const getEngagementStatusColor = (status: string) => {
     const colors = {
@@ -185,16 +133,13 @@ const EnterpriseContactsModule = () => {
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2 }}
     >
-      <Card className="h-full cursor-pointer hover:shadow-lg transition-all duration-200">
-        <CardHeader className="pb-3">
+      <div className="bg-white rounded-lg shadow-md h-full cursor-pointer hover:shadow-lg transition-all duration-200 border border-gray-200">
+        <div className="p-4 pb-3">
           <div className="flex items-start justify-between">
             <div className="flex items-center space-x-3">
-              <Avatar className="w-12 h-12">
-                <AvatarImage src={contact.profilePhoto} />
-                <AvatarFallback className="bg-blue-100 text-blue-600">
-                  {contact.firstName?.[0]}{contact.lastName?.[0]}
-                </AvatarFallback>
-              </Avatar>
+              <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-semibold">
+                {contact.firstName?.[0]}{contact.lastName?.[0]}
+              </div>
               <div>
                 <h3 className="font-semibold text-lg">
                   {contact.firstName} {contact.lastName}
@@ -210,40 +155,20 @@ const EnterpriseContactsModule = () => {
             </div>
             <div className="flex items-center space-x-2">
               {contact.isPrimary && (
-                <Badge variant="secondary" className="text-xs">
+                <span className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full flex items-center">
                   <Star className="w-3 h-3 mr-1" />
                   Primary
-                </Badge>
+                </span>
               )}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <MoreHorizontal className="w-4 h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem>
-                    <Eye className="w-4 h-4 mr-2" />
-                    View Details
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Edit className="w-4 h-4 mr-2" />
-                    Edit Contact
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Mail className="w-4 h-4 mr-2" />
-                    Send Email
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Calendar className="w-4 h-4 mr-2" />
-                    Schedule Meeting
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div className="relative">
+                <button className="p-1 hover:bg-gray-100 rounded">
+                  <MoreHorizontal className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
-        </CardHeader>
-        <CardContent>
+        </div>
+        <div className="p-4 pt-0">
           <div className="space-y-3">
             {/* Contact Information */}
             <div className="space-y-2">
@@ -259,22 +184,22 @@ const EnterpriseContactsModule = () => {
                   {contact.phone}
                 </div>
               )}
-              {contact.location && (
+              {contact.department && (
                 <div className="flex items-center text-sm text-gray-600">
-                  <MapPin className="w-4 h-4 mr-2" />
-                  {contact.location}
+                  <Building className="w-4 h-4 mr-2" />
+                  {contact.department}
                 </div>
               )}
             </div>
 
-            {/* Persona and Engagement Status */}
+            {/* Status and Type */}
             <div className="flex flex-wrap gap-2">
-              <Badge className={getPersonaColor(contact.persona)}>
-                {contact.persona.replace('_', ' ')}
-              </Badge>
-              <Badge className={getEngagementStatusColor(contact.engagementStatus)}>
+              <span className={`text-xs px-2 py-1 rounded-full ${contact.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                {contact.status}
+              </span>
+              <span className={`text-xs px-2 py-1 rounded-full ${getEngagementStatusColor(contact.engagementStatus)}`}>
                 {contact.engagementStatus.replace('_', ' ')}
-              </Badge>
+              </span>
             </div>
 
             {/* Relationship Score */}
@@ -314,20 +239,20 @@ const EnterpriseContactsModule = () => {
             {contact.tags && contact.tags.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {contact.tags.slice(0, 3).map((tag, index) => (
-                  <Badge key={index} variant="outline" className="text-xs">
+                  <span key={index} className="text-xs px-2 py-1 bg-gray-50 border border-gray-200 rounded-full">
                     {tag}
-                  </Badge>
+                  </span>
                 ))}
                 {contact.tags.length > 3 && (
-                  <Badge variant="outline" className="text-xs">
+                  <span className="text-xs px-2 py-1 bg-gray-50 border border-gray-200 rounded-full">
                     +{contact.tags.length - 3} more
-                  </Badge>
+                  </span>
                 )}
               </div>
             )}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </motion.div>
   );
 
@@ -337,33 +262,30 @@ const EnterpriseContactsModule = () => {
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.2 }}
     >
-      <Card className="mb-2 hover:shadow-md transition-all duration-200">
-        <CardContent className="p-4">
+      <div className="bg-white rounded-lg shadow-sm mb-2 hover:shadow-md transition-all duration-200 border border-gray-200">
+        <div className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <Avatar className="w-10 h-10">
-                <AvatarImage src={contact.profilePhoto} />
-                <AvatarFallback className="bg-blue-100 text-blue-600">
-                  {contact.firstName?.[0]}{contact.lastName?.[0]}
-                </AvatarFallback>
-              </Avatar>
+              <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-semibold">
+                {contact.firstName?.[0]}{contact.lastName?.[0]}
+              </div>
               <div className="flex-1">
                 <div className="flex items-center space-x-3">
                   <h3 className="font-semibold">
                     {contact.firstName} {contact.lastName}
                   </h3>
                   {contact.isPrimary && (
-                    <Badge variant="secondary" className="text-xs">
+                    <span className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full flex items-center">
                       <Star className="w-3 h-3 mr-1" />
                       Primary
-                    </Badge>
+                    </span>
                   )}
-                  <Badge className={getPersonaColor(contact.persona)}>
-                    {contact.persona.replace('_', ' ')}
-                  </Badge>
-                  <Badge className={getEngagementStatusColor(contact.engagementStatus)}>
+                  <span className={`text-xs px-2 py-1 rounded-full ${contact.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                    {contact.status}
+                  </span>
+                  <span className={`text-xs px-2 py-1 rounded-full ${getEngagementStatusColor(contact.engagementStatus)}`}>
                     {contact.engagementStatus.replace('_', ' ')}
-                  </Badge>
+                  </span>
                 </div>
                 <div className="flex items-center space-x-4 mt-1 text-sm text-gray-500">
                   <span>{contact.position}</span>
@@ -410,35 +332,13 @@ const EnterpriseContactsModule = () => {
                 <div className="text-sm font-semibold">{contact.responseRate}%</div>
                 <div className="text-xs text-gray-500">Response</div>
               </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <MoreHorizontal className="w-4 h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem>
-                    <Eye className="w-4 h-4 mr-2" />
-                    View Details
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Edit className="w-4 h-4 mr-2" />
-                    Edit Contact
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Mail className="w-4 h-4 mr-2" />
-                    Send Email
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Calendar className="w-4 h-4 mr-2" />
-                    Schedule Meeting
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <button className="p-1 hover:bg-gray-100 rounded">
+                <MoreHorizontal className="w-4 h-4" />
+              </button>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </motion.div>
   );
 
@@ -451,86 +351,74 @@ const EnterpriseContactsModule = () => {
           <p className="text-gray-500 mt-1">Manage and engage with your contact network</p>
         </div>
         <div className="flex items-center space-x-3">
-          <Button variant="outline">
+          <button className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 flex items-center">
             <Settings className="w-4 h-4 mr-2" />
             Configure
-          </Button>
-          <Button>
+          </button>
+          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 flex items-center">
             <Plus className="w-4 h-4 mr-2" />
             Add Contact
-          </Button>
+          </button>
         </div>
       </div>
 
       {/* Analytics Dashboard */}
       {metrics && (
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Total Contacts</p>
-                  <p className="text-2xl font-bold">{metrics.totalContacts}</p>
-                </div>
-                <Users className="w-8 h-8 text-blue-500" />
+          <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-500">Total Contacts</p>
+                <p className="text-2xl font-bold">{metrics.totalContacts}</p>
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Active Contacts</p>
-                  <p className="text-2xl font-bold text-green-600">{metrics.activeContacts}</p>
-                </div>
-                <UserCheck className="w-8 h-8 text-green-500" />
+              <Users className="w-8 h-8 text-blue-500" />
+            </div>
+          </div>
+          <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-500">Active Contacts</p>
+                <p className="text-2xl font-bold text-green-600">{metrics.activeContacts}</p>
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Avg. Relationship</p>
-                  <p className="text-2xl font-bold text-purple-600">{metrics.averageRelationshipScore}</p>
-                </div>
-                <Award className="w-8 h-8 text-purple-500" />
+              <UserCheck className="w-8 h-8 text-green-500" />
+            </div>
+          </div>
+          <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-500">Avg. Relationship</p>
+                <p className="text-2xl font-bold text-purple-600">{metrics.averageRelationshipScore}</p>
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Total Touchpoints</p>
-                  <p className="text-2xl font-bold text-orange-600">{metrics.totalTouchpoints}</p>
-                </div>
-                <Activity className="w-8 h-8 text-orange-500" />
+              <Award className="w-8 h-8 text-purple-500" />
+            </div>
+          </div>
+          <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-500">Total Touchpoints</p>
+                <p className="text-2xl font-bold text-orange-600">{metrics.totalTouchpoints}</p>
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Response Rate</p>
-                  <p className="text-2xl font-bold text-teal-600">{metrics.responseRate}%</p>
-                </div>
-                <Target className="w-8 h-8 text-teal-500" />
+              <Activity className="w-8 h-8 text-orange-500" />
+            </div>
+          </div>
+          <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-500">Response Rate</p>
+                <p className="text-2xl font-bold text-teal-600">{metrics.responseRate}%</p>
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Recently Engaged</p>
-                  <p className="text-2xl font-bold text-indigo-600">{metrics.recentlyEngaged}</p>
-                </div>
-                <TrendingUp className="w-8 h-8 text-indigo-500" />
+              <Target className="w-8 h-8 text-teal-500" />
+            </div>
+          </div>
+          <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-500">Recently Engaged</p>
+                <p className="text-2xl font-bold text-indigo-600">{metrics.recentlyEngaged}</p>
               </div>
-            </CardContent>
-          </Card>
+              <TrendingUp className="w-8 h-8 text-indigo-500" />
+            </div>
+          </div>
         </div>
       )}
 
@@ -539,62 +427,33 @@ const EnterpriseContactsModule = () => {
         <div className="flex items-center space-x-4 flex-1">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <Input
+            <input
+              type="text"
               placeholder="Search contacts..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                <Filter className="w-4 h-4 mr-2" />
-                Segment: {selectedSegment === 'all' ? 'All' : selectedSegment.replace('_', ' ')}
-                <ChevronDown className="w-4 h-4 ml-2" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => setSelectedSegment('all')}>
-                All Contacts
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setSelectedSegment('decision_maker')}>
-                Decision Makers
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setSelectedSegment('champion')}>
-                Champions
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setSelectedSegment('influencer')}>
-                Influencers
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setSelectedSegment('active')}>
-                Active Contacts
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setSelectedSegment('at_risk')}>
-                At Risk
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="relative">
+            <button 
+              onClick={() => setSelectedSegment(selectedSegment === 'all' ? 'active' : 'all')}
+              className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 flex items-center"
+            >
+              <Filter className="w-4 h-4 mr-2" />
+              Segment: {selectedSegment === 'all' ? 'All' : selectedSegment.replace('_', ' ')}
+              <ChevronDown className="w-4 h-4 ml-2" />
+            </button>
+          </div>
         </div>
         <div className="flex items-center space-x-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                {viewMode === 'grid' ? <Grid3X3 className="w-4 h-4" /> : <List className="w-4 h-4" />}
-                <ChevronDown className="w-4 h-4 ml-2" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setViewMode('grid')}>
-                <Grid3X3 className="w-4 h-4 mr-2" />
-                Grid View
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setViewMode('list')}>
-                <List className="w-4 h-4 mr-2" />
-                List View
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <button 
+            onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 flex items-center"
+          >
+            {viewMode === 'grid' ? <Grid3X3 className="w-4 h-4" /> : <List className="w-4 h-4" />}
+            <ChevronDown className="w-4 h-4 ml-2" />
+          </button>
         </div>
       </div>
 
@@ -602,8 +461,8 @@ const EnterpriseContactsModule = () => {
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array.from({ length: 6 }).map((_, i) => (
-            <Card key={i} className="animate-pulse">
-              <CardHeader>
+            <div key={i} className="bg-white rounded-lg shadow-sm border border-gray-200 animate-pulse">
+              <div className="p-4">
                 <div className="flex items-center space-x-3">
                   <div className="w-12 h-12 bg-gray-200 rounded-full" />
                   <div className="space-y-2">
@@ -611,15 +470,15 @@ const EnterpriseContactsModule = () => {
                     <div className="h-3 bg-gray-200 rounded w-24" />
                   </div>
                 </div>
-              </CardHeader>
-              <CardContent>
+              </div>
+              <div className="p-4 pt-0">
                 <div className="space-y-3">
                   <div className="h-3 bg-gray-200 rounded w-full" />
                   <div className="h-3 bg-gray-200 rounded w-3/4" />
                   <div className="h-3 bg-gray-200 rounded w-1/2" />
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))}
         </div>
       ) : viewMode === 'grid' ? (
@@ -643,10 +502,10 @@ const EnterpriseContactsModule = () => {
           <p className="text-gray-500 mb-6">
             {searchTerm ? 'Try adjusting your search terms.' : 'Get started by adding your first contact.'}
           </p>
-          <Button>
+          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 flex items-center">
             <Plus className="w-4 h-4 mr-2" />
             Add Contact
-          </Button>
+          </button>
         </div>
       )}
     </div>
