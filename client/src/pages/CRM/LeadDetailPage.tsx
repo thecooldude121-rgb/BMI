@@ -203,7 +203,7 @@ export default function LeadDetailPage() {
     setEditValue('');
   };
 
-  const renderEditableField = (field: string, label: string, value: string, type: 'text' | 'email' | 'tel' | 'textarea' | 'select' = 'text', options?: Array<{id: string, name: string}>) => {
+  const renderEditableField = (field: string, label: string, value: string | undefined, type: 'text' | 'email' | 'tel' | 'textarea' | 'select' = 'text', options?: Array<{id: string, name: string}>) => {
     const isEditing = editingField === field;
     
     return (
@@ -261,7 +261,7 @@ export default function LeadDetailPage() {
             </>
           ) : (
             <button
-              onClick={() => handleEdit(field, value)}
+              onClick={() => handleEdit(field, value || '')}
               className="p-1 text-gray-400 hover:text-gray-600"
             >
               <Edit className="w-4 h-4" />
@@ -423,15 +423,15 @@ export default function LeadDetailPage() {
               <div className="p-6">
                 <h2 className="text-lg font-semibold mb-4">Lead Information</h2>
                 <div className="space-y-0">
-                  {renderEditableField('name', 'Full Name', (lead as Lead)?.name)}
+                  {renderEditableField('name', 'Full Name', (lead as Lead)?.name || `${(lead as Lead)?.firstName || ''} ${(lead as Lead)?.lastName || ''}`.trim())}
                   {renderEditableField('email', 'Email', (lead as Lead)?.email, 'email')}
                   {renderEditableField('phone', 'Phone', (lead as Lead)?.phone, 'tel')}
                   {renderEditableField('company', 'Company', (lead as Lead)?.company)}
-                  {renderEditableField('position', 'Position', (lead as Lead)?.position)}
-                  {renderEditableField('status', 'Status', (lead as Lead)?.status, 'select', LEAD_STATUSES)}
-                  {renderEditableField('source', 'Lead Source', (lead as Lead)?.source)}
+                  {renderEditableField('position', 'Position', (lead as Lead)?.position || (lead as Lead)?.jobTitle)}
+                  {renderEditableField('status', 'Status', (lead as Lead)?.status || (lead as Lead)?.leadStatus, 'select', LEAD_STATUSES)}
+                  {renderEditableField('source', 'Lead Source', (lead as Lead)?.source || (lead as Lead)?.leadSource)}
                   {renderEditableField('industry', 'Industry', (lead as Lead)?.industry)}
-                  {renderEditableField('notes', 'Notes', (lead as Lead)?.notes, 'textarea')}
+                  {renderEditableField('notes', 'Notes', (lead as Lead)?.notes || (lead as Lead)?.description, 'textarea')}
                 </div>
               </div>
             </div>
