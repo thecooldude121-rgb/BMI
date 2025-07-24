@@ -12,12 +12,8 @@ const CRMModule = () => {
   return (
     <div className="h-full overflow-auto bg-gray-50">
       <Switch>
-        <Route path="/crm/leads">
-          {(params) => !params.id ? <NextGenLeadsModule /> : null}
-        </Route>
-        <Route path="/crm/leads/:id">
-          <LeadDetailPage />
-        </Route>
+        <Route path="/crm/leads/:id" component={LeadDetailPage} />
+        <Route path="/crm/leads" component={NextGenLeadsModule} />
         <Route path="/crm/contacts">
           <SimpleContactsPage />
         </Route>
