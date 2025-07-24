@@ -224,70 +224,11 @@ const NextGenAccountModule: React.FC = () => {
               Configure
             </button>
             
-            {/* View Mode Selector */}
-            <div className="relative">
-              <button
-                onClick={() => setShowViewDropdown(!showViewDropdown)}
-                className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors flex items-center"
-              >
-                {viewMode === 'grid' && <Grid3X3 className="w-4 h-4 mr-2" />}
-                {viewMode === 'list' && <List className="w-4 h-4 mr-2" />}
-                {viewMode === 'kanban' && <Columns className="w-4 h-4 mr-2" />}
-                <span className="capitalize">{viewMode} View</span>
-                <ChevronDown className="w-4 h-4 ml-2" />
-              </button>
-              
-              {showViewDropdown && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                  <button
-                    onClick={() => { setViewMode('grid'); setShowViewDropdown(false); }}
-                    className={`w-full flex items-center px-4 py-2 text-sm hover:bg-gray-50 transition-colors ${
-                      viewMode === 'grid' ? 'text-blue-600 bg-blue-50' : 'text-gray-700'
-                    }`}
-                  >
-                    <Grid3X3 className="w-4 h-4 mr-3" />
-                    <div>
-                      <div className="font-medium">Grid View</div>
-                      <div className="text-xs text-gray-500">Card-based layout with rich details</div>
-                    </div>
-                  </button>
-                  <button
-                    onClick={() => { setViewMode('list'); setShowViewDropdown(false); }}
-                    className={`w-full flex items-center px-4 py-2 text-sm hover:bg-gray-50 transition-colors ${
-                      viewMode === 'list' ? 'text-blue-600 bg-blue-50' : 'text-gray-700'
-                    }`}
-                  >
-                    <List className="w-4 h-4 mr-3" />
-                    <div>
-                      <div className="font-medium">List View</div>
-                      <div className="text-xs text-gray-500">Compact table format</div>
-                    </div>
-                  </button>
-                  <button
-                    onClick={() => { setViewMode('kanban'); setShowViewDropdown(false); }}
-                    className={`w-full flex items-center px-4 py-2 text-sm hover:bg-gray-50 transition-colors ${
-                      viewMode === 'kanban' ? 'text-blue-600 bg-blue-50' : 'text-gray-700'
-                    }`}
-                  >
-                    <Columns className="w-4 h-4 mr-3" />
-                    <div>
-                      <div className="font-medium">Kanban View</div>
-                      <div className="text-xs text-gray-500">Organized by health status</div>
-                    </div>
-                  </button>
-                </div>
-              )}
-            </div>
+            
           </div>
         </div>
         
-        {/* Click outside handler for view dropdown */}
-        {showViewDropdown && (
-          <div 
-            className="fixed inset-0 z-40" 
-            onClick={() => setShowViewDropdown(false)}
-          />
-        )}
+        
 
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
@@ -578,9 +519,6 @@ const NextGenAccountModule: React.FC = () => {
                         {account.twitterHandle && (
                           <Twitter className="w-4 h-4 text-blue-400" />
                         )}
-                        <button className="text-gray-400 hover:text-gray-600">
-                          <MoreHorizontal className="w-4 h-4" />
-                        </button>
                       </div>
                     </div>
                   </motion.div>
