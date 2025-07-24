@@ -5,7 +5,7 @@ import { insertMeetingSchema, updateMeetingSchema } from "@shared/schema";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { transcribeAudio, analyzeMeeting } from "./services/openai";
+import { transcribeAudio, analyzeMeeting } from "./services/gemini";
 import { calendarService } from "./services/calendar";
 
 // Configure multer for file uploads
@@ -184,11 +184,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 async function processAudioAsync(meetingId: number, audioFilePath: string) {
   try {
     // Step 1: Transcribe audio
-    const { text: transcript, duration } = await transcribeAudio(audioFilePath);
+    const transcript = await transcribeAudio(audioFilePath);
     
     await storage.updateMeeting(meetingId, {
-      transcript,
-      duration
+      transcript
     });
 
     // Step 2: Analyze transcript
@@ -198,7 +197,7 @@ async function processAudioAsync(meetingId: number, audioFilePath: string) {
     await storage.updateMeeting(meetingId, {
       status: "completed",
       summary: analysis.summary,
-      keyOutcomes: analysis.keyOutcomes,
+      keyOutcomes: analysis.outcomes,
       painPoints: analysis.painPoints,
       objections: analysis.objections
     });
