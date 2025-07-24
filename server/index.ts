@@ -56,16 +56,21 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || '5000', 10);
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
+  // Try port 3000 for better Replit compatibility
+  const port = parseInt(process.env.PORT || '3000', 10);
+  const host = '0.0.0.0';
+  
+  server.listen(port, host, () => {
+    log(`serving on ${host}:${port}`);
+    console.log(`🚀 BMI Platform ready at http://${host}:${port}`);
+  }).on('error', (err: any) => {
+    console.error('Server error:', err);
+    if (err.code === 'EADDRINUSE') {
+      console.log(`Port ${port} is busy, trying port ${port + 1}`);
+      server.listen(port + 1, host, () => {
+        log(`serving on ${host}:${port + 1}`);
+        console.log(`🚀 BMI Platform ready at http://${host}:${port + 1}`);
+      });
+    }
   });
 })();
