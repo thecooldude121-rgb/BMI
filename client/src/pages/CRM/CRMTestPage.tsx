@@ -20,9 +20,13 @@ const CRMTestPage: React.FC = () => {
       
       for (const endpoint of endpoints) {
         try {
-          console.log(`Testing ${endpoint.name}...`);
+          console.log(`🧪 Testing ${endpoint.name} at ${endpoint.url}...`);
           const response = await fetch(endpoint.url);
-          const data = await response.json();
+          console.log(`📡 ${endpoint.name} response:`, response.status, response.statusText);
+          const text = await response.text();
+          console.log(`📄 ${endpoint.name} response size:`, text.length, 'characters');
+          const data = JSON.parse(text);
+          console.log(`✅ ${endpoint.name} parsed:`, Array.isArray(data) ? `${data.length} items` : typeof data);
           
           results[endpoint.name] = {
             status: response.status,
@@ -32,6 +36,7 @@ const CRMTestPage: React.FC = () => {
             error: null
           };
         } catch (error) {
+          console.error(`❌ ${endpoint.name} error:`, error);
           results[endpoint.name] = {
             status: 'Error',
             error: String(error),
@@ -40,6 +45,7 @@ const CRMTestPage: React.FC = () => {
         }
       }
       
+      console.log('🏁 All tests completed:', results);
       setTestResults(results);
       setLoading(false);
     };
