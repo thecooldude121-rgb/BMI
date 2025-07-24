@@ -1,0 +1,62 @@
+Build a comprehensive Account Module for a CRM platform that surpasses Salesforce, HubSpot, Zoho, Pipedrive, and Salesnayak in features and user experience.
+
+Frontend (React + Material UI or Ant Design preferred)
+1. Account List & Overview Page
+
+Customizable Kanban and List views: allow toggling between pipeline-style and tabular layouts.
+
+Advanced filtering by owner, industry, revenue, health, and status.
+
+Bulk actions: assign/reassign, tag, merge duplicates, launch follow-up tasks.
+
+Visual health indicators and account segment labels.
+
+Parent-child account hierarchy visualization.
+
+2. Account Creation & Import
+
+Multi-source account creation: web form, API, manual, CSV import.
+
+Auto-enrichment: fill company info (industry, size, website, logo, social links) using domain or email.
+
+Real-time duplicate detection with guided merge workflow.
+
+3. Account Detail Page
+
+Profile summary: owner, type, health score, revenue, key contacts, open deals.
+
+360° relationship map: show all linked deals, leads, and organizational structure.
+
+Unified timeline: log/filter emails, calls, meetings, notes, tasks.
+
+AI-driven next-step recommendations and reminders.
+
+Document library: version-controlled, e-signature tracking, and secure sharing.
+
+Change/audit log with timestamps and users.
+
+4. Analytics & Reporting
+
+Interactive dashboards: account health, pipeline value, conversion/win rate.
+
+Segment & cohort analysis: e.g. by region or account type.
+
+Exportable and customizable reports; drill down to account, deal, lead, or contact level.
+
+Backend (Node.js + Express or Python FastAPI)
+Full REST APIs for CRUD on Accounts, Leads, Deals, Contacts, Activities, and Documents.
+
+Event-driven webhooks for instant syncing of leads and deals when related account data changes.
+
+Robust, field-level role-based access controls.
+
+Automation rules for enrichment, scoring, reminders, and smart assignments.
+
+Additional Requirements
+Mobile-responsive, modular design for future extensibility.
+
+Include schema definitions for Accounts, Deals, Leads, Contacts, Activities, Documents.
+
+Provide setup instructions and code samples for account-to-lead and account-to-deal interconnection and bi-directional data sync.
+
+Return complete frontend, backend, and documentation.
