@@ -87,7 +87,10 @@ const AccountDetailPage: React.FC = () => {
 
   // Update account mutation
   const updateAccountMutation = useMutation({
-    mutationFn: (data: Partial<Account>) => apiRequest(`/api/accounts/${id}`, 'PATCH', data),
+    mutationFn: (data: Partial<Account>) => apiRequest(`/api/accounts/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/accounts'] });
       setIsEditing(false);
