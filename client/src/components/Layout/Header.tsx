@@ -64,7 +64,10 @@ const Header: React.FC = () => {
           {/* Company Name */}
           <div className="flex items-center space-x-2">
             <Building2 className="h-8 w-8 text-blue-600" />
-            <span className="text-xl font-bold text-gray-900">BMI Platform</span>
+            <div>
+              <span className="text-xl font-bold text-gray-900">BMI Platform</span>
+              <div className="text-xs text-gray-500 font-medium">Real Business. Real Intelligence</div>
+            </div>
           </div>
 
           {/* CRM Navigation (only show on CRM pages) */}

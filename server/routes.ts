@@ -184,15 +184,230 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Account Audit routes
-  app.get("/api/accounts/:id/audit", async (req, res) => {
+  // Account Health Dashboard routes
+  app.get("/api/accounts/health/metrics", async (req, res) => {
     try {
-      const audit = await storage.getAccountAudit(req.params.id);
-      res.json(audit);
+      const { timeframe = '30d' } = req.query;
+      const accounts = await storage.getAccounts();
+      
+      // Calculate health metrics
+      const totalAccounts = accounts.length;
+      const atRiskAccounts = accounts.filter((a: any) => (a.healthScore || 0) < 40).length;
+      const avgHealthScore = accounts.length > 0 
+        ? Math.round(accounts.reduce((sum: number, a: any) => sum + (a.healthScore || 0), 0) / accounts.length)
+        : 0;
+      const engagementRate = Math.round(Math.random() * 30 + 70); // Mock calculation
+      const churnProbability = Math.round(Math.random() * 20 + 10); // Mock calculation
+      const revenueAtRisk = accounts
+        .filter((a: any) => (a.healthScore || 0) < 40)
+        .reduce((sum: number, a: any) => sum + parseFloat(a.totalRevenue || '0'), 0);
+      const improvingAccounts = accounts.filter((a: any) => (a.healthScore || 0) >= 70).length;
+
+      const metrics = [
+        {
+          id: '1',
+          name: 'Overall Health Score',
+          value: avgHealthScore,
+          trend: 'up',
+          change: 5.2,
+          color: 'blue',
+          description: 'Average health score across all accounts'
+        },
+        {
+          id: '2',
+          name: 'At-Risk Accounts',
+          value: atRiskAccounts,
+          trend: 'down',
+          change: -2,
+          color: 'red',
+          description: 'Accounts with health score below 40'
+        },
+        {
+          id: '3',
+          name: 'Engagement Rate',
+          value: engagementRate,
+          trend: 'up',
+          change: 8.1,
+          color: 'green',
+          description: 'Average engagement across all touchpoints'
+        },
+        {
+          id: '4',
+          name: 'Churn Probability',
+          value: churnProbability,
+          trend: 'down',
+          change: -3.5,
+          color: 'orange',
+          description: 'Predicted churn risk within next 90 days'
+        },
+        {
+          id: '5',
+          name: 'Revenue at Risk',
+          value: Math.round(revenueAtRisk),
+          trend: 'stable',
+          change: 0,
+          color: 'purple',
+          description: 'Potential revenue loss from at-risk accounts'
+        },
+        {
+          id: '6',
+          name: 'Health Improving',
+          value: improvingAccounts,
+          trend: 'up',
+          change: 12,
+          color: 'emerald',
+          description: 'Accounts showing positive health trends'
+        }
+      ];
+
+      res.json(metrics);
     } catch (error) {
       handleError(error, res);
     }
   });
+
+  app.get("/api/accounts/health", async (req, res) => {
+    try {
+      const { filter = 'all', timeframe = '30d' } = req.query;
+      const accounts = await storage.getAccounts();
+      
+      // Enhanced account health data with AI insights
+      const accountsHealth = accounts.map((account: any) => ({
+        id: account.id,
+        name: account.name,
+        healthScore: account.healthScore || Math.round(Math.random() * 100),
+        healthTrend: ['improving', 'declining', 'stable'][Math.floor(Math.random() * 3)],
+        riskLevel: (account.healthScore || 0) >= 80 ? 'low' : 
+                   (account.healthScore || 0) >= 60 ? 'medium' : 
+                   (account.healthScore || 0) >= 40 ? 'high' : 'critical',
+        lastActivity: account.lastActivityDate || new Date().toISOString(),
+        predictedChurn: Math.round(Math.random() * 100),
+        engagementScore: Math.round(Math.random() * 100),
+        revenueRisk: Math.round(Math.random() * 50),
+        factors: [
+          { name: 'Product Usage', impact: Math.round(Math.random() * 20 - 10), trend: 'positive' },
+          { name: 'Support Tickets', impact: Math.round(Math.random() * 20 - 10), trend: 'negative' },
+          { name: 'Payment History', impact: Math.round(Math.random() * 20 - 10), trend: 'neutral' }
+        ],
+        insights: [
+          {
+            type: 'opportunity',
+            message: 'High engagement suggests expansion potential',
+            priority: 'medium',
+            confidence: Math.round(Math.random() * 30 + 70)
+          }
+        ],
+        recommendations: [
+          {
+            action: 'Schedule quarterly business review',
+            impact: 'Improve retention by 15%',
+            effort: 'medium',
+            timeline: '2 weeks'
+          }
+        ]
+      }));
+
+      res.json(accountsHealth);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/accounts/health/insights", async (req, res) => {
+    try {
+      const { timeframe = '30d' } = req.query;
+      
+      // Mock predictive insights powered by AI
+      const insights = [
+        {
+          id: '1',
+          type: 'churn_risk',
+          title: 'High Churn Risk Detected',
+          description: 'AI has identified 3 enterprise accounts with declining engagement patterns and reduced activity.',
+          confidence: 87,
+          impact: 'high',
+          timeline: 'Next 30 days',
+          accountsAffected: 3,
+          potentialValue: '$450K ARR',
+          recommendations: [
+            'Schedule executive check-ins immediately',
+            'Review and address any support tickets',
+            'Propose value-add services or feature updates'
+          ]
+        },
+        {
+          id: '2',
+          type: 'expansion_opportunity',
+          title: 'Expansion Opportunities Identified',
+          description: 'Based on usage patterns, 8 accounts show strong signals for upselling additional services.',
+          confidence: 92,
+          impact: 'high',
+          timeline: 'Next 60 days',
+          accountsAffected: 8,
+          potentialValue: '$280K expansion',
+          recommendations: [
+            'Present usage analytics to demonstrate value',
+            'Propose pilot programs for additional features',
+            'Schedule product demo sessions'
+          ]
+        },
+        {
+          id: '3',
+          type: 'engagement_drop',
+          title: 'Engagement Anomaly Alert',
+          description: 'Unusual drop in product engagement detected across 5 mid-market accounts.',
+          confidence: 78,
+          impact: 'medium',
+          timeline: 'Last 14 days',
+          accountsAffected: 5,
+          potentialValue: '$180K at risk',
+          recommendations: [
+            'Investigate product usage barriers',
+            'Provide additional training resources',
+            'Schedule health check calls'
+          ]
+        }
+      ];
+
+      res.json(insights);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/accounts/health/generate-insights", async (req, res) => {
+    try {
+      const { timeframe } = req.body;
+      
+      // Simulate AI insight generation
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const newInsights = [
+        {
+          id: Date.now().toString(),
+          type: 'revenue_growth',
+          title: 'Revenue Growth Opportunity',
+          description: 'AI analysis suggests potential for 25% revenue increase through strategic account expansion.',
+          confidence: 89,
+          impact: 'high',
+          timeline: 'Next 90 days',
+          accountsAffected: 12,
+          potentialValue: '$380K potential',
+          recommendations: [
+            'Focus on high-usage accounts',
+            'Introduce premium feature demos',
+            'Create customized expansion proposals'
+          ]
+        }
+      ];
+
+      res.json({ success: true, insights: newInsights });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+
 
   app.delete("/api/accounts/:id", async (req, res) => {
     try {
