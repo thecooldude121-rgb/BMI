@@ -3,7 +3,8 @@ import { Switch, Route } from 'wouter';
 import NextGenLeadsModule from './NextGenLeadsModule';
 import LeadDetailPage from './LeadDetailPage';
 import SimpleContactsPage from './SimpleContactsPage';
-import SimpleAccountsPage from './SimpleAccountsPage';
+import NextGenAccountModule from './NextGenAccountModule';
+import AccountDetailPage from './AccountDetailPage';
 import SimpleAdvancedDealsModule from './SimpleAdvancedDealsModule';
 import WorkingActivitiesPage from './WorkingActivitiesPage';
 import DiagnosticPage from './DiagnosticPage';
@@ -17,8 +18,9 @@ const CRMModule = () => {
         <Route path="/crm/contacts">
           <SimpleContactsPage />
         </Route>
+        <Route path="/crm/accounts/:id" component={AccountDetailPage} />
         <Route path="/crm/accounts">
-          <SimpleAccountsPage />
+          <NextGenAccountModule />
         </Route>
         <Route path="/crm/deals">
           <SimpleAdvancedDealsModule />

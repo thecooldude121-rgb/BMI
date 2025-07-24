@@ -86,6 +86,124 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Enhanced Account routes
+  app.get("/api/accounts/:id/with-relations", async (req, res) => {
+    try {
+      const account = await storage.getAccountWithRelations(req.params.id);
+      if (!account) return res.status(404).json({ error: "Account not found" });
+      res.json(account);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/accounts/:id/health", async (req, res) => {
+    try {
+      const health = await storage.getAccountHealth(req.params.id);
+      res.json(health);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/accounts/:id/metrics", async (req, res) => {
+    try {
+      const metrics = await storage.getAccountMetrics(req.params.id);
+      res.json(metrics);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/accounts/search", async (req, res) => {
+    try {
+      const { query, ...filters } = req.query;
+      const accounts = await storage.searchAccounts(String(query || ''), filters);
+      res.json(accounts);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Account Document routes
+  app.get("/api/accounts/:id/documents", async (req, res) => {
+    try {
+      const documents = await storage.getAccountDocuments(req.params.id);
+      res.json(documents);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/accounts/:id/documents", async (req, res) => {
+    try {
+      const documentData = { ...req.body, accountId: req.params.id };
+      const document = await storage.createAccountDocument(documentData);
+      res.status(201).json(document);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Account Hierarchy routes
+  app.get("/api/accounts/:id/hierarchy", async (req, res) => {
+    try {
+      const hierarchy = await storage.getAccountHierarchy(req.params.id);
+      res.json(hierarchy);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/accounts/hierarchy", async (req, res) => {
+    try {
+      const hierarchy = await storage.createAccountHierarchy(req.body);
+      res.status(201).json(hierarchy);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Account Enrichment routes
+  app.get("/api/accounts/:id/enrichment", async (req, res) => {
+    try {
+      const enrichment = await storage.getAccountEnrichment(req.params.id);
+      res.json(enrichment);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/accounts/:id/enrichment", async (req, res) => {
+    try {
+      const enrichmentData = { ...req.body, accountId: req.params.id };
+      const enrichment = await storage.createAccountEnrichment(enrichmentData);
+      res.status(201).json(enrichment);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Account Audit routes
+  app.get("/api/accounts/:id/audit", async (req, res) => {
+    try {
+      const audit = await storage.getAccountAudit(req.params.id);
+      res.json(audit);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.delete("/api/accounts/:id", async (req, res) => {
+    try {
+      const success = await storage.deleteAccount(req.params.id);
+      if (!success) return res.status(404).json({ error: "Account not found" });
+      res.json({ success: true });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
   app.delete("/api/accounts", async (req, res) => {
     try {
       const { ids } = req.body;

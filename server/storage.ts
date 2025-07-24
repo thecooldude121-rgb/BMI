@@ -12,8 +12,37 @@ export interface IStorage {
   // Account methods
   getAccounts(): Promise<schema.Account[]>;
   getAccount(id: string): Promise<schema.Account | undefined>;
+  getAccountWithRelations(id: string): Promise<schema.Account & { contacts: schema.Contact[], deals: schema.Deal[], leads: schema.Lead[], documents: schema.AccountDocument[] } | undefined>;
+  getAccountsByOwner(ownerId: string): Promise<schema.Account[]>;
+  getAccountHierarchy(accountId: string): Promise<schema.AccountHierarchy[]>;
   createAccount(account: schema.InsertAccount): Promise<schema.Account>;
   updateAccount(id: string, account: Partial<schema.InsertAccount>): Promise<schema.Account>;
+  deleteAccount(id: string): Promise<boolean>;
+  
+  // Account Document methods
+  getAccountDocuments(accountId: string): Promise<schema.AccountDocument[]>;
+  getAccountDocument(id: string): Promise<schema.AccountDocument | undefined>;
+  createAccountDocument(document: schema.InsertAccountDocument): Promise<schema.AccountDocument>;
+  updateAccountDocument(id: string, document: Partial<schema.InsertAccountDocument>): Promise<schema.AccountDocument>;
+  deleteAccountDocument(id: string): Promise<boolean>;
+  
+  // Account Hierarchy methods
+  createAccountHierarchy(hierarchy: schema.InsertAccountHierarchy): Promise<schema.AccountHierarchy>;
+  deleteAccountHierarchy(parentId: string, childId: string): Promise<boolean>;
+  
+  // Account Enrichment methods
+  getAccountEnrichment(accountId: string): Promise<schema.AccountEnrichment[]>;
+  createAccountEnrichment(enrichment: schema.InsertAccountEnrichment): Promise<schema.AccountEnrichment>;
+  updateAccountEnrichment(id: string, enrichment: Partial<schema.InsertAccountEnrichment>): Promise<schema.AccountEnrichment>;
+  
+  // Account Audit methods
+  getAccountAudit(accountId: string): Promise<schema.AccountAudit[]>;
+  createAccountAudit(audit: schema.InsertAccountAudit): Promise<schema.AccountAudit>;
+  
+  // Account Analytics methods
+  getAccountHealth(accountId: string): Promise<{ score: number, factors: any[] }>;
+  getAccountMetrics(accountId: string): Promise<{ totalDeals: number, totalRevenue: string, averageDealSize: string, lastActivity: Date | null }>;
+  searchAccounts(query: string, filters?: any): Promise<schema.Account[]>;
 
   // Contact methods
   getContacts(): Promise<schema.Contact[]>;
@@ -129,6 +158,187 @@ export class DatabaseStorage implements IStorage {
   async deleteAccount(id: string): Promise<boolean> {
     const result = await db.delete(schema.accounts).where(eq(schema.accounts.id, id));
     return (result.rowCount || 0) > 0;
+  }
+
+  async getAccountWithRelations(id: string): Promise<schema.Account & { contacts: schema.Contact[], deals: schema.Deal[], leads: schema.Lead[], documents: schema.AccountDocument[] } | undefined> {
+    const account = await this.getAccount(id);
+    if (!account) return undefined;
+    
+    const [contacts, deals, leads, documents] = await Promise.all([
+      this.getContactsByAccount(id),
+      db.select().from(schema.deals).where(eq(schema.deals.accountId, id)),
+      db.select().from(schema.leads).where(eq(schema.leads.accountId, id)),
+      this.getAccountDocuments(id)
+    ]);
+    
+    return { ...account, contacts, deals, leads, documents };
+  }
+
+  async getAccountsByOwner(ownerId: string): Promise<schema.Account[]> {
+    return await db.select().from(schema.accounts).where(eq(schema.accounts.ownerId, ownerId));
+  }
+
+  async getAccountHierarchy(accountId: string): Promise<schema.AccountHierarchy[]> {
+    return await db.select().from(schema.accountHierarchy)
+      .where(sql`${schema.accountHierarchy.parentAccountId} = ${accountId} OR ${schema.accountHierarchy.childAccountId} = ${accountId}`);
+  }
+
+  // Account Document methods
+  async getAccountDocuments(accountId: string): Promise<schema.AccountDocument[]> {
+    return await db.select().from(schema.accountDocuments).where(eq(schema.accountDocuments.accountId, accountId));
+  }
+
+  async getAccountDocument(id: string): Promise<schema.AccountDocument | undefined> {
+    const docs = await db.select().from(schema.accountDocuments).where(eq(schema.accountDocuments.id, id));
+    return docs[0];
+  }
+
+  async createAccountDocument(document: schema.InsertAccountDocument): Promise<schema.AccountDocument> {
+    const docs = await db.insert(schema.accountDocuments).values(document).returning();
+    return docs[0];
+  }
+
+  async updateAccountDocument(id: string, document: Partial<schema.InsertAccountDocument>): Promise<schema.AccountDocument> {
+    const docs = await db.update(schema.accountDocuments).set(document).where(eq(schema.accountDocuments.id, id)).returning();
+    return docs[0];
+  }
+
+  async deleteAccountDocument(id: string): Promise<boolean> {
+    const result = await db.delete(schema.accountDocuments).where(eq(schema.accountDocuments.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  // Account Hierarchy methods
+  async createAccountHierarchy(hierarchy: schema.InsertAccountHierarchy): Promise<schema.AccountHierarchy> {
+    const hierarchies = await db.insert(schema.accountHierarchy).values(hierarchy).returning();
+    return hierarchies[0];
+  }
+
+  async deleteAccountHierarchy(parentId: string, childId: string): Promise<boolean> {
+    const result = await db.delete(schema.accountHierarchy)
+      .where(and(
+        eq(schema.accountHierarchy.parentAccountId, parentId),
+        eq(schema.accountHierarchy.childAccountId, childId)
+      ));
+    return (result.rowCount || 0) > 0;
+  }
+
+  // Account Enrichment methods
+  async getAccountEnrichment(accountId: string): Promise<schema.AccountEnrichment[]> {
+    return await db.select().from(schema.accountEnrichment)
+      .where(and(
+        eq(schema.accountEnrichment.accountId, accountId),
+        eq(schema.accountEnrichment.isActive, true)
+      ));
+  }
+
+  async createAccountEnrichment(enrichment: schema.InsertAccountEnrichment): Promise<schema.AccountEnrichment> {
+    const enrichments = await db.insert(schema.accountEnrichment).values(enrichment).returning();
+    return enrichments[0];
+  }
+
+  async updateAccountEnrichment(id: string, enrichment: Partial<schema.InsertAccountEnrichment>): Promise<schema.AccountEnrichment> {
+    const enrichments = await db.update(schema.accountEnrichment).set(enrichment).where(eq(schema.accountEnrichment.id, id)).returning();
+    return enrichments[0];
+  }
+
+  // Account Audit methods
+  async getAccountAudit(accountId: string): Promise<schema.AccountAudit[]> {
+    return await db.select().from(schema.accountAudit)
+      .where(eq(schema.accountAudit.accountId, accountId))
+      .orderBy(desc(schema.accountAudit.timestamp));
+  }
+
+  async createAccountAudit(audit: schema.InsertAccountAudit): Promise<schema.AccountAudit> {
+    const audits = await db.insert(schema.accountAudit).values(audit).returning();
+    return audits[0];
+  }
+
+  // Account Analytics methods
+  async getAccountHealth(accountId: string): Promise<{ score: number, factors: any[] }> {
+    const account = await this.getAccount(accountId);
+    if (!account) return { score: 0, factors: [] };
+
+    const factors = [];
+    let score = account.healthScore || 50;
+
+    // Calculate health based on activity
+    const recentActivities = await db.select().from(schema.activities)
+      .where(and(
+        eq(schema.activities.accountId, accountId),
+        gte(schema.activities.createdAt, new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)) // Last 30 days
+      ));
+
+    if (recentActivities.length > 5) {
+      score += 10;
+      factors.push({ type: 'activity', value: 'High recent activity', impact: '+10' });
+    } else if (recentActivities.length === 0) {
+      score -= 15;
+      factors.push({ type: 'activity', value: 'No recent activity', impact: '-15' });
+    }
+
+    // Check deal performance
+    const openDeals = await db.select().from(schema.deals)
+      .where(and(
+        eq(schema.deals.accountId, accountId),
+        sql`${schema.deals.stage} NOT IN ('closed-won', 'closed-lost')`
+      ));
+
+    if (openDeals.length > 0) {
+      score += 5;
+      factors.push({ type: 'deals', value: `${openDeals.length} open deals`, impact: '+5' });
+    }
+
+    return { score: Math.max(0, Math.min(100, score)), factors };
+  }
+
+  async getAccountMetrics(accountId: string): Promise<{ totalDeals: number, totalRevenue: string, averageDealSize: string, lastActivity: Date | null }> {
+    const deals = await db.select().from(schema.deals).where(eq(schema.deals.accountId, accountId));
+    const activities = await db.select().from(schema.activities)
+      .where(eq(schema.activities.accountId, accountId))
+      .orderBy(desc(schema.activities.createdAt))
+      .limit(1);
+
+    const totalDeals = deals.length;
+    const totalRevenue = deals.reduce((sum, deal) => sum + parseFloat(deal.value || '0'), 0);
+    const averageDealSize = totalDeals > 0 ? totalRevenue / totalDeals : 0;
+
+    return {
+      totalDeals,
+      totalRevenue: totalRevenue.toString(),
+      averageDealSize: averageDealSize.toString(),
+      lastActivity: activities[0]?.createdAt || null
+    };
+  }
+
+  async searchAccounts(query: string, filters?: any): Promise<schema.Account[]> {
+    let whereClause = sql`1=1`;
+    
+    if (query) {
+      whereClause = sql`${whereClause} AND (
+        LOWER(${schema.accounts.name}) LIKE LOWER(${'%' + query + '%'}) OR
+        LOWER(${schema.accounts.domain}) LIKE LOWER(${'%' + query + '%'}) OR
+        LOWER(${schema.accounts.industry}) LIKE LOWER(${'%' + query + '%'})
+      )`;
+    }
+
+    if (filters?.industry) {
+      whereClause = sql`${whereClause} AND ${schema.accounts.industry} = ${filters.industry}`;
+    }
+
+    if (filters?.accountType) {
+      whereClause = sql`${whereClause} AND ${schema.accounts.accountType} = ${filters.accountType}`;
+    }
+
+    if (filters?.accountStatus) {
+      whereClause = sql`${whereClause} AND ${schema.accounts.accountStatus} = ${filters.accountStatus}`;
+    }
+
+    if (filters?.ownerId) {
+      whereClause = sql`${whereClause} AND ${schema.accounts.ownerId} = ${filters.ownerId}`;
+    }
+
+    return await db.select().from(schema.accounts).where(whereClause);
   }
 
   // Contact methods
