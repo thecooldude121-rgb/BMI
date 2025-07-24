@@ -1,2 +1,2 @@
 [dev]
-run = "npm run dev"
+command = "npm run dev"
