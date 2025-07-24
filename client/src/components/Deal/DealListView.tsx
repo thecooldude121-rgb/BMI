@@ -249,11 +249,13 @@ const DealListView: React.FC<DealListViewProps> = ({
                 {selectedDeals.length > 0 && (
                   <BulkActionsDropdown
                     selectedItems={selectedDeals}
+                    itemType="deals"
                     onBulkTransfer={handleBulkTransfer}
                     onBulkUpdate={handleBulkUpdate}
                     onBulkDelete={handleBulkDelete}
                     onBulkEmail={handleBulkEmail}
                     onPrintView={handlePrintView}
+                    isVisible={true}
                   />
                 )}
               </div>
@@ -451,10 +453,10 @@ const DealListView: React.FC<DealListViewProps> = ({
                         <div className="flex items-center space-x-2">
                           <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
                             <span className="text-xs font-medium text-blue-600">
-                              {deal.ownerId.charAt(0).toUpperCase()}
+                              {deal.ownerId ? deal.ownerId.charAt(0).toUpperCase() : '?'}
                             </span>
                           </div>
-                          <span className="text-sm text-gray-900">{deal.ownerId}</span>
+                          <span className="text-sm text-gray-900">{deal.ownerId || 'Unassigned'}</span>
                         </div>
                       )}
                       {column.field === 'accountId' && (
