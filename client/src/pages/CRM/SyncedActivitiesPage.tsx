@@ -47,13 +47,19 @@ const SyncedActivitiesPage: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const { data: activities = [], isLoading } = useQuery({
+  const { data: activities = [], isLoading, error } = useQuery({
     queryKey: ['/api/activities'],
     queryFn: async () => {
+      console.log('🚀 Fetching activities...');
       const response = await fetch('/api/activities');
+      console.log('📡 Activities response status:', response.status);
       if (!response.ok) throw new Error('Failed to fetch activities');
-      return response.json();
-    }
+      const data = await response.json();
+      console.log('📦 Activities data received:', data.length, 'items');
+      return data;
+    },
+    retry: 3,
+    retryDelay: 1000
   });
 
   const { data: leads = [] } = useQuery({
@@ -176,12 +182,26 @@ const SyncedActivitiesPage: React.FC = () => {
     return groups;
   }, {});
 
+  console.log('🔄 Loading state:', isLoading);
+  console.log('❌ Error state:', error);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading synchronized activities...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-600 text-lg">Error loading activities</div>
+          <p className="mt-2 text-gray-600">{error.message}</p>
         </div>
       </div>
     );
