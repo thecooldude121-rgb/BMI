@@ -627,47 +627,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // AI Meeting Intelligence Routes
-  app.get("/api/meetings", async (req, res) => {
-    try {
-      const meetings = await storage.getMeetings();
-      res.json(meetings);
-    } catch (error) {
-      handleError(error, res);
-    }
-  });
-
-  app.get("/api/meetings/:id", async (req, res) => {
-    try {
-      const meeting = await storage.getMeeting(req.params.id);
-      if (!meeting) return res.status(404).json({ error: "Meeting not found" });
-      res.json(meeting);
-    } catch (error) {
-      handleError(error, res);
-    }
-  });
-
-  app.post("/api/meetings", async (req, res) => {
-    try {
-      const result = schema.insertMeetingSchema.safeParse(req.body);
-      if (!result.success) {
-        return res.status(400).json({ error: "Invalid meeting data", details: result.error });
-      }
-      const meeting = await storage.createMeeting(result.data);
-      res.status(201).json(meeting);
-    } catch (error) {
-      handleError(error, res);
-    }
-  });
-
-  app.patch("/api/meetings/:id", async (req, res) => {
-    try {
-      const meeting = await storage.updateMeeting(req.params.id, req.body);
-      res.json(meeting);
-    } catch (error) {
-      handleError(error, res);
-    }
-  });
+  // AI Meeting Intelligence Routes (duplicates removed)
 
   app.delete("/api/meetings/:id", async (req, res) => {
     try {
