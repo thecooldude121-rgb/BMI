@@ -92,6 +92,12 @@ const SyncedActivitiesPage: React.FC = () => {
     }
   });
 
+  // Debug log the data
+  console.log('Activities data:', activities);
+  console.log('Deals data:', deals);
+  console.log('Contacts data:', contacts);
+  console.log('Accounts data:', accounts);
+
   const getActivityIcon = (type: string) => {
     switch (type) {
       case 'email': return <Mail className="h-4 w-4" />;
