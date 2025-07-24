@@ -10,11 +10,6 @@ import Dashboard from "@/pages/Dashboard";
 import CRMModule from "./pages/CRM/CRMModule";
 import MeetingModule from "./pages/Meeting/MeetingModule";
 import HRMSModule from "./pages/HRMS/HRMSModule";
-import GamificationPage from "./pages/Gamification/GamificationPage";
-import LeadGeneration from "./pages/LeadGeneration/LeadGeneration";
-import Calendar from "./pages/Calendar/Calendar";
-import Analytics from "@/pages/Analytics/Analytics";
-import Settings from "@/pages/Settings/Settings";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -30,11 +25,8 @@ function Router() {
           <Route path="/meetings" component={MeetingModule} />
           <Route path="/hrms/:rest*" component={HRMSModule} />
           <Route path="/hrms" component={HRMSModule} />
-          <Route path="/gamification" component={GamificationPage} />
-          <Route path="/lead-generation" component={LeadGeneration} />
-          <Route path="/calendar" component={Calendar} />
-          <Route path="/analytics" component={Analytics} />
-          <Route path="/settings" component={Settings} />
+          <Route path="/analytics" component={() => <div className="p-8"><h1 className="text-2xl font-bold">Analytics Coming Soon</h1></div>} />
+          <Route path="/settings" component={() => <div className="p-8"><h1 className="text-2xl font-bold">Settings Coming Soon</h1></div>} />
           <Route component={NotFound} />
         </Switch>
       </div>
