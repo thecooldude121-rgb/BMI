@@ -36,14 +36,14 @@ const Header: React.FC = () => {
   ];
 
   const appModules = [
-    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { name: 'BI Board', href: '/analytics', icon: BarChart3 },
     { name: 'CRM', href: '/crm', icon: Users },
     { name: 'AI Meeting Intelligence', href: '/meeting-intelligence', icon: Brain },
     { name: 'HRMS', href: '/hrms', icon: UserCheck },
     { name: 'Lead Generation', href: '/lead-generation', icon: Target },
-    { name: 'BI Board', href: '/analytics', icon: BarChart3 },
     { name: 'Calendar', href: '/calendar', icon: Calendar },
     { name: 'Settings', href: '/settings', icon: Settings },
+    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   ];
 
   const createMenuItems = [
