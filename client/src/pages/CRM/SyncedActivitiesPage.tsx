@@ -184,6 +184,8 @@ const SyncedActivitiesPage: React.FC = () => {
 
   console.log('🔄 Loading state:', isLoading);
   console.log('❌ Error state:', error);
+  console.log('📋 Filtered activities count:', filteredActivities.length);
+  console.log('📊 Grouped activities:', Object.keys(groupedActivities).length, 'groups');
 
   if (isLoading) {
     return (
@@ -259,6 +261,21 @@ const SyncedActivitiesPage: React.FC = () => {
               <option value="cancelled">Cancelled</option>
             </select>
           </div>
+        </div>
+      </div>
+
+      {/* Debug Info Card */}
+      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+        <h3 className="text-sm font-medium text-yellow-800 mb-2">Debug Information</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs text-yellow-700">
+          <div>Activities: {activities.length}</div>
+          <div>Deals: {deals.length}</div>
+          <div>Contacts: {contacts.length}</div>
+          <div>Accounts: {accounts.length}</div>
+          <div>Filtered: {filteredActivities.length}</div>
+          <div>Grouped: {Object.keys(groupedActivities).length}</div>
+          <div>Loading: {isLoading ? 'Yes' : 'No'}</div>
+          <div>Error: {error ? 'Yes' : 'No'}</div>
         </div>
       </div>
 
