@@ -3,6 +3,22 @@ import { useQuery } from '@tanstack/react-query';
 
 const SimpleActivitiesPage: React.FC = () => {
   console.log('🎯 SimpleActivitiesPage loading...');
+  
+  // Add immediate test
+  React.useEffect(() => {
+    console.log('🚀 Component mounted, testing API directly...');
+    fetch('/api/activities')
+      .then(res => {
+        console.log('📡 Direct API test status:', res.status);
+        return res.json();
+      })
+      .then(data => {
+        console.log('📦 Direct API test data:', data.length, 'activities');
+      })
+      .catch(err => {
+        console.error('❌ Direct API test error:', err);
+      });
+  }, []);
 
   const { data: activities = [], isLoading, error } = useQuery({
     queryKey: ['/api/activities'],
