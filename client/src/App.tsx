@@ -22,10 +22,12 @@ import GamificationPage from './pages/Gamification/GamificationPage';
 import Settings from './pages/Settings/Settings';
 import Login from './pages/Auth/Login';
 import MeetingIntelligencePage from './pages/MeetingIntelligencePage';
+import MeetingDashboard from './pages/MeetingDashboard';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
 const DealDetailWrapper = ({ params }: { params: { id: string } }) => <DealDetailPage dealId={params.id} />;
+const MeetingDashboardWrapper = ({ params }: { params: { id: string } }) => <MeetingDashboard />;
 
 
 
@@ -54,6 +56,7 @@ const App = () => {
               <Route path="/analytics" component={Analytics} />
               <Route path="/calendar" component={Calendar} />
               <Route path="/meeting-intelligence" component={MeetingIntelligencePage} />
+              <Route path="/meetings/:id" component={MeetingDashboardWrapper} />
               <Route path="/lead-generation" component={LeadGeneration} />
               <Route path="/gamification" component={GamificationPage} />
               <Route path="/settings" component={Settings} />
