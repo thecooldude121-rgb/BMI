@@ -50,18 +50,23 @@ const SyncedActivitiesPage: React.FC = () => {
   const { data: activities = [], isLoading, error } = useQuery({
     queryKey: ['/api/activities'],
     queryFn: async () => {
-      console.log('🚀 Fetching activities...');
-      const response = await fetch('/api/activities');
-      console.log('📡 Activities response status:', response.status);
-      if (!response.ok) throw new Error('Failed to fetch activities');
-      const data = await response.json();
-      console.log('📦 Activities data received:', data.length, 'items');
-      if (data.length > 0) {
-        console.log('🔍 First activity sample:', data[0]);
+      try {
+        console.log('🚀 Fetching activities...');
+        const response = await fetch('/api/activities');
+        console.log('📡 Activities response status:', response.status);
+        if (!response.ok) throw new Error('Failed to fetch activities');
+        const data = await response.json();
+        console.log('📦 Activities data received:', data.length, 'items');
+        if (data.length > 0) {
+          console.log('🔍 First activity sample:', data[0]);
+        }
+        return data;
+      } catch (err) {
+        console.error('❌ Error fetching activities:', err);
+        throw err;
       }
-      return data;
     },
-    retry: 3,
+    retry: 1,
     retryDelay: 1000
   });
 
