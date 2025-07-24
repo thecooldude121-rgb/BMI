@@ -53,6 +53,14 @@ app.use((req, res, next) => {
     console.log("Gamification seeding error:", error.message);
   }
 
+  // Seed meeting data
+  try {
+    const { seedMeetingData } = await import("./meeting-seeder");
+    await seedMeetingData();
+  } catch (error: any) {
+    console.log("Meeting seeding error:", error.message);
+  }
+
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
