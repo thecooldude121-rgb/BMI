@@ -36,6 +36,9 @@ const SimpleActivitiesPage: React.FC = () => {
   console.log('🔄 Loading:', isLoading);
   console.log('❌ Error:', error);
   console.log('📋 Activities:', activities.length);
+  console.log('📋 Activities type:', typeof activities);
+  console.log('📋 Activities is array:', Array.isArray(activities));
+  console.log('📋 Activities raw:', activities);
 
   if (isLoading) {
     return <div className="p-4">Loading activities...</div>;
@@ -47,7 +50,13 @@ const SimpleActivitiesPage: React.FC = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Activities</h1>
+      <h1 className="text-2xl font-bold mb-4">Activities Debug Page</h1>
+      <div className="bg-yellow-100 p-3 mb-4 rounded">
+        <p><strong>Loading:</strong> {isLoading ? 'Yes' : 'No'}</p>
+        <p><strong>Error:</strong> {error ? error.message : 'None'}</p>
+        <p><strong>Activities Length:</strong> {activities.length}</p>
+        <p><strong>Activities Type:</strong> {typeof activities} (Array: {Array.isArray(activities) ? 'Yes' : 'No'})</p>
+      </div>
       <p className="mb-4">{activities.length} activities found</p>
       
       {activities.length === 0 ? (
