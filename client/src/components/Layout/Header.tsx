@@ -199,42 +199,6 @@ const Header: React.FC = () => {
             <Settings className="h-5 w-5" />
           </button>
 
-          {/* App Menu */}
-          <div className="relative">
-            <button
-              onClick={() => setShowAppMenu(!showAppMenu)}
-              className="flex items-center p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <LayoutDashboard className="h-5 w-5" />
-            </button>
-            
-            {showAppMenu && (
-              <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                <div className="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
-                  All Modules
-                </div>
-                <div className="grid grid-cols-1 gap-1 p-2">
-                  {appModules.map((module) => {
-                    const Icon = module.icon;
-                    return (
-                      <button
-                        key={module.name}
-                        onClick={() => {
-                          setLocation(module.href);
-                          setShowAppMenu(false);
-                        }}
-                        className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-md transition-colors"
-                      >
-                        <Icon className="mr-3 h-4 w-4 text-gray-400" />
-                        {module.name}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-
           {/* Profile Menu */}
           <div className="relative">
             <button 
@@ -278,6 +242,42 @@ const Header: React.FC = () => {
                 >
                   Sign out
                 </button>
+              </div>
+            )}
+          </div>
+
+          {/* App Menu */}
+          <div className="relative">
+            <button
+              onClick={() => setShowAppMenu(!showAppMenu)}
+              className="flex items-center p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <LayoutDashboard className="h-5 w-5" />
+            </button>
+            
+            {showAppMenu && (
+              <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                <div className="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                  All Modules
+                </div>
+                <div className="grid grid-cols-1 gap-1 p-2">
+                  {appModules.map((module) => {
+                    const Icon = module.icon;
+                    return (
+                      <button
+                        key={module.name}
+                        onClick={() => {
+                          setLocation(module.href);
+                          setShowAppMenu(false);
+                        }}
+                        className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-md transition-colors"
+                      >
+                        <Icon className="mr-3 h-4 w-4 text-gray-400" />
+                        {module.name}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>
