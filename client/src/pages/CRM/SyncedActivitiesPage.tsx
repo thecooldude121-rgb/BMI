@@ -56,6 +56,9 @@ const SyncedActivitiesPage: React.FC = () => {
       if (!response.ok) throw new Error('Failed to fetch activities');
       const data = await response.json();
       console.log('📦 Activities data received:', data.length, 'items');
+      if (data.length > 0) {
+        console.log('🔍 First activity sample:', data[0]);
+      }
       return data;
     },
     retry: 3,
@@ -162,11 +165,29 @@ const SyncedActivitiesPage: React.FC = () => {
       (selectedModule === 'accounts' && activity.accountId);
 
     const matchesStatus = statusFilter === 'all' || activity.status === statusFilter;
-    const matchesSearch = activity.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const matchesSearch = searchTerm === '' || 
+                         activity.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          activity.description?.toLowerCase().includes(searchTerm.toLowerCase());
 
     return matchesModule && matchesStatus && matchesSearch;
   });
+
+  console.log('🔍 Filter check:');
+  console.log('  - Selected module:', selectedModule);
+  console.log('  - Status filter:', statusFilter);
+  console.log('  - Search term:', `"${searchTerm}"`);
+  console.log('  - Total activities:', activities.length);
+  console.log('  - Filtered activities:', filteredActivities.length);
+  if (activities.length > 0 && filteredActivities.length === 0) {
+    console.log('  - Sample activity for debug:', {
+      leadId: activities[0].leadId,
+      dealId: activities[0].dealId,
+      contactId: activities[0].contactId,
+      accountId: activities[0].accountId,
+      status: activities[0].status,
+      subject: activities[0].subject
+    });
+  }
 
   const groupedActivities = filteredActivities.reduce((groups: any, activity: ActivityData) => {
     const entityInfo = getRelatedEntityInfo(activity);
@@ -214,8 +235,8 @@ const SyncedActivitiesPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Synchronized Activities</h1>
-          <p className="text-gray-600">Activities connected across all CRM modules - Leads, Deals, Contacts, and Accounts</p>
+          <h1 className="text-3xl font-bold text-gray-900">Activities</h1>
+          <p className="text-gray-600">{filteredActivities.length} of {activities.length} activities</p>
         </div>
         <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
           <Plus className="h-4 w-4 inline mr-2" />
