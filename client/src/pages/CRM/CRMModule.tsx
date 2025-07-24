@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch, Route } from 'wouter';
-import SimpleLeadsPage from './SimpleLeadsPage';
+import NextGenLeadsModule from './NextGenLeadsModule';
 import SimpleContactsPage from './SimpleContactsPage';
 import SimpleAccountsPage from './SimpleAccountsPage';
 import SimpleAdvancedDealsModule from './SimpleAdvancedDealsModule';
@@ -12,7 +12,7 @@ const CRMModule = () => {
     <div className="h-full overflow-auto bg-gray-50">
       <Switch>
         <Route path="/crm/leads">
-          <SimpleLeadsPage />
+          <NextGenLeadsModule />
         </Route>
         <Route path="/crm/contacts">
           <SimpleContactsPage />
