@@ -29,7 +29,9 @@ const CRMModule = () => {
         <Route path="/crm/deals" component={UnifiedDealsPage} />
         <Route path="/crm/pipeline" component={PipelinePage} />
         <Route path="/crm/tasks" component={TasksPage} />
-        <Route path="/crm/activities" component={TestActivitiesPage} />
+        <Route path="/crm/activities">
+          <TestActivitiesPage />
+        </Route>
         <Route path="/crm">
           <CRMGamificationPage key="crm-gamification" />
         </Route>
