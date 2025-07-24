@@ -40,7 +40,7 @@ const App = () => {
           <main>
             <Switch>
               <Route path="/login" component={Login} />
-              <Route path="/" component={Dashboard} />
+              <Route path="/" component={Analytics} />
               <Route path="/dashboard" component={Dashboard} />
               <Route path="/crm" component={CRMModule} />
               <Route path="/crm/leads" component={EnhancedLeadsPage} />
