@@ -135,22 +135,117 @@ export const accounts: any = pgTable("accounts", {
   lastContactDate: timestamp("last_contact_date"),
 });
 
+// Enhanced contact persona and role enums
+export const contactPersonaEnum = pgEnum("contact_persona", ["decision_maker", "champion", "influencer", "gatekeeper", "end_user", "technical_buyer", "economic_buyer"]);
+export const engagementStatusEnum = pgEnum("engagement_status", ["active", "at_risk", "do_not_contact", "recently_engaged", "dormant", "unresponsive"]);
+export const preferredChannelEnum = pgEnum("preferred_channel", ["email", "phone", "linkedin", "whatsapp", "sms", "in_person", "video_call"]);
+
 export const contacts = pgTable("contacts", {
   id: uuid("id").primaryKey().defaultRandom(),
   accountId: uuid("account_id").references(() => accounts.id),
+  
+  // Core contact information
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   email: text("email"),
   phone: text("phone"),
   mobile: text("mobile"),
+  workPhone: text("work_phone"),
+  personalEmail: text("personal_email"),
+  
+  // Professional information
   position: text("position"),
+  title: text("title"),
   department: text("department"),
+  reportingManager: text("reporting_manager"),
+  directReports: jsonb("direct_reports"), // Array of contact IDs
+  
+  // Contact details and preferences
+  location: text("location"),
+  timezone: text("timezone"),
+  bestContactTime: text("best_contact_time"),
+  preferredChannel: preferredChannelEnum("preferred_channel").default('email'),
+  languagePreference: text("language_preference").default('en'),
+  
+  // Social and digital presence
   linkedinUrl: text("linkedin_url"),
+  twitterHandle: text("twitter_handle"),
+  facebookUrl: text("facebook_url"),
+  personalWebsite: text("personal_website"),
+  
+  // Relationship and engagement
   isPrimary: boolean("is_primary").default(false),
   status: contactStatusEnum("status").default('active'),
+  engagementStatus: engagementStatusEnum("engagement_status").default('active'),
+  relationshipScore: integer("relationship_score").default(50), // 0-100 AI-powered score
+  lastTouchDate: timestamp("last_touch_date"),
+  lastResponseDate: timestamp("last_response_date"),
+  responseRate: decimal("response_rate", { precision: 5, scale: 2 }).default('0'), // Percentage
+  
+  // Role and influence
+  persona: contactPersonaEnum("persona").default('influencer'),
+  influenceLevel: integer("influence_level").default(5), // 1-10 scale
+  decisionMakingPower: integer("decision_making_power").default(5), // 1-10 scale
+  
+  // Contact assignment and ownership
   ownerId: uuid("owner_id").references(() => users.id),
+  backupOwnerId: uuid("backup_owner_id").references(() => users.id),
+  teamVisibility: text("team_visibility").default('team'), // private, team, company
+  
+  // Personal and biographical information
+  birthday: date("birthday"),
+  anniversary: date("anniversary"),
+  interests: jsonb("interests"), // Array of interests
+  personalNotes: text("personal_notes"),
+  familyInfo: jsonb("family_info"),
+  
+  // Contact intelligence and scoring
+  aiInsights: jsonb("ai_insights"),
+  behavioralProfile: jsonb("behavioral_profile"),
+  communicationStyle: text("communication_style"), // formal, casual, brief, detailed
+  
+  // Engagement metrics
+  emailOpens: integer("email_opens").default(0),
+  emailClicks: integer("email_clicks").default(0),
+  meetingsAttended: integer("meetings_attended").default(0),
+  callsAnswered: integer("calls_answered").default(0),
+  
+  // Tags and categorization
+  tags: jsonb("tags"), // Array of tags
+  customFields: jsonb("custom_fields"),
+  segments: jsonb("segments"), // Array of segments
+  
+  // Data enrichment
+  enrichmentStatus: text("enrichment_status").default('pending'),
+  enrichmentData: jsonb("enrichment_data"),
+  dataSource: text("data_source").default('manual'), // manual, import, api, enrichment
+  dataQualityScore: integer("data_quality_score").default(50), // 0-100
+  
+  // Compliance and privacy
+  gdprConsent: boolean("gdpr_consent").default(false),
+  emailOptIn: boolean("email_opt_in").default(false),
+  smsOptIn: boolean("sms_opt_in").default(false),
+  marketingConsent: boolean("marketing_consent").default(false),
+  dataProcessingConsent: jsonb("data_processing_consent"),
+  unsubscribeDate: timestamp("unsubscribe_date"),
+  doNotContactReason: text("do_not_contact_reason"),
+  
+  // File attachments and documents
+  profilePhoto: text("profile_photo"),
+  businessCard: text("business_card"),
+  documents: jsonb("documents"), // Array of document metadata
+  
+  // Activity tracking
+  lastActivityDate: timestamp("last_activity_date"),
+  lastActivityType: text("last_activity_type"),
+  totalActivities: integer("total_activities").default(0),
+  
+  // Audit and history
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  createdBy: uuid("created_by").references(() => users.id),
+  lastModifiedBy: uuid("last_modified_by").references(() => users.id),
+  changeLog: jsonb("change_log"), // Array of changes with timestamps
 });
 
 export const leads: any = pgTable("leads", {

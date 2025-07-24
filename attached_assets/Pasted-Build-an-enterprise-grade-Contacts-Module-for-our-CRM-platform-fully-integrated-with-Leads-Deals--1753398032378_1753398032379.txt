@@ -1,0 +1,90 @@
+Build an enterprise-grade Contacts Module for our CRM platform, fully integrated with Leads, Deals, and Accounts modules. The module should surpass existing CRMs by delivering exceptional data quality, deep relationship mapping, seamless collaboration, and actionable insight.
+
+1. Contacts List & Directory
+Smart toggle: easily switch between table, card, and org-chart views.
+
+Multi-filter: search by name, company, title, tags, last activity date, engagement status, deal/lead association, custom personas (decision-maker, champion, etc.).
+
+Bulk actions: assign, tag, email, add to campaign, validate, or enrich contacts.
+
+Health and engagement badges: at-risk, active, do-not-contact, recently engaged.
+
+Save and pin custom views for prospecting/nurture campaigns.
+
+2. Contact Creation & Import
+Multi-source: add manually, via CSV, business card scan, LinkedIn, web forms/API.
+
+Real-time smart enrichment of title, company, LinkedIn, email, location, phone via third-party or in-app scripts.
+
+Inline duplicate prevention and guided merge workflows.
+
+Multi-account linking, with clear “primary” and “secondary” association logic.
+
+3. Contact Detail Page
+360° Profile: name, photo, title, department, location, best contact method, time zone.
+
+Relationship health: show last touch, AI relationship score, engagement frequency, preferred channel, role rating (decision-maker/influencer/etc.).
+
+Comms timeline: all interaction channels (calls, emails, meetings, tasks, chats, WhatsApp, LinkedIn, SMS) in one chronological feed; filterable and inline editable; attach files or notes to each event.
+
+One-click actions: send email/SMS, schedule meeting/call, log note, or create new activity—each auto-linked to related deal/lead/account.
+
+Linked entities: see all deals (active/historical) this contact is connected to, each with quick status and monetary value. Display all linked leads and accounts, visually mapped.
+
+Org chart: visualize reporting structure and influencer map; drag-and-drop to adjust roles and relationships.
+
+4. Segmentation & Smart Targeting
+Tagging: support custom, hierarchical tags for persona, campaign, tier, segment.
+
+Dynamic lists: rule-based lists auto-update on triggers (e.g., "all VPs in SaaS in the last 30 days").
+
+Bulk campaign enrollment and opt-in/opt-out status; track consent, unsubscribe, and compliance with regional laws.
+
+5. Engagement & Automation
+Activity widgets: show personal engagement calendar/heatmap, open vs. completed activity stats, response rates.
+
+AI insights: suggest best time/channel to reach out, birthday/anniversary nudges, dormant contact prompts, key influencer detection.
+
+Reminders: auto-set or manual, with rule-driven follow-up logic and snooze/reassign options.
+
+Automatic data enrichment: background scripts update outdated info using live data or enrichment APIs.
+
+Duplicate contact detection and cleanup recommendations.
+
+6. Collaboration & Security
+Assign primary/backup owners; team-level visibility options.
+
+@Mentions, internal comments, and audit change logs on each contact.
+
+Field-level security and GDPR/CCPA compliance—log preferences, restrict sensitive field edits to admins.
+
+File library with versioning for KYC docs, signed contracts, and other files.
+
+7. Integrations
+Auto-sync and validate from Gmail/Outlook, Google/Outlook Calendar, LinkedIn, WhatsApp, and telephony (click-to-call and SMS logging).
+
+API/webhooks so contact updates sync instantly to Leads, Deals, and Accounts modules.
+
+8. Analytics & Reporting
+Relationship and engagement dashboards: visualize touch frequency, stage conversion, response rates.
+
+Report effectiveness of contact engagement by campaign, owner, or segment.
+
+AI-powered “relationship scoring” and deal attribution: see which contacts drive the most wins or lost deals.
+
+9. User Experience Requirements
+Universal, context-aware quick-add and edit.
+
+Responsive mobile/tablet desktop views.
+
+Visual indicators/badges for relationship, engagement, source channel, status.
+
+Real-time updates across all modules.
+
+10. Schema & API/Backend Requirements
+Entities: Contact (incl. custom fields, linked accounts/deals/leads, tags, audit log), Communication (typed, linked to all entities), OrgChartNode, FileAttachment.
+
+Endpoints: CRUD for contacts, search/filter, bulk/merge, enrichment, activity logging, reporting, and seamless inter-module relationship APIs.
+
+Instructions:
+Provide frontend (React/Material UI or Ant Design) and backend (Node.js/Express or Python FastAPI) components, schema definitions, integration patterns for all major features above, including code comments and setup instructions. Return code samples showing deep inter-module connections for closed-loop data and seamless workflows

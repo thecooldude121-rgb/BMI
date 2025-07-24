@@ -509,6 +509,257 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Enhanced Contacts API endpoints
+  app.get("/api/contacts/metrics", async (req, res) => {
+    try {
+      const contacts = await storage.getContacts();
+      
+      // Calculate contact metrics
+      const totalContacts = contacts.length;
+      const activeContacts = contacts.filter((c: any) => c.status === 'active').length;
+      const averageRelationshipScore = contacts.length > 0 
+        ? Math.round(contacts.reduce((sum: number, c: any) => sum + (c.relationshipScore || 50), 0) / contacts.length)
+        : 0;
+      const totalTouchpoints = contacts.reduce((sum: number, c: any) => sum + (c.totalActivities || 0), 0);
+      const responseRate = contacts.length > 0 
+        ? Math.round(contacts.reduce((sum: number, c: any) => sum + (c.responseRate || 0), 0) / contacts.length)
+        : 0;
+      const recentlyEngaged = contacts.filter((c: any) => c.engagementStatus === 'recently_engaged').length;
+
+      const metrics = {
+        totalContacts,
+        activeContacts,
+        averageRelationshipScore,
+        totalTouchpoints,
+        responseRate,
+        recentlyEngaged
+      };
+
+      res.json(metrics);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/contacts/segments", async (req, res) => {
+    try {
+      const contacts = await storage.getContacts();
+      
+      // Group contacts by various segments
+      const segments = {
+        byPersona: {},
+        byEngagementStatus: {},
+        byDepartment: {},
+        byInfluenceLevel: { high: 0, medium: 0, low: 0 }
+      };
+
+      contacts.forEach((contact: any) => {
+        // Group by persona
+        const persona = contact.persona || 'unknown';
+        segments.byPersona[persona] = (segments.byPersona[persona] || 0) + 1;
+
+        // Group by engagement status
+        const engagement = contact.engagementStatus || 'unknown';
+        segments.byEngagementStatus[engagement] = (segments.byEngagementStatus[engagement] || 0) + 1;
+
+        // Group by department
+        const department = contact.department || 'unknown';
+        segments.byDepartment[department] = (segments.byDepartment[department] || 0) + 1;
+
+        // Group by influence level
+        const influence = contact.influenceLevel || 5;
+        if (influence >= 8) segments.byInfluenceLevel.high++;
+        else if (influence >= 5) segments.byInfluenceLevel.medium++;
+        else segments.byInfluenceLevel.low++;
+      });
+
+      res.json(segments);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/contacts/:id/engagement", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { type, outcome, notes } = req.body;
+      
+      // Update contact engagement metrics
+      const contact = await storage.getContact(id);
+      if (!contact) return res.status(404).json({ error: "Contact not found" });
+
+      const updates = {
+        lastTouchDate: new Date().toISOString(),
+        lastActivityType: type,
+        totalActivities: (contact.totalActivities || 0) + 1,
+        ...(outcome === 'responded' && {
+          lastResponseDate: new Date().toISOString(),
+          responseRate: Math.min(100, (contact.responseRate || 0) + 5)
+        })
+      };
+
+      const updatedContact = await storage.updateContact(id, updates);
+      res.json(updatedContact);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/contacts/:id/relationship-score", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { score, reason } = req.body;
+      
+      if (score < 0 || score > 100) {
+        return res.status(400).json({ error: "Score must be between 0 and 100" });
+      }
+
+      const updatedContact = await storage.updateContact(id, {
+        relationshipScore: score,
+        updatedAt: new Date().toISOString()
+      });
+
+      res.json(updatedContact);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/contacts/:id/activities", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const activities = await storage.getActivities();
+      const contactActivities = activities.filter(activity => activity.contactId === id);
+      res.json(contactActivities);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/contacts/:id/tags", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { tags } = req.body;
+      
+      if (!Array.isArray(tags)) {
+        return res.status(400).json({ error: "Tags must be an array" });
+      }
+
+      const contact = await storage.getContact(id);
+      if (!contact) return res.status(404).json({ error: "Contact not found" });
+
+      const existingTags = contact.tags || [];
+      const newTags = [...new Set([...existingTags, ...tags])];
+
+      const updatedContact = await storage.updateContact(id, {
+        tags: newTags,
+        updatedAt: new Date().toISOString()
+      });
+
+      res.json(updatedContact);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.delete("/api/contacts/:id/tags", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { tags } = req.body;
+      
+      if (!Array.isArray(tags)) {
+        return res.status(400).json({ error: "Tags must be an array" });
+      }
+
+      const contact = await storage.getContact(id);
+      if (!contact) return res.status(404).json({ error: "Contact not found" });
+
+      const existingTags = contact.tags || [];
+      const newTags = existingTags.filter(tag => !tags.includes(tag));
+
+      const updatedContact = await storage.updateContact(id, {
+        tags: newTags,
+        updatedAt: new Date().toISOString()
+      });
+
+      res.json(updatedContact);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/contacts/bulk-update", async (req, res) => {
+    try {
+      const { contactIds, updates } = req.body;
+      
+      if (!Array.isArray(contactIds)) {
+        return res.status(400).json({ error: "contactIds must be an array" });
+      }
+
+      const results = await Promise.all(
+        contactIds.map(id => storage.updateContact(id, {
+          ...updates,
+          updatedAt: new Date().toISOString()
+        }))
+      );
+
+      const successCount = results.filter(Boolean).length;
+      res.json({ success: true, updatedCount: successCount });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/contacts/:id/communication-preference", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { preferredChannel, bestContactTime, languagePreference } = req.body;
+
+      const updatedContact = await storage.updateContact(id, {
+        preferredChannel,
+        bestContactTime,
+        languagePreference,
+        updatedAt: new Date().toISOString()
+      });
+
+      res.json(updatedContact);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/contacts/health-check", async (req, res) => {
+    try {
+      const contacts = await storage.getContacts();
+      
+      const healthReport = {
+        total: contacts.length,
+        dataQuality: {
+          missingEmails: contacts.filter(c => !c.email).length,
+          missingPhones: contacts.filter(c => !c.phone && !c.mobile).length,
+          incompleteProfiles: contacts.filter(c => !c.position || !c.department).length,
+          duplicates: 0 // TODO: Implement duplicate detection
+        },
+        engagement: {
+          never_contacted: contacts.filter(c => !c.lastTouchDate).length,
+          dormant: contacts.filter(c => c.engagementStatus === 'dormant').length,
+          at_risk: contacts.filter(c => c.engagementStatus === 'at_risk').length,
+          unresponsive: contacts.filter(c => c.engagementStatus === 'unresponsive').length
+        },
+        compliance: {
+          gdpr_consent: contacts.filter(c => c.gdprConsent).length,
+          email_opt_in: contacts.filter(c => c.emailOptIn).length,
+          marketing_consent: contacts.filter(c => c.marketingConsent).length,
+          do_not_contact: contacts.filter(c => c.engagementStatus === 'do_not_contact').length
+        }
+      };
+
+      res.json(healthReport);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
   // Lead routes
   app.get("/api/leads", async (req, res) => {
     try {
