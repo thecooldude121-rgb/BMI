@@ -31,6 +31,22 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Health check endpoint for deployment
+  app.get("/health", (req, res) => {
+    res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+  });
+
+  // Root endpoint health check
+  app.get("/", (req, res, next) => {
+    // In production, serve static files
+    if (process.env.NODE_ENV === "production") {
+      res.sendFile(path.join(process.cwd(), "dist", "index.html"));
+    } else {
+      // In development, let Vite handle it
+      next();
+    }
+  });
+
   // Get all meetings
   app.get("/api/meetings", async (req, res) => {
     try {
