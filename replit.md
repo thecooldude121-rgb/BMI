@@ -20,13 +20,16 @@ Preferred communication style: Simple, everyday language.
 ✓ Server successfully runs on port 5000 with continuous operation
 ✓ **BMI Platform now has persistent preview functionality**
 
-## Previous Changes (July 23, 2025)
+## Previous Changes (July 23-24, 2025)
 
 ✓ Successfully integrated AI Meeting App as separate module within BMI platform
 ✓ Added comprehensive Meeting Intelligence module to navigation
 ✓ Created meeting upload, transcription, and analysis components
+✓ **Switched from OpenAI to Google Gemini 1.5 Pro for all AI services**
 ✓ Integrated Google Gemini 1.5 Pro for speech-to-text transcription  
 ✓ Implemented Gemini AI for intelligent meeting analysis and insights
+✓ Updated Settings page to reflect Gemini API integration
+✓ Updated all documentation to reference Gemini instead of OpenAI
 ✓ Configured file upload system supporting MP3, WAV, M4A, MP4 formats
 ✓ Built meeting dashboard with statistics and processing status
 ✓ Added meeting detail modal with insights display and transcript download

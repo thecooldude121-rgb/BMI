@@ -47,7 +47,7 @@ export default function Settings() {
                 <div className="flex items-center">
                   <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
                   <div>
-                    <p className="font-medium text-green-800">OpenAI API Connected</p>
+                    <p className="font-medium text-green-800">Google Gemini API Connected</p>
                     <p className="text-sm text-green-600">Transcription and analysis services are active</p>
                   </div>
                 </div>
@@ -55,10 +55,10 @@ export default function Settings() {
               </div>
               
               <div className="text-sm text-gray-600">
-                <p>Your OpenAI API key is securely stored and used for:</p>
+                <p>Your Google Gemini API key is securely stored and used for:</p>
                 <ul className="list-disc list-inside mt-2 space-y-1">
-                  <li>Audio transcription with Whisper</li>
-                  <li>Meeting analysis with GPT-4o</li>
+                  <li>Audio transcription with Gemini 1.5 Pro</li>
+                  <li>Meeting analysis with Gemini AI</li>
                   <li>Generating summaries and insights</li>
                 </ul>
               </div>

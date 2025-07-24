@@ -1,13 +1,13 @@
 # MeetingAI - AI-Powered Sales Meeting Assistant
 
-MeetingAI is a comprehensive sales meeting assistant that automatically transcribes, analyzes, and extracts actionable insights from uploaded meeting audio files. Built with modern web technologies and powered by OpenAI's latest AI models.
+MeetingAI is a comprehensive sales meeting assistant that automatically transcribes, analyzes, and extracts actionable insights from uploaded meeting audio files. Built with modern web technologies and powered by Google's Gemini AI models.
 
 ## ✨ Features
 
 ### Core Functionality
 - **🎤 Audio Upload**: Drag-and-drop interface supporting MP3, WAV, M4A, and MP4 files (up to 100MB)
-- **🔄 Automated Transcription**: High-accuracy speech-to-text using OpenAI Whisper
-- **🧠 AI Analysis**: Advanced meeting analysis powered by GPT-4o generating:
+- **🔄 Automated Transcription**: High-accuracy speech-to-text using Google Gemini 1.5 Pro
+- **🧠 AI Analysis**: Advanced meeting analysis powered by Gemini AI generating:
   - Concise meeting summaries
   - Key outcomes and action items
   - Prospect pain points identification
@@ -44,14 +44,14 @@ MeetingAI is a comprehensive sales meeting assistant that automatically transcri
 - **RESTful API** design with proper HTTP status codes
 
 ### AI & External Services
-- **OpenAI Whisper** for transcription
-- **GPT-4o** for meeting analysis and insights
+- **Google Gemini 1.5 Pro** for audio transcription
+- **Gemini AI** for meeting analysis and insights
 - **Secure API key management** through environment variables
 
 ## 📋 Prerequisites
 
 - **Node.js 18+** and npm
-- **OpenAI API key** with available credits
+- **Google Gemini API key** with available credits
 - **Modern web browser** (Chrome, Firefox, Safari, Edge)
 
 ## ⚡ Quick Start
@@ -71,8 +71,8 @@ npm install
 # Copy environment template
 cp .env.example .env
 
-# Edit .env file and add your OpenAI API key
-OPENAI_API_KEY=your_openai_api_key_here
+# Edit .env file and add your Gemini API key
+GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
 ### 3. Launch Application
@@ -154,7 +154,7 @@ meetingai/
 
 | Variable | Description | Required | Default |
 |----------|-------------|----------|---------|
-| `OPENAI_API_KEY` | OpenAI API key for AI services | ✅ Yes | - |
+| `GEMINI_API_KEY` | Google Gemini API key for AI services | ✅ Yes | - |
 | `DATABASE_URL` | PostgreSQL connection string | No | In-memory |
 | `NODE_ENV` | Runtime environment | No | `development` |
 | `PORT` | Server port | No | `5000` |
