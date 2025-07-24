@@ -23,17 +23,33 @@ const CRMModule = () => {
           <CRMGamificationPage key="crm-gamification" />
         </Route>
         <Route path="/crm/leads">
-          <EnhancedLeadsPage key="enhanced-leads" />
+          <div className="p-6">
+            <h1 className="text-2xl font-bold mb-4">Leads</h1>
+            <p>Leads module loading...</p>
+          </div>
         </Route>
-        <Route path="/crm/contacts" component={ContactsPage} />
+        <Route path="/crm/contacts">
+          <div className="p-6">
+            <h1 className="text-2xl font-bold mb-4">Contacts</h1>
+            <p>Contacts module loading...</p>
+          </div>
+        </Route>
         <Route path="/crm/accounts">
-          <EnhancedAccountsPage key="enhanced-accounts" />
+          <div className="p-6">
+            <h1 className="text-2xl font-bold mb-4">Accounts</h1>
+            <p>Accounts module loading...</p>
+          </div>
         </Route>
-        <Route path="/crm/deals" component={UnifiedDealsPage} />
+        <Route path="/crm/deals">
+          <div className="p-6">
+            <h1 className="text-2xl font-bold mb-4">Deals</h1>
+            <p>Deals module loading...</p>
+          </div>
+        </Route>
         <Route path="/crm/pipeline" component={PipelinePage} />
         <Route path="/crm/tasks" component={TasksPage} />
         <Route path="/crm/activities">
-          <SyncedActivitiesPage />
+          <WorkingActivitiesPage />
         </Route>
         <Route path="/crm/test">
           <CRMTestPage />
