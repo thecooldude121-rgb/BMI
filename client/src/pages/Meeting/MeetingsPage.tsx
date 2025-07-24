@@ -3,9 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { MeetingUploadModal } from '../../components/Meeting/MeetingUploadModal';
-import { MeetingCard } from '../../components/Meeting/MeetingCard';
-import { MeetingDetailModal } from '../../components/Meeting/MeetingDetailModal';
+import { MeetingUploadModal } from '@/components/Meeting/MeetingUploadModal';
+import { MeetingCard } from '@/components/Meeting/MeetingCard';
+import { MeetingDetailModal } from '@/components/Meeting/MeetingDetailModal';
 import { Plus, Search, FileAudio, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 
 interface Meeting {
@@ -184,8 +184,7 @@ export default function MeetingsPage() {
             <MeetingCard
               key={meeting.id}
               meeting={meeting}
-              onViewDetails={setSelectedMeeting}
-              onDownload={handleDownload}
+              onClick={() => setSelectedMeeting(meeting)}
             />
           ))}
         </div>
@@ -193,14 +192,15 @@ export default function MeetingsPage() {
 
       {/* Modals */}
       <MeetingUploadModal
-        isOpen={uploadModalOpen}
+        open={uploadModalOpen}
         onClose={() => setUploadModalOpen(false)}
+        onUploadComplete={() => window.location.reload()}
       />
       
       {selectedMeeting && (
         <MeetingDetailModal
           meeting={selectedMeeting}
-          isOpen={!!selectedMeeting}
+          open={!!selectedMeeting}
           onClose={() => setSelectedMeeting(null)}
         />
       )}

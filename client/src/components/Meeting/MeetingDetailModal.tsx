@@ -1,11 +1,10 @@
+import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Download, Calendar, Users, Clock, FileText, Target, AlertTriangle, CheckSquare, MessageSquare } from 'lucide-react';
-import { format } from 'date-fns';
+import { Download, Clock, Users, FileAudio, CheckCircle, AlertCircle, Loader } from 'lucide-react';
 
 interface Meeting {
   id: number;
@@ -26,236 +25,218 @@ interface Meeting {
 }
 
 interface MeetingDetailModalProps {
-  meeting: Meeting;
-  isOpen: boolean;
+  meeting: Meeting | null;
+  open: boolean;
   onClose: () => void;
 }
 
-export function MeetingDetailModal({ meeting, isOpen, onClose }: MeetingDetailModalProps) {
-  const handleDownload = () => {
-    if (meeting.transcript) {
-      const blob = new Blob([meeting.transcript], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${meeting.title}-transcript.txt`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+export function MeetingDetailModal({ meeting, open, onClose }: MeetingDetailModalProps) {
+  if (!meeting) return null;
+
+  const getStatusIcon = () => {
+    switch (meeting.status) {
+      case 'completed':
+        return <CheckCircle className="h-5 w-5 text-green-600" />;
+      case 'failed':
+        return <AlertCircle className="h-5 w-5 text-red-600" />;
+      default:
+        return <Loader className="h-5 w-5 text-blue-600 animate-spin" />;
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'processing': return 'bg-yellow-100 text-yellow-800';
-      case 'failed': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+  const getStatusColor = () => {
+    switch (meeting.status) {
+      case 'completed':
+        return 'bg-green-100 text-green-800';
+      case 'failed':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-blue-100 text-blue-800';
     }
+  };
+
+  const downloadTranscript = () => {
+    if (!meeting.transcript) return;
+    
+    const element = document.createElement('a');
+    const file = new Blob([meeting.transcript], { type: 'text/plain' });
+    element.href = URL.createObjectURL(file);
+    element.download = `${meeting.title}-transcript.txt`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
+  const formatDuration = (seconds?: number) => {
+    if (!seconds) return 'Unknown';
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <DialogTitle className="text-xl">{meeting.title}</DialogTitle>
-              <div className="flex items-center space-x-4 text-sm text-gray-600">
-                <div className="flex items-center space-x-1">
-                  <Calendar className="h-4 w-4" />
-                  <span>{format(new Date(meeting.createdAt), 'MMM d, yyyy')}</span>
-                </div>
-                {meeting.participants && (
-                  <div className="flex items-center space-x-1">
-                    <Users className="h-4 w-4" />
-                    <span>{meeting.participants}</span>
-                  </div>
-                )}
-                {meeting.duration && (
-                  <div className="flex items-center space-x-1">
-                    <Clock className="h-4 w-4" />
-                    <span>{Math.round(meeting.duration / 60)} min</span>
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Badge className={getStatusColor(meeting.status)}>
+          <div className="flex items-start justify-between">
+            <DialogTitle className="text-xl font-semibold text-gray-900 pr-4">
+              {meeting.title}
+            </DialogTitle>
+            <Badge className={`${getStatusColor()}`}>
+              <div className="flex items-center gap-1">
+                {getStatusIcon()}
                 {meeting.status}
-              </Badge>
-              {meeting.status === 'completed' && meeting.transcript && (
-                <Button variant="outline" size="sm" onClick={handleDownload}>
-                  <Download className="h-4 w-4 mr-1" />
-                  Download
-                </Button>
-              )}
-            </div>
+              </div>
+            </Badge>
           </div>
         </DialogHeader>
 
-        <ScrollArea className="max-h-[calc(90vh-120px)]">
-          <div className="space-y-6 pr-4">
-            {meeting.status === 'processing' && (
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="text-center py-8">
-                    <Clock className="h-12 w-12 text-yellow-500 mx-auto mb-4 animate-spin" />
-                    <h3 className="text-lg font-semibold mb-2">Processing Meeting</h3>
-                    <p className="text-gray-600">
-                      AI is transcribing and analyzing your meeting. This may take a few minutes.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+        <div className="space-y-4">
+          {/* Meeting Info */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <div className="flex items-center text-gray-600">
+              <FileAudio className="h-4 w-4 mr-2" />
+              {meeting.filename}
+            </div>
+            {meeting.participants && (
+              <div className="flex items-center text-gray-600">
+                <Users className="h-4 w-4 mr-2" />
+                {meeting.participants}
+              </div>
             )}
-
-            {meeting.status === 'failed' && (
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="text-center py-8">
-                    <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">Processing Failed</h3>
-                    <p className="text-gray-600">
-                      There was an error processing this meeting. Please try uploading again.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {meeting.status === 'completed' && (
-              <>
-                {/* Summary */}
-                {meeting.summary && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center space-x-2">
-                        <FileText className="h-5 w-5" />
-                        <span>Meeting Summary</span>
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-gray-700 leading-relaxed">{meeting.summary}</p>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {/* Insights */}
-                {meeting.insights && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {meeting.insights.outcomes.length > 0 && (
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="flex items-center space-x-2 text-base">
-                            <Target className="h-4 w-4 text-green-600" />
-                            <span>Key Outcomes</span>
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <ul className="space-y-2">
-                            {meeting.insights.outcomes.map((outcome, index) => (
-                              <li key={index} className="flex items-start space-x-2">
-                                <div className="w-1.5 h-1.5 bg-green-600 rounded-full mt-2 flex-shrink-0" />
-                                <span className="text-sm text-gray-700">{outcome}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </CardContent>
-                      </Card>
-                    )}
-
-                    {meeting.insights.actionItems.length > 0 && (
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="flex items-center space-x-2 text-base">
-                            <CheckSquare className="h-4 w-4 text-blue-600" />
-                            <span>Action Items</span>
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <ul className="space-y-2">
-                            {meeting.insights.actionItems.map((item, index) => (
-                              <li key={index} className="flex items-start space-x-2">
-                                <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
-                                <span className="text-sm text-gray-700">{item}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </CardContent>
-                      </Card>
-                    )}
-
-                    {meeting.insights.painPoints.length > 0 && (
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="flex items-center space-x-2 text-base">
-                            <AlertTriangle className="h-4 w-4 text-orange-600" />
-                            <span>Pain Points</span>
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <ul className="space-y-2">
-                            {meeting.insights.painPoints.map((point, index) => (
-                              <li key={index} className="flex items-start space-x-2">
-                                <div className="w-1.5 h-1.5 bg-orange-600 rounded-full mt-2 flex-shrink-0" />
-                                <span className="text-sm text-gray-700">{point}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </CardContent>
-                      </Card>
-                    )}
-
-                    {meeting.insights.objections.length > 0 && (
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="flex items-center space-x-2 text-base">
-                            <MessageSquare className="h-4 w-4 text-red-600" />
-                            <span>Objections</span>
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <ul className="space-y-2">
-                            {meeting.insights.objections.map((objection, index) => (
-                              <li key={index} className="flex items-start space-x-2">
-                                <div className="w-1.5 h-1.5 bg-red-600 rounded-full mt-2 flex-shrink-0" />
-                                <span className="text-sm text-gray-700">{objection}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </CardContent>
-                      </Card>
-                    )}
-                  </div>
-                )}
-
-                {/* Transcript */}
-                {meeting.transcript && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center justify-between">
-                        <span>Full Transcript</span>
-                        <Button variant="outline" size="sm" onClick={handleDownload}>
-                          <Download className="h-4 w-4 mr-1" />
-                          Download
-                        </Button>
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto">
-                        <pre className="whitespace-pre-wrap text-sm text-gray-700 font-mono">
-                          {meeting.transcript}
-                        </pre>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-              </>
-            )}
+            <div className="flex items-center text-gray-600">
+              <Clock className="h-4 w-4 mr-2" />
+              {formatDuration(meeting.duration)}
+            </div>
+            <div className="text-gray-600">
+              {new Date(meeting.createdAt).toLocaleDateString()}
+            </div>
           </div>
-        </ScrollArea>
+
+          {meeting.status === 'processing' && (
+            <Card>
+              <CardContent className="pt-6">
+                <div className="text-center">
+                  <Loader className="h-8 w-8 animate-spin mx-auto mb-2 text-blue-600" />
+                  <p className="text-gray-600">Processing meeting audio...</p>
+                  <p className="text-sm text-gray-500">This may take a few minutes</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {meeting.status === 'failed' && (
+            <Card className="border-red-200">
+              <CardContent className="pt-6">
+                <div className="text-center">
+                  <AlertCircle className="h-8 w-8 mx-auto mb-2 text-red-600" />
+                  <p className="text-red-600">Processing failed</p>
+                  <p className="text-sm text-gray-500">Please try uploading again</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {meeting.status === 'completed' && (
+            <Tabs defaultValue="summary" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="summary">Summary</TabsTrigger>
+                <TabsTrigger value="insights">Insights</TabsTrigger>
+                <TabsTrigger value="transcript">Transcript</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="summary">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Meeting Summary</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-700 whitespace-pre-wrap">
+                      {meeting.summary || 'No summary available'}
+                    </p>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="insights">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-green-700">Key Outcomes</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="list-disc list-inside space-y-1">
+                        {meeting.insights?.outcomes?.map((outcome, index) => (
+                          <li key={index} className="text-gray-700">{outcome}</li>
+                        )) || <li className="text-gray-500">No outcomes identified</li>}
+                      </ul>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-blue-700">Action Items</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="list-disc list-inside space-y-1">
+                        {meeting.insights?.actionItems?.map((item, index) => (
+                          <li key={index} className="text-gray-700">{item}</li>
+                        )) || <li className="text-gray-500">No action items identified</li>}
+                      </ul>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-orange-700">Pain Points</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="list-disc list-inside space-y-1">
+                        {meeting.insights?.painPoints?.map((pain, index) => (
+                          <li key={index} className="text-gray-700">{pain}</li>
+                        )) || <li className="text-gray-500">No pain points identified</li>}
+                      </ul>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-red-700">Objections</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="list-disc list-inside space-y-1">
+                        {meeting.insights?.objections?.map((objection, index) => (
+                          <li key={index} className="text-gray-700">{objection}</li>
+                        )) || <li className="text-gray-500">No objections identified</li>}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="transcript">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle>Full Transcript</CardTitle>
+                    {meeting.transcript && (
+                      <Button onClick={downloadTranscript} size="sm" variant="outline">
+                        <Download className="h-4 w-4 mr-2" />
+                        Download
+                      </Button>
+                    )}
+                  </CardHeader>
+                  <CardContent>
+                    <div className="max-h-96 overflow-y-auto">
+                      <pre className="whitespace-pre-wrap text-sm text-gray-700 font-mono">
+                        {meeting.transcript || 'No transcript available'}
+                      </pre>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   );
