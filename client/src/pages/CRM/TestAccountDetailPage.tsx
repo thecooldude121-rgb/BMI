@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParams } from 'wouter';
 import { Building, ArrowLeft, Brain } from 'lucide-react';
-import { GrowthRecommendations } from '@/components/GrowthRecommendations';
 
 const TestAccountDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -46,7 +45,13 @@ const TestAccountDetailPage: React.FC = () => {
           </span>
         </div>
         
-        <GrowthRecommendations accountId={id!} />
+        <div className="text-center py-8">
+          <p className="text-lg font-medium text-blue-600 mb-2">🧠 AI Growth Recommendations</p>
+          <p className="text-gray-600 mb-4">Testing AI-powered growth analysis for Account ID: {id}</p>
+          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+            Generate AI Recommendations
+          </button>
+        </div>
       </div>
     </div>
   );
