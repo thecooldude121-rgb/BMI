@@ -328,6 +328,39 @@ const SyncedActivitiesPage: React.FC = () => {
                           <strong>Outcome:</strong> {activity.outcome}
                         </p>
                       )}
+                      {/* Related Entity Information */}
+                      <div className="bg-gray-50 rounded-lg p-3 mt-3">
+                        <div className="text-xs font-medium text-gray-700 mb-2">Related CRM Data:</div>
+                        <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
+                          {activity.dealId && (
+                            <div className="flex items-center space-x-1">
+                              <DollarSign className="h-3 w-3 text-green-600" />
+                              <span>Deal: {deals.find((d: any) => d.id === activity.dealId)?.name || activity.dealId}</span>
+                            </div>
+                          )}
+                          {activity.leadId && (
+                            <div className="flex items-center space-x-1">
+                              <UserPlus className="h-3 w-3 text-blue-600" />
+                              <span>Lead: {leads.find((l: any) => l.id === activity.leadId)?.company || activity.leadId}</span>
+                            </div>
+                          )}
+                          {activity.contactId && (
+                            <div className="flex items-center space-x-1">
+                              <Users className="h-3 w-3 text-purple-600" />
+                              <span>Contact: {contacts.find((c: any) => c.id === activity.contactId) ? 
+                                `${contacts.find((c: any) => c.id === activity.contactId)?.firstName} ${contacts.find((c: any) => c.id === activity.contactId)?.lastName}` : 
+                                activity.contactId}</span>
+                            </div>
+                          )}
+                          {activity.accountId && (
+                            <div className="flex items-center space-x-1">
+                              <Building className="h-3 w-3 text-orange-600" />
+                              <span>Account: {accounts.find((a: any) => a.id === activity.accountId)?.name || activity.accountId}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      
                       <div className="flex items-center justify-between mt-3">
                         <div className="flex items-center space-x-4 text-xs text-gray-500">
                           <span>Type: {activity.type}</span>
