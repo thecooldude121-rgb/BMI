@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
+import { motion, AnimatePresence } from 'framer-motion';
 import Fuse from 'fuse.js';
 import { 
   Plus, 
@@ -188,13 +189,15 @@ export default function NextGenLeadsModule() {
     const statusConfig = LEAD_STATUSES.find(s => s.id === lead.leadStatus) || LEAD_STATUSES[0];
     
     return (
-      <div
+      <motion.div
         key={lead.id}
         className="bg-white border rounded-lg p-4 hover:shadow-md transition-shadow relative cursor-pointer"
         onClick={(e) => {
           e.stopPropagation();
           setLocation(`/crm/leads/${lead.id}`);
         }}
+        whileHover={{ y: -2, scale: 1.02 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
         {/* Multi-select checkbox */}
         <div className="absolute top-3 left-3 z-10">
@@ -287,14 +290,25 @@ export default function NextGenLeadsModule() {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     );
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <motion.div 
+      className="h-full flex flex-col"
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 20 }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+    >
       {/* Header */}
-      <div className="p-6 border-b bg-white">
+      <motion.div 
+        className="p-6 border-b bg-white"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+      >
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">Next-Gen Lead Management</h1>
@@ -575,10 +589,15 @@ export default function NextGenLeadsModule() {
             </div>
           </div>
         )}
-      </div>
+      </motion.div>
 
       {/* Content */}
-      <div className="p-6 h-full overflow-auto">
+      <motion.div 
+        className="p-6 h-full overflow-auto"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.2 }}
+      >
         {isLoading ? (
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
@@ -620,14 +639,19 @@ export default function NextGenLeadsModule() {
             </div>
           </div>
         ) : (
-          <div className={viewMode === 'grid' 
-            ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4' 
-            : 'space-y-3'
-          }>
+          <motion.div 
+            className={viewMode === 'grid' 
+              ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4' 
+              : 'space-y-3'
+            }
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.3 }}
+          >
             {(filteredLeads as Lead[]).map((lead: Lead) => renderLeadCard(lead))}
-          </div>
+          </motion.div>
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
