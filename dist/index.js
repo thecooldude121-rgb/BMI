@@ -37,7 +37,15 @@ var MemStorage = class {
       ...insertMeeting,
       id,
       createdAt: now,
-      updatedAt: now
+      updatedAt: now,
+      status: insertMeeting.status || "processing",
+      summary: insertMeeting.summary || null,
+      duration: insertMeeting.duration || null,
+      participants: insertMeeting.participants || null,
+      transcript: insertMeeting.transcript || null,
+      keyOutcomes: insertMeeting.keyOutcomes || null,
+      painPoints: insertMeeting.painPoints || null,
+      objections: insertMeeting.objections || null
     };
     this.meetings.set(id, meeting);
     return meeting;
@@ -582,25 +590,40 @@ app.use((req, res, next) => {
   });
   next();
 });
-(async () => {
-  const server = await registerRoutes(app);
-  app.use((err, _req, res, _next) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-    res.status(status).json({ message });
-    throw err;
-  });
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
+app.use((err, _req, res, _next) => {
+  const status = err.status || err.statusCode || 500;
+  const message = err.message || "Internal Server Error";
+  console.error("Server error:", err);
+  res.status(status).json({ message });
+});
+async function startServer() {
+  try {
+    const server = await registerRoutes(app);
+    if (process.env.NODE_ENV === "production") {
+      serveStatic(app);
+    } else {
+      await setupVite(app, server);
+    }
+    const port = parseInt(process.env.PORT || "5000", 10);
+    const host = "0.0.0.0";
+    server.listen(port, host, () => {
+      log(`serving on ${host}:${port}`);
+      console.log(`\u{1F680} BMI Platform ready at http://${host}:${port}`);
+    }).on("error", (err) => {
+      console.error("Server startup error:", err);
+      if (err.code === "EADDRINUSE") {
+        console.log(`Port ${port} is busy, trying port ${port + 1}`);
+        server.listen(port + 1, host, () => {
+          log(`serving on ${host}:${port + 1}`);
+          console.log(`\u{1F680} BMI Platform ready at http://${host}:${port + 1}`);
+        });
+      } else {
+        process.exit(1);
+      }
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
   }
-  const port = parseInt(process.env.PORT || "5000", 10);
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true
-  }, () => {
-    log(`serving on port ${port}`);
-  });
-})();
+}
+startServer();
