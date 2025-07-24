@@ -796,6 +796,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Development/Testing Routes
+  app.post("/api/seed-varied-data", async (req, res) => {
+    try {
+      const { seedVariedCRMData } = await import("./simple-seed");
+      const result = await seedVariedCRMData();
+      res.json({ success: true, message: "Varied CRM data seeded successfully", data: result });
+    } catch (error: any) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  });
+
   // Calendar Integration Routes
   app.post("/api/calendar/sync", async (req, res) => {
     try {
