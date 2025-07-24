@@ -102,6 +102,7 @@ This is a comprehensive CRM and Business Management Intelligence platform succes
   * Created comprehensive LeadDetailPage with full lead information, inline editing, and sidebar navigation
   * Implemented lead health visualization, quick actions, and activity timeline in detail view
   * Enhanced lead management UX with seamless navigation between list and detail views
+  * **KNOWN ISSUE**: Lead detail page navigation still requires troubleshooting - deferred for future session
 
 ## Database Schema
 The platform uses a comprehensive schema including:
