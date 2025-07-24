@@ -188,7 +188,8 @@ export default function NextGenLeadsModule() {
     return (
       <div
         key={lead.id}
-        className="bg-white border rounded-lg p-4 hover:shadow-md transition-shadow relative"
+        className="bg-white border rounded-lg p-4 hover:shadow-md transition-shadow relative cursor-pointer"
+        onClick={() => window.location.href = `/crm/leads/${lead.id}`}
       >
         {/* Multi-select checkbox */}
         <div className="absolute top-3 left-3 z-10">
@@ -266,25 +267,8 @@ export default function NextGenLeadsModule() {
               </div>
               <span className="text-xs text-gray-600">{lead.assignedTo}</span>
             </div>
-            <div className="flex items-center space-x-1">
-              <button 
-                className="p-1 hover:bg-gray-100 rounded"
-                onClick={() => window.location.href = `/crm/leads/${lead.id}`}
-              >
-                <Eye className="w-4 h-4 text-gray-600" />
-              </button>
-              <button 
-                className="p-1 hover:bg-gray-100 rounded"
-                onClick={() => alert('Edit lead functionality coming soon!')}
-              >
-                <Edit className="w-4 h-4 text-gray-600" />
-              </button>
-              <button 
-                className="p-1 hover:bg-gray-100 rounded"
-                onClick={() => alert('Convert to deal functionality coming soon!')}
-              >
-                <ArrowRight className="w-4 h-4 text-green-600" />
-              </button>
+            <div className="text-xs text-gray-500 font-medium">
+              Click to view details →
             </div>
           </div>
 
