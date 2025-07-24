@@ -1,29 +1,190 @@
-import { users, meetings, type User, type InsertUser, type Meeting, type InsertMeeting, type UpdateMeeting } from "@shared/schema";
+import { users, type User, type InsertUser } from "@shared/schema";
+
+// Define basic BMI Platform entities
+export interface Lead {
+  id: number;
+  name: string;
+  email: string;
+  company?: string;
+  stage: 'new' | 'qualified' | 'proposal' | 'closed-won' | 'closed-lost';
+  value?: number;
+  source?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Deal {
+  id: number;
+  title: string;
+  value: number;
+  stage: 'prospecting' | 'qualification' | 'proposal' | 'negotiation' | 'closed-won' | 'closed-lost';
+  probability: number;
+  leadId?: number;
+  accountId?: number;
+  ownerId?: number;
+  expectedCloseDate?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Account {
+  id: number;
+  name: string;
+  industry?: string;
+  website?: string;
+  phone?: string;
+  address?: string;
+  revenue?: number;
+  employees?: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Employee {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  department?: string;
+  position?: string;
+  salary?: number;
+  hireDate?: Date;
+  status: 'active' | 'inactive' | 'terminated';
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   
-  // Meeting methods
-  createMeeting(meeting: InsertMeeting): Promise<Meeting>;
-  getMeeting(id: number): Promise<Meeting | undefined>;
-  getAllMeetings(): Promise<Meeting[]>;
-  updateMeeting(id: number, meeting: UpdateMeeting): Promise<Meeting | undefined>;
-  deleteMeeting(id: number): Promise<boolean>;
+  // CRM methods
+  getAllLeads(): Promise<Lead[]>;
+  getAllDeals(): Promise<Deal[]>;
+  getAllAccounts(): Promise<Account[]>;
+  
+  // HRMS methods
+  getAllEmployees(): Promise<Employee[]>;
 }
 
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
-  private meetings: Map<number, Meeting>;
+  private leads: Map<number, Lead>;
+  private deals: Map<number, Deal>;
+  private accounts: Map<number, Account>;
+  private employees: Map<number, Employee>;
   private currentUserId: number;
-  private currentMeetingId: number;
+  private currentLeadId: number;
+  private currentDealId: number;
+  private currentAccountId: number;
+  private currentEmployeeId: number;
 
   constructor() {
     this.users = new Map();
-    this.meetings = new Map();
+    this.leads = new Map();
+    this.deals = new Map();
+    this.accounts = new Map();
+    this.employees = new Map();
     this.currentUserId = 1;
-    this.currentMeetingId = 1;
+    this.currentLeadId = 1;
+    this.currentDealId = 1;
+    this.currentAccountId = 1;
+    this.currentEmployeeId = 1;
+    
+    // Initialize with sample data
+    this.initializeSampleData();
+  }
+
+  private initializeSampleData() {
+    const now = new Date();
+    
+    // Sample Leads
+    this.leads.set(1, {
+      id: 1,
+      name: "John Smith",
+      email: "john.smith@techcorp.com",
+      company: "TechCorp Inc",
+      stage: "qualified",
+      value: 50000,
+      source: "Website",
+      createdAt: now,
+      updatedAt: now
+    });
+    
+    this.leads.set(2, {
+      id: 2,
+      name: "Sarah Johnson",
+      email: "sarah@innovate.co",
+      company: "Innovate Solutions",
+      stage: "proposal",
+      value: 75000,
+      source: "Referral",
+      createdAt: now,
+      updatedAt: now
+    });
+    
+    // Sample Deals
+    this.deals.set(1, {
+      id: 1,
+      title: "Enterprise Software License",
+      value: 120000,
+      stage: "negotiation",
+      probability: 75,
+      expectedCloseDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      createdAt: now,
+      updatedAt: now
+    });
+    
+    this.deals.set(2, {
+      id: 2,
+      title: "Professional Services Contract",
+      value: 85000,
+      stage: "closed-won",
+      probability: 100,
+      createdAt: now,
+      updatedAt: now
+    });
+    
+    // Sample Accounts
+    this.accounts.set(1, {
+      id: 1,
+      name: "Global Enterprises",
+      industry: "Technology",
+      website: "https://globalent.com",
+      phone: "+1-555-0123",
+      revenue: 10000000,
+      employees: 500,
+      createdAt: now,
+      updatedAt: now
+    });
+    
+    // Sample Employees
+    this.employees.set(1, {
+      id: 1,
+      firstName: "Alice",
+      lastName: "Brown",
+      email: "alice.brown@company.com",
+      department: "Sales",
+      position: "Sales Manager",
+      salary: 85000,
+      status: "active",
+      createdAt: now,
+      updatedAt: now
+    });
+    
+    this.employees.set(2, {
+      id: 2,
+      firstName: "Bob",
+      lastName: "Wilson",
+      email: "bob.wilson@company.com",
+      department: "Engineering",
+      position: "Software Engineer",
+      salary: 95000,
+      status: "active",
+      createdAt: now,
+      updatedAt: now
+    });
   }
 
   async getUser(id: number): Promise<User | undefined> {
@@ -43,52 +204,30 @@ export class MemStorage implements IStorage {
     return user;
   }
 
-  async createMeeting(insertMeeting: InsertMeeting): Promise<Meeting> {
-    const id = this.currentMeetingId++;
-    const now = new Date();
-    const meeting: Meeting = { 
-      ...insertMeeting, 
-      id,
-      createdAt: now,
-      updatedAt: now,
-      status: insertMeeting.status || "processing",
-      summary: insertMeeting.summary || null,
-      duration: insertMeeting.duration || null,
-      participants: insertMeeting.participants || null,
-      transcript: insertMeeting.transcript || null,
-      keyOutcomes: insertMeeting.keyOutcomes || null,
-      painPoints: insertMeeting.painPoints || null,
-      objections: insertMeeting.objections || null
-    };
-    this.meetings.set(id, meeting);
-    return meeting;
-  }
-
-  async getMeeting(id: number): Promise<Meeting | undefined> {
-    return this.meetings.get(id);
-  }
-
-  async getAllMeetings(): Promise<Meeting[]> {
-    return Array.from(this.meetings.values()).sort((a, b) => 
+  // CRM methods
+  async getAllLeads(): Promise<Lead[]> {
+    return Array.from(this.leads.values()).sort((a, b) => 
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   }
 
-  async updateMeeting(id: number, updateMeeting: UpdateMeeting): Promise<Meeting | undefined> {
-    const existing = this.meetings.get(id);
-    if (!existing) return undefined;
-    
-    const updated: Meeting = {
-      ...existing,
-      ...updateMeeting,
-      updatedAt: new Date()
-    };
-    this.meetings.set(id, updated);
-    return updated;
+  async getAllDeals(): Promise<Deal[]> {
+    return Array.from(this.deals.values()).sort((a, b) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
   }
 
-  async deleteMeeting(id: number): Promise<boolean> {
-    return this.meetings.delete(id);
+  async getAllAccounts(): Promise<Account[]> {
+    return Array.from(this.accounts.values()).sort((a, b) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }
+
+  // HRMS methods
+  async getAllEmployees(): Promise<Employee[]> {
+    return Array.from(this.employees.values()).sort((a, b) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
   }
 }
 
