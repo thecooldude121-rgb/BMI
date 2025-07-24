@@ -9,6 +9,7 @@ import PipelinePage from './PipelinePage';
 import SyncedActivitiesPage from './SyncedActivitiesPage';
 import SimpleActivitiesPage from './SimpleActivitiesPage';
 import WorkingActivitiesPage from './WorkingActivitiesPage';
+import TestActivitiesPage from './TestActivitiesPage';
 import TasksPage from './TasksPage';
 
 const CRMModule = () => {
@@ -28,7 +29,7 @@ const CRMModule = () => {
         <Route path="/crm/deals" component={UnifiedDealsPage} />
         <Route path="/crm/pipeline" component={PipelinePage} />
         <Route path="/crm/tasks" component={TasksPage} />
-        <Route path="/crm/activities" component={WorkingActivitiesPage} />
+        <Route path="/crm/activities" component={TestActivitiesPage} />
         <Route path="/crm">
           <CRMGamificationPage key="crm-gamification" />
         </Route>
