@@ -524,40 +524,40 @@ export default function SimpleAdvancedDealsModule() {
                 <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-50">
                   <div className="py-1">
                     <button 
-                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+                      className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-50"
                       onClick={() => {
-                        console.log('Mass update:', selectedDeals);
                         setShowActionsDropdown(false);
+                        alert('Import Deals feature coming soon!');
                       }}
-                      disabled={selectedDeals.length === 0}
                     >
-                      <Edit className="w-4 h-4 mr-2" />
+                      Import Deals
+                    </button>
+                    <button 
+                      className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-50"
+                      onClick={() => {
+                        setShowActionsDropdown(false);
+                        alert('Export Deals feature coming soon!');
+                      }}
+                    >
+                      Export Deals
+                    </button>
+                    <button 
+                      className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-50"
+                      onClick={() => {
+                        setShowActionsDropdown(false);
+                        alert('Mass Update feature coming soon!');
+                      }}
+                    >
                       Mass Update
                     </button>
                     <button 
-                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+                      className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-50"
                       onClick={() => {
-                        console.log('Mass transfer:', selectedDeals);
                         setShowActionsDropdown(false);
+                        alert('Duplicate Detection feature coming soon!');
                       }}
-                      disabled={selectedDeals.length === 0}
                     >
-                      <UserPlus className="w-4 h-4 mr-2" />
-                      Mass Transfer
-                    </button>
-                    <button 
-                      className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
-                      onClick={() => {
-                        if (confirm(`Are you sure you want to delete ${selectedDeals.length} selected deals?`)) {
-                          console.log('Delete deals:', selectedDeals);
-                          setSelectedDeals([]);
-                        }
-                        setShowActionsDropdown(false);
-                      }}
-                      disabled={selectedDeals.length === 0}
-                    >
-                      <Trash2 className="w-4 h-4 mr-2" />
-                      Delete Selected
+                      Find Duplicates
                     </button>
                   </div>
                 </div>
@@ -565,12 +565,38 @@ export default function SimpleAdvancedDealsModule() {
             </div>
 
             <button 
-              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium"
+              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium flex items-center"
               onClick={() => window.location.href = '/crm/deals/new'}
             >
-              <Plus className="w-4 h-4 mr-2 inline" />
+              <Plus className="w-4 h-4 mr-2" />
               New Deal
             </button>
+          </div>
+        </div>
+
+        {/* Advanced Analytics Dashboard */}
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <div className="text-2xl font-bold text-blue-600">{deals.length}</div>
+            <div className="text-sm text-blue-600">Total Deals</div>
+          </div>
+          <div className="bg-green-50 p-4 rounded-lg">
+            <div className="text-2xl font-bold text-green-600">
+              ${deals.reduce((sum: number, deal: any) => sum + parseFloat(deal.value), 0).toLocaleString()}
+            </div>
+            <div className="text-sm text-green-600">Pipeline Value</div>
+          </div>
+          <div className="bg-yellow-50 p-4 rounded-lg">
+            <div className="text-2xl font-bold text-yellow-600">
+              {Math.round(deals.reduce((sum: number, deal: any) => sum + deal.probability, 0) / deals.length || 0)}%
+            </div>
+            <div className="text-sm text-yellow-600">Avg Probability</div>
+          </div>
+          <div className="bg-purple-50 p-4 rounded-lg">
+            <div className="text-2xl font-bold text-purple-600">
+              {deals.filter((d: any) => d.stage === 'closed-won').length}
+            </div>
+            <div className="text-sm text-purple-600">Won Deals</div>
           </div>
         </div>
 

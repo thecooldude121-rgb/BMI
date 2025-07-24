@@ -91,7 +91,7 @@ export const contacts = pgTable("contacts", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const leads = pgTable("leads", {
+export const leads: any = pgTable("leads", {
   id: uuid("id").primaryKey().defaultRandom(),
   contactId: uuid("contact_id").references(() => contacts.id),
   accountId: uuid("account_id").references(() => accounts.id),
@@ -136,8 +136,7 @@ export const leads = pgTable("leads", {
   autoAssignmentRules: jsonb("auto_assignment_rules"),
   assignmentHistory: jsonb("assignment_history"),
   
-  // Deduplication and enrichment
-  duplicateOf: uuid("duplicate_of").references(() => leads.id),
+  // Deduplication and enrichment  
   enrichmentStatus: text("enrichment_status").default('pending'), // pending, enriched, failed
   enrichmentData: jsonb("enrichment_data"), // Third-party enriched data
   
@@ -170,7 +169,6 @@ export const leads = pgTable("leads", {
   demoRequests: integer("demo_requests").default(0),
   
   // Sales process
-  qualification: jsonb("qualification"), // BANT, MEDDIC, etc.
   nextAction: text("next_action"),
   nextActionDate: timestamp("next_action_date"),
   lastActivityType: text("last_activity_type"),
@@ -190,10 +188,6 @@ export const leads = pgTable("leads", {
   aiInsights: jsonb("ai_insights"), // AI-generated insights
   autoNurturing: boolean("auto_nurturing").default(false),
   sequenceId: text("sequence_id"), // Enrolled nurture sequence
-  
-  // Duplicate detection
-  duplicateOf: uuid("duplicate_of").references(() => leads.id),
-  duplicateScore: decimal("duplicate_score", { precision: 5, scale: 2 }), // Confidence in duplicate match
   
   // Consent & compliance
   gdprConsent: boolean("gdpr_consent").default(false),
@@ -346,7 +340,7 @@ export const dealStageHistory = pgTable("deal_stage_history", {
 });
 
 // Deal Comments for collaboration
-export const dealComments = pgTable("deal_comments", {
+export const dealComments: any = pgTable("deal_comments", {
   id: uuid("id").primaryKey().defaultRandom(),
   dealId: uuid("deal_id").references(() => deals.id).notNull(),
   userId: uuid("user_id").references(() => users.id).notNull(),
