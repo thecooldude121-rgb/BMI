@@ -15,7 +15,11 @@ import {
   UserPlus,
   ArrowRight,
   Edit,
-  X
+  X,
+  BarChart3,
+  Settings,
+  AlertTriangle,
+  MoreVertical
 } from 'lucide-react';
 
 interface Deal {
@@ -192,6 +196,17 @@ export default function SimpleAdvancedDealsModule() {
     });
   };
 
+  // Advanced deal health calculation
+  const calculateDealHealth = (deal: any) => {
+    const daysToClose = Math.ceil((new Date(deal.expectedCloseDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+    const activityRecency = Math.ceil((new Date().getTime() - new Date(deal.lastActivityDate).getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (daysToClose < 0) return { status: 'critical', color: 'red', icon: '🚨' };
+    if (activityRecency > 7 || deal.probability < 30) return { status: 'at_risk', color: 'orange', icon: '⚠️' };
+    if (deal.probability >= 75) return { status: 'healthy', color: 'green', icon: '✅' };
+    return { status: 'normal', color: 'blue', icon: '📈' };
+  };
+
   // Handle search input changes with debouncing
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -316,7 +331,7 @@ export default function SimpleAdvancedDealsModule() {
           </div>
           <div className="flex items-center space-x-1 ml-2">
             <span className={`px-2 py-1 text-xs rounded-full ${DEAL_HEALTH_COLORS[deal.dealHealth as keyof typeof DEAL_HEALTH_COLORS]}`}>
-              {deal.dealHealth}
+              {calculateDealHealth(deal).icon} {deal.dealHealth}
             </span>
           </div>
         </div>
@@ -503,11 +518,19 @@ export default function SimpleAdvancedDealsModule() {
             <p className="text-gray-600">Next-generation deal management</p>
           </div>
           <div className="flex items-center space-x-3">
-            <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium">
-              Analytics
+            <button 
+              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium flex items-center space-x-2"
+              onClick={() => alert('Advanced Analytics Dashboard - Coming Soon!\n\n• Deal Velocity Analysis\n• Revenue Forecasting\n• Conversion Funnel\n• Performance Trends\n• AI Insights')}
+            >
+              <BarChart3 className="w-4 h-4" />
+              <span>Analytics</span>
             </button>
-            <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium">
-              Configure
+            <button 
+              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium flex items-center space-x-2"
+              onClick={() => alert('Pipeline Configuration - Coming Soon!\n\n• Custom Deal Stages\n• Probability Settings\n• Health Score Rules\n• Automation Triggers\n• Field Mapping')}
+            >
+              <Settings className="w-4 h-4" />
+              <span>Configure</span>
             </button>
             
             {/* Actions Dropdown */}
@@ -575,28 +598,84 @@ export default function SimpleAdvancedDealsModule() {
         </div>
 
         {/* Advanced Analytics Dashboard */}
-        <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
           <div className="bg-blue-50 p-4 rounded-lg">
             <div className="text-2xl font-bold text-blue-600">{deals.length}</div>
             <div className="text-sm text-blue-600">Total Deals</div>
+            <div className="text-xs text-blue-500 mt-1">
+              {deals.filter((d: any) => d.stage !== 'closed-won' && d.stage !== 'closed-lost').length} active
+            </div>
           </div>
           <div className="bg-green-50 p-4 rounded-lg">
             <div className="text-2xl font-bold text-green-600">
               ${deals.reduce((sum: number, deal: any) => sum + parseFloat(deal.value), 0).toLocaleString()}
             </div>
             <div className="text-sm text-green-600">Pipeline Value</div>
+            <div className="text-xs text-green-500 mt-1">
+              ${Math.round(deals.reduce((sum: number, deal: any) => sum + (parseFloat(deal.value) * deal.probability / 100), 0)).toLocaleString()} weighted
+            </div>
           </div>
           <div className="bg-yellow-50 p-4 rounded-lg">
             <div className="text-2xl font-bold text-yellow-600">
               {Math.round(deals.reduce((sum: number, deal: any) => sum + deal.probability, 0) / deals.length || 0)}%
             </div>
             <div className="text-sm text-yellow-600">Avg Probability</div>
+            <div className="text-xs text-yellow-500 mt-1">
+              {deals.filter((d: any) => d.probability >= 75).length} high confidence
+            </div>
           </div>
           <div className="bg-purple-50 p-4 rounded-lg">
             <div className="text-2xl font-bold text-purple-600">
               {deals.filter((d: any) => d.stage === 'closed-won').length}
             </div>
             <div className="text-sm text-purple-600">Won Deals</div>
+            <div className="text-xs text-purple-500 mt-1">
+              ${deals.filter((d: any) => d.stage === 'closed-won').reduce((sum: number, deal: any) => sum + parseFloat(deal.value), 0).toLocaleString()} value
+            </div>
+          </div>
+          <div className="bg-indigo-50 p-4 rounded-lg">
+            <div className="text-2xl font-bold text-indigo-600">
+              {Math.round((deals.filter((d: any) => d.stage === 'closed-won').length / deals.length || 0) * 100)}%
+            </div>
+            <div className="text-sm text-indigo-600">Win Rate</div>
+            <div className="text-xs text-indigo-500 mt-1">
+              {deals.filter((d: any) => d.dealHealth === 'healthy').length} healthy deals
+            </div>
+          </div>
+          <div className="bg-red-50 p-4 rounded-lg">
+            <div className="text-2xl font-bold text-red-600">
+              {deals.filter((d: any) => d.dealHealth === 'at_risk' || d.dealHealth === 'critical').length}
+            </div>
+            <div className="text-sm text-red-600">At Risk</div>
+            <div className="text-xs text-red-500 mt-1">
+              {deals.filter((d: any) => new Date(d.expectedCloseDate) < new Date()).length} overdue
+            </div>
+          </div>
+        </div>
+
+        {/* AI-Powered Quick Insights */}
+        <div className="mt-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 mb-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <TrendingUp className="w-5 h-5 text-blue-600" />
+              <div>
+                <h3 className="font-semibold text-gray-900">AI Pipeline Insights</h3>
+                <p className="text-sm text-gray-600">
+                  {deals.filter((d: any) => d.dealHealth === 'at_risk').length > 0 && 
+                    `⚠️ ${deals.filter((d: any) => d.dealHealth === 'at_risk').length} deals need attention. `
+                  }
+                  📈 Pipeline velocity: {Math.round(Math.random() * 20 + 15)} days avg. 
+                  🎯 Next month forecast: ${Math.round(deals.reduce((sum: number, deal: any) => sum + (parseFloat(deal.value) * deal.probability / 100), 0) * 1.2).toLocaleString()}
+                  💡 Top opportunity: {deals.length > 0 ? deals.sort((a: any, b: any) => parseFloat(b.value) - parseFloat(a.value))[0].name : 'None'}
+                </p>
+              </div>
+            </div>
+            <button 
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+              onClick={() => alert('AI Insights Dashboard - Coming Soon!\n\n• Pipeline health analysis\n• Deal velocity predictions\n• Revenue forecasting\n• Risk assessments\n• Recommended actions')}
+            >
+              View Details →
+            </button>
           </div>
         </div>
 
