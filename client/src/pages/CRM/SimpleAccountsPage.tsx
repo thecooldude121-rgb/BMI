@@ -8,7 +8,7 @@ interface Account {
   website?: string;
   phone?: string;
   email?: string;
-  address?: string;
+  address?: string | { street?: string; city?: string; state?: string; zip?: string; country?: string };
   employees?: number;
   revenue?: number;
   type?: string;
@@ -44,7 +44,8 @@ const SimpleAccountsPage: React.FC = () => {
   if (loading) {
     return (
       <div className="p-6">
-        <div className="flex items-center justify-center h-64">
+        <h1 className="text-2xl font-bold text-gray-900 mb-4">Accounts</h1>
+        <div className="flex items-center justify-center h-64 bg-white rounded-lg border">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
             <p className="mt-2 text-gray-600">Loading accounts...</p>
@@ -174,7 +175,14 @@ const SimpleAccountsPage: React.FC = () => {
               {account.address && (
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <MapPin className="h-4 w-4" />
-                  <span className="truncate">{account.address}</span>
+                  <span className="truncate">
+                    {typeof account.address === 'string' 
+                      ? account.address 
+                      : typeof account.address === 'object' && account.address
+                        ? `${account.address.street || ''} ${account.address.city || ''} ${account.address.state || ''} ${account.address.zip || ''}`.trim()
+                        : 'Address not available'
+                    }
+                  </span>
                 </div>
               )}
             </div>

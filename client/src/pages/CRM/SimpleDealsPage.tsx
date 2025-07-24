@@ -44,7 +44,8 @@ const SimpleDealsPage: React.FC = () => {
   if (loading) {
     return (
       <div className="p-6">
-        <div className="flex items-center justify-center h-64">
+        <h1 className="text-2xl font-bold text-gray-900 mb-4">Deals</h1>
+        <div className="flex items-center justify-center h-64 bg-white rounded-lg border">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
             <p className="mt-2 text-gray-600">Loading deals...</p>

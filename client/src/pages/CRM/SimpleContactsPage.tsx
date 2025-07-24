@@ -11,7 +11,7 @@ interface Contact {
   account?: {
     name: string;
   };
-  address?: string;
+  address?: string | { street?: string; city?: string; state?: string; zip?: string; country?: string };
   notes?: string;
   createdAt: string;
 }
@@ -44,7 +44,8 @@ const SimpleContactsPage: React.FC = () => {
   if (loading) {
     return (
       <div className="p-6">
-        <div className="flex items-center justify-center h-64">
+        <h1 className="text-2xl font-bold text-gray-900 mb-4">Contacts</h1>
+        <div className="flex items-center justify-center h-64 bg-white rounded-lg border">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
             <p className="mt-2 text-gray-600">Loading contacts...</p>
@@ -150,7 +151,14 @@ const SimpleContactsPage: React.FC = () => {
                   {contact.address && (
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <MapPin className="h-3 w-3" />
-                      <span className="truncate">{contact.address}</span>
+                      <span className="truncate">
+                        {typeof contact.address === 'string' 
+                          ? contact.address 
+                          : typeof contact.address === 'object' && contact.address
+                            ? `${contact.address.street || ''} ${contact.address.city || ''} ${contact.address.state || ''} ${contact.address.zip || ''}`.trim()
+                            : 'Address not available'
+                        }
+                      </span>
                     </div>
                   )}
                 </div>
