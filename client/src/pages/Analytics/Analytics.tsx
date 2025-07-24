@@ -75,7 +75,7 @@ const Analytics: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">BI Board</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Business Intelligence</h1>
           <p className="text-gray-600">Comprehensive business intelligence and performance insights</p>
         </div>
         <div className="flex items-center space-x-3">
@@ -99,7 +99,6 @@ const Analytics: React.FC = () => {
           </button>
         </div>
       </div>
-
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -154,7 +153,6 @@ const Analytics: React.FC = () => {
           </div>
         </div>
       </div>
-
       {/* Metric Tabs */}
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
@@ -174,7 +172,6 @@ const Analytics: React.FC = () => {
           ))}
         </nav>
       </div>
-
       {/* Content */}
       {selectedMetric === 'pipeline' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -231,7 +228,6 @@ const Analytics: React.FC = () => {
           </div>
         </div>
       )}
-
       {selectedMetric === 'funnel' && (
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-6">Sales Funnel Analysis</h3>
@@ -276,7 +272,6 @@ const Analytics: React.FC = () => {
           </div>
         </div>
       )}
-
       {selectedMetric === 'team' && (
         <div className="bg-white rounded-lg border border-gray-200">
           <div className="px-6 py-4 border-b border-gray-200">
@@ -345,7 +340,6 @@ const Analytics: React.FC = () => {
           </div>
         </div>
       )}
-
       {selectedMetric === 'industry' && (
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-6">Industry Performance</h3>
