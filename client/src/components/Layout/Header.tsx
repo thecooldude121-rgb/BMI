@@ -41,7 +41,7 @@ const Header: React.FC = () => {
     { name: 'AI Meeting Intelligence', href: '/meeting-intelligence', icon: Brain },
     { name: 'HRMS', href: '/hrms', icon: UserCheck },
     { name: 'Lead Generation', href: '/lead-generation', icon: Target },
-    { name: 'Analytics', href: '/analytics', icon: BarChart3 },
+    { name: 'BI Board', href: '/analytics', icon: BarChart3 },
     { name: 'Calendar', href: '/calendar', icon: Calendar },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
