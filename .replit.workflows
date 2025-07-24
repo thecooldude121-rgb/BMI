@@ -1,2 +1,2 @@
 [dev]
-command = "node server.mjs"
+command = "node simple-server.js"
