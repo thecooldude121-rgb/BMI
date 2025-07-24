@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import Fuse from 'fuse.js';
 import { 
   Plus, 
   Search, 
@@ -13,7 +14,8 @@ import {
   Trash2,
   UserPlus,
   ArrowRight,
-  Edit
+  Edit,
+  X
 } from 'lucide-react';
 
 interface Deal {
@@ -62,6 +64,11 @@ export default function SimpleAdvancedDealsModule() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDeals, setSelectedDeals] = useState<string[]>([]);
   const [showActionsDropdown, setShowActionsDropdown] = useState(false);
+  const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
+  const [searchSuggestions, setSearchSuggestions] = useState<any[]>([]);
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
 
   const queryClient = useQueryClient();
 
@@ -103,14 +110,60 @@ export default function SimpleAdvancedDealsModule() {
     return columns;
   }, [deals]);
 
-  // Filter deals based on search
+  // Initialize Fuse.js for fuzzy search
+  const fuse = React.useMemo(() => {
+    const options = {
+      keys: [
+        { name: 'name', weight: 0.3 },
+        { name: 'title', weight: 0.2 },
+        { name: 'account.name', weight: 0.2 },
+        { name: 'contact.firstName', weight: 0.1 },
+        { name: 'contact.lastName', weight: 0.1 },
+        { name: 'stage', weight: 0.05 },
+        { name: 'dealHealth', weight: 0.05 }
+      ],
+      threshold: 0.4, // 0.0 = perfect match, 1.0 = match anything
+      includeScore: true,
+      includeMatches: true,
+      minMatchCharLength: 1,
+    };
+    return new Fuse(deals, options);
+  }, [deals]);
+
+  // Filter deals based on search with fuzzy matching
   const filteredDeals = React.useMemo(() => {
-    return deals.filter((deal: Deal) => {
-      const matchesSearch = deal.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           deal.title.toLowerCase().includes(searchTerm.toLowerCase());
-      return matchesSearch;
-    });
-  }, [deals, searchTerm]);
+    if (!searchTerm.trim()) {
+      return deals;
+    }
+
+    const results = fuse.search(searchTerm);
+    return results.map(result => result.item);
+  }, [deals, searchTerm, fuse]);
+
+  // Generate search suggestions
+  const generateSuggestions = React.useCallback((query: string) => {
+    if (!query.trim() || query.length < 2) {
+      setSearchSuggestions([]);
+      return;
+    }
+
+    const results = fuse.search(query, { limit: 6 });
+    const suggestions = results.map(result => ({
+      type: 'deal',
+      item: result.item,
+      matches: result.matches,
+      score: result.score
+    }));
+
+    // Add quick search categories if we have suggestions
+    const categories = suggestions.length > 0 ? [] : [
+      { type: 'category', label: `Search for "${query}" in all fields`, query: query },
+      { type: 'category', label: `Search for "${query}" in deal names`, query: query },
+      { type: 'category', label: `Search for "${query}" in accounts`, query: query }
+    ];
+
+    setSearchSuggestions([...suggestions, ...categories]);
+  }, [fuse]);
 
   const handleDragStart = (e: React.DragEvent, dealId: string) => {
     e.dataTransfer.setData('text/plain', dealId);
@@ -127,6 +180,94 @@ export default function SimpleAdvancedDealsModule() {
       dealId,
       updates: { stage: newStage }
     });
+  };
+
+  // Handle search input changes with debouncing
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      generateSuggestions(searchTerm);
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, generateSuggestions]);
+
+  // Handle keyboard navigation in suggestions
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!showSearchSuggestions) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setSelectedSuggestionIndex(prev => 
+          prev < searchSuggestions.length - 1 ? prev + 1 : 0
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setSelectedSuggestionIndex(prev => 
+          prev > 0 ? prev - 1 : searchSuggestions.length - 1
+        );
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (selectedSuggestionIndex >= 0) {
+          const suggestion = searchSuggestions[selectedSuggestionIndex];
+          handleSuggestionSelect(suggestion);
+        }
+        break;
+      case 'Escape':
+        setShowSearchSuggestions(false);
+        setSelectedSuggestionIndex(-1);
+        break;
+    }
+  };
+
+  // Handle suggestion selection
+  const handleSuggestionSelect = (suggestion: any) => {
+    if (suggestion.type === 'deal') {
+      // Direct navigation to deal detail page
+      window.location.href = `/crm/deals/${suggestion.item.id}`;
+    } else if (suggestion.type === 'category') {
+      setSearchTerm(suggestion.query);
+    }
+    setShowSearchSuggestions(false);
+    setSelectedSuggestionIndex(-1);
+  };
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchInputRef.current && 
+        !searchInputRef.current.contains(event.target as Node) &&
+        suggestionsRef.current && 
+        !suggestionsRef.current.contains(event.target as Node)
+      ) {
+        setShowSearchSuggestions(false);
+        setSelectedSuggestionIndex(-1);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Highlight matching text in suggestions
+  const highlightMatch = (text: string, matches: any[] = []) => {
+    if (!matches.length) return text;
+    
+    let highlighted = text;
+    matches.forEach(match => {
+      if (match.key === 'name' || match.key === 'title') {
+        match.indices.forEach(([start, end]: [number, number]) => {
+          const before = highlighted.slice(0, start);
+          const match = highlighted.slice(start, end + 1);
+          const after = highlighted.slice(end + 1);
+          highlighted = `${before}<mark class="bg-yellow-200">${match}</mark>${after}`;
+        });
+      }
+    });
+    return highlighted;
   };
 
   const renderDealCard = (deal: Deal) => (
@@ -429,12 +570,83 @@ export default function SimpleAdvancedDealsModule() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
+                ref={searchInputRef}
                 type="text"
-                placeholder="Search deals..."
+                placeholder="Search deals, accounts, contacts..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setShowSearchSuggestions(true);
+                  setSelectedSuggestionIndex(-1);
+                }}
+                onKeyDown={handleKeyDown}
+                onFocus={() => {
+                  if (searchTerm.length >= 2) {
+                    setShowSearchSuggestions(true);
+                  }
+                }}
+                className="pl-10 pr-10 py-2 border border-gray-300 rounded-lg w-80 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+              {searchTerm && (
+                <button
+                  onClick={() => {
+                    setSearchTerm('');
+                    setShowSearchSuggestions(false);
+                    setSelectedSuggestionIndex(-1);
+                  }}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+              
+              {/* Search Suggestions Dropdown */}
+              {showSearchSuggestions && searchSuggestions.length > 0 && (
+                <div 
+                  ref={suggestionsRef}
+                  className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto"
+                >
+                  {searchSuggestions.map((suggestion, index) => (
+                    <div
+                      key={index}
+                      className={`px-4 py-3 cursor-pointer transition-colors ${
+                        index === selectedSuggestionIndex 
+                          ? 'bg-blue-50 border-l-2 border-blue-500' 
+                          : 'hover:bg-gray-50'
+                      }`}
+                      onClick={() => handleSuggestionSelect(suggestion)}
+                    >
+                      {suggestion.type === 'deal' ? (
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            <div className="font-medium text-sm text-gray-900">
+                              <span 
+                                dangerouslySetInnerHTML={{
+                                  __html: highlightMatch(suggestion.item.name, suggestion.matches)
+                                }}
+                              />
+                            </div>
+                            <div className="text-xs text-gray-500 mt-1">
+                              {suggestion.item.account?.name} • ${parseInt(suggestion.item.value).toLocaleString()}
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2 text-xs text-gray-400">
+                            <span className={`px-2 py-1 rounded-full text-xs ${DEAL_HEALTH_COLORS[suggestion.item.dealHealth as keyof typeof DEAL_HEALTH_COLORS]}`}>
+                              {suggestion.item.dealHealth}
+                            </span>
+                            <ArrowRight className="w-3 h-3" />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-center text-sm text-blue-600">
+                          <Search className="w-4 h-4 mr-2" />
+                          {suggestion.label}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
             <button className="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
               <Filter className="w-4 h-4 mr-2 inline" />
