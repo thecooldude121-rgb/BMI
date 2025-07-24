@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import * as schema from "@shared/schema";
 import { z } from "zod";
 import { aiInsightsService } from "./aiService";
+import { meetingIntelligenceService } from "./meetingIntelligence";
 
 // Helper function for error handling
 const handleError = (error: unknown, res: any) => {
@@ -576,6 +577,196 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error creating achievement:', error);
       res.status(500).json({ error: 'Failed to create achievement' });
+    }
+  });
+
+  // AI Meeting Intelligence Routes
+  app.get("/api/meetings", async (req, res) => {
+    try {
+      const meetings = await storage.getMeetings();
+      res.json(meetings);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/meetings/:id", async (req, res) => {
+    try {
+      const meeting = await storage.getMeeting(req.params.id);
+      if (!meeting) return res.status(404).json({ error: "Meeting not found" });
+      res.json(meeting);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/meetings", async (req, res) => {
+    try {
+      const result = schema.insertMeetingSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ error: "Invalid meeting data", details: result.error });
+      }
+      const meeting = await storage.createMeeting(result.data);
+      res.status(201).json(meeting);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.patch("/api/meetings/:id", async (req, res) => {
+    try {
+      const meeting = await storage.updateMeeting(req.params.id, req.body);
+      res.json(meeting);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.delete("/api/meetings/:id", async (req, res) => {
+    try {
+      await storage.deleteMeeting(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Meeting Analysis Route
+  app.post("/api/meetings/:id/analyze", async (req, res) => {
+    try {
+      const { transcript, meetingMetadata, previousMeetingActions } = req.body;
+      
+      if (!transcript || !meetingMetadata) {
+        return res.status(400).json({ error: "Transcript and meeting metadata are required" });
+      }
+
+      const analysis = await meetingIntelligenceService.analyzeMeeting({
+        transcript,
+        meetingMetadata,
+        previousMeetingActions
+      });
+
+      // Store analysis results in database
+      const meetingId = req.params.id;
+      
+      // Store summary
+      if (analysis.summary) {
+        await storage.createMeetingSummary({
+          meetingId,
+          conciseSummary: analysis.summary.conciseSummary,
+          keyTopics: analysis.summary.keyTopics,
+          meetingIntent: analysis.summary.meetingIntent,
+          attendeeRoles: analysis.summary.attendeeRoles,
+          duration: analysis.summary.duration,
+          engagementScore: analysis.summary.engagementScore,
+          sentimentAnalysis: analysis.summary.sentimentAnalysis
+        });
+      }
+
+      // Store outcomes
+      for (const outcome of analysis.outcomes) {
+        await storage.createMeetingOutcome({
+          meetingId,
+          ...outcome,
+          followUpDate: outcome.followUpDate ? new Date(outcome.followUpDate) : null
+        });
+      }
+
+      // Store insights
+      for (const insight of analysis.insights) {
+        await storage.createMeetingInsight({
+          meetingId,
+          ...insight
+        });
+      }
+
+      // Store questions
+      for (const question of analysis.questions) {
+        await storage.createMeetingQuestion({
+          meetingId,
+          ...question
+        });
+      }
+
+      // Store pain points
+      for (const painPoint of analysis.painPoints) {
+        await storage.createMeetingPainPoint({
+          meetingId,
+          ...painPoint
+        });
+      }
+
+      // Store follow-ups
+      for (const followUp of analysis.followUps) {
+        await storage.createMeetingFollowUp({
+          meetingId,
+          ...followUp,
+          dueDate: followUp.dueDate ? new Date(followUp.dueDate) : null
+        });
+      }
+
+      // Update meeting AI processing status
+      await storage.updateMeeting(meetingId, { aiProcessingStatus: 'completed' });
+
+      res.json(analysis);
+    } catch (error) {
+      console.error('Meeting Analysis Error:', error);
+      handleError(error, res);
+    }
+  });
+
+  // Meeting Intelligence Data Routes
+  app.get("/api/meetings/:id/summary", async (req, res) => {
+    try {
+      const summary = await storage.getMeetingSummary(req.params.id);
+      res.json(summary);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/meetings/:id/outcomes", async (req, res) => {
+    try {
+      const outcomes = await storage.getMeetingOutcomes(req.params.id);
+      res.json(outcomes);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/meetings/:id/insights", async (req, res) => {
+    try {
+      const insights = await storage.getMeetingInsights(req.params.id);
+      res.json(insights);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/meetings/:id/questions", async (req, res) => {
+    try {
+      const questions = await storage.getMeetingQuestions(req.params.id);
+      res.json(questions);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/meetings/:id/pain-points", async (req, res) => {
+    try {
+      const painPoints = await storage.getMeetingPainPoints(req.params.id);
+      res.json(painPoints);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/meetings/:id/follow-ups", async (req, res) => {
+    try {
+      const followUps = await storage.getMeetingFollowUps(req.params.id);
+      res.json(followUps);
+    } catch (error) {
+      handleError(error, res);
     }
   });
 

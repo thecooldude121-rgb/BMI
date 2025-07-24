@@ -423,14 +423,13 @@ export async function seedDatabase() {
     await db.insert(schema.meetings).values([
       {
         title: 'TechCorp Strategy Session',
-        date: new Date('2025-01-28T14:00:00Z'),
-        duration: 60,
-        attendees: [userId, sampleContacts[0].id],
-        type: 'client-meeting',
-        relatedToType: 'deal',
-        relatedToId: sampleDeals[0].id,
-        summary: 'Discuss implementation strategy and timeline',
-        createdBy: userId
+        description: 'Discuss implementation strategy and timeline',
+        scheduledStart: new Date('2025-01-28T14:00:00Z'),
+        scheduledEnd: new Date('2025-01-28T15:00:00Z'),
+        type: 'video',
+        status: 'completed',
+        organizerId: userId,
+        dealId: sampleDeals[0].id
       }
     ]);
 

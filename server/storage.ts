@@ -56,6 +56,26 @@ export interface IStorage {
   getMeeting(id: string): Promise<schema.Meeting | undefined>;
   createMeeting(meeting: schema.InsertMeeting): Promise<schema.Meeting>;
   updateMeeting(id: string, meeting: Partial<schema.InsertMeeting>): Promise<schema.Meeting>;
+  deleteMeeting(id: string): Promise<boolean>;
+
+  // Meeting Intelligence methods
+  createMeetingSummary(summary: schema.InsertMeetingSummary): Promise<schema.MeetingSummary>;
+  getMeetingSummary(meetingId: string): Promise<schema.MeetingSummary | undefined>;
+  
+  createMeetingOutcome(outcome: schema.InsertMeetingOutcome): Promise<schema.MeetingOutcome>;
+  getMeetingOutcomes(meetingId: string): Promise<schema.MeetingOutcome[]>;
+  
+  createMeetingInsight(insight: schema.InsertMeetingInsight): Promise<schema.MeetingInsight>;
+  getMeetingInsights(meetingId: string): Promise<schema.MeetingInsight[]>;
+  
+  createMeetingQuestion(question: schema.InsertMeetingQuestion): Promise<schema.MeetingQuestion>;
+  getMeetingQuestions(meetingId: string): Promise<schema.MeetingQuestion[]>;
+  
+  createMeetingPainPoint(painPoint: schema.InsertMeetingPainPoint): Promise<schema.MeetingPainPoint>;
+  getMeetingPainPoints(meetingId: string): Promise<schema.MeetingPainPoint[]>;
+  
+  createMeetingFollowUp(followUp: schema.InsertMeetingFollowUp): Promise<schema.MeetingFollowUp>;
+  getMeetingFollowUps(meetingId: string): Promise<schema.MeetingFollowUp[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -240,26 +260,6 @@ export class DatabaseStorage implements IStorage {
     return activities[0];
   }
 
-  // Meeting methods
-  async getMeetings(): Promise<schema.Meeting[]> {
-    return await db.select().from(schema.meetings);
-  }
-
-  async getMeeting(id: string): Promise<schema.Meeting | undefined> {
-    const meetings = await db.select().from(schema.meetings).where(eq(schema.meetings.id, id));
-    return meetings[0];
-  }
-
-  async createMeeting(meeting: schema.InsertMeeting): Promise<schema.Meeting> {
-    const meetings = await db.insert(schema.meetings).values(meeting).returning();
-    return meetings[0];
-  }
-
-  async updateMeeting(id: string, meeting: Partial<schema.InsertMeeting>): Promise<schema.Meeting> {
-    const meetings = await db.update(schema.meetings).set(meeting).where(eq(schema.meetings.id, id)).returning();
-    return meetings[0];
-  }
-
   // Gamification methods
   async getSalesPoints(userId?: string): Promise<schema.SalesPoints[]> {
     if (userId) {
@@ -337,6 +337,87 @@ export class DatabaseStorage implements IStorage {
   async createAchievement(achievement: schema.InsertAchievement): Promise<schema.Achievement> {
     const result = await db.insert(schema.achievements).values(achievement).returning();
     return result[0];
+  }
+
+  // Missing meeting implementation
+  async getMeetings(): Promise<schema.Meeting[]> {
+    return await db.select().from(schema.meetings).orderBy(desc(schema.meetings.scheduledStart));
+  }
+
+  async getMeeting(id: string): Promise<schema.Meeting | undefined> {
+    const meetings = await db.select().from(schema.meetings).where(eq(schema.meetings.id, id));
+    return meetings[0];
+  }
+
+  async createMeeting(meeting: schema.InsertMeeting): Promise<schema.Meeting> {
+    const meetings = await db.insert(schema.meetings).values(meeting).returning();
+    return meetings[0];
+  }
+
+  async updateMeeting(id: string, updates: Partial<schema.InsertMeeting>): Promise<schema.Meeting> {
+    const meetings = await db.update(schema.meetings).set(updates).where(eq(schema.meetings.id, id)).returning();
+    return meetings[0];
+  }
+
+  async deleteMeeting(id: string): Promise<boolean> {
+    const result = await db.delete(schema.meetings).where(eq(schema.meetings.id, id));
+    return result.rowCount ? result.rowCount > 0 : false;
+  }
+
+  // Meeting Intelligence methods
+  async createMeetingSummary(summary: schema.InsertMeetingSummary): Promise<schema.MeetingSummary> {
+    const summaries = await db.insert(schema.meetingSummaries).values(summary).returning();
+    return summaries[0];
+  }
+
+  async getMeetingSummary(meetingId: string): Promise<schema.MeetingSummary | undefined> {
+    const summaries = await db.select().from(schema.meetingSummaries).where(eq(schema.meetingSummaries.meetingId, meetingId));
+    return summaries[0];
+  }
+
+  async createMeetingOutcome(outcome: schema.InsertMeetingOutcome): Promise<schema.MeetingOutcome> {
+    const outcomes = await db.insert(schema.meetingOutcomes).values(outcome).returning();
+    return outcomes[0];
+  }
+
+  async getMeetingOutcomes(meetingId: string): Promise<schema.MeetingOutcome[]> {
+    return await db.select().from(schema.meetingOutcomes).where(eq(schema.meetingOutcomes.meetingId, meetingId));
+  }
+
+  async createMeetingInsight(insight: schema.InsertMeetingInsight): Promise<schema.MeetingInsight> {
+    const insights = await db.insert(schema.meetingInsights).values(insight).returning();
+    return insights[0];
+  }
+
+  async getMeetingInsights(meetingId: string): Promise<schema.MeetingInsight[]> {
+    return await db.select().from(schema.meetingInsights).where(eq(schema.meetingInsights.meetingId, meetingId));
+  }
+
+  async createMeetingQuestion(question: schema.InsertMeetingQuestion): Promise<schema.MeetingQuestion> {
+    const questions = await db.insert(schema.meetingQuestions).values(question).returning();
+    return questions[0];
+  }
+
+  async getMeetingQuestions(meetingId: string): Promise<schema.MeetingQuestion[]> {
+    return await db.select().from(schema.meetingQuestions).where(eq(schema.meetingQuestions.meetingId, meetingId));
+  }
+
+  async createMeetingPainPoint(painPoint: schema.InsertMeetingPainPoint): Promise<schema.MeetingPainPoint> {
+    const painPoints = await db.insert(schema.meetingPainPoints).values(painPoint).returning();
+    return painPoints[0];
+  }
+
+  async getMeetingPainPoints(meetingId: string): Promise<schema.MeetingPainPoint[]> {
+    return await db.select().from(schema.meetingPainPoints).where(eq(schema.meetingPainPoints.meetingId, meetingId));
+  }
+
+  async createMeetingFollowUp(followUp: schema.InsertMeetingFollowUp): Promise<schema.MeetingFollowUp> {
+    const followUps = await db.insert(schema.meetingFollowUps).values(followUp).returning();
+    return followUps[0];
+  }
+
+  async getMeetingFollowUps(meetingId: string): Promise<schema.MeetingFollowUp[]> {
+    return await db.select().from(schema.meetingFollowUps).where(eq(schema.meetingFollowUps.meetingId, meetingId));
   }
 
   // Leaderboard queries
