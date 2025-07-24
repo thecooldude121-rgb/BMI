@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLocation } from 'wouter';
 import { 
   Building, Phone, Mail, MapPin, Users, DollarSign, Plus, Filter, Search, 
   Grid3X3, List, MoreHorizontal, TrendingUp, AlertTriangle, CheckCircle,
@@ -68,6 +69,7 @@ const NextGenAccountModule: React.FC = () => {
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const [showViewDropdown, setShowViewDropdown] = useState(false);
+  const [location, setLocation] = useLocation();
 
   const queryClient = useQueryClient();
 
@@ -453,7 +455,7 @@ const NextGenAccountModule: React.FC = () => {
                     transition={{ delay: index * 0.05 }}
                     whileHover={{ y: -4, boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}
                     className="bg-white rounded-lg border border-gray-200 p-6 hover:border-blue-300 transition-all duration-200 cursor-pointer"
-                    onClick={() => window.location.href = `/crm/accounts/${account.id}`}
+                    onClick={() => setLocation(`/crm/accounts/${account.id}`)}
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center space-x-3">
@@ -570,7 +572,12 @@ const NextGenAccountModule: React.FC = () => {
                                 </div>
                               )}
                               <div>
-                                <p className="font-medium text-gray-900">{account.name}</p>
+                                <button 
+                                  onClick={() => setLocation(`/crm/accounts/${account.id}`)}
+                                  className="font-medium text-gray-900 hover:text-blue-600 text-left"
+                                >
+                                  {account.name}
+                                </button>
                                 <p className="text-sm text-gray-500">{account.domain}</p>
                               </div>
                             </div>
@@ -684,7 +691,7 @@ const NextGenAccountModule: React.FC = () => {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.05 }}
                           className="bg-white rounded-lg p-4 border border-gray-200 hover:border-blue-300 transition-colors cursor-pointer"
-                          onClick={() => window.location.href = `/crm/accounts/${account.id}`}
+                          onClick={() => setLocation(`/crm/accounts/${account.id}`)}
                         >
                           <div className="flex items-start justify-between mb-3">
                             <div className="flex items-center space-x-2">
