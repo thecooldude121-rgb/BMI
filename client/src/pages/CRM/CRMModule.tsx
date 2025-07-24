@@ -3,7 +3,7 @@ import { Switch, Route } from 'wouter';
 import SimpleLeadsPage from './SimpleLeadsPage';
 import SimpleContactsPage from './SimpleContactsPage';
 import SimpleAccountsPage from './SimpleAccountsPage';
-import SimpleDealsPage from './SimpleDealsPage';
+import SimpleAdvancedDealsModule from './SimpleAdvancedDealsModule';
 import WorkingActivitiesPage from './WorkingActivitiesPage';
 import DiagnosticPage from './DiagnosticPage';
 
@@ -21,7 +21,7 @@ const CRMModule = () => {
           <SimpleAccountsPage />
         </Route>
         <Route path="/crm/deals">
-          <SimpleDealsPage />
+          <SimpleAdvancedDealsModule />
         </Route>
         <Route path="/crm/activities">
           <WorkingActivitiesPage />
