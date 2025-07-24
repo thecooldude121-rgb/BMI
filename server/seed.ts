@@ -5,12 +5,9 @@ import { eq } from "drizzle-orm";
 async function seedEnhancedActivities(userId: string, accountIds: string[], contactIds: string[], leadIds: string[], dealIds: string[]) {
   console.log("🎯 Starting enhanced activities seeding...");
   
-  // Check if activities already exist
+  // Check if activities already exist - always seed enhanced activities
   const existingActivities = await db.select().from(schema.activities);
-  if (existingActivities.length >= 20) {
-    console.log("✅ Activities already seeded");
-    return;
-  }
+  console.log(`Found ${existingActivities.length} existing activities - proceeding with enhanced seeding`);
   
   const enhancedActivities = [
     // Lead follow-up activities
@@ -87,7 +84,7 @@ async function seedEnhancedActivities(userId: string, accountIds: string[], cont
       subject: "Quarterly Business Review - GlobalMFG",
       type: "meeting",
       direction: "outbound",
-      status: "in_progress",
+      status: "planned",
       priority: "high",
       description: "Quarterly review of account performance and future planning",
       scheduledAt: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
@@ -104,7 +101,7 @@ async function seedEnhancedActivities(userId: string, accountIds: string[], cont
       subject: "Support Ticket Resolution Follow-up",
       type: "task",
       direction: "inbound",
-      status: "open",
+      status: "planned",
       priority: "medium",
       description: "Follow up on recent support ticket resolution and ensure customer satisfaction",
       dueDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
@@ -120,7 +117,7 @@ async function seedEnhancedActivities(userId: string, accountIds: string[], cont
     // Additional 15 more activities for comprehensive testing...
     {
       subject: "LinkedIn Connection Request",
-      type: "linkedin",
+      type: "note",
       direction: "outbound",
       status: "completed",
       priority: "low",
@@ -160,7 +157,7 @@ async function seedEnhancedActivities(userId: string, accountIds: string[], cont
       subject: "Technical Requirements Assessment",
       type: "meeting",
       direction: "outbound",
-      status: "open",
+      status: "planned",
       priority: "high",
       description: "Deep dive into technical requirements and integration needs",
       scheduledAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
@@ -202,7 +199,7 @@ async function seedEnhancedActivities(userId: string, accountIds: string[], cont
       subject: "Cold Email Campaign - Healthcare Prospects",
       type: "email",
       direction: "outbound",
-      status: "in_progress",
+      status: "planned",
       priority: "medium",
       description: "Targeted email campaign to healthcare industry prospects",
       scheduledAt: new Date(Date.now() + 6 * 60 * 60 * 1000),
@@ -219,7 +216,7 @@ async function seedEnhancedActivities(userId: string, accountIds: string[], cont
       subject: "Industry Conference Follow-up",
       type: "task",
       direction: "outbound",
-      status: "open",
+      status: "planned",
       priority: "medium",
       description: "Follow up with contacts met at the recent industry conference",
       dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
@@ -267,7 +264,7 @@ async function seedEnhancedActivities(userId: string, accountIds: string[], cont
       subject: "MQL Qualification Call",
       type: "call",
       direction: "outbound",
-      status: "open",
+      status: "planned",
       priority: "high",
       description: "Qualify marketing qualified lead and assess sales readiness",
       scheduledAt: new Date(Date.now() + 4 * 60 * 60 * 1000),
@@ -301,7 +298,7 @@ async function seedEnhancedActivities(userId: string, accountIds: string[], cont
       subject: "Contract Renewal Discussion",
       type: "meeting",
       direction: "outbound",
-      status: "open",
+      status: "planned",
       priority: "critical",
       description: "Discuss contract renewal and potential expansion opportunities",
       scheduledAt: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
@@ -317,7 +314,7 @@ async function seedEnhancedActivities(userId: string, accountIds: string[], cont
     },
     {
       subject: "Product Training Session",
-      type: "training",
+      type: "meeting",
       direction: "outbound",
       status: "completed",
       priority: "medium",
@@ -337,7 +334,7 @@ async function seedEnhancedActivities(userId: string, accountIds: string[], cont
     },
     {
       subject: "LinkedIn Article Engagement",
-      type: "linkedin",
+      type: "note",
       direction: "outbound",
       status: "completed",
       priority: "low",
@@ -355,7 +352,7 @@ async function seedEnhancedActivities(userId: string, accountIds: string[], cont
       subject: "Urgent: Contract Signature Required",
       type: "task",
       direction: "outbound",
-      status: "overdue",
+      status: "planned",
       priority: "urgent",
       description: "Follow up on pending contract signature - deal at risk",
       dueDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
