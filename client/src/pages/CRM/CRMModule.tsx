@@ -15,6 +15,10 @@ import CRMTestPage from './CRMTestPage';
 import SimpleTest from './SimpleTest';
 import DiagnosticPage from './DiagnosticPage';
 import MinimalTest from './MinimalTest';
+import SimpleLeadsPage from './SimpleLeadsPage';
+import SimpleContactsPage from './SimpleContactsPage';
+import SimpleAccountsPage from './SimpleAccountsPage';
+import SimpleDealsPage from './SimpleDealsPage';
 
 const CRMModule = () => {
   return (
@@ -24,33 +28,21 @@ const CRMModule = () => {
           <CRMGamificationPage key="crm-gamification" />
         </Route>
         <Route path="/crm/leads">
-          <div className="p-6">
-            <h1 className="text-2xl font-bold mb-4">Leads</h1>
-            <p>Leads module loading...</p>
-          </div>
+          <SimpleLeadsPage />
         </Route>
         <Route path="/crm/contacts">
-          <div className="p-6">
-            <h1 className="text-2xl font-bold mb-4">Contacts</h1>
-            <p>Contacts module loading...</p>
-          </div>
+          <SimpleContactsPage />
         </Route>
         <Route path="/crm/accounts">
-          <div className="p-6">
-            <h1 className="text-2xl font-bold mb-4">Accounts</h1>
-            <p>Accounts module loading...</p>
-          </div>
+          <SimpleAccountsPage />
         </Route>
         <Route path="/crm/deals">
-          <div className="p-6">
-            <h1 className="text-2xl font-bold mb-4">Deals</h1>
-            <p>Deals module loading...</p>
-          </div>
+          <SimpleDealsPage />
         </Route>
         <Route path="/crm/pipeline" component={PipelinePage} />
         <Route path="/crm/tasks" component={TasksPage} />
         <Route path="/crm/activities">
-          <MinimalTest />
+          <WorkingActivitiesPage />
         </Route>
         <Route path="/crm/test">
           <CRMTestPage />
