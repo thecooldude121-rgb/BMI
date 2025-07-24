@@ -45,7 +45,7 @@ const SimpleActivitiesPage: React.FC = () => {
   }
 
   if (error) {
-    return <div className="p-4 text-red-600">Error: {error.message}</div>;
+    return <div className="p-4 text-red-600">Error: {String(error)}</div>;
   }
 
   return (
@@ -53,7 +53,7 @@ const SimpleActivitiesPage: React.FC = () => {
       <h1 className="text-2xl font-bold mb-4">Activities Debug Page</h1>
       <div className="bg-yellow-100 p-3 mb-4 rounded">
         <p><strong>Loading:</strong> {isLoading ? 'Yes' : 'No'}</p>
-        <p><strong>Error:</strong> {error ? error.message : 'None'}</p>
+        <p><strong>Error:</strong> {error ? String(error) : 'None'}</p>
         <p><strong>Activities Length:</strong> {activities.length}</p>
         <p><strong>Activities Type:</strong> {typeof activities} (Array: {Array.isArray(activities) ? 'Yes' : 'No'})</p>
       </div>
