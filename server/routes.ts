@@ -826,14 +826,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       
       const totalActivities = activities.length;
-      const openActivities = activities.filter(a => a.status === 'open' || a.status === 'in_progress').length;
+      const openActivities = activities.filter(a => a.status === 'planned').length;
       const completedToday = activities.filter(a => 
         a.status === 'completed' && 
         a.completedAt && 
         new Date(a.completedAt) >= today
       ).length;
       const overdueActivities = activities.filter(a => 
-        (a.status === 'open' || a.status === 'in_progress') &&
+        a.status === 'planned' &&
         a.dueDate && 
         new Date(a.dueDate) < now
       ).length;
