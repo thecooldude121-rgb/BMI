@@ -5,7 +5,8 @@ import { apiRequest } from '@/lib/queryClient';
 import { 
   ArrowLeft, Edit2, Save, X, Plus, Mail, Phone, Globe, Building,
   Calendar, DollarSign, User, Target, Clock, FileText, Paperclip,
-  Activity, Users, MessageSquare, Briefcase, TrendingUp, CheckCircle
+  Activity, Users, MessageSquare, Briefcase, TrendingUp, CheckCircle,
+  CheckSquare
 } from 'lucide-react';
 
 interface DealDetailPageProps {
@@ -619,7 +620,7 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
           </div>
         </div>
 
-        {/* Activities Section */}
+        {/* Open Activities Section */}
         <div id="activities" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
@@ -628,29 +629,248 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
             </div>
             <button className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
               <Plus className="h-4 w-4 inline mr-2" />
-              Add Task
+              Add Now
             </button>
           </div>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <input type="checkbox" className="h-4 w-4 text-blue-600" />
-                <div>
-                  <h4 className="font-medium text-gray-900">Follow up with decision maker</h4>
-                  <p className="text-sm text-gray-600">Due: Tomorrow</p>
+          
+          {/* Column View Toggle */}
+          <div className="mb-4 flex items-center space-x-2">
+            <span className="text-sm text-gray-600">Column View</span>
+            <button className="px-3 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50">
+              ⚟
+            </button>
+          </div>
+
+          {/* Open Activities Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* Emails Column */}
+            <div className="border border-gray-200 rounded-lg">
+              <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
+                <div className="flex items-center space-x-2">
+                  <Mail className="h-4 w-4 text-blue-600" />
+                  <h4 className="font-medium text-gray-900">Emails</h4>
+                  <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">0</span>
                 </div>
               </div>
-              <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">High Priority</span>
+              <div className="p-4">
+                <div className="text-center py-8 text-gray-500">
+                  <Mail className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+                  <p className="text-sm">No open emails</p>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <input type="checkbox" className="h-4 w-4 text-blue-600" />
-                <div>
-                  <h4 className="font-medium text-gray-900">Send proposal document</h4>
-                  <p className="text-sm text-gray-600">Due: Next week</p>
+
+            {/* Tasks Column */}
+            <div className="border border-gray-200 rounded-lg">
+              <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
+                <div className="flex items-center space-x-2">
+                  <CheckSquare className="h-4 w-4 text-orange-600" />
+                  <h4 className="font-medium text-gray-900">Tasks</h4>
+                  <span className="text-xs bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full">2</span>
                 </div>
               </div>
-              <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium">Medium Priority</span>
+              <div className="p-3 space-y-3">
+                <div className="p-3 border border-gray-200 rounded bg-white hover:bg-gray-50">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h5 className="text-sm font-medium text-gray-900">Follow up with decision maker</h5>
+                      <p className="text-xs text-gray-600 mt-1">Due: Tomorrow</p>
+                      <p className="text-xs text-gray-500 mt-1">Assigned to: Sales Rep</p>
+                    </div>
+                    <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full">High</span>
+                  </div>
+                </div>
+                <div className="p-3 border border-gray-200 rounded bg-white hover:bg-gray-50">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h5 className="text-sm font-medium text-gray-900">Send proposal document</h5>
+                      <p className="text-xs text-gray-600 mt-1">Due: Next week</p>
+                      <p className="text-xs text-gray-500 mt-1">Assigned to: Sales Rep</p>
+                    </div>
+                    <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full">Medium</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Meetings Column */}
+            <div className="border border-gray-200 rounded-lg">
+              <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
+                <div className="flex items-center space-x-2">
+                  <Calendar className="h-4 w-4 text-purple-600" />
+                  <h4 className="font-medium text-gray-900">Meetings</h4>
+                  <span className="text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">1</span>
+                </div>
+              </div>
+              <div className="p-3">
+                <div className="p-3 border border-gray-200 rounded bg-white hover:bg-gray-50">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h5 className="text-sm font-medium text-gray-900">Proposal Discussion</h5>
+                      <p className="text-xs text-gray-600 mt-1">Tomorrow, 2:00 PM</p>
+                      <p className="text-xs text-gray-500 mt-1">with Decision Maker</p>
+                    </div>
+                    <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Scheduled</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Calls Column */}
+            <div className="border border-gray-200 rounded-lg">
+              <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
+                <div className="flex items-center space-x-2">
+                  <Phone className="h-4 w-4 text-green-600" />
+                  <h4 className="font-medium text-gray-900">Calls</h4>
+                  <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">0</span>
+                </div>
+              </div>
+              <div className="p-4">
+                <div className="text-center py-8 text-gray-500">
+                  <Phone className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+                  <p className="text-sm">No open calls</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Closed Activities Section */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-3">
+              <Activity className="h-5 w-5 text-gray-600" />
+              <h3 className="text-lg font-semibold text-gray-900">Closed Activities</h3>
+            </div>
+          </div>
+
+          {/* Closed Activities Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* Closed Tasks */}
+            <div className="border border-gray-200 rounded-lg">
+              <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
+                <div className="flex items-center space-x-2">
+                  <CheckSquare className="h-4 w-4 text-orange-600" />
+                  <h4 className="font-medium text-gray-900">Closed Tasks</h4>
+                  <span className="text-xs bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full">3</span>
+                </div>
+              </div>
+              <div className="p-3 space-y-3">
+                <div className="p-3 border border-gray-200 rounded bg-white">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h5 className="text-sm font-medium text-gray-900">Initial discovery call</h5>
+                      <p className="text-xs text-gray-600 mt-1">Closed: May 28, 2025 11:40 AM</p>
+                      <p className="text-xs text-gray-500 mt-1">by Sales Rep</p>
+                    </div>
+                    <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">✓ Done</span>
+                  </div>
+                </div>
+                <div className="p-3 border border-gray-200 rounded bg-white">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h5 className="text-sm font-medium text-gray-900">Needs assessment</h5>
+                      <p className="text-xs text-gray-600 mt-1">Closed: May 26, 2025</p>
+                      <p className="text-xs text-gray-500 mt-1">by Sales Rep</p>
+                    </div>
+                    <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">✓ Done</span>
+                  </div>
+                </div>
+                <div className="p-3 border border-gray-200 rounded bg-white">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h5 className="text-sm font-medium text-gray-900">Requirements gathering</h5>
+                      <p className="text-xs text-gray-600 mt-1">Closed: May 25, 2025</p>
+                      <p className="text-xs text-gray-500 mt-1">by Sales Rep</p>
+                    </div>
+                    <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">✓ Done</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Closed Meetings */}
+            <div className="border border-gray-200 rounded-lg">
+              <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
+                <div className="flex items-center space-x-2">
+                  <Calendar className="h-4 w-4 text-purple-600" />
+                  <h4 className="font-medium text-gray-900">Closed Meetings</h4>
+                  <span className="text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">2</span>
+                </div>
+              </div>
+              <div className="p-3 space-y-3">
+                <div className="p-3 border border-gray-200 rounded bg-white">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h5 className="text-sm font-medium text-gray-900">Follow up Meeting</h5>
+                      <p className="text-xs text-gray-600 mt-1">Jan 30, 2025 11:00 AM - 11:30 AM</p>
+                      <p className="text-xs text-gray-500 mt-1">with Decision Maker</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-3 border border-gray-200 rounded bg-white">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h5 className="text-sm font-medium text-gray-900">Discovery Meeting</h5>
+                      <p className="text-xs text-gray-600 mt-1">Jan 6, 2025 11:00 AM - 12:00 PM</p>
+                      <p className="text-xs text-gray-500 mt-1">with Stakeholders</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Closed Calls */}
+            <div className="border border-gray-200 rounded-lg">
+              <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
+                <div className="flex items-center space-x-2">
+                  <Phone className="h-4 w-4 text-green-600" />
+                  <h4 className="font-medium text-gray-900">Closed Calls</h4>
+                  <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">2</span>
+                </div>
+              </div>
+              <div className="p-3 space-y-3">
+                <div className="p-3 border border-gray-200 rounded bg-white">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h5 className="text-sm font-medium text-gray-900">Outgoing call to Decision Maker</h5>
+                      <p className="text-xs text-gray-600 mt-1">Jan 10, 2025 10:31 AM</p>
+                      <p className="text-xs text-gray-500 mt-1">Call Result: ⋆ Interested</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-3 border border-gray-200 rounded bg-white">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h5 className="text-sm font-medium text-gray-900">Follow-up call about requirements</h5>
+                      <p className="text-xs text-gray-600 mt-1">Nov 21, 2024 2:08 AM</p>
+                      <p className="text-xs text-gray-500 mt-1">Call Result: ⋆ Requested more info</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Closed Emails */}
+            <div className="border border-gray-200 rounded-lg">
+              <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
+                <div className="flex items-center space-x-2">
+                  <Mail className="h-4 w-4 text-blue-600" />
+                  <h4 className="font-medium text-gray-900">Closed Emails</h4>
+                  <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">1</span>
+                </div>
+              </div>
+              <div className="p-3">
+                <div className="p-3 border border-gray-200 rounded bg-white">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h5 className="text-sm font-medium text-gray-900">Welcome email sent</h5>
+                      <p className="text-xs text-gray-600 mt-1">Sent: Jan 15, 2025</p>
+                      <p className="text-xs text-gray-500 mt-1">to prospect@company.com</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
