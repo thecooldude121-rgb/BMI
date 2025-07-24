@@ -50,27 +50,82 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+// Account-specific enums
+export const accountTypeEnum = pgEnum('account_type', ['prospect', 'customer', 'partner', 'vendor', 'competitor', 'former_customer']);
+export const accountStatusEnum = pgEnum('account_status', ['active', 'inactive', 'suspended', 'churned', 'potential']);
+export const accountHealthEnum = pgEnum('account_health', ['excellent', 'good', 'at_risk', 'critical', 'churned']);
+export const accountSegmentEnum = pgEnum('account_segment', ['enterprise', 'mid_market', 'smb', 'startup', 'government', 'non_profit']);
+export const industryEnum = pgEnum('industry', ['technology', 'healthcare', 'finance', 'education', 'manufacturing', 'retail', 'real_estate', 'consulting', 'media', 'transportation', 'energy', 'agriculture', 'biotechnology', 'fashion', 'other']);
+
 export const accounts: any = pgTable("accounts", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   domain: text("domain"),
-  industry: text("industry"),
+  industry: industryEnum("industry"),
   companySize: companySizeEnum("company_size").default('unknown'),
   annualRevenue: decimal("annual_revenue", { precision: 15, scale: 2 }),
   website: text("website"),
   phone: text("phone"),
   description: text("description"),
+  
+  // Enhanced address fields
   address: jsonb("address"),
-  accountType: text("account_type").default('prospect'), // prospect, customer, partner
-  parentAccountId: uuid("parent_account_id").references(() => accounts.id),
-  employees: integer("employees"),
-  faxNumber: text("fax_number"),
   billingAddress: jsonb("billing_address"),
   shippingAddress: jsonb("shipping_address"),
-  documents: jsonb("documents"), // Array of uploaded document metadata
+  
+  // Account classification
+  accountType: accountTypeEnum("account_type").default('prospect'),
+  accountStatus: accountStatusEnum("account_status").default('active'),
+  accountSegment: accountSegmentEnum("account_segment"),
+  
+  // Hierarchy and relationships
+  parentAccountId: uuid("parent_account_id").references(() => accounts.id),
+  
+  // Company details
+  employees: integer("employees"),
+  foundedYear: integer("founded_year"),
+  stockSymbol: text("stock_symbol"),
+  linkedinUrl: text("linkedin_url"),
+  twitterHandle: text("twitter_handle"),
+  faxNumber: text("fax_number"),
+  
+  // Business metrics
+  healthScore: integer("health_score").default(50), // 0-100
+  customerSince: timestamp("customer_since"),
+  lastActivityDate: timestamp("last_activity_date"),
+  
+  // Enrichment data
+  logoUrl: text("logo_url"),
+  technologies: jsonb("technologies"), // Array of technologies used
+  socialMedia: jsonb("social_media"), // Social media profiles
+  competitors: jsonb("competitors"), // Known competitors
+  
+  // CRM fields
   ownerId: uuid("owner_id").references(() => users.id),
+  tags: jsonb("tags"), // Array of tags
+  customFields: jsonb("custom_fields"),
+  
+  // Document management
+  documents: jsonb("documents"), // Array of uploaded document metadata
+  
+  // Audit fields
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  
+  // AI and automation
+  enrichmentStatus: text("enrichment_status").default('pending'), // pending, completed, failed
+  enrichmentData: jsonb("enrichment_data"),
+  autoAssignmentRules: jsonb("auto_assignment_rules"),
+  
+  // Compliance and privacy
+  gdprConsent: boolean("gdpr_consent").default(false),
+  dataProcessingConsent: jsonb("data_processing_consent"),
+  
+  // Performance tracking
+  totalDeals: integer("total_deals").default(0),
+  totalRevenue: decimal("total_revenue", { precision: 15, scale: 2 }).default('0'),
+  averageDealSize: decimal("average_deal_size", { precision: 15, scale: 2 }).default('0'),
+  lastContactDate: timestamp("last_contact_date"),
 });
 
 export const contacts = pgTable("contacts", {
@@ -816,6 +871,63 @@ export const insertMeetingSummarySchema = createInsertSchema(meetingSummaries).o
   createdAt: true,
 });
 
+// Account Document Management Tables
+export const accountDocuments = pgTable("account_documents", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  accountId: uuid("account_id").references(() => accounts.id).notNull(),
+  name: text("name").notNull(),
+  type: text("type").notNull(), // contract, proposal, invoice, presentation, etc.
+  fileUrl: text("file_url").notNull(),
+  fileSize: integer("file_size"), // in bytes
+  mimeType: text("mime_type"),
+  version: integer("version").default(1),
+  description: text("description"),
+  tags: jsonb("tags"), // Array of tags for categorization
+  uploadedBy: uuid("uploaded_by").references(() => users.id).notNull(),
+  isPublic: boolean("is_public").default(false),
+  expirationDate: timestamp("expiration_date"),
+  signatureRequired: boolean("signature_required").default(false),
+  signatureStatus: text("signature_status"), // pending, signed, rejected
+  signedBy: uuid("signed_by").references(() => users.id),
+  signedAt: timestamp("signed_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Account Hierarchy for parent-child relationships
+export const accountHierarchy = pgTable("account_hierarchy", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  parentAccountId: uuid("parent_account_id").references(() => accounts.id).notNull(),
+  childAccountId: uuid("child_account_id").references(() => accounts.id).notNull(),
+  relationshipType: text("relationship_type").default('subsidiary'), // subsidiary, division, branch, partner
+  hierarchyLevel: integer("hierarchy_level").default(1),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+// Account Enrichment Data for auto-filled information
+export const accountEnrichment = pgTable("account_enrichment", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  accountId: uuid("account_id").references(() => accounts.id).notNull(),
+  source: text("source").notNull(), // clearbit, zoominfo, apollo, manual
+  data: jsonb("data").notNull(), // Enriched company data
+  confidence: integer("confidence"), // 0-100 confidence score
+  lastEnriched: timestamp("last_enriched").notNull().defaultNow(),
+  isActive: boolean("is_active").default(true),
+});
+
+// Account Audit Log for tracking changes
+export const accountAudit = pgTable("account_audit", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  accountId: uuid("account_id").references(() => accounts.id).notNull(),
+  userId: uuid("user_id").references(() => users.id).notNull(),
+  action: text("action").notNull(), // created, updated, deleted, merged
+  fieldChanged: text("field_changed"),
+  oldValue: text("old_value"),
+  newValue: text("new_value"),
+  timestamp: timestamp("timestamp").notNull().defaultNow(),
+});
+
 export const insertMeetingOutcomeSchema = createInsertSchema(meetingOutcomes).omit({
   id: true,
   createdAt: true,
@@ -917,6 +1029,37 @@ export type Task = typeof tasks.$inferSelect;
 
 export type InsertActivity = z.infer<typeof insertActivitySchema>;
 export type Activity = typeof activities.$inferSelect;
+
+export type AccountDocument = typeof accountDocuments.$inferSelect;
+export type InsertAccountDocument = typeof accountDocuments.$inferInsert;
+export type AccountHierarchy = typeof accountHierarchy.$inferSelect;
+export type InsertAccountHierarchy = typeof accountHierarchy.$inferInsert;
+export type AccountEnrichment = typeof accountEnrichment.$inferSelect;
+export type InsertAccountEnrichment = typeof accountEnrichment.$inferInsert;
+export type AccountAudit = typeof accountAudit.$inferSelect;
+export type InsertAccountAudit = typeof accountAudit.$inferInsert;
+
+// Account insert schemas
+export const insertAccountDocumentSchema = createInsertSchema(accountDocuments).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertAccountHierarchySchema = createInsertSchema(accountHierarchy).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertAccountEnrichmentSchema = createInsertSchema(accountEnrichment).omit({
+  id: true,
+  lastEnriched: true,
+});
+
+export const insertAccountAuditSchema = createInsertSchema(accountAudit).omit({
+  id: true,
+  timestamp: true,
+});
 
 export type InsertMeeting = z.infer<typeof insertMeetingSchema>;
 export type Meeting = typeof meetings.$inferSelect;
