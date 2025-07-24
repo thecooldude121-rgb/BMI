@@ -182,6 +182,7 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
     { id: 'overview', label: 'Deal Overview', icon: Briefcase },
     { id: 'timeline', label: 'Timeline', icon: Activity },
     { id: 'activities', label: 'Open Activities', icon: Target },
+    { id: 'closed-activities', label: 'Closed Activities', icon: CheckCircle },
     { id: 'engagement', label: 'Engagement Plan', icon: Users },
     { id: 'stage-history', label: 'Stage History', icon: TrendingUp },
     { id: 'attachments', label: 'Attachments', icon: Paperclip },
@@ -736,7 +737,7 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
         </div>
 
         {/* Closed Activities Section */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div id="closed-activities" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
               <Activity className="h-5 w-5 text-gray-600" />
