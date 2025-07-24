@@ -546,7 +546,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const contacts = await storage.getContacts();
       
       // Group contacts by various segments
-      const segments = {
+      const segments: any = {
         byPersona: {},
         byEngagementStatus: {},
         byDepartment: {},
@@ -567,7 +567,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         segments.byDepartment[department] = (segments.byDepartment[department] || 0) + 1;
 
         // Group by influence level
-        const influence = contact.influenceLevel || 5;
+        const influence = Number(contact.influenceLevel) || 5;
         if (influence >= 8) segments.byInfluenceLevel.high++;
         else if (influence >= 5) segments.byInfluenceLevel.medium++;
         else segments.byInfluenceLevel.low++;
@@ -591,10 +591,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updates = {
         lastTouchDate: new Date().toISOString(),
         lastActivityType: type,
-        totalActivities: (contact.totalActivities || 0) + 1,
+        totalActivities: Number(contact.totalActivities || 0) + 1,
         ...(outcome === 'responded' && {
           lastResponseDate: new Date().toISOString(),
-          responseRate: Math.min(100, (contact.responseRate || 0) + 5)
+          responseRate: Math.min(100, Number(contact.responseRate || 0) + 5)
         })
       };
 
@@ -648,7 +648,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const contact = await storage.getContact(id);
       if (!contact) return res.status(404).json({ error: "Contact not found" });
 
-      const existingTags = contact.tags || [];
+      const existingTags = Array.isArray(contact.tags) ? contact.tags : [];
       const newTags = [...new Set([...existingTags, ...tags])];
 
       const updatedContact = await storage.updateContact(id, {
@@ -674,8 +674,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const contact = await storage.getContact(id);
       if (!contact) return res.status(404).json({ error: "Contact not found" });
 
-      const existingTags = contact.tags || [];
-      const newTags = existingTags.filter(tag => !tags.includes(tag));
+      const existingTags = Array.isArray(contact.tags) ? contact.tags : [];
+      const newTags = existingTags.filter((tag: string) => !tags.includes(tag));
 
       const updatedContact = await storage.updateContact(id, {
         tags: newTags,

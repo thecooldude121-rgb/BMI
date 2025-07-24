@@ -193,8 +193,8 @@ export const contacts = pgTable("contacts", {
   teamVisibility: text("team_visibility").default('team'), // private, team, company
   
   // Personal and biographical information
-  birthday: date("birthday"),
-  anniversary: date("anniversary"),
+  birthday: timestamp("birthday"),
+  anniversary: timestamp("anniversary"),
   interests: jsonb("interests"), // Array of interests
   personalNotes: text("personal_notes"),
   familyInfo: jsonb("family_info"),
