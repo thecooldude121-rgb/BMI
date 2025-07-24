@@ -11,7 +11,9 @@ export const leadStageEnum = pgEnum('lead_stage', ['new', 'contacted', 'qualifie
 export const leadStatusEnum = pgEnum('lead_status', ['active', 'inactive', 'nurturing']);
 export const leadPriorityEnum = pgEnum('lead_priority', ['low', 'medium', 'high', 'urgent']);
 export const leadSourceEnum = pgEnum('lead_source', ['website', 'social_media', 'email_campaign', 'referral', 'cold_call', 'trade_show', 'advertisement', 'partner']);
-export const dealStageEnum = pgEnum('deal_stage', ['qualification', 'proposal', 'negotiation', 'closed-won', 'closed-lost']);
+export const dealStageEnum = pgEnum('deal_stage', ['qualification', 'proposal', 'negotiation', 'closed-won', 'closed-lost', 'discovery', 'demo', 'trial']);
+export const dealTypeEnum = pgEnum('deal_type', ['new_business', 'existing_business', 'renewal', 'expansion', 'upsell', 'cross_sell']);
+export const dealHealthEnum = pgEnum('deal_health', ['healthy', 'at_risk', 'critical', 'hot_opportunity', 'stalled']);
 export const taskStatusEnum = pgEnum('task_status', ['pending', 'in-progress', 'completed']);
 export const taskPriorityEnum = pgEnum('task_priority', ['low', 'medium', 'high']);
 export const activityTypeEnum = pgEnum('activity_type', ['call', 'email', 'meeting', 'task', 'note', 'demo', 'proposal']);
@@ -23,6 +25,9 @@ export const meetingTypeEnum = pgEnum('meeting_type', ['call', 'video', 'in-pers
 export const participantStatusEnum = pgEnum('participant_status', ['invited', 'accepted', 'declined', 'tentative']);
 export const transcriptionStatusEnum = pgEnum('transcription_status', ['pending', 'processing', 'completed', 'failed']);
 export const insightTypeEnum = pgEnum('insight_type', ['action_item', 'sentiment', 'key_decision', 'follow_up', 'risk', 'opportunity']);
+export const dealRiskLevelEnum = pgEnum('deal_risk_level', ['low', 'medium', 'high', 'critical']);
+export const competitorEnum = pgEnum('competitor', ['salesforce', 'hubspot', 'pipedrive', 'zoho', 'monday', 'other', 'none']);
+export const dealSourceEnum = pgEnum('deal_source', ['inbound', 'outbound', 'referral', 'marketing', 'partner', 'existing_customer']);
 
 // Core Tables
 export const users = pgTable("users", {
@@ -124,8 +129,100 @@ export const deals = pgTable("deals", {
   description: text("description"),
   nextStep: text("next_step"),
   notes: text("notes"),
+  
+  // Enhanced Deal Fields
+  dealType: dealTypeEnum("deal_type").default('new_business'),
+  dealHealth: dealHealthEnum("deal_health").default('healthy'),
+  dealSource: dealSourceEnum("deal_source").default('inbound'),
+  riskLevel: dealRiskLevelEnum("risk_level").default('low'),
+  competitor: competitorEnum("competitor").default('none'),
+  
+  // Financial Details
+  monthlyRecurringRevenue: decimal("monthly_recurring_revenue", { precision: 15, scale: 2 }).default('0'),
+  annualContractValue: decimal("annual_contract_value", { precision: 15, scale: 2 }).default('0'),
+  discount: decimal("discount", { precision: 5, scale: 2 }).default('0'), // percentage
+  costOfAcquisition: decimal("cost_of_acquisition", { precision: 15, scale: 2 }).default('0'),
+  
+  // Sales Process
+  salesCycle: integer("sales_cycle"), // days
+  stageHistory: jsonb("stage_history").default('[]'), // Array of stage changes with timestamps
+  lastActivityDate: timestamp("last_activity_date"),
+  followUpDate: timestamp("follow_up_date"),
+  
+  // Team & Collaboration
+  teamMembers: jsonb("team_members").default('[]'), // Array of user IDs
+  followers: jsonb("followers").default('[]'), // Array of user IDs following this deal
+  
+  // AI & Automation
+  aiScore: integer("ai_score").default(0), // 0-100 AI health score
+  aiInsights: jsonb("ai_insights").default('{}'),
+  automationTriggers: jsonb("automation_triggers").default('[]'),
+  
+  // Custom Fields
+  customFields: jsonb("custom_fields").default('{}'),
+  tags: jsonb("tags").default('[]'),
+  
+  // Metadata
+  territory: text("territory"),
+  businessUnit: text("business_unit"),
+  campaignSource: text("campaign_source"),
+  
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Deal Stage History for tracking stage transitions
+export const dealStageHistory = pgTable("deal_stage_history", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  dealId: uuid("deal_id").references(() => deals.id).notNull(),
+  fromStage: dealStageEnum("from_stage"),
+  toStage: dealStageEnum("to_stage").notNull(),
+  changedBy: uuid("changed_by").references(() => users.id).notNull(),
+  notes: text("notes"),
+  duration: integer("duration"), // days in previous stage
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+// Deal Comments for collaboration
+export const dealComments = pgTable("deal_comments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  dealId: uuid("deal_id").references(() => deals.id).notNull(),
+  userId: uuid("user_id").references(() => users.id).notNull(),
+  content: text("content").notNull(),
+  mentions: jsonb("mentions").default('[]'), // Array of mentioned user IDs
+  isInternal: boolean("is_internal").default(true),
+  parentCommentId: uuid("parent_comment_id").references(() => dealComments.id),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Deal Attachments
+export const dealAttachments = pgTable("deal_attachments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  dealId: uuid("deal_id").references(() => deals.id).notNull(),
+  fileName: text("file_name").notNull(),
+  fileUrl: text("file_url").notNull(),
+  fileSize: integer("file_size"), // bytes
+  fileType: text("file_type"),
+  uploadedBy: uuid("uploaded_by").references(() => users.id).notNull(),
+  description: text("description"),
+  isPublic: boolean("is_public").default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+// Deal Products/Services for line items
+export const dealProducts = pgTable("deal_products", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  dealId: uuid("deal_id").references(() => deals.id).notNull(),
+  productName: text("product_name").notNull(),
+  description: text("description"),
+  quantity: integer("quantity").notNull().default(1),
+  unitPrice: decimal("unit_price", { precision: 15, scale: 2 }).notNull(),
+  totalPrice: decimal("total_price", { precision: 15, scale: 2 }).notNull(),
+  discount: decimal("discount", { precision: 5, scale: 2 }).default('0'),
+  isRecurring: boolean("is_recurring").default(false),
+  billingFrequency: text("billing_frequency"), // monthly, quarterly, annually
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 export const tasks = pgTable("tasks", {

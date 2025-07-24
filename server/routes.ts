@@ -312,6 +312,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/deals/:id", async (req, res) => {
+    try {
+      const deal = await storage.getDeal(req.params.id);
+      if (!deal) return res.status(404).json({ error: "Deal not found" });
+      res.json(deal);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
   app.delete("/api/deals/:id", async (req, res) => {
     try {
       const success = await storage.deleteDeal(req.params.id);

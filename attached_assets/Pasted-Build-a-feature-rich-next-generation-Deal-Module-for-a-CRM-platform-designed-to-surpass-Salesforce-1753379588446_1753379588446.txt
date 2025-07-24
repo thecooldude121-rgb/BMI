@@ -1,0 +1,68 @@
+Build a feature-rich, next-generation Deal Module for a CRM platform, designed to surpass Salesforce, HubSpot, Zoho, Pipedrive, and Salesnayak. Your implementation should address current market gaps, deliver speed, clarity, automation, and best-in-class user experience, both web and mobile ready.
+
+Frontend (React with Material UI or Ant Design):
+Deal List / Pipeline View
+
+Kanban board with drag-and-drop for deal stage movement.
+
+Table/List view with multi-filter, bulk action (assign, tag, move).
+
+Deal cards feature live status color, inline editing for core fields, clickable names opening detail pages.
+
+Deal Creation Page
+
+Multi-step wizard with progress indicator and contextual help.
+
+Dynamic, conditionally displayed fields based on pipeline/type.
+
+Autocomplete for accounts, contacts, products/services.
+
+Seamlessly add new activities and attachments while creating a deal.
+
+Deal Detail Page
+
+Information blocks: Deal summary (core metrics, milestones), Relationship (accounts, contacts, related deals), Financials (products, custom/recurring fees, discount), Timeline (interactive visual stage history, duration and notes per stage), Activities/Comms (open/closed, emails, calls with logs and auto-generated AI recaps), File manager, Audit/Changelog.
+
+Inline editing and stage movements.
+
+Side-by-side collaboration feed, @mentions, and “deal team” visibility.
+
+“Deal at risk”/“hot opportunity” AI scoring badge.
+
+Persistent Sidebar
+
+Deal health heatmap.
+
+Smart reminders, AI step suggestions.
+
+Follower/team list, quick-add actions.
+
+Analytics & Reporting
+
+Interactive dashboards: stage conversion, win/loss, forecasting, velocity, and bottleneck analytics.
+
+Flexible filters (user, territory, pipeline, deal value).
+
+Backend (Node.js+Express or Python FastAPI):
+REST endpoints for CRUD on Deals, Accounts, Contacts, Activities, Emails, Attachments, Stage History.
+
+Business rules for stage change triggers, automatic alerts/task assignment, and notification.
+
+Integration of AI endpoints for deal health and action recommendations.
+
+Role-based data access with field/section-level control.
+
+Secure file operations.
+
+Real-time updates via WebSockets for collaboration.
+
+Additional Requirements
+Mobile-responsive design throughout.
+
+Reusable, clean schema definitions for all entities (JSON/SQL).
+
+Code comments and simple setup instructions.
+
+Modular structure for simple extensions (e.g., add-ons for contract eSign, support ticket sync, etc.).
+
+Request Replit to generate both frontend and backend boilerplate, complete with schema, UI components, and deployment/readme instructions.
