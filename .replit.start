@@ -1,1 +1,1 @@
-node simple-server.js
+npm run dev
