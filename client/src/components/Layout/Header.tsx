@@ -47,6 +47,7 @@ const Header: React.FC = () => {
   ];
 
   const createMenuItems = [
+    { name: 'Quick Meeting', action: () => setLocation('/meeting-intelligence'), icon: Brain },
     { name: 'Add Lead', action: () => setLocation('/crm/leads/new'), icon: UserPlus },
     { name: 'Create Deal', action: () => setLocation('/crm/deals/create'), icon: DollarSign },
     { name: 'Add Contact', action: () => setLocation('/crm/contacts/new'), icon: Users },

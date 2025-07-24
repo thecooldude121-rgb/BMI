@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Brain, Calendar, Mic, FileText, Users, Plus, Loader2 } from 'lucide-react';
+import { Brain, Calendar, Mic, FileText, Users, Plus, Loader2, Video } from 'lucide-react';
+import MeetingIntegrations from '../components/Meeting/MeetingIntegrations';
 
 export default function MeetingIntelligencePage() {
-  const [activeTab, setActiveTab] = useState('create');
+  const [activeTab, setActiveTab] = useState('quick-meet');
   const [meetingForm, setMeetingForm] = useState({
     title: '',
     description: '',
@@ -93,8 +94,9 @@ export default function MeetingIntelligencePage() {
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
           {[
-            { key: 'create', label: 'Create Meeting', icon: Mic },
-            { key: 'meetings', label: 'Meetings', icon: Calendar }
+            { key: 'quick-meet', label: 'Quick Meeting', icon: Video },
+            { key: 'create', label: 'Create & Analyze', icon: Mic },
+            { key: 'meetings', label: 'Meeting History', icon: Calendar }
           ].map(({ key, label, icon: Icon }) => (
             <button
               key={key}
@@ -113,6 +115,13 @@ export default function MeetingIntelligencePage() {
       </div>
 
       <div className="mt-6">
+        {activeTab === 'quick-meet' && (
+          <MeetingIntegrations onMeetingCreated={(meeting) => {
+            queryClient.invalidateQueries({ queryKey: ['/api/meetings'] });
+            setActiveTab('meetings');
+          }} />
+        )}
+
         {activeTab === 'create' && (
           <div className="bg-white rounded-lg shadow border p-6 space-y-6">
             <div>

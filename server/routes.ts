@@ -715,6 +715,124 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Meeting Platform Integration Routes
+  app.post("/api/meetings/create-with-platform", async (req, res) => {
+    try {
+      const meetingData = insertMeetingSchema.parse(req.body);
+      const meeting = await storage.createMeeting(meetingData);
+      
+      // Generate platform-specific meeting links
+      let platformLink = '';
+      const platform = req.body.platform || 'google-meet';
+      
+      if (platform === 'google-meet') {
+        // Generate Google Meet link (simplified - would use Google Calendar API in production)
+        const startTime = new Date(meetingData.scheduledStart);
+        const endTime = new Date(meetingData.scheduledEnd || meetingData.scheduledStart);
+        
+        const googleCalendarUrl = new URL('https://calendar.google.com/calendar/render');
+        googleCalendarUrl.searchParams.set('action', 'TEMPLATE');
+        googleCalendarUrl.searchParams.set('text', meetingData.title || 'Meeting');
+        googleCalendarUrl.searchParams.set('details', meetingData.description || '');
+        googleCalendarUrl.searchParams.set('dates', 
+          `${startTime.toISOString().replace(/[-:]/g, '').split('.')[0]}Z/${endTime.toISOString().replace(/[-:]/g, '').split('.')[0]}Z`
+        );
+        
+        platformLink = googleCalendarUrl.toString();
+      } else if (platform === 'teams') {
+        // Generate Teams meeting link
+        const startTime = new Date(meetingData.scheduledStart);
+        const endTime = new Date(meetingData.scheduledEnd || meetingData.scheduledStart);
+        
+        platformLink = `https://teams.microsoft.com/l/meeting/new?subject=${encodeURIComponent(meetingData.title || 'Meeting')}&startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
+      }
+
+      res.json({ 
+        ...meeting, 
+        platformLink,
+        platform 
+      });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/meetings/generate-link", async (req, res) => {
+    try {
+      const { platform, title, scheduledStart, scheduledEnd, description, attendees } = req.body;
+      
+      let meetingLink = '';
+      
+      if (platform === 'google-meet') {
+        const startTime = new Date(scheduledStart);
+        const endTime = new Date(scheduledEnd || scheduledStart);
+        
+        const googleCalendarUrl = new URL('https://calendar.google.com/calendar/render');
+        googleCalendarUrl.searchParams.set('action', 'TEMPLATE');
+        googleCalendarUrl.searchParams.set('text', title);
+        googleCalendarUrl.searchParams.set('details', description || '');
+        googleCalendarUrl.searchParams.set('dates', 
+          `${startTime.toISOString().replace(/[-:]/g, '').split('.')[0]}Z/${endTime.toISOString().replace(/[-:]/g, '').split('.')[0]}Z`
+        );
+        if (attendees && Array.isArray(attendees)) {
+          googleCalendarUrl.searchParams.set('add', attendees.join(','));
+        }
+        
+        meetingLink = googleCalendarUrl.toString();
+      } else if (platform === 'teams') {
+        const startTime = new Date(scheduledStart);
+        const endTime = new Date(scheduledEnd || scheduledStart);
+        
+        meetingLink = `https://teams.microsoft.com/l/meeting/new?subject=${encodeURIComponent(title)}&startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
+      }
+
+      res.json({ 
+        meetingLink,
+        platform,
+        deepLink: meetingLink
+      });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Calendar Integration Routes
+  app.post("/api/calendar/sync", async (req, res) => {
+    try {
+      const { provider, accessToken } = req.body;
+      
+      // This would integrate with Google Calendar or Outlook Calendar APIs
+      // For now, return a mock success response
+      res.json({ 
+        success: true, 
+        provider,
+        message: `Calendar sync enabled for ${provider}` 
+      });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/calendar/events", async (req, res) => {
+    try {
+      // This would fetch calendar events from integrated calendars
+      // Mock response for now
+      const events = [
+        {
+          id: '1',
+          title: 'Team Standup',
+          start: new Date().toISOString(),
+          end: new Date(Date.now() + 3600000).toISOString(),
+          source: 'google-calendar'
+        }
+      ];
+      
+      res.json(events);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
   // Meeting Intelligence Data Routes
   app.get("/api/meetings/:id/summary", async (req, res) => {
     try {
