@@ -818,6 +818,140 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Enhanced Activity Module Routes
+  app.get("/api/activities/metrics", async (req, res) => {
+    try {
+      const activities = await storage.getActivities();
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      
+      const totalActivities = activities.length;
+      const openActivities = activities.filter(a => a.status === 'open' || a.status === 'in_progress').length;
+      const completedToday = activities.filter(a => 
+        a.status === 'completed' && 
+        a.completedAt && 
+        new Date(a.completedAt) >= today
+      ).length;
+      const overdueActivities = activities.filter(a => 
+        (a.status === 'open' || a.status === 'in_progress') &&
+        a.dueDate && 
+        new Date(a.dueDate) < now
+      ).length;
+      
+      // Calculate average completion time (in minutes)
+      const completedActivities = activities.filter(a => a.status === 'completed' && a.duration);
+      const avgCompletionTime = completedActivities.length > 0 
+        ? Math.round(completedActivities.reduce((sum, a) => sum + (a.duration || 0), 0) / completedActivities.length)
+        : 0;
+      
+      // Calculate completion rate
+      const totalTasksWithDueDate = activities.filter(a => a.dueDate).length;
+      const completedTasks = activities.filter(a => a.status === 'completed').length;
+      const completionRate = totalTasksWithDueDate > 0 
+        ? Math.round((completedTasks / totalTasksWithDueDate) * 100)
+        : 0;
+
+      res.json({
+        totalActivities,
+        openActivities,
+        completedToday,
+        overdueActivities,
+        avgCompletionTime,
+        completionRate
+      });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/activities/:id/comments", async (req, res) => {
+    try {
+      const { content, mentions, isInternal } = req.body;
+      const comment = await storage.createActivityComment({
+        activityId: req.params.id,
+        authorId: req.body.authorId || '1', // TODO: Get from auth
+        content,
+        mentions: mentions || [],
+        isInternal: isInternal !== false
+      });
+      res.status(201).json(comment);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/activities/:id/comments", async (req, res) => {
+    try {
+      const comments = await storage.getActivityComments(req.params.id);
+      res.json(comments);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/activities/bulk", async (req, res) => {
+    try {
+      const { action, activityIds, data } = req.body;
+      
+      if (!Array.isArray(activityIds)) {
+        return res.status(400).json({ error: "activityIds must be an array" });
+      }
+
+      let results = [];
+      switch (action) {
+        case 'complete':
+          results = await Promise.all(
+            activityIds.map(id => storage.completeActivity(id, data?.outcome))
+          );
+          break;
+        case 'assign':
+          results = await Promise.all(
+            activityIds.map(id => storage.updateActivity(id, { assignedTo: data?.assignedTo }))
+          );
+          break;
+        case 'update_status':
+          results = await Promise.all(
+            activityIds.map(id => storage.updateActivity(id, { status: data?.status }))
+          );
+          break;
+        case 'delete':
+          results = await Promise.all(
+            activityIds.map(id => storage.deleteActivity(id))
+          );
+          break;
+        default:
+          return res.status(400).json({ error: "Invalid action" });
+      }
+
+      res.json({ success: true, affected: results.filter(Boolean).length });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/activities/templates", async (req, res) => {
+    try {
+      const templates = await storage.getActivityTemplates();
+      res.json(templates);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/activities/from-template", async (req, res) => {
+    try {
+      const { templateId, relatedToType, relatedToId, customFields } = req.body;
+      const activity = await storage.createActivityFromTemplate(templateId, {
+        relatedToType,
+        relatedToId,
+        ...customFields
+      });
+      res.status(201).json(activity);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
   // Meeting routes
   app.get("/api/meetings", async (req, res) => {
     try {

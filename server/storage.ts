@@ -85,6 +85,13 @@ export interface IStorage {
   createActivity(activity: schema.InsertActivity): Promise<schema.Activity>;
   updateActivity(id: string, activity: Partial<schema.InsertActivity>): Promise<schema.Activity>;
   completeActivity(id: string, outcome?: string): Promise<schema.Activity>;
+  deleteActivity(id: string): Promise<boolean>;
+  
+  // Enhanced Activity Module methods
+  createActivityComment(comment: any): Promise<any>;
+  getActivityComments(activityId: string): Promise<any[]>;
+  getActivityTemplates(): Promise<any[]>; // For activity templates
+  createActivityFromTemplate(templateId: string, data: any): Promise<schema.Activity>;
 
   // Meeting methods
   getMeetings(): Promise<schema.Meeting[]>;
@@ -523,6 +530,49 @@ export class DatabaseStorage implements IStorage {
       .where(eq(schema.activities.id, id))
       .returning();
     return activities[0];
+  }
+
+  async deleteActivity(id: string): Promise<boolean> {
+    const result = await db.delete(schema.activities).where(eq(schema.activities.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  async createActivityComment(comment: any): Promise<any> {
+    const comments = await db.insert(schema.activityComments).values(comment).returning();
+    return comments[0];
+  }
+
+  async getActivityComments(activityId: string): Promise<any[]> {
+    return await db.select().from(schema.activityComments)
+      .where(eq(schema.activityComments.activityId, activityId))
+      .orderBy(desc(schema.activityComments.createdAt));
+  }
+
+  async getActivityTemplates(): Promise<any[]> {
+    // For now return mock templates - this would come from a templates table in production
+    return [
+      { id: '1', name: 'Follow-up Call', type: 'call', description: 'Standard follow-up call template' },
+      { id: '2', name: 'Demo Meeting', type: 'meeting', description: 'Product demonstration template' },
+      { id: '3', name: 'Proposal Email', type: 'email', description: 'Business proposal template' }
+    ];
+  }
+
+  async createActivityFromTemplate(templateId: string, data: any): Promise<schema.Activity> {
+    // Basic template implementation - would be enhanced with actual template data
+    const templateActivity = {
+      subject: data.subject || 'Template Activity',
+      type: data.type || 'task',
+      status: 'open',
+      priority: 'medium',
+      description: data.description || '',
+      relatedToType: data.relatedToType,
+      relatedToId: data.relatedToId,
+      assignedTo: data.assignedTo,
+      dueDate: data.dueDate,
+      ...data
+    };
+    
+    return await this.createActivity(templateActivity);
   }
 
   // Gamification methods
