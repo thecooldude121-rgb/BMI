@@ -41,14 +41,14 @@ interface RewardItem {
   claimed: boolean;
 }
 
-const RARITY_COLORS = {
+const RARITY_COLORS: Record<string, string> = {
   common: 'from-gray-400 to-gray-600',
   rare: 'from-blue-400 to-blue-600', 
   epic: 'from-purple-400 to-purple-600',
   legendary: 'from-yellow-400 to-yellow-600'
 };
 
-const RARITY_GLOW = {
+const RARITY_GLOW: Record<string, string> = {
   common: 'shadow-gray-500/20',
   rare: 'shadow-blue-500/40',
   epic: 'shadow-purple-500/40', 
