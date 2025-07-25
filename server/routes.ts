@@ -463,6 +463,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/contacts/by-account/:accountId", async (req, res) => {
+    try {
+      const contacts = await storage.getContactsByAccount(req.params.accountId);
+      res.json(contacts);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
   app.post("/api/contacts", async (req, res) => {
     try {
       const result = schema.insertContactSchema.safeParse(req.body);
