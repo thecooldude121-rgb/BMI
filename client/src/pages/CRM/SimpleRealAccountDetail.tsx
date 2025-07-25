@@ -51,6 +51,18 @@ const SimpleRealAccountDetail: React.FC = () => {
     enabled: !!id
   });
 
+  // Fetch related deals
+  const { data: deals, isLoading: dealsLoading } = useQuery({
+    queryKey: ['/api/deals', 'by-account', id],
+    queryFn: async () => {
+      if (!id) return [];
+      const response = await fetch(`/api/deals/by-account/${id}`);
+      if (!response.ok) throw new Error('Failed to fetch deals');
+      return response.json();
+    },
+    enabled: !!id
+  });
+
   const handleBackToAccounts = () => {
     setLocation('/crm/accounts');
   };
@@ -230,7 +242,11 @@ const SimpleRealAccountDetail: React.FC = () => {
                 ) : contacts && contacts.length > 0 ? (
                   <div className="space-y-4">
                     {contacts.slice(0, 3).map((contact) => (
-                      <div key={contact.id} className="flex items-center space-x-4 p-3 border rounded-lg hover:bg-gray-50">
+                      <div 
+                        key={contact.id} 
+                        className="flex items-center space-x-4 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                        onClick={() => setLocation(`/crm/contacts/${contact.id}`)}
+                      >
                         <div className="flex-shrink-0">
                           <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium">
                             {contact.firstName?.[0]}{contact.lastName?.[0]}
@@ -245,12 +261,18 @@ const SimpleRealAccountDetail: React.FC = () => {
                         </div>
                         <div className="flex space-x-2">
                           {contact.email && (
-                            <button className="p-2 text-gray-400 hover:text-gray-600">
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); window.location.href = `mailto:${contact.email}`; }}
+                              className="p-2 text-gray-400 hover:text-gray-600"
+                            >
                               <Mail className="w-4 h-4" />
                             </button>
                           )}
                           {contact.phone && (
-                            <button className="p-2 text-gray-400 hover:text-gray-600">
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); window.location.href = `tel:${contact.phone}`; }}
+                              className="p-2 text-gray-400 hover:text-gray-600"
+                            >
                               <Phone className="w-4 h-4" />
                             </button>
                           )}
@@ -269,6 +291,75 @@ const SimpleRealAccountDetail: React.FC = () => {
                     <p className="text-gray-500">No contacts found for this account</p>
                     <button className="mt-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
                       Add First Contact
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Related Deals */}
+            <div className="bg-white rounded-lg shadow">
+              <div className="p-6 border-b border-gray-200">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+                    <DollarSign className="w-5 h-5 mr-2" />
+                    Related Deals ({deals?.length || 0})
+                  </h2>
+                  <button className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50">
+                    Create Deal
+                  </button>
+                </div>
+              </div>
+              <div className="p-6">
+                {dealsLoading ? (
+                  <div className="space-y-3">
+                    {[1, 2].map((i) => (
+                      <div key={i} className="animate-pulse flex space-x-4">
+                        <div className="flex-1 space-y-2 py-1">
+                          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                          <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : deals && deals.length > 0 ? (
+                  <div className="space-y-4">
+                    {deals.slice(0, 3).map((deal: any) => (
+                      <div 
+                        key={deal.id} 
+                        className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                        onClick={() => setLocation(`/crm/deals/${deal.id}`)}
+                      >
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-gray-900">{deal.name}</p>
+                          <p className="text-sm text-gray-500">Stage: {deal.stage}</p>
+                          <p className="text-sm text-gray-500">
+                            Value: {formatCurrency(deal.value?.toString())} • {deal.probability}% probability
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            deal.stage === 'closed_won' ? 'bg-green-100 text-green-800' :
+                            deal.stage === 'closed_lost' ? 'bg-red-100 text-red-800' :
+                            'bg-blue-100 text-blue-800'
+                          }`}>
+                            {deal.stage?.replace('_', ' ').toUpperCase()}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                    {deals.length > 3 && (
+                      <button className="w-full px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
+                        View All {deals.length} Deals
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-center py-6">
+                    <DollarSign className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500">No deals found for this account</p>
+                    <button className="mt-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
+                      Create First Deal
                     </button>
                   </div>
                 )}
