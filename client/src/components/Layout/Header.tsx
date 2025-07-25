@@ -57,7 +57,7 @@ const Header: React.FC = () => {
   ];
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 relative z-50">
+    <header className="bg-white shadow-sm border-b border-gray-200 fixed top-0 left-0 right-0 z-[9998]">
       <div className="flex items-center justify-between h-14 px-6">
         {/* Left Section - Company Name and Navigation */}
         <div className="flex items-center space-x-8">
