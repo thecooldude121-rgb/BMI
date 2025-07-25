@@ -26,8 +26,7 @@ const Header: React.FC = () => {
     { name: 'Leads', href: '/crm/leads', icon: UserPlus },
     { name: 'Accounts', href: '/crm/accounts', icon: Building },
     { name: 'Deals', href: '/crm/deals', icon: DollarSign },
-    { name: 'Activities', href: '/crm/activities', icon: Activity },
-    { name: 'Employees', href: '/crm/employees', icon: UserCheck }
+    { name: 'Activities', href: '/crm/activities', icon: Activity }
   ];
 
   const moreNavigation = [
@@ -40,6 +39,7 @@ const Header: React.FC = () => {
     { name: 'BI Board', href: '/analytics', icon: BarChart3 },
     { name: 'CRM', href: '/crm', icon: Users },
     { name: 'AI Meeting Intelligence', href: '/meeting-intelligence', icon: Brain },
+    { name: 'HRMS', href: '/hrms', icon: UserCheck },
     { name: 'Lead Generation', href: '/lead-generation', icon: Target },
     { name: 'Calendar', href: '/calendar', icon: Calendar },
     { name: 'Settings', href: '/settings', icon: Settings },
