@@ -7,6 +7,16 @@ import { aiInsightsService } from "./aiService";
 import { meetingIntelligenceService } from "./meetingIntelligence";
 import { aiGrowthService, AccountAnalysisData } from "./services/aiGrowthService";
 
+// Import HRMS schemas
+const { 
+  insertEmployeeSchema,
+  insertLeaveRequestSchema,
+  insertAttendanceSchema,
+  insertPerformanceReviewSchema,
+  insertTrainingProgramSchema,
+  insertTrainingEnrollmentSchema
+} = schema;
+
 // Helper function for error handling
 const handleError = (error: unknown, res: any) => {
   const message = error instanceof Error ? error.message : 'An unknown error occurred';
@@ -1742,6 +1752,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/seed-hrms-data", async (req, res) => {
+    try {
+      const { seedHRMSData } = await import("./hrms-seed");
+      const result = await seedHRMSData();
+      res.json({ success: true, message: "HRMS data seeded successfully", data: result });
+    } catch (error: any) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  });
+
   // Calendar Integration Routes
   app.post("/api/calendar/sync", async (req, res) => {
     try {
@@ -2215,6 +2235,459 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error triggering gamification action:', error);
       res.status(500).json({ error: 'Failed to trigger gamification action' });
+    }
+  });
+
+  // HRMS Employee Management Routes
+  app.get("/api/employees", async (req, res) => {
+    try {
+      const employees = await storage.getEmployees();
+      res.json(employees);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/employees/:id", async (req, res) => {
+    try {
+      const employee = await storage.getEmployee(req.params.id);
+      if (!employee) {
+        res.status(404).json({ error: "Employee not found" });
+        return;
+      }
+      res.json(employee);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/employees/user/:userId", async (req, res) => {
+    try {
+      const employee = await storage.getEmployeeByUserId(req.params.userId);
+      if (!employee) {
+        res.status(404).json({ error: "Employee not found" });
+        return;
+      }
+      res.json(employee);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/employees/department/:department", async (req, res) => {
+    try {
+      const employees = await storage.getEmployeesByDepartment(req.params.department);
+      res.json(employees);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/employees/manager/:managerId", async (req, res) => {
+    try {
+      const employees = await storage.getEmployeesByManager(req.params.managerId);
+      res.json(employees);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/employees", async (req, res) => {
+    try {
+      const result = insertEmployeeSchema.safeParse(req.body);
+      if (!result.success) {
+        res.status(400).json({ error: "Invalid employee data", details: result.error.issues });
+        return;
+      }
+      const employee = await storage.createEmployee(result.data);
+      res.status(201).json(employee);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.patch("/api/employees/:id", async (req, res) => {
+    try {
+      const employee = await storage.updateEmployee(req.params.id, req.body);
+      res.json(employee);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.delete("/api/employees/:id", async (req, res) => {
+    try {
+      const success = await storage.deleteEmployee(req.params.id);
+      if (!success) {
+        res.status(404).json({ error: "Employee not found" });
+        return;
+      }
+      res.status(204).send();
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // HRMS Leave Management Routes
+  app.get("/api/leave-requests", async (req, res) => {
+    try {
+      const requests = await storage.getLeaveRequests();
+      res.json(requests);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/leave-requests/:id", async (req, res) => {
+    try {
+      const request = await storage.getLeaveRequest(req.params.id);
+      if (!request) {
+        res.status(404).json({ error: "Leave request not found" });
+        return;
+      }
+      res.json(request);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/leave-requests/employee/:employeeId", async (req, res) => {
+    try {
+      const requests = await storage.getLeaveRequestsByEmployee(req.params.employeeId);
+      res.json(requests);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/leave-requests/status/:status", async (req, res) => {
+    try {
+      const requests = await storage.getLeaveRequestsByStatus(req.params.status);
+      res.json(requests);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/leave-requests", async (req, res) => {
+    try {
+      const result = insertLeaveRequestSchema.safeParse(req.body);
+      if (!result.success) {
+        res.status(400).json({ error: "Invalid leave request data", details: result.error.issues });
+        return;
+      }
+      const request = await storage.createLeaveRequest(result.data);
+      res.status(201).json(request);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.patch("/api/leave-requests/:id", async (req, res) => {
+    try {
+      const request = await storage.updateLeaveRequest(req.params.id, req.body);
+      res.json(request);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.delete("/api/leave-requests/:id", async (req, res) => {
+    try {
+      const success = await storage.deleteLeaveRequest(req.params.id);
+      if (!success) {
+        res.status(404).json({ error: "Leave request not found" });
+        return;
+      }
+      res.status(204).send();
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // HRMS Attendance Management Routes
+  app.get("/api/attendance", async (req, res) => {
+    try {
+      const attendance = await storage.getAttendance();
+      res.json(attendance);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/attendance/employee/:employeeId", async (req, res) => {
+    try {
+      const attendance = await storage.getAttendanceByEmployee(req.params.employeeId);
+      res.json(attendance);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/attendance/date/:date", async (req, res) => {
+    try {
+      const date = new Date(req.params.date);
+      const attendance = await storage.getAttendanceByDate(date);
+      res.json(attendance);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/attendance/range", async (req, res) => {
+    try {
+      const { startDate, endDate } = req.query;
+      if (!startDate || !endDate) {
+        res.status(400).json({ error: "Start date and end date are required" });
+        return;
+      }
+      const attendance = await storage.getAttendanceByDateRange(new Date(startDate as string), new Date(endDate as string));
+      res.json(attendance);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/attendance", async (req, res) => {
+    try {
+      const result = insertAttendanceSchema.safeParse(req.body);
+      if (!result.success) {
+        res.status(400).json({ error: "Invalid attendance data", details: result.error.issues });
+        return;
+      }
+      const attendance = await storage.createAttendance(result.data);
+      res.status(201).json(attendance);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.patch("/api/attendance/:id", async (req, res) => {
+    try {
+      const attendance = await storage.updateAttendance(req.params.id, req.body);
+      res.json(attendance);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/attendance/clock-in", async (req, res) => {
+    try {
+      const { employeeId, location } = req.body;
+      if (!employeeId) {
+        res.status(400).json({ error: "Employee ID is required" });
+        return;
+      }
+      const attendance = await storage.clockIn(employeeId, location);
+      res.status(201).json(attendance);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/attendance/clock-out", async (req, res) => {
+    try {
+      const { attendanceId } = req.body;
+      if (!attendanceId) {
+        res.status(400).json({ error: "Attendance ID is required" });
+        return;
+      }
+      const attendance = await storage.clockOut(attendanceId);
+      res.json(attendance);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // HRMS Performance Management Routes
+  app.get("/api/performance-reviews", async (req, res) => {
+    try {
+      const reviews = await storage.getPerformanceReviews();
+      res.json(reviews);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/performance-reviews/:id", async (req, res) => {
+    try {
+      const review = await storage.getPerformanceReview(req.params.id);
+      if (!review) {
+        res.status(404).json({ error: "Performance review not found" });
+        return;
+      }
+      res.json(review);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/performance-reviews/employee/:employeeId", async (req, res) => {
+    try {
+      const reviews = await storage.getPerformanceReviewsByEmployee(req.params.employeeId);
+      res.json(reviews);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/performance-reviews/reviewer/:reviewerId", async (req, res) => {
+    try {
+      const reviews = await storage.getPerformanceReviewsByReviewer(req.params.reviewerId);
+      res.json(reviews);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/performance-reviews", async (req, res) => {
+    try {
+      const result = insertPerformanceReviewSchema.safeParse(req.body);
+      if (!result.success) {
+        res.status(400).json({ error: "Invalid performance review data", details: result.error.issues });
+        return;
+      }
+      const review = await storage.createPerformanceReview(result.data);
+      res.status(201).json(review);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.patch("/api/performance-reviews/:id", async (req, res) => {
+    try {
+      const review = await storage.updatePerformanceReview(req.params.id, req.body);
+      res.json(review);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // HRMS Training Management Routes
+  app.get("/api/training-programs", async (req, res) => {
+    try {
+      const programs = await storage.getTrainingPrograms();
+      res.json(programs);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/training-programs/:id", async (req, res) => {
+    try {
+      const program = await storage.getTrainingProgram(req.params.id);
+      if (!program) {
+        res.status(404).json({ error: "Training program not found" });
+        return;
+      }
+      res.json(program);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/training-programs", async (req, res) => {
+    try {
+      const result = insertTrainingProgramSchema.safeParse(req.body);
+      if (!result.success) {
+        res.status(400).json({ error: "Invalid training program data", details: result.error.issues });
+        return;
+      }
+      const program = await storage.createTrainingProgram(result.data);
+      res.status(201).json(program);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.patch("/api/training-programs/:id", async (req, res) => {
+    try {
+      const program = await storage.updateTrainingProgram(req.params.id, req.body);
+      res.json(program);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/training-enrollments", async (req, res) => {
+    try {
+      const enrollments = await storage.getTrainingEnrollments();
+      res.json(enrollments);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/training-enrollments/employee/:employeeId", async (req, res) => {
+    try {
+      const enrollments = await storage.getTrainingEnrollmentsByEmployee(req.params.employeeId);
+      res.json(enrollments);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/training-enrollments/program/:programId", async (req, res) => {
+    try {
+      const enrollments = await storage.getTrainingEnrollmentsByProgram(req.params.programId);
+      res.json(enrollments);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/training-enrollments", async (req, res) => {
+    try {
+      const result = insertTrainingEnrollmentSchema.safeParse(req.body);
+      if (!result.success) {
+        res.status(400).json({ error: "Invalid training enrollment data", details: result.error.issues });
+        return;
+      }
+      const enrollment = await storage.createTrainingEnrollment(result.data);
+      res.status(201).json(enrollment);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.patch("/api/training-enrollments/:id", async (req, res) => {
+    try {
+      const enrollment = await storage.updateTrainingEnrollment(req.params.id, req.body);
+      res.json(enrollment);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // HRMS Analytics Routes
+  app.get("/api/hrms/metrics/employees", async (req, res) => {
+    try {
+      const metrics = await storage.getEmployeeMetrics();
+      res.json(metrics);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/hrms/metrics/attendance", async (req, res) => {
+    try {
+      const { startDate, endDate } = req.query;
+      const start = startDate ? new Date(startDate as string) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const end = endDate ? new Date(endDate as string) : new Date();
+      
+      const metrics = await storage.getAttendanceMetrics(start, end);
+      res.json(metrics);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/hrms/metrics/leave", async (req, res) => {
+    try {
+      const metrics = await storage.getLeaveMetrics();
+      res.json(metrics);
+    } catch (error) {
+      handleError(error, res);
     }
   });
 
