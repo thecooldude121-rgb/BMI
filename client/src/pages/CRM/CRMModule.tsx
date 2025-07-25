@@ -8,7 +8,7 @@ import BasicAccountsPage from './BasicAccountsPage';
 import TestAccountDetailPage from './TestAccountDetailPage';
 import SimpleTestPage from './SimpleTestPage';
 import WorkingAccountDetail from './WorkingAccountDetail';
-import DebugRouter from './DebugRouter';
+
 import AccountHealthDashboard from './AccountHealthDashboard';
 import SimpleAdvancedDealsModule from './SimpleAdvancedDealsModule';
 import NextGenActivitiesModule from './NextGenActivitiesModule';
@@ -20,10 +20,8 @@ const CRMModule = () => {
   
   return (
     <div className="h-full overflow-auto bg-gray-50">
-      <DebugRouter />
-      <div style={{ padding: '10px', backgroundColor: 'yellow', marginBottom: '10px' }}>
-        DEBUG: CRM Module is loading
-      </div>
+
+
       <Switch>
         <Route path="/crm/leads/:id" component={LeadDetailPage} />
         <Route path="/crm/leads" component={NextGenLeadsModule} />

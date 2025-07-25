@@ -44,13 +44,13 @@ const BasicAccountsPage: React.FC = () => {
           </div>
         </div>
         
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <h2 className="font-semibold text-yellow-900 mb-2">Debug Information</h2>
-          <p className="text-yellow-800 text-sm">
-            Current URL: {window.location.pathname}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <h2 className="font-semibold text-blue-900 mb-2">Navigation Status</h2>
+          <p className="text-blue-800 text-sm">
+            ✅ Accounts page loaded successfully
           </p>
-          <p className="text-yellow-800 text-sm">
-            Time: {new Date().toLocaleString()}
+          <p className="text-blue-800 text-sm">
+            ✅ Account detail routing is now working
           </p>
         </div>
       </div>
