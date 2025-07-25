@@ -1,6 +1,14 @@
 import React from 'react';
+import { useLocation } from 'wouter';
 
 const BasicAccountsPage: React.FC = () => {
+  const [, setLocation] = useLocation();
+
+  const handleAccountClick = (accountId: string) => {
+    console.log('Navigating to account:', accountId);
+    setLocation(`/crm/accounts/${accountId}`);
+  };
+
   return (
     <div className="p-6 min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto">
@@ -13,7 +21,7 @@ const BasicAccountsPage: React.FC = () => {
               <h3 className="font-semibold text-blue-900">Test Account 1</h3>
               <p className="text-blue-700 text-sm">ID: test-123</p>
               <button 
-                onClick={() => window.location.href = '/crm/accounts/test-123'}
+                onClick={() => handleAccountClick('test-123')}
                 className="mt-2 bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
               >
                 View Details
@@ -24,7 +32,7 @@ const BasicAccountsPage: React.FC = () => {
               <h3 className="font-semibold text-green-900">Test Account 2</h3>
               <p className="text-green-700 text-sm">ID: test-456</p>
               <button 
-                onClick={() => window.location.href = '/crm/accounts/test-456'}
+                onClick={() => handleAccountClick('test-456')}
                 className="mt-2 bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700"
               >
                 View Details
@@ -35,7 +43,7 @@ const BasicAccountsPage: React.FC = () => {
               <h3 className="font-semibold text-purple-900">Test Account 3</h3>
               <p className="text-purple-700 text-sm">ID: test-789</p>
               <button 
-                onClick={() => window.location.href = '/crm/accounts/test-789'}
+                onClick={() => handleAccountClick('test-789')}
                 className="mt-2 bg-purple-600 text-white px-3 py-1 rounded text-sm hover:bg-purple-700"
               >
                 View Details

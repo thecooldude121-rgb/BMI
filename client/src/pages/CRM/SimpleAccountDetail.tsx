@@ -1,8 +1,14 @@
 import React from 'react';
-import { useParams } from 'wouter';
+import { useParams, useLocation } from 'wouter';
 
 const SimpleAccountDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const [, setLocation] = useLocation();
+
+  const handleBackToAccounts = () => {
+    console.log('Navigating back to accounts');
+    setLocation('/crm/accounts');
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -54,7 +60,7 @@ const SimpleAccountDetail: React.FC = () => {
               <h2 className="text-xl font-semibold text-gray-900">Quick Actions</h2>
               <div className="space-y-3">
                 <button 
-                  onClick={() => window.location.href = '/crm/accounts'}
+                  onClick={handleBackToAccounts}
                   className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
                 >
                   ← Back to Accounts List
