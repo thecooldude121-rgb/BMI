@@ -67,8 +67,28 @@ const CRMModule = () => {
           </div>
         </Route>
         <Route path="/crm">
-          <div className="min-h-screen w-full">
-            <GamificationModule />
+          <div className="min-h-screen w-full bg-slate-900 p-8">
+            <div className="text-white text-2xl mb-4">CRM Gamification Dashboard</div>
+            <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl p-6">
+              <h2 className="text-xl font-bold text-white mb-4">Welcome back, Champion!</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg p-4">
+                  <div className="text-white font-semibold">Level 12</div>
+                  <div className="text-white/80">Elite Closer</div>
+                  <div className="text-white text-2xl font-bold">2,847 XP</div>
+                </div>
+                <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-lg p-4">
+                  <div className="text-white font-semibold">Streak</div>
+                  <div className="text-white text-2xl font-bold">23 Days</div>
+                  <div className="text-white/80">Keep it up!</div>
+                </div>
+                <div className="bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg p-4">
+                  <div className="text-white font-semibold">Badges</div>
+                  <div className="text-white text-2xl font-bold">18</div>
+                  <div className="text-white/80">Collected</div>
+                </div>
+              </div>
+            </div>
           </div>
         </Route>
       </Switch>
