@@ -4,6 +4,7 @@ import NextGenLeadsModule from './NextGenLeadsModule';
 import LeadDetailPage from './LeadDetailPage';
 import EnterpriseContactsModule from './EnterpriseContactsModule';
 import NextGenAccountModule from './NextGenAccountModule';
+import BasicAccountsPage from './BasicAccountsPage';
 import TestAccountDetailPage from './TestAccountDetailPage';
 import SimpleTestPage from './SimpleTestPage';
 import WorkingAccountDetail from './WorkingAccountDetail';
@@ -24,25 +25,24 @@ const CRMModule = () => {
         DEBUG: CRM Module is loading
       </div>
       <Switch>
-        <Route path="~/leads/:id" component={LeadDetailPage} />
-        <Route path="~/leads" component={NextGenLeadsModule} />
-        <Route path="~/contacts/:id" component={() => <div>Contact Detail Page Coming Soon</div>} />
-        <Route path="~/contacts">
+        <Route path="/crm/leads/:id" component={LeadDetailPage} />
+        <Route path="/crm/leads" component={NextGenLeadsModule} />
+        <Route path="/crm/contacts/:id" component={() => <div>Contact Detail Page Coming Soon</div>} />
+        <Route path="/crm/contacts">
           <EnterpriseContactsModule />
         </Route>
-        <Route path="~/accounts/health" component={AccountHealthDashboard} />
-        <Route path="~/accounts/test" component={SimpleTestPage} />
-
-        <Route path="~/accounts">
-          <NextGenAccountModule />
+        <Route path="/crm/accounts/health" component={AccountHealthDashboard} />
+        <Route path="/crm/accounts/test" component={SimpleTestPage} />
+        <Route path="/crm/accounts">
+          <BasicAccountsPage />
         </Route>
-        <Route path="~/deals">
+        <Route path="/crm/deals">
           <SimpleAdvancedDealsModule />
         </Route>
-        <Route path="~/activities">
+        <Route path="/crm/activities">
           <NextGenActivitiesModule />
         </Route>
-        <Route path="~/gamification">
+        <Route path="/crm/gamification">
           <div className="p-6">
             <h1 className="text-2xl font-bold mb-4">Gamification</h1>
             <div className="bg-white rounded-lg p-6">
@@ -50,7 +50,7 @@ const CRMModule = () => {
             </div>
           </div>
         </Route>
-        <Route path="~/tasks">
+        <Route path="/crm/tasks">
           <div className="p-6">
             <h1 className="text-2xl font-bold mb-4">Tasks</h1>
             <div className="bg-white rounded-lg p-6">
@@ -58,7 +58,7 @@ const CRMModule = () => {
             </div>
           </div>
         </Route>
-        <Route path="~/pipeline">
+        <Route path="/crm/pipeline">
           <div className="p-6">
             <h1 className="text-2xl font-bold mb-4">Sales Pipeline</h1>
             <div className="bg-white rounded-lg p-6">
@@ -67,7 +67,7 @@ const CRMModule = () => {
           </div>
         </Route>
         <Route path="/crm">
-          <DiagnosticPage />
+          <BasicAccountsPage />
         </Route>
       </Switch>
     </div>
