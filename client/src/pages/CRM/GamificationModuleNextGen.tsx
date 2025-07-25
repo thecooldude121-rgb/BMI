@@ -56,7 +56,7 @@ export function GamificationModule() {
               className={`relative px-4 py-2 rounded-xl font-medium text-sm transition-all duration-200 flex items-center space-x-2 ${
                 activeTab === tab.key
                   ? 'bg-gradient-to-r from-purple-500 to-cyan-500 text-white shadow-lg'
-                  : 'text-gray-300 hover:text-white hover:bg-white/10'
+                  : 'text-white/90 hover:text-white hover:bg-white/10'
               }`}
             >
               <tab.icon className="w-4 h-4" />
