@@ -14,7 +14,7 @@ import TasksPage from './pages/CRM/TasksPage';
 import CreateDealWizard from './components/Deal/CreateDealWizard';
 
 import DealDetailPage from './components/Deal/DealDetailPage';
-import HRMSModule from './pages/HRMS/HRMSModule';
+
 import Analytics from './pages/Analytics/Analytics';
 import Calendar from './pages/Calendar/Calendar';
 import LeadGeneration from './pages/LeadGeneration/LeadGeneration';
@@ -55,7 +55,7 @@ const App = () => {
                 </div>
               )} />
               <Route path="/crm/:rest*" component={CRMModule} />
-              <Route path="/hrms" component={HRMSModule} />
+
               <Route path="/analytics" component={Analytics} />
               <Route path="/calendar" component={Calendar} />
               <Route path="/meeting-intelligence" component={MeetingIntelligencePage} />
