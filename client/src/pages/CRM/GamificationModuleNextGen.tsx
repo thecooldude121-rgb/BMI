@@ -34,7 +34,7 @@ export function GamificationModule() {
   };
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen w-full">
       {/* Ultra-modern tab navigation overlay - Fixed and Frozen */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -86,7 +86,7 @@ export function GamificationModule() {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.3 }}
-          className="pt-28"
+          className="pt-28 relative z-0"
         >
           {renderNextGenContent()}
         </motion.div>
