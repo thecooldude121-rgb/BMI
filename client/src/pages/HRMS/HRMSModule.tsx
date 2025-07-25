@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Switch, Route, Link, useLocation } from 'wouter';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Users, Clock, Calendar, BarChart3, Award, BookOpen, DollarSign, Settings,
-  UserPlus, Briefcase, Brain, Target, Zap, Globe, Shield, TrendingUp
+  UserPlus, Briefcase, Brain, Target, Zap, Globe, Shield, TrendingUp,
+  ChevronLeft, ChevronRight, Menu
 } from 'lucide-react';
 import EmployeesPage from './EmployeesPage';
 import AttendancePage from './AttendancePage';
@@ -40,6 +41,7 @@ const SettingsPlaceholder: React.FC = () => (
 
 const HRMSModule: React.FC = () => {
   const [location] = useLocation();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   
   const tabs = [
     { id: 'employees', name: 'Employees', icon: Users, path: '/hrms/employees', description: 'Workforce Management' },
@@ -62,46 +64,56 @@ const HRMSModule: React.FC = () => {
   const activeSection = getActiveSection();
 
   return (
-    <div className="h-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-white dark:from-slate-900 dark:via-blue-900/10 dark:to-slate-800">
-      {/* Enhanced Header */}
-      <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm border-b border-slate-200 dark:border-slate-700 shadow-sm">
-        <div className="px-6 py-4">
+    <div className="h-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-white dark:from-slate-900 dark:via-blue-900/10 dark:to-slate-800 flex">
+      {/* Collapsible Sidebar */}
+      <motion.div
+        initial={false}
+        animate={{ width: sidebarCollapsed ? 80 : 280 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm border-r border-slate-200 dark:border-slate-700 shadow-lg flex flex-col relative"
+      >
+        {/* Sidebar Header */}
+        <div className="p-4 border-b border-slate-200 dark:border-slate-700">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
-                <Users className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
-                  AI-Powered HRMS Platform
-                </h1>
-                <p className="text-slate-600 dark:text-slate-400 mt-1 flex items-center space-x-2">
-                  <Zap className="w-4 h-4 text-yellow-500" />
-                  <span>Comprehensive Employee Lifecycle Management</span>
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-6">
-              <div className="flex items-center space-x-2 px-3 py-1.5 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-full">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-sm font-medium text-green-700 dark:text-green-400">
-                  AI Active
-                </span>
-              </div>
-              <div className="flex items-center space-x-2 text-slate-600 dark:text-slate-400">
-                <Globe className="w-4 h-4" />
-                <span className="text-sm">Multi-tenant Ready</span>
-              </div>
-              <div className="flex items-center space-x-2 text-slate-600 dark:text-slate-400">
-                <Shield className="w-4 h-4" />
-                <span className="text-sm">Enterprise Security</span>
-              </div>
-            </div>
+            <AnimatePresence mode="wait">
+              {!sidebarCollapsed && (
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.2 }}
+                  className="flex items-center space-x-3"
+                >
+                  <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
+                    <Users className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-lg font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+                      HRMS Platform
+                    </h1>
+                    <p className="text-xs text-slate-600 dark:text-slate-400">AI-Powered</p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            
+            <motion.button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              {sidebarCollapsed ? (
+                <ChevronRight className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+              ) : (
+                <ChevronLeft className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+              )}
+            </motion.button>
           </div>
         </div>
 
-        {/* Enhanced Navigation Tabs */}
-        <div className="flex space-x-0 overflow-x-auto bg-slate-50/50 dark:bg-slate-800/50">
+        {/* Navigation Items */}
+        <div className="flex-1 overflow-y-auto py-4">
           {tabs.map((tab) => {
             const isActive = location.startsWith(tab.path);
             const Icon = tab.icon;
@@ -110,43 +122,120 @@ const HRMSModule: React.FC = () => {
               <Link key={tab.id} href={tab.path}>
                 <motion.div
                   className={`
-                    flex flex-col items-center justify-center px-4 py-3 border-b-2 cursor-pointer
-                    transition-all duration-300 whitespace-nowrap min-w-[120px]
+                    mx-2 mb-1 rounded-lg cursor-pointer transition-all duration-200
                     ${isActive 
-                      ? 'border-blue-500 bg-gradient-to-t from-blue-50 to-white dark:from-blue-900/30 dark:to-slate-800 text-blue-600 dark:text-blue-400 shadow-sm' 
-                      : 'border-transparent hover:border-slate-300 hover:bg-gradient-to-t hover:from-slate-50 hover:to-white dark:hover:from-slate-700/50 dark:hover:to-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                      ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 shadow-sm border border-blue-200 dark:border-blue-800' 
+                      : 'hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                     }
                   `}
-                  whileHover={{ y: -2, scale: 1.02 }}
-                  whileTap={{ y: 0, scale: 0.98 }}
-                  initial={false}
-                  animate={isActive ? { y: -1 } : { y: 0 }}
+                  whileHover={{ x: 2 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <Icon className={`w-5 h-5 mb-1 ${isActive ? 'text-blue-600 dark:text-blue-400' : ''}`} />
-                  <span className="font-medium text-xs">{tab.name}</span>
-                  <span className="text-xs opacity-75 mt-0.5">{tab.description}</span>
+                  <div className={`flex items-center ${sidebarCollapsed ? 'justify-center py-3' : 'px-3 py-2.5'}`}>
+                    <Icon className={`${sidebarCollapsed ? 'w-5 h-5' : 'w-4 h-4'} ${isActive ? 'text-blue-600 dark:text-blue-400' : ''}`} />
+                    
+                    <AnimatePresence mode="wait">
+                      {!sidebarCollapsed && (
+                        <motion.div
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: -10 }}
+                          transition={{ duration: 0.2 }}
+                          className="ml-3 flex-1"
+                        >
+                          <div className="text-sm font-medium">{tab.name}</div>
+                          <div className="text-xs opacity-75">{tab.description}</div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 </motion.div>
               </Link>
             );
           })}
         </div>
-      </div>
 
-      {/* Main Content with Enhanced Layout */}
-      <div className="flex-1 overflow-auto">
-        <Switch>
-          <Route path="/hrms/employees" component={EmployeesPage} />
-          <Route path="/hrms/onboarding" component={OnboardingPage} />
-          <Route path="/hrms/recruitment" component={RecruitmentPage} />
-          <Route path="/hrms/performance" component={PerformancePage} />
-          <Route path="/hrms/learning" component={LearningPage} />
-          <Route path="/hrms/attendance" component={AttendancePage} />
-          <Route path="/hrms/leave" component={LeavePage} />
-          <Route path="/hrms/payroll" component={PayrollPage} />
-          <Route path="/hrms/analytics" component={AnalyticsPage} />
-          <Route path="/hrms/settings" component={SettingsPlaceholder} />
-          <Route path="/hrms" component={EmployeesPage} />
-        </Switch>
+        {/* Status Indicators in Sidebar */}
+        <div className="p-4 border-t border-slate-200 dark:border-slate-700">
+          <AnimatePresence mode="wait">
+            {!sidebarCollapsed ? (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.2 }}
+                className="space-y-2"
+              >
+                <div className="flex items-center space-x-2 px-2 py-1 bg-green-50 dark:bg-green-900/20 rounded-md">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-xs font-medium text-green-700 dark:text-green-300">System Online</span>
+                </div>
+                <div className="flex items-center space-x-2 px-2 py-1 bg-blue-50 dark:bg-blue-900/20 rounded-md">
+                  <Brain className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+                  <span className="text-xs font-medium text-blue-700 dark:text-blue-300">AI Analytics</span>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.2 }}
+                className="flex flex-col items-center space-y-2"
+              >
+                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                <Brain className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </motion.div>
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Main Header */}
+        <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm border-b border-slate-200 dark:border-slate-700 shadow-sm">
+          <div className="px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+                  {activeSection.name}
+                </h1>
+                <div className="flex items-center space-x-2 text-slate-600 dark:text-slate-400">
+                  <Zap className="w-4 h-4 text-yellow-500" />
+                  <span className="text-sm">{activeSection.description}</span>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-700 rounded-full">
+                  <Globe className="w-3 h-3 text-green-500" />
+                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Enterprise</span>
+                </div>
+                <div className="flex items-center space-x-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-700 rounded-full">
+                  <Shield className="w-3 h-3 text-blue-500" />
+                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300">SOC 2</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 overflow-auto">
+          <Switch>
+            <Route path="/hrms/employees" component={EmployeesPage} />
+            <Route path="/hrms/onboarding" component={OnboardingPage} />
+            <Route path="/hrms/recruitment" component={RecruitmentPage} />
+            <Route path="/hrms/performance" component={PerformancePage} />
+            <Route path="/hrms/learning" component={LearningPage} />
+            <Route path="/hrms/attendance" component={AttendancePage} />
+            <Route path="/hrms/leave" component={LeavePage} />
+            <Route path="/hrms/payroll" component={PayrollPage} />
+            <Route path="/hrms/analytics" component={AnalyticsPage} />
+            <Route path="/hrms/settings" component={SettingsPlaceholder} />
+            <Route path="/hrms" component={EmployeesPage} />
+          </Switch>
+        </div>
       </div>
     </div>
   );
