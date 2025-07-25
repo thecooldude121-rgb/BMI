@@ -14,6 +14,30 @@ import PayrollPage from './PayrollPage';
 import AnalyticsPage from './AnalyticsPage';
 import PerformancePage from './PerformancePage';
 
+// Placeholder components for missing routes
+const LeavePage: React.FC = () => (
+  <div className="p-8 text-center">
+    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Leave Management</h2>
+    <p className="text-gray-600 dark:text-gray-400">Coming soon - comprehensive leave management system</p>
+  </div>
+);
+
+const SettingsPlaceholder: React.FC = () => (
+  <div className="p-8 max-w-4xl mx-auto">
+    <div className="bg-gradient-to-r from-slate-50 to-gray-50 dark:from-slate-800/50 dark:to-gray-800/50 rounded-xl p-8 border border-slate-200 dark:border-slate-700">
+      <div className="text-center">
+        <Settings className="w-16 h-16 text-slate-500 mx-auto mb-4" />
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+          Enterprise Configuration
+        </h2>
+        <p className="text-slate-700 dark:text-slate-300 mb-4">
+          Comprehensive HRMS settings, integrations, and system configuration
+        </p>
+      </div>
+    </div>
+  </div>
+);
+
 const HRMSModule: React.FC = () => {
   const [location] = useLocation();
   
@@ -117,7 +141,7 @@ const HRMSModule: React.FC = () => {
           <Route path="/hrms/performance" component={PerformancePage} />
           <Route path="/hrms/learning" component={LearningPage} />
           <Route path="/hrms/attendance" component={AttendancePage} />
-          <Route path="/hrms/leave" component={LeaveManagementPlaceholder} />
+          <Route path="/hrms/leave" component={LeavePage} />
           <Route path="/hrms/payroll" component={PayrollPage} />
           <Route path="/hrms/analytics" component={AnalyticsPage} />
           <Route path="/hrms/settings" component={SettingsPlaceholder} />
@@ -128,8 +152,8 @@ const HRMSModule: React.FC = () => {
   );
 };
 
-// Enhanced Placeholder Components
-const LeaveManagementPlaceholder: React.FC = () => (
+// Enhanced Leave Management Placeholder
+const EnhancedLeavePage: React.FC = () => (
   <div className="p-8 max-w-4xl mx-auto">
     <div className="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-xl p-8 border border-orange-200 dark:border-orange-800">
       <div className="text-center">
@@ -144,27 +168,6 @@ const LeaveManagementPlaceholder: React.FC = () => (
           <span className="px-3 py-1 bg-orange-100 dark:bg-orange-900/40 text-orange-800 dark:text-orange-200 rounded-full">Smart Scheduling</span>
           <span className="px-3 py-1 bg-orange-100 dark:bg-orange-900/40 text-orange-800 dark:text-orange-200 rounded-full">Team Coverage</span>
           <span className="px-3 py-1 bg-orange-100 dark:bg-orange-900/40 text-orange-800 dark:text-orange-200 rounded-full">Compliance Tracking</span>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const SettingsPlaceholder: React.FC = () => (
-  <div className="p-8 max-w-4xl mx-auto">
-    <div className="bg-gradient-to-r from-slate-50 to-gray-50 dark:from-slate-800/50 dark:to-gray-800/50 rounded-xl p-8 border border-slate-200 dark:border-slate-700">
-      <div className="text-center">
-        <Settings className="w-16 h-16 text-slate-500 mx-auto mb-4" />
-        <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-          Enterprise Configuration
-        </h2>
-        <p className="text-slate-700 dark:text-slate-300 mb-4">
-          Multi-tenant setup, integrations, compliance, and system administration
-        </p>
-        <div className="flex flex-wrap justify-center gap-2 text-sm">
-          <span className="px-3 py-1 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-full">Multi-Tenant</span>
-          <span className="px-3 py-1 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-full">API Integrations</span>
-          <span className="px-3 py-1 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-full">Security</span>
         </div>
       </div>
     </div>
