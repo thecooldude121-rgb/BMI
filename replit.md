@@ -11,6 +11,9 @@ This is a comprehensive CRM and Business Management Intelligence platform succes
 - **API**: RESTful API with comprehensive CRUD operations
 
 ## Recent Changes
+- **2025-01-25**: ✅ FIXED CRITICAL ACTIVITIES MODULE ISSUE: Resolved activities/metrics API route 500 error by fixing route ordering conflict where `/api/activities/:id` was intercepting `/api/activities/metrics` and treating "metrics" as UUID parameter, causing database syntax errors. Moved specific routes before parameterized routes to ensure proper routing.
+- **2025-01-25**: ✅ Activities Module now fully functional with proper data synchronization between metrics dashboard and detailed activities list. Successfully processing 855+ activities with accurate calculations for total activities, open activities, completed today, overdue activities, average completion time, and completion rates.
+- **2025-01-25**: Enhanced Activities Module metrics API with comprehensive error handling, safe date parsing, fallback values, and detailed logging for debugging and monitoring.
 - **2025-01-25**: Successfully implemented comprehensive CRM Gamification Module with complete backend and frontend integration including:
   * Created comprehensive gamification database schema with 10+ new tables: gamificationBadges, userGamificationProfiles, gamificationActions, gamificationChallenges, challengeParticipants, gamificationRewards, userRewardClaims, gamificationStreaks, peerRecognitions, gamificationNotifications
   * Built complete gamification API layer with 25+ routes for all gamification features: badges, profiles, actions, challenges, leaderboards, rewards, streaks, notifications, and peer recognition
