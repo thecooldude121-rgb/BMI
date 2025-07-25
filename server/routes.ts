@@ -1267,6 +1267,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI-Powered Activity Suggestions
+  app.get("/api/activities/ai-suggestions", async (req, res) => {
+    try {
+      const { aiActivitySuggestionEngine } = await import('./ai-activity-suggestions');
+      const userId = req.query.userId as string || '1';
+      
+      console.log('🤖 Generating AI activity suggestions...');
+      const suggestions = await aiActivitySuggestionEngine.generateSuggestions(userId);
+      console.log(`✨ Generated ${suggestions.length} AI suggestions`);
+      
+      res.json(suggestions);
+    } catch (error) {
+      console.error('❌ Error generating AI suggestions:', error);
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/activities/ai-suggestions/accept", async (req, res) => {
+    try {
+      const { suggestionId, customizations } = req.body;
+      
+      // Extract activity data from suggestion and create activity
+      const activityData = {
+        subject: customizations.title || 'AI Suggested Activity',
+        type: customizations.type || 'task',
+        priority: customizations.priority || 'medium',
+        status: 'planned',
+        scheduledAt: customizations.scheduledAt || new Date(),
+        duration: customizations.duration || 30,
+        description: customizations.description,
+        assignedTo: req.body.userId || '1',
+        createdBy: req.body.userId || '1',
+        ...(customizations.relatedToType === 'lead' && { leadId: customizations.relatedToId }),
+        ...(customizations.relatedToType === 'deal' && { dealId: customizations.relatedToId }),
+        ...(customizations.relatedToType === 'contact' && { contactId: customizations.relatedToId }),
+        ...(customizations.relatedToType === 'account' && { accountId: customizations.relatedToId }),
+      };
+
+      const activity = await storage.createActivity(activityData);
+      
+      console.log(`✅ Created activity from AI suggestion: ${suggestionId}`);
+      res.status(201).json(activity);
+    } catch (error) {
+      console.error('❌ Error accepting AI suggestion:', error);
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/activities/ai-suggestions/feedback", async (req, res) => {
+    try {
+      const { suggestionId, helpful, reason } = req.body;
+      
+      // In a real implementation, this would be stored for ML model improvement
+      console.log(`📊 AI Suggestion Feedback - ID: ${suggestionId}, Helpful: ${helpful}, Reason: ${reason}`);
+      
+      res.json({ success: true, message: 'Feedback recorded' });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
   app.post("/api/activities/from-template", async (req, res) => {
     try {
       const { templateId, relatedToType, relatedToId, customFields } = req.body;
