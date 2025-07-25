@@ -64,6 +64,16 @@ export const recommendationTypeEnum = pgEnum('recommendation_type', ['upsell', '
 export const recommendationPriorityEnum = pgEnum('recommendation_priority', ['low', 'medium', 'high', 'critical']);
 export const recommendationStatusEnum = pgEnum('recommendation_status', ['pending', 'in_review', 'approved', 'implemented', 'rejected', 'expired']);
 
+// Gamification enums
+export const gamificationActionTypeEnum = pgEnum('gamification_action_type', ['lead_created', 'lead_qualified', 'deal_created', 'deal_won', 'deal_lost', 'activity_completed', 'call_made', 'email_sent', 'meeting_scheduled', 'task_completed', 'note_added', 'contact_created', 'account_created', 'daily_login', 'weekly_streak', 'monthly_goal', 'training_completed', 'profile_updated', 'team_collaboration', 'peer_recognition', 'challenge_completed']);
+export const badgeTypeEnum = pgEnum('badge_type', ['achievement', 'milestone', 'skill', 'social', 'streak', 'competition', 'leadership', 'learning']);
+export const challengeTypeEnum = pgEnum('challenge_type', ['individual', 'team', 'company_wide', 'department']);
+export const challengeStatusEnum = pgEnum('challenge_status', ['draft', 'active', 'paused', 'completed', 'cancelled']);
+export const challengeDifficultyEnum = pgEnum('challenge_difficulty', ['easy', 'medium', 'hard', 'expert']);
+export const rewardTypeEnum = pgEnum('reward_type', ['points', 'badge', 'certificate', 'physical_item', 'experience', 'privilege', 'recognition']);
+export const rewardStatusEnum = pgEnum('reward_status', ['available', 'claimed', 'redeemed', 'expired']);
+export const recognitionTypeEnum = pgEnum('recognition_type', ['kudos', 'thanks', 'high_five', 'appreciation', 'nomination', 'testimonial']);
+
 export const accounts: any = pgTable("accounts", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
@@ -1323,3 +1333,237 @@ export type LeadAssignmentRule = typeof leadAssignmentRules.$inferSelect;
 
 export type GrowthRecommendation = typeof growthRecommendations.$inferSelect;
 export type InsertGrowthRecommendation = z.infer<typeof insertGrowthRecommendationSchema>;
+
+// Enhanced Gamification Tables
+export const gamificationActions = pgTable("gamification_actions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  actionType: gamificationActionTypeEnum("action_type").notNull(),
+  targetEntity: text("target_entity"), // leads, deals, contacts, accounts, activities
+  entityId: uuid("entity_id"),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  points: integer("points").notNull().default(0),
+  multiplier: decimal("multiplier", { precision: 3, scale: 2 }).default('1.00'),
+  context: jsonb("context"), // Additional action metadata
+  timestamp: timestamp("timestamp").notNull().defaultNow(),
+  processed: boolean("processed").notNull().default(false),
+  challengeId: uuid("challenge_id").references(() => gamificationChallenges.id),
+  teamId: uuid("team_id")
+});
+
+export const gamificationBadges = pgTable("gamification_badges", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  badgeType: badgeTypeEnum("badge_type").notNull(),
+  criteria: jsonb("criteria").notNull(), // Conditions for earning the badge
+  iconUrl: text("icon_url"),
+  iconColor: text("icon_color").default('#3B82F6'),
+  points: integer("points").notNull().default(0),
+  rarity: text("rarity").default('common'), // common, rare, epic, legendary
+  isActive: boolean("is_active").notNull().default(true),
+  validFrom: timestamp("valid_from").defaultNow(),
+  validUntil: timestamp("valid_until"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+export const userGamificationProfiles = pgTable("user_gamification_profiles", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }).unique(),
+  totalXP: integer("total_xp").notNull().default(0),
+  currentLevel: integer("current_level").notNull().default(1),
+  levelProgress: decimal("level_progress", { precision: 5, scale: 2 }).default('0.00'),
+  totalBadges: integer("total_badges").notNull().default(0),
+  longestStreak: integer("longest_streak").notNull().default(0),
+  currentStreak: integer("current_streak").notNull().default(0),
+  lastActiveDate: timestamp("last_active_date"),
+  leaderboardRank: integer("leaderboard_rank"),
+  teamId: uuid("team_id"),
+  title: text("title").default('Newcomer'),
+  bio: text("bio"),
+  preferences: jsonb("preferences").default('{}'),
+  achievements: jsonb("achievements").default('[]'),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+export const userBadgeEarnings = pgTable("user_badge_earnings", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  badgeId: uuid("badge_id").notNull().references(() => gamificationBadges.id, { onDelete: 'cascade' }),
+  earnedAt: timestamp("earned_at").notNull().defaultNow(),
+  context: jsonb("context"), // How it was earned
+  notified: boolean("notified").notNull().default(false),
+  displayOrder: integer("display_order").default(0)
+});
+
+export const gamificationChallenges = pgTable("gamification_challenges", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  challengeType: challengeTypeEnum("challenge_type").notNull(),
+  status: challengeStatusEnum("status").notNull().default('draft'),
+  difficulty: challengeDifficultyEnum("difficulty").notNull().default('medium'),
+  goal: jsonb("goal").notNull(), // Target metrics and conditions
+  progress: jsonb("progress").default('{}'), // Current progress tracking
+  rewards: jsonb("rewards").default('[]'), // Points, badges, items
+  participants: jsonb("participants").default('[]'), // User/team IDs
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
+  createdBy: uuid("created_by").notNull().references(() => users.id),
+  teamId: uuid("team_id"),
+  departmentId: uuid("department_id"),
+  isPublic: boolean("is_public").notNull().default(true),
+  maxParticipants: integer("max_participants"),
+  autoEnroll: boolean("auto_enroll").notNull().default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+export const challengeParticipants = pgTable("challenge_participants", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  challengeId: uuid("challenge_id").notNull().references(() => gamificationChallenges.id, { onDelete: 'cascade' }),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  teamId: uuid("team_id"),
+  joinedAt: timestamp("joined_at").notNull().defaultNow(),
+  progress: jsonb("progress").default('{}'),
+  currentRank: integer("current_rank"),
+  status: text("status").default('active'), // active, completed, dropped_out
+  completedAt: timestamp("completed_at"),
+  finalScore: integer("final_score").default(0)
+});
+
+export const gamificationRewards = pgTable("gamification_rewards", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  rewardType: rewardTypeEnum("reward_type").notNull(),
+  cost: integer("cost").notNull(), // XP cost
+  value: text("value"), // Monetary or practical value
+  imageUrl: text("image_url"),
+  category: text("category"),
+  stock: integer("stock").default(-1), // -1 for unlimited
+  isActive: boolean("is_active").notNull().default(true),
+  requirements: jsonb("requirements").default('{}'), // Level, badges required
+  expiresAfter: integer("expires_after"), // Days after claiming
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+export const userRewardClaims = pgTable("user_reward_claims", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  rewardId: uuid("reward_id").notNull().references(() => gamificationRewards.id, { onDelete: 'cascade' }),
+  status: rewardStatusEnum("status").notNull().default('claimed'),
+  claimedAt: timestamp("claimed_at").notNull().defaultNow(),
+  redeemedAt: timestamp("redeemed_at"),
+  expiresAt: timestamp("expires_at"),
+  notes: text("notes"),
+  adminNotes: text("admin_notes")
+});
+
+export const peerRecognitions = pgTable("peer_recognitions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  fromUserId: uuid("from_user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  toUserId: uuid("to_user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  recognitionType: recognitionTypeEnum("recognition_type").notNull(),
+  message: text("message").notNull(),
+  points: integer("points").notNull().default(5),
+  isPublic: boolean("is_public").notNull().default(true),
+  context: jsonb("context"), // Related CRM entity
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  acknowledgedAt: timestamp("acknowledged_at")
+});
+
+export const gamificationLeaderboards = pgTable("gamification_leaderboards", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  description: text("description"),
+  type: text("type").notNull(), // weekly, monthly, quarterly, yearly, all_time
+  metric: text("metric").notNull(), // xp, badges, deals_won, activities_completed
+  period: text("period").notNull(), // current, previous
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date"),
+  rankings: jsonb("rankings").default('[]'),
+  isActive: boolean("is_active").notNull().default(true),
+  teamId: uuid("team_id"),
+  departmentId: uuid("department_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+export const gamificationStreaks = pgTable("gamification_streaks", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  streakType: text("streak_type").notNull(), // daily_login, activity_completion, deal_creation
+  currentCount: integer("current_count").notNull().default(0),
+  longestCount: integer("longest_count").notNull().default(0),
+  lastActivityDate: timestamp("last_activity_date"),
+  startDate: timestamp("start_date").notNull().defaultNow(),
+  isActive: boolean("is_active").notNull().default(true),
+  metadata: jsonb("metadata").default('{}')
+});
+
+export const gamificationNotifications = pgTable("gamification_notifications", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  type: text("type").notNull(), // badge_earned, level_up, challenge_complete, streak_milestone
+  title: text("title").notNull(),
+  message: text("message").notNull(),
+  data: jsonb("data").default('{}'),
+  isRead: boolean("is_read").notNull().default(false),
+  priority: text("priority").default('normal'), // low, normal, high, urgent
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  readAt: timestamp("read_at")
+});
+
+// Schema exports for gamification
+export const insertGamificationActionSchema = createInsertSchema(gamificationActions);
+export const insertGamificationBadgeSchema = createInsertSchema(gamificationBadges);
+export const insertUserGamificationProfileSchema = createInsertSchema(userGamificationProfiles);
+export const insertUserBadgeEarningSchema = createInsertSchema(userBadgeEarnings);
+export const insertGamificationChallengeSchema = createInsertSchema(gamificationChallenges);
+export const insertChallengeParticipantSchema = createInsertSchema(challengeParticipants);
+export const insertGamificationRewardSchema = createInsertSchema(gamificationRewards);
+export const insertUserRewardClaimSchema = createInsertSchema(userRewardClaims);
+export const insertPeerRecognitionSchema = createInsertSchema(peerRecognitions);
+export const insertGamificationLeaderboardSchema = createInsertSchema(gamificationLeaderboards);
+export const insertGamificationStreakSchema = createInsertSchema(gamificationStreaks);
+export const insertGamificationNotificationSchema = createInsertSchema(gamificationNotifications);
+
+// Types
+export type GamificationAction = typeof gamificationActions.$inferSelect;
+export type InsertGamificationAction = z.infer<typeof insertGamificationActionSchema>;
+
+export type GamificationBadge = typeof gamificationBadges.$inferSelect;
+export type InsertGamificationBadge = z.infer<typeof insertGamificationBadgeSchema>;
+
+export type UserGamificationProfile = typeof userGamificationProfiles.$inferSelect;
+export type InsertUserGamificationProfile = z.infer<typeof insertUserGamificationProfileSchema>;
+
+export type UserBadgeEarning = typeof userBadgeEarnings.$inferSelect;
+export type InsertUserBadgeEarning = z.infer<typeof insertUserBadgeEarningSchema>;
+
+export type GamificationChallenge = typeof gamificationChallenges.$inferSelect;
+export type InsertGamificationChallenge = z.infer<typeof insertGamificationChallengeSchema>;
+
+export type ChallengeParticipant = typeof challengeParticipants.$inferSelect;
+export type InsertChallengeParticipant = z.infer<typeof insertChallengeParticipantSchema>;
+
+export type GamificationReward = typeof gamificationRewards.$inferSelect;
+export type InsertGamificationReward = z.infer<typeof insertGamificationRewardSchema>;
+
+export type UserRewardClaim = typeof userRewardClaims.$inferSelect;
+export type InsertUserRewardClaim = z.infer<typeof insertUserRewardClaimSchema>;
+
+export type PeerRecognition = typeof peerRecognitions.$inferSelect;
+export type InsertPeerRecognition = z.infer<typeof insertPeerRecognitionSchema>;
+
+export type GamificationLeaderboard = typeof gamificationLeaderboards.$inferSelect;
+export type InsertGamificationLeaderboard = z.infer<typeof insertGamificationLeaderboardSchema>;
+
+export type GamificationStreak = typeof gamificationStreaks.$inferSelect;
+export type InsertGamificationStreak = z.infer<typeof insertGamificationStreakSchema>;
+
+export type GamificationNotification = typeof gamificationNotifications.$inferSelect;
+export type InsertGamificationNotification = z.infer<typeof insertGamificationNotificationSchema>;

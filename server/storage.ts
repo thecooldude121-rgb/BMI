@@ -1158,6 +1158,467 @@ Respond with only valid JSON in this format:
       message: 'Recommendation marked as implemented'
     };
   }
+
+  // ========================================
+  // COMPREHENSIVE GAMIFICATION METHODS
+  // ========================================
+
+  // Gamification Actions
+  async createGamificationAction(action: schema.InsertGamificationAction): Promise<schema.GamificationAction> {
+    const [newAction] = await db.insert(schema.gamificationActions).values(action).returning();
+    
+    // Process points and trigger badge checks
+    await this.processGamificationAction(newAction);
+    
+    return newAction;
+  }
+
+  async getGamificationActions(userId?: string): Promise<schema.GamificationAction[]> {
+    if (userId) {
+      return await db.select().from(schema.gamificationActions)
+        .where(eq(schema.gamificationActions.userId, userId))
+        .orderBy(desc(schema.gamificationActions.timestamp));
+    }
+    return await db.select().from(schema.gamificationActions)
+      .orderBy(desc(schema.gamificationActions.timestamp));
+  }
+
+  async processGamificationAction(action: schema.GamificationAction): Promise<void> {
+    // Update user XP and level
+    await this.updateUserXP(action.userId, action.points);
+    
+    // Check and award badges
+    await this.checkAndAwardBadges(action.userId, action);
+    
+    // Update streaks
+    await this.updateUserStreaks(action.userId, action.actionType);
+    
+    // Update challenge progress
+    if (action.challengeId) {
+      await this.updateChallengeProgress(action.challengeId, action.userId, action);
+    }
+  }
+
+  // User Gamification Profiles
+  async getUserGamificationProfile(userId: string): Promise<schema.UserGamificationProfile | null> {
+    const profiles = await db.select().from(schema.userGamificationProfiles)
+      .where(eq(schema.userGamificationProfiles.userId, userId));
+    return profiles[0] || null;
+  }
+
+  async createUserGamificationProfile(profile: schema.InsertUserGamificationProfile): Promise<schema.UserGamificationProfile> {
+    const [newProfile] = await db.insert(schema.userGamificationProfiles).values(profile).returning();
+    return newProfile;
+  }
+
+  async updateUserXP(userId: string, points: number): Promise<void> {
+    let profile = await this.getUserGamificationProfile(userId);
+    
+    if (!profile) {
+      profile = await this.createUserGamificationProfile({
+        userId,
+        totalXP: points,
+        currentLevel: 1,
+        levelProgress: 0
+      });
+    } else {
+      const newXP = profile.totalXP + points;
+      const { level, progress } = this.calculateLevelFromXP(newXP);
+      
+      const levelChanged = level > profile.currentLevel;
+      
+      await db.update(schema.userGamificationProfiles)
+        .set({
+          totalXP: newXP,
+          currentLevel: level,
+          levelProgress: progress,
+          updatedAt: new Date()
+        })
+        .where(eq(schema.userGamificationProfiles.userId, userId));
+
+      // Create level up notification
+      if (levelChanged) {
+        await this.createGamificationNotification({
+          userId,
+          type: 'level_up',
+          title: `Level Up! Welcome to Level ${level}`,
+          message: `Congratulations! You've reached level ${level}!`,
+          data: { newLevel: level, xpEarned: points }
+        });
+      }
+    }
+  }
+
+  private calculateLevelFromXP(xp: number): { level: number; progress: number } {
+    // XP required for each level increases exponentially
+    let level = 1;
+    let totalXPNeeded = 0;
+    let xpForCurrentLevel = 100; // Base XP for level 1
+
+    while (totalXPNeeded + xpForCurrentLevel <= xp) {
+      totalXPNeeded += xpForCurrentLevel;
+      level++;
+      xpForCurrentLevel = Math.floor(100 * Math.pow(1.5, level - 1));
+    }
+
+    const xpIntoCurrentLevel = xp - totalXPNeeded;
+    const progress = (xpIntoCurrentLevel / xpForCurrentLevel) * 100;
+
+    return { level, progress };
+  }
+
+  // Badges
+  async getGamificationBadges(): Promise<schema.GamificationBadge[]> {
+    return await db.select().from(schema.gamificationBadges)
+      .where(eq(schema.gamificationBadges.isActive, true))
+      .orderBy(schema.gamificationBadges.name);
+  }
+
+  async createGamificationBadge(badge: schema.InsertGamificationBadge): Promise<schema.GamificationBadge> {
+    const [newBadge] = await db.insert(schema.gamificationBadges).values(badge).returning();
+    return newBadge;
+  }
+
+  async getUserBadges(userId: string): Promise<(schema.UserBadgeEarning & { badge: schema.GamificationBadge })[]> {
+    return await db
+      .select()
+      .from(schema.userBadgeEarnings)
+      .innerJoin(schema.gamificationBadges, eq(schema.userBadgeEarnings.badgeId, schema.gamificationBadges.id))
+      .where(eq(schema.userBadgeEarnings.userId, userId))
+      .orderBy(desc(schema.userBadgeEarnings.earnedAt));
+  }
+
+  async checkAndAwardBadges(userId: string, action: schema.GamificationAction): Promise<void> {
+    const badges = await this.getGamificationBadges();
+    
+    for (const badge of badges) {
+      const hasEarned = await this.checkBadgeCriteria(userId, badge, action);
+      if (hasEarned) {
+        await this.awardBadge(userId, badge.id);
+      }
+    }
+  }
+
+  private async checkBadgeCriteria(userId: string, badge: schema.GamificationBadge, action: schema.GamificationAction): Promise<boolean> {
+    // Check if user already has this badge
+    const existingBadge = await db.select().from(schema.userBadgeEarnings)
+      .where(and(
+        eq(schema.userBadgeEarnings.userId, userId),
+        eq(schema.userBadgeEarnings.badgeId, badge.id)
+      ));
+
+    if (existingBadge.length > 0) return false;
+
+    const criteria = badge.criteria as any;
+    
+    // Example criteria checking logic
+    switch (criteria.type) {
+      case 'action_count':
+        const actionCount = await db.select({ count: sql<number>`count(*)` })
+          .from(schema.gamificationActions)
+          .where(and(
+            eq(schema.gamificationActions.userId, userId),
+            eq(schema.gamificationActions.actionType, criteria.actionType)
+          ));
+        return actionCount[0].count >= criteria.threshold;
+
+      case 'streak':
+        const streak = await this.getUserStreak(userId, criteria.streakType);
+        return streak && streak.currentCount >= criteria.threshold;
+
+      case 'level':
+        const profile = await this.getUserGamificationProfile(userId);
+        return profile && profile.currentLevel >= criteria.threshold;
+
+      default:
+        return false;
+    }
+  }
+
+  async awardBadge(userId: string, badgeId: string): Promise<void> {
+    await db.insert(schema.userBadgeEarnings).values({
+      userId,
+      badgeId,
+      earnedAt: new Date()
+    });
+
+    // Update badge count in profile
+    await db.update(schema.userGamificationProfiles)
+      .set({
+        totalBadges: sql`${schema.userGamificationProfiles.totalBadges} + 1`,
+        updatedAt: new Date()
+      })
+      .where(eq(schema.userGamificationProfiles.userId, userId));
+
+    const badge = await db.select().from(schema.gamificationBadges)
+      .where(eq(schema.gamificationBadges.id, badgeId));
+
+    // Create notification
+    await this.createGamificationNotification({
+      userId,
+      type: 'badge_earned',
+      title: `Badge Earned: ${badge[0].name}`,
+      message: badge[0].description,
+      data: { badgeId, badgeName: badge[0].name }
+    });
+  }
+
+  // Streaks
+  async getUserStreak(userId: string, streakType: string): Promise<schema.GamificationStreak | null> {
+    const streaks = await db.select().from(schema.gamificationStreaks)
+      .where(and(
+        eq(schema.gamificationStreaks.userId, userId),
+        eq(schema.gamificationStreaks.streakType, streakType),
+        eq(schema.gamificationStreaks.isActive, true)
+      ));
+    return streaks[0] || null;
+  }
+
+  async updateUserStreaks(userId: string, actionType: string): Promise<void> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Update daily login streak
+    if (actionType === 'daily_login') {
+      await this.updateStreak(userId, 'daily_login', today);
+    }
+
+    // Update activity completion streak
+    if (['activity_completed', 'call_made', 'email_sent', 'task_completed'].includes(actionType)) {
+      await this.updateStreak(userId, 'activity_completion', today);
+    }
+  }
+
+  private async updateStreak(userId: string, streakType: string, date: Date): Promise<void> {
+    let streak = await this.getUserStreak(userId, streakType);
+
+    if (!streak) {
+      // Create new streak
+      await db.insert(schema.gamificationStreaks).values({
+        userId,
+        streakType,
+        currentCount: 1,
+        longestCount: 1,
+        lastActivityDate: date,
+        startDate: date
+      });
+    } else {
+      const lastActivity = new Date(streak.lastActivityDate!);
+      const daysDiff = Math.floor((date.getTime() - lastActivity.getTime()) / (1000 * 60 * 60 * 24));
+
+      if (daysDiff === 1) {
+        // Continue streak
+        const newCount = streak.currentCount + 1;
+        await db.update(schema.gamificationStreaks)
+          .set({
+            currentCount: newCount,
+            longestCount: Math.max(newCount, streak.longestCount),
+            lastActivityDate: date
+          })
+          .where(eq(schema.gamificationStreaks.id, streak.id));
+      } else if (daysDiff > 1) {
+        // Reset streak
+        await db.update(schema.gamificationStreaks)
+          .set({
+            currentCount: 1,
+            lastActivityDate: date,
+            startDate: date
+          })
+          .where(eq(schema.gamificationStreaks.id, streak.id));
+      }
+    }
+  }
+
+  // Challenges
+  async getGamificationChallenges(status?: string): Promise<schema.GamificationChallenge[]> {
+    let query = db.select().from(schema.gamificationChallenges);
+    
+    if (status) {
+      query = query.where(eq(schema.gamificationChallenges.status, status as any));
+    }
+    
+    return await query.orderBy(desc(schema.gamificationChallenges.createdAt));
+  }
+
+  async createGamificationChallenge(challenge: schema.InsertGamificationChallenge): Promise<schema.GamificationChallenge> {
+    const [newChallenge] = await db.insert(schema.gamificationChallenges).values(challenge).returning();
+    return newChallenge;
+  }
+
+  async joinChallenge(challengeId: string, userId: string): Promise<void> {
+    await db.insert(schema.challengeParticipants).values({
+      challengeId,
+      userId,
+      status: 'active'
+    });
+  }
+
+  async updateChallengeProgress(challengeId: string, userId: string, action: schema.GamificationAction): Promise<void> {
+    // Implementation depends on specific challenge logic
+    // This is a simplified version
+    const participant = await db.select().from(schema.challengeParticipants)
+      .where(and(
+        eq(schema.challengeParticipants.challengeId, challengeId),
+        eq(schema.challengeParticipants.userId, userId)
+      ));
+
+    if (participant.length > 0) {
+      await db.update(schema.challengeParticipants)
+        .set({
+          progress: sql`jsonb_set(progress, '{actions}', (COALESCE(progress->'actions', '0')::int + 1)::text::jsonb)`,
+          finalScore: sql`${schema.challengeParticipants.finalScore} + ${action.points}`
+        })
+        .where(eq(schema.challengeParticipants.id, participant[0].id));
+    }
+  }
+
+  // Leaderboards
+  async getLeaderboard(type: string = 'all_time', teamId?: string): Promise<any[]> {
+    let query = db
+      .select({
+        userId: schema.userGamificationProfiles.userId,
+        user: {
+          firstName: schema.users.firstName,
+          lastName: schema.users.lastName,
+          avatarUrl: schema.users.avatarUrl
+        },
+        totalXP: schema.userGamificationProfiles.totalXP,
+        currentLevel: schema.userGamificationProfiles.currentLevel,
+        totalBadges: schema.userGamificationProfiles.totalBadges,
+        currentStreak: schema.userGamificationProfiles.currentStreak
+      })
+      .from(schema.userGamificationProfiles)
+      .innerJoin(schema.users, eq(schema.userGamificationProfiles.userId, schema.users.id));
+
+    if (teamId) {
+      query = query.where(eq(schema.userGamificationProfiles.teamId, teamId));
+    }
+
+    return await query
+      .orderBy(desc(schema.userGamificationProfiles.totalXP))
+      .limit(50);
+  }
+
+  // Notifications
+  async createGamificationNotification(notification: schema.InsertGamificationNotification): Promise<schema.GamificationNotification> {
+    const [newNotification] = await db.insert(schema.gamificationNotifications).values(notification).returning();
+    return newNotification;
+  }
+
+  async getUserNotifications(userId: string, unreadOnly: boolean = false): Promise<schema.GamificationNotification[]> {
+    let query = db.select().from(schema.gamificationNotifications)
+      .where(eq(schema.gamificationNotifications.userId, userId));
+
+    if (unreadOnly) {
+      query = query.where(eq(schema.gamificationNotifications.isRead, false));
+    }
+
+    return await query
+      .orderBy(desc(schema.gamificationNotifications.createdAt))
+      .limit(50);
+  }
+
+  async markNotificationAsRead(notificationId: string): Promise<void> {
+    await db.update(schema.gamificationNotifications)
+      .set({ isRead: true, readAt: new Date() })
+      .where(eq(schema.gamificationNotifications.id, notificationId));
+  }
+
+  // Peer Recognition
+  async createPeerRecognition(recognition: schema.InsertPeerRecognition): Promise<schema.PeerRecognition> {
+    const [newRecognition] = await db.insert(schema.peerRecognitions).values(recognition).returning();
+    
+    // Award points to recipient
+    await this.updateUserXP(recognition.toUserId, recognition.points || 5);
+    
+    // Create notification
+    const fromUser = await db.select().from(schema.users)
+      .where(eq(schema.users.id, recognition.fromUserId));
+    
+    await this.createGamificationNotification({
+      userId: recognition.toUserId,
+      type: 'peer_recognition',
+      title: `Recognition from ${fromUser[0].firstName}`,
+      message: recognition.message,
+      data: { recognitionId: newRecognition.id, fromUser: fromUser[0] }
+    });
+    
+    return newRecognition;
+  }
+
+  async getPeerRecognitions(userId?: string): Promise<schema.PeerRecognition[]> {
+    let query = db.select().from(schema.peerRecognitions);
+    
+    if (userId) {
+      query = query.where(or(
+        eq(schema.peerRecognitions.fromUserId, userId),
+        eq(schema.peerRecognitions.toUserId, userId)
+      ));
+    }
+    
+    return await query.orderBy(desc(schema.peerRecognitions.createdAt));
+  }
+
+  // Rewards
+  async getGamificationRewards(): Promise<schema.GamificationReward[]> {
+    return await db.select().from(schema.gamificationRewards)
+      .where(eq(schema.gamificationRewards.isActive, true))
+      .orderBy(schema.gamificationRewards.cost);
+  }
+
+  async claimReward(userId: string, rewardId: string): Promise<schema.UserRewardClaim> {
+    // Check if user has enough XP
+    const profile = await this.getUserGamificationProfile(userId);
+    const reward = await db.select().from(schema.gamificationRewards)
+      .where(eq(schema.gamificationRewards.id, rewardId));
+
+    if (!profile || !reward[0]) {
+      throw new Error('Invalid user or reward');
+    }
+
+    if (profile.totalXP < reward[0].cost) {
+      throw new Error('Insufficient XP');
+    }
+
+    // Deduct XP and create claim
+    await db.update(schema.userGamificationProfiles)
+      .set({
+        totalXP: profile.totalXP - reward[0].cost,
+        updatedAt: new Date()
+      })
+      .where(eq(schema.userGamificationProfiles.userId, userId));
+
+    const [claim] = await db.insert(schema.userRewardClaims).values({
+      userId,
+      rewardId,
+      status: 'claimed'
+    }).returning();
+
+    return claim;
+  }
+
+  // Analytics and Metrics
+  async getGamificationMetrics(): Promise<any> {
+    const totalUsers = await db.select({ count: sql<number>`count(*)` })
+      .from(schema.userGamificationProfiles);
+    
+    const totalActions = await db.select({ count: sql<number>`count(*)` })
+      .from(schema.gamificationActions);
+    
+    const totalBadges = await db.select({ count: sql<number>`count(*)` })
+      .from(schema.userBadgeEarnings);
+    
+    const activeChallenges = await db.select({ count: sql<number>`count(*)` })
+      .from(schema.gamificationChallenges)
+      .where(eq(schema.gamificationChallenges.status, 'active'));
+
+    return {
+      totalUsers: totalUsers[0].count,
+      totalActions: totalActions[0].count,
+      totalBadgesEarned: totalBadges[0].count,
+      activeChallenges: activeChallenges[0].count
+    };
+  }
 }
 
 export const storage = new DatabaseStorage();

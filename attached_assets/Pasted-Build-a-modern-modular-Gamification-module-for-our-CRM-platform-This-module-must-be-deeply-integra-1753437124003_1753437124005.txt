@@ -1,0 +1,93 @@
+Build a modern, modular Gamification module for our CRM platform. This module must be deeply integrated with all existing CRM components (Leads, Deals, Activities, Contacts, Accounts) to maximize user engagement, drive productivity, and foster competition/collaboration. It should address and exceed market gaps in HubSpot, Zoho, Salesforce, Pipedrive, and Salesnayak.
+
+1. Gamification Engine & Data
+Design a core engine that tracks and awards Points (XP), Badges, Levels, and Streaks for user actions across modules (e.g., new leads, closed deals, completed calls/tasks, consistent daily activity, goals met).
+
+Support a flexible data schema:
+
+GamifiedAction: { actionType, targetEntity, owner, timestamp, points, context }
+
+Badge: { id, name, description, criteria, icon }
+
+UserGamification: { userId, xp, level, badges, streaks, leaderboardRank, team }
+
+Challenge: { id, name, goal, progress, status, deadline, scope (individual/team) }
+
+2. Gamified Badges, XP, and Levels
+Award badges and XP for core behaviors:
+
+e.g., "Lead Magnet" (10 new leads in a week), "Closer" (3 deals closed in a week), daily activity streaks, campaign participation.
+
+Automatically tally and display XP (points) and level-up users based on cumulative performance.
+
+Contextual pop-up or notification for every badge/level earned.
+
+3. Leaderboards & Challenges
+Develop real-time leaderboards:
+
+Individual and team rankings by XP, badges, deals/activities, improvements (week-over-week/month-over-month).
+
+Filters for teams, roles, territories, timeframes.
+
+Create custom Challenges & Missions:
+
+Weekly/monthly targets (e.g., "Qualify 20 Leads," "Complete CRM Training Quest").
+
+Track personal/team progress. Spotlight top climbers and completions.
+
+4. Social & Rewards
+Enable peer recognition:
+
+Give/receive "kudos" or peer points with message, feeding into profiles.
+
+Reward Marketplace scaffolding:
+
+Redeem XP/badges for customizable company perks (e.g., lunch, gift cards, privileges).
+
+Public gamified profiles:
+
+Users display badges, levels, streaks, and leaderboard status.
+
+5. Engagement Flow & Coaching
+Dynamic, real-time dashboards/widgets:
+
+Show badge progress, current streaks, challenge progress bars on user dashboards and module sidebars.
+
+Feed and announcements:
+
+Automated congratulatory posts for new achievements, streaks, and challenge winners in activity feed or sidebar.
+
+Adaptive coaching:
+
+Trigger in-app tips or feedback when users reach milestones, drop off, or struggle with specific objectives.
+
+6. Manager & Analytics Features
+Full admin controls:
+
+Create, edit, trigger custom badges/challenges.
+
+Analytics dashboard:
+
+Track impact: which elements increase usage, team engagement, or conversion rates.
+
+Manager views: team participation, top movers, laggards, challenge ROI.
+
+7. Seamless Integration
+All gamification triggers are tightly coupled to the existing CRM modules—ensure actions in Leads, Deals, Accounts, Contacts, Activities yield corresponding XP/badges/challenge progress via event hooks or API calls.
+
+Support bulk event import for awards or migration if needed.
+
+8. User Experience
+Responsive UI for pop-up badges, streak banners, and leaderboards.
+
+Intuitive badge/XP/streak dashboards for each user, plus public team/company-wide leaderboards.
+
+One-click navigation to profiles, reward marketplace, and manager dashboards.
+
+9. Schema & API
+Provide schemas for GamifiedAction, Badge, UserGamificationState, Challenge, PeerRecognition, and Reward.
+
+REST or GraphQL endpoints for award checking, leaderboard queries, triggers, redemptions, and admin CRUD.
+
+Instructions:
+Return full frontend (React + Material UI or Ant Design), backend (Node.js/Express or Python FastAPI), with sample hooks to CRM events, modular project structure, and code comments detailing extension points. Include demo data and scripts for initial leaderboards, badge awards, and XP calculations.
