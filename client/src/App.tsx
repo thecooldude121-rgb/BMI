@@ -39,7 +39,7 @@ const App = () => {
       <DataProvider>
         <div className="min-h-screen bg-gray-50">
           <Header />
-          <main>
+          <main className="pt-14">
             <Switch>
               <Route path="/login" component={Login} />
               <Route path="/" component={Analytics} />
