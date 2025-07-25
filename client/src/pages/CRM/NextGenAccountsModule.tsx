@@ -34,9 +34,18 @@ const NextGenAccountsModule: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState('all');
 
   // Fetch accounts data
-  const { data: accounts = [], isLoading } = useQuery<Account[]>({
+  const { data: accounts = [], isLoading, error } = useQuery<Account[]>({
     queryKey: ['/api/accounts'],
+    retry: 3,
+    retryDelay: 1000
   });
+
+  // Log error if exists
+  React.useEffect(() => {
+    if (error) {
+      console.error('Error fetching accounts:', error);
+    }
+  }, [error]);
 
   // Delete mutation
   const deleteAccountMutation = useMutation({
@@ -79,7 +88,7 @@ const NextGenAccountsModule: React.FC = () => {
   };
 
   // Filter accounts
-  const filteredAccounts = accounts.filter(account => {
+  const filteredAccounts = (accounts || []).filter((account: Account) => {
     const matchesSearch = account.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          account.industry?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = filterStatus === 'all' || account.status === filterStatus;
@@ -87,12 +96,12 @@ const NextGenAccountsModule: React.FC = () => {
   });
 
   // Calculate metrics
-  const totalAccounts = accounts.length;
-  const activeAccounts = accounts.filter(a => a.status === 'active').length;
-  const avgHealthScore = accounts.length > 0 
-    ? Math.round(accounts.reduce((sum, a) => sum + (a.healthScore || 0), 0) / accounts.length)
+  const totalAccounts = (accounts || []).length;
+  const activeAccounts = (accounts || []).filter((a: Account) => a.status === 'active').length;
+  const avgHealthScore = (accounts || []).length > 0 
+    ? Math.round((accounts || []).reduce((sum: number, a: Account) => sum + (a.healthScore || 0), 0) / (accounts || []).length)
     : 0;
-  const totalRevenue = accounts.reduce((sum, a) => sum + parseFloat(a.totalRevenue || '0'), 0);
+  const totalRevenue = (accounts || []).reduce((sum: number, a: Account) => sum + parseFloat(a.totalRevenue || '0'), 0);
 
   const handleAccountClick = (accountId: string) => {
     setLocation(`/crm/accounts/${accountId}`);
@@ -268,6 +277,17 @@ const NextGenAccountsModule: React.FC = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="p-6">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <h3 className="text-lg font-medium text-red-900 mb-2">Error Loading Accounts</h3>
+          <p className="text-red-700">There was an issue loading the accounts data. Please try refreshing the page.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -424,7 +444,7 @@ const NextGenAccountsModule: React.FC = () => {
           ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' 
           : 'space-y-4'
       }`}>
-        {filteredAccounts.map((account) => 
+        {(filteredAccounts || []).map((account: Account) => 
           viewMode === 'grid' ? (
             <AccountCard key={account.id} account={account} />
           ) : (
