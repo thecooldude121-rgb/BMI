@@ -7,6 +7,13 @@ import {
   Plus, ChevronRight, Calendar, Clock, CheckCircle
 } from 'lucide-react';
 
+// Import Next-Gen Components
+import NextGenGamificationDashboard from '../../components/gamification/NextGenGamificationDashboard';
+import NextGenBadgeVault from '../../components/gamification/NextGenBadgeVault';
+import NextGenLeaderboard from '../../components/gamification/NextGenLeaderboard';
+import NextGenChallenges from '../../components/gamification/NextGenChallenges';
+import NextGenRewardsMarketplace from '../../components/gamification/NextGenRewardsMarketplace';
+
 interface UserProfile {
   id: string;
   userId: string;
