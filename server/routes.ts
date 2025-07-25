@@ -1818,6 +1818,251 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ========================================
+  // COMPREHENSIVE GAMIFICATION ROUTES
+  // ========================================
+
+  // Gamification Actions
+  app.post('/api/gamification/actions', async (req, res) => {
+    try {
+      const actionData = schema.insertGamificationActionSchema.parse(req.body);
+      const action = await storage.createGamificationAction(actionData);
+      res.json(action);
+    } catch (error) {
+      console.error('Error creating gamification action:', error);
+      res.status(500).json({ error: 'Failed to create gamification action' });
+    }
+  });
+
+  app.get('/api/gamification/actions/:userId?', async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const actions = await storage.getGamificationActions(userId);
+      res.json(actions);
+    } catch (error) {
+      console.error('Error fetching gamification actions:', error);
+      res.status(500).json({ error: 'Failed to fetch gamification actions' });
+    }
+  });
+
+  // User Gamification Profiles
+  app.get('/api/gamification/profile/:userId', async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const profile = await storage.getUserGamificationProfile(userId);
+      res.json(profile);
+    } catch (error) {
+      console.error('Error fetching user gamification profile:', error);
+      res.status(500).json({ error: 'Failed to fetch user gamification profile' });
+    }
+  });
+
+  app.post('/api/gamification/profile', async (req, res) => {
+    try {
+      const profileData = schema.insertUserGamificationProfileSchema.parse(req.body);
+      const profile = await storage.createUserGamificationProfile(profileData);
+      res.json(profile);
+    } catch (error) {
+      console.error('Error creating user gamification profile:', error);
+      res.status(500).json({ error: 'Failed to create user gamification profile' });
+    }
+  });
+
+  // Gamification Badges
+  app.get('/api/gamification/badges', async (req, res) => {
+    try {
+      const badges = await storage.getGamificationBadges();
+      res.json(badges);
+    } catch (error) {
+      console.error('Error fetching gamification badges:', error);
+      res.status(500).json({ error: 'Failed to fetch gamification badges' });
+    }
+  });
+
+  app.post('/api/gamification/badges', async (req, res) => {
+    try {
+      const badgeData = schema.insertGamificationBadgeSchema.parse(req.body);
+      const badge = await storage.createGamificationBadge(badgeData);
+      res.json(badge);
+    } catch (error) {
+      console.error('Error creating gamification badge:', error);
+      res.status(500).json({ error: 'Failed to create gamification badge' });
+    }
+  });
+
+  app.get('/api/gamification/badges/user/:userId', async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const badges = await storage.getUserBadges(userId);
+      res.json(badges);
+    } catch (error) {
+      console.error('Error fetching user badges:', error);
+      res.status(500).json({ error: 'Failed to fetch user badges' });
+    }
+  });
+
+  // Gamification Challenges
+  app.get('/api/gamification/challenges', async (req, res) => {
+    try {
+      const { status } = req.query;
+      const challenges = await storage.getGamificationChallenges(status as string);
+      res.json(challenges);
+    } catch (error) {
+      console.error('Error fetching gamification challenges:', error);
+      res.status(500).json({ error: 'Failed to fetch gamification challenges' });
+    }
+  });
+
+  app.post('/api/gamification/challenges', async (req, res) => {
+    try {
+      const challengeData = schema.insertGamificationChallengeSchema.parse(req.body);
+      const challenge = await storage.createGamificationChallenge(challengeData);
+      res.json(challenge);
+    } catch (error) {
+      console.error('Error creating gamification challenge:', error);
+      res.status(500).json({ error: 'Failed to create gamification challenge' });
+    }
+  });
+
+  app.post('/api/gamification/challenges/:challengeId/join', async (req, res) => {
+    try {
+      const { challengeId } = req.params;
+      const { userId } = req.body;
+      await storage.joinChallenge(challengeId, userId);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error joining challenge:', error);
+      res.status(500).json({ error: 'Failed to join challenge' });
+    }
+  });
+
+  // Leaderboards
+  app.get('/api/gamification/leaderboard', async (req, res) => {
+    try {
+      const { type, teamId } = req.query;
+      const leaderboard = await storage.getLeaderboard(type as string, teamId as string);
+      res.json(leaderboard);
+    } catch (error) {
+      console.error('Error fetching leaderboard:', error);
+      res.status(500).json({ error: 'Failed to fetch leaderboard' });
+    }
+  });
+
+  // Notifications
+  app.get('/api/gamification/notifications/:userId', async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const { unreadOnly } = req.query;
+      const notifications = await storage.getUserNotifications(userId, unreadOnly === 'true');
+      res.json(notifications);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+      res.status(500).json({ error: 'Failed to fetch notifications' });
+    }
+  });
+
+  app.patch('/api/gamification/notifications/:notificationId/read', async (req, res) => {
+    try {
+      const { notificationId } = req.params;
+      await storage.markNotificationAsRead(notificationId);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+      res.status(500).json({ error: 'Failed to mark notification as read' });
+    }
+  });
+
+  // Peer Recognition
+  app.post('/api/gamification/recognition', async (req, res) => {
+    try {
+      const recognitionData = schema.insertPeerRecognitionSchema.parse(req.body);
+      const recognition = await storage.createPeerRecognition(recognitionData);
+      res.json(recognition);
+    } catch (error) {
+      console.error('Error creating peer recognition:', error);
+      res.status(500).json({ error: 'Failed to create peer recognition' });
+    }
+  });
+
+  app.get('/api/gamification/recognition/:userId?', async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const recognitions = await storage.getPeerRecognitions(userId);
+      res.json(recognitions);
+    } catch (error) {
+      console.error('Error fetching peer recognitions:', error);
+      res.status(500).json({ error: 'Failed to fetch peer recognitions' });
+    }
+  });
+
+  // Rewards
+  app.get('/api/gamification/rewards', async (req, res) => {
+    try {
+      const rewards = await storage.getGamificationRewards();
+      res.json(rewards);
+    } catch (error) {
+      console.error('Error fetching gamification rewards:', error);
+      res.status(500).json({ error: 'Failed to fetch gamification rewards' });
+    }
+  });
+
+  app.post('/api/gamification/rewards/:rewardId/claim', async (req, res) => {
+    try {
+      const { rewardId } = req.params;
+      const { userId } = req.body;
+      const claim = await storage.claimReward(userId, rewardId);
+      res.json(claim);
+    } catch (error) {
+      console.error('Error claiming reward:', error);
+      const message = error instanceof Error ? error.message : 'Failed to claim reward';
+      res.status(500).json({ error: message });
+    }
+  });
+
+  // Streaks
+  app.get('/api/gamification/streaks/:userId/:streakType', async (req, res) => {
+    try {
+      const { userId, streakType } = req.params;
+      const streak = await storage.getUserStreak(userId, streakType);
+      res.json(streak);
+    } catch (error) {
+      console.error('Error fetching user streak:', error);
+      res.status(500).json({ error: 'Failed to fetch user streak' });
+    }
+  });
+
+  // Analytics and Metrics
+  app.get('/api/gamification/metrics', async (req, res) => {
+    try {
+      const metrics = await storage.getGamificationMetrics();
+      res.json(metrics);
+    } catch (error) {
+      console.error('Error fetching gamification metrics:', error);
+      res.status(500).json({ error: 'Failed to fetch gamification metrics' });
+    }
+  });
+
+  // Utility route to trigger gamification action (for CRM integration)
+  app.post('/api/gamification/trigger', async (req, res) => {
+    try {
+      const { actionType, targetEntity, entityId, userId, points, context } = req.body;
+      
+      const action = await storage.createGamificationAction({
+        actionType,
+        targetEntity,
+        entityId,
+        userId,
+        points: points || 10,
+        context
+      });
+      
+      res.json(action);
+    } catch (error) {
+      console.error('Error triggering gamification action:', error);
+      res.status(500).json({ error: 'Failed to trigger gamification action' });
+    }
+  });
+
   const server = createServer(app);
 
   return server;
