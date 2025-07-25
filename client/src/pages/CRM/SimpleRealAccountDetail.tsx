@@ -41,7 +41,13 @@ const SimpleRealAccountDetail: React.FC = () => {
 
   // Fetch related contacts
   const { data: contacts, isLoading: contactsLoading } = useQuery<Contact[]>({
-    queryKey: ['/api/contacts/by-account', id],
+    queryKey: ['/api/contacts', 'by-account', id],
+    queryFn: async () => {
+      if (!id) return [];
+      const response = await fetch(`/api/contacts/by-account/${id}`);
+      if (!response.ok) throw new Error('Failed to fetch contacts');
+      return response.json();
+    },
     enabled: !!id
   });
 
