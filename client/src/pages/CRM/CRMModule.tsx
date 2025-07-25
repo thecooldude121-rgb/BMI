@@ -48,9 +48,7 @@ const CRMModule = () => {
           <CRMAnalyticsDashboard />
         </Route>
         <Route path="/crm/gamification">
-          <div className="p-6">
-            <GamificationModule />
-          </div>
+          <GamificationModule />
         </Route>
         <Route path="/crm/tasks">
           <div className="p-6">
@@ -69,9 +67,7 @@ const CRMModule = () => {
           </div>
         </Route>
         <Route path="/crm">
-          <div className="p-6">
-            <GamificationModule />
-          </div>
+          <GamificationModule />
         </Route>
       </Switch>
     </div>
