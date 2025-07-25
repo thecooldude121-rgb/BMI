@@ -463,15 +463,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/contacts/by-account/:accountId", async (req, res) => {
-    try {
-      const contacts = await storage.getContactsByAccount(req.params.accountId);
-      res.json(contacts);
-    } catch (error) {
-      handleError(error, res);
-    }
-  });
-
   app.post("/api/contacts", async (req, res) => {
     try {
       const result = schema.insertContactSchema.safeParse(req.body);
@@ -852,6 +843,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const deal = await storage.getDeal(req.params.id);
       if (!deal) return res.status(404).json({ error: "Deal not found" });
       res.json(deal);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/deals/by-account/:accountId", async (req, res) => {
+    try {
+      const deals = await storage.getDeals();
+      const filteredDeals = deals.filter(deal => deal.accountId === req.params.accountId);
+      res.json(filteredDeals);
     } catch (error) {
       handleError(error, res);
     }
