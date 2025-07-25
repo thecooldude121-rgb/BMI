@@ -32,7 +32,10 @@ export async function apiRequest(url: string, options: RequestOptions = {}) {
     config.body = JSON.stringify(body);
   }
 
-  const response = await fetch(url, config);
+  const response = await fetch(url, config).catch(error => {
+    console.error('Fetch error:', error);
+    throw new Error(`Network error: ${error.message}`);
+  });
 
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
