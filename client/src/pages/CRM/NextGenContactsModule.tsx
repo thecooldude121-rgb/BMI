@@ -46,13 +46,27 @@ const NextGenContactsModule: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState('all');
 
   // Fetch contacts and accounts data
-  const { data: contacts = [], isLoading } = useQuery<Contact[]>({
+  const { data: contacts = [], isLoading, error: contactsError } = useQuery<Contact[]>({
     queryKey: ['/api/contacts'],
+    retry: 3,
+    retryDelay: 1000
   });
 
-  const { data: accounts = [] } = useQuery<Account[]>({
+  const { data: accounts = [], error: accountsError } = useQuery<Account[]>({
     queryKey: ['/api/accounts'],
+    retry: 3,
+    retryDelay: 1000
   });
+
+  // Log errors if they exist
+  React.useEffect(() => {
+    if (contactsError) {
+      console.error('Error fetching contacts:', contactsError);
+    }
+    if (accountsError) {
+      console.error('Error fetching accounts:', accountsError);
+    }
+  }, [contactsError, accountsError]);
 
   // Delete mutation
   const deleteContactMutation = useMutation({
@@ -101,7 +115,7 @@ const NextGenContactsModule: React.FC = () => {
   };
 
   // Filter contacts
-  const filteredContacts = contacts.filter(contact => {
+  const filteredContacts = (contacts || []).filter((contact: Contact) => {
     const fullName = `${contact.firstName || ''} ${contact.lastName || ''}`.toLowerCase();
     const matchesSearch = fullName.includes(searchTerm.toLowerCase()) ||
                          contact.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -111,12 +125,12 @@ const NextGenContactsModule: React.FC = () => {
   });
 
   // Calculate metrics
-  const totalContacts = contacts.length;
-  const activeContacts = contacts.filter(c => c.status === 'active').length;
-  const avgRelationshipScore = contacts.length > 0 
-    ? Math.round(contacts.reduce((sum, c) => sum + (c.relationshipScore || 50), 0) / contacts.length)
+  const totalContacts = (contacts || []).length;
+  const activeContacts = (contacts || []).filter((c: Contact) => c.status === 'active').length;
+  const avgRelationshipScore = (contacts || []).length > 0 
+    ? Math.round((contacts || []).reduce((sum: number, c: Contact) => sum + (c.relationshipScore || 50), 0) / (contacts || []).length)
     : 0;
-  const highInfluenceContacts = contacts.filter(c => (c.influenceLevel || 0) >= 8).length;
+  const highInfluenceContacts = (contacts || []).filter((c: Contact) => (c.influenceLevel || 0) >= 8).length;
 
   const handleContactClick = (contactId: string) => {
     setLocation(`/crm/contacts/${contactId}`);
@@ -320,6 +334,17 @@ const NextGenContactsModule: React.FC = () => {
     );
   }
 
+  if (contactsError || accountsError) {
+    return (
+      <div className="p-6">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <h3 className="text-lg font-medium text-red-900 mb-2">Error Loading Contacts</h3>
+          <p className="text-red-700">There was an issue loading the contacts data. Please try refreshing the page.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -476,7 +501,7 @@ const NextGenContactsModule: React.FC = () => {
           ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' 
           : 'space-y-4'
       }`}>
-        {filteredContacts.map((contact) => 
+        {(filteredContacts || []).map((contact: Contact) => 
           viewMode === 'grid' ? (
             <ContactCard key={contact.id} contact={contact} />
           ) : (
