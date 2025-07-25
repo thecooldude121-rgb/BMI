@@ -119,6 +119,60 @@ export interface IStorage {
   
   createMeetingFollowUp(followUp: schema.InsertMeetingFollowUp): Promise<schema.MeetingFollowUp>;
   getMeetingFollowUps(meetingId: string): Promise<schema.MeetingFollowUp[]>;
+
+  // HRMS Employee Management
+  getEmployees(): Promise<schema.Employee[]>;
+  getEmployee(id: string): Promise<schema.Employee | undefined>;
+  getEmployeeByUserId(userId: string): Promise<schema.Employee | undefined>;
+  getEmployeesByDepartment(department: string): Promise<schema.Employee[]>;
+  getEmployeesByManager(managerId: string): Promise<schema.Employee[]>;
+  createEmployee(employee: schema.InsertEmployee): Promise<schema.Employee>;
+  updateEmployee(id: string, employee: Partial<schema.InsertEmployee>): Promise<schema.Employee>;
+  deleteEmployee(id: string): Promise<boolean>;
+
+  // HRMS Leave Management
+  getLeaveRequests(): Promise<schema.LeaveRequest[]>;
+  getLeaveRequest(id: string): Promise<schema.LeaveRequest | undefined>;
+  getLeaveRequestsByEmployee(employeeId: string): Promise<schema.LeaveRequest[]>;
+  getLeaveRequestsByStatus(status: string): Promise<schema.LeaveRequest[]>;
+  createLeaveRequest(request: schema.InsertLeaveRequest): Promise<schema.LeaveRequest>;
+  updateLeaveRequest(id: string, request: Partial<schema.InsertLeaveRequest>): Promise<schema.LeaveRequest>;
+  deleteLeaveRequest(id: string): Promise<boolean>;
+
+  // HRMS Attendance Management
+  getAttendance(): Promise<schema.Attendance[]>;
+  getAttendanceByEmployee(employeeId: string): Promise<schema.Attendance[]>;
+  getAttendanceByDate(date: Date): Promise<schema.Attendance[]>;
+  getAttendanceByDateRange(startDate: Date, endDate: Date): Promise<schema.Attendance[]>;
+  createAttendance(attendance: schema.InsertAttendance): Promise<schema.Attendance>;
+  updateAttendance(id: string, attendance: Partial<schema.InsertAttendance>): Promise<schema.Attendance>;
+  clockIn(employeeId: string, location?: string): Promise<schema.Attendance>;
+  clockOut(attendanceId: string): Promise<schema.Attendance>;
+
+  // HRMS Performance Management
+  getPerformanceReviews(): Promise<schema.PerformanceReview[]>;
+  getPerformanceReview(id: string): Promise<schema.PerformanceReview | undefined>;
+  getPerformanceReviewsByEmployee(employeeId: string): Promise<schema.PerformanceReview[]>;
+  getPerformanceReviewsByReviewer(reviewerId: string): Promise<schema.PerformanceReview[]>;
+  createPerformanceReview(review: schema.InsertPerformanceReview): Promise<schema.PerformanceReview>;
+  updatePerformanceReview(id: string, review: Partial<schema.InsertPerformanceReview>): Promise<schema.PerformanceReview>;
+
+  // HRMS Training Management
+  getTrainingPrograms(): Promise<schema.TrainingProgram[]>;
+  getTrainingProgram(id: string): Promise<schema.TrainingProgram | undefined>;
+  createTrainingProgram(program: schema.InsertTrainingProgram): Promise<schema.TrainingProgram>;
+  updateTrainingProgram(id: string, program: Partial<schema.InsertTrainingProgram>): Promise<schema.TrainingProgram>;
+  
+  getTrainingEnrollments(): Promise<schema.TrainingEnrollment[]>;
+  getTrainingEnrollmentsByEmployee(employeeId: string): Promise<schema.TrainingEnrollment[]>;
+  getTrainingEnrollmentsByProgram(programId: string): Promise<schema.TrainingEnrollment[]>;
+  createTrainingEnrollment(enrollment: schema.InsertTrainingEnrollment): Promise<schema.TrainingEnrollment>;
+  updateTrainingEnrollment(id: string, enrollment: Partial<schema.InsertTrainingEnrollment>): Promise<schema.TrainingEnrollment>;
+
+  // HRMS Analytics
+  getEmployeeMetrics(): Promise<{ totalEmployees: number, activeEmployees: number, departmentCounts: any, averageSalary: number }>;
+  getAttendanceMetrics(startDate: Date, endDate: Date): Promise<{ presentDays: number, totalDays: number, averageHours: number, lateCount: number }>;
+  getLeaveMetrics(): Promise<{ pendingRequests: number, approvedThisMonth: number, totalDaysUsed: number, averageBalance: number }>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1617,6 +1671,347 @@ Respond with only valid JSON in this format:
       totalActions: totalActions[0].count,
       totalBadgesEarned: totalBadges[0].count,
       activeChallenges: activeChallenges[0].count
+    };
+  }
+
+  // HRMS Employee Management Implementation
+  async getEmployees(): Promise<schema.Employee[]> {
+    return await db.select().from(schema.employees).orderBy(desc(schema.employees.createdAt));
+  }
+
+  async getEmployee(id: string): Promise<schema.Employee | undefined> {
+    const employees = await db.select().from(schema.employees).where(eq(schema.employees.id, id));
+    return employees[0];
+  }
+
+  async getEmployeeByUserId(userId: string): Promise<schema.Employee | undefined> {
+    const employees = await db.select().from(schema.employees).where(eq(schema.employees.userId, userId));
+    return employees[0];
+  }
+
+  async getEmployeesByDepartment(department: string): Promise<schema.Employee[]> {
+    return await db.select().from(schema.employees).where(eq(schema.employees.department, department));
+  }
+
+  async getEmployeesByManager(managerId: string): Promise<schema.Employee[]> {
+    return await db.select().from(schema.employees).where(eq(schema.employees.managerId, managerId));
+  }
+
+  async createEmployee(employee: schema.InsertEmployee): Promise<schema.Employee> {
+    const employees = await db.insert(schema.employees).values(employee).returning();
+    return employees[0];
+  }
+
+  async updateEmployee(id: string, employee: Partial<schema.InsertEmployee>): Promise<schema.Employee> {
+    const employees = await db.update(schema.employees).set(employee).where(eq(schema.employees.id, id)).returning();
+    return employees[0];
+  }
+
+  async deleteEmployee(id: string): Promise<boolean> {
+    const result = await db.delete(schema.employees).where(eq(schema.employees.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  // HRMS Leave Management Implementation
+  async getLeaveRequests(): Promise<schema.LeaveRequest[]> {
+    return await db.select().from(schema.leaveRequests).orderBy(desc(schema.leaveRequests.createdAt));
+  }
+
+  async getLeaveRequest(id: string): Promise<schema.LeaveRequest | undefined> {
+    const requests = await db.select().from(schema.leaveRequests).where(eq(schema.leaveRequests.id, id));
+    return requests[0];
+  }
+
+  async getLeaveRequestsByEmployee(employeeId: string): Promise<schema.LeaveRequest[]> {
+    return await db.select().from(schema.leaveRequests)
+      .where(eq(schema.leaveRequests.employeeId, employeeId))
+      .orderBy(desc(schema.leaveRequests.createdAt));
+  }
+
+  async getLeaveRequestsByStatus(status: string): Promise<schema.LeaveRequest[]> {
+    return await db.select().from(schema.leaveRequests)
+      .where(eq(schema.leaveRequests.status, status))
+      .orderBy(desc(schema.leaveRequests.createdAt));
+  }
+
+  async createLeaveRequest(request: schema.InsertLeaveRequest): Promise<schema.LeaveRequest> {
+    const requests = await db.insert(schema.leaveRequests).values(request).returning();
+    return requests[0];
+  }
+
+  async updateLeaveRequest(id: string, request: Partial<schema.InsertLeaveRequest>): Promise<schema.LeaveRequest> {
+    const requests = await db.update(schema.leaveRequests).set(request).where(eq(schema.leaveRequests.id, id)).returning();
+    return requests[0];
+  }
+
+  async deleteLeaveRequest(id: string): Promise<boolean> {
+    const result = await db.delete(schema.leaveRequests).where(eq(schema.leaveRequests.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  // HRMS Attendance Management Implementation
+  async getAttendance(): Promise<schema.Attendance[]> {
+    return await db.select().from(schema.attendance).orderBy(desc(schema.attendance.date));
+  }
+
+  async getAttendanceByEmployee(employeeId: string): Promise<schema.Attendance[]> {
+    return await db.select().from(schema.attendance)
+      .where(eq(schema.attendance.employeeId, employeeId))
+      .orderBy(desc(schema.attendance.date));
+  }
+
+  async getAttendanceByDate(date: Date): Promise<schema.Attendance[]> {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+    
+    return await db.select().from(schema.attendance)
+      .where(and(
+        gte(schema.attendance.date, startOfDay),
+        lte(schema.attendance.date, endOfDay)
+      ));
+  }
+
+  async getAttendanceByDateRange(startDate: Date, endDate: Date): Promise<schema.Attendance[]> {
+    return await db.select().from(schema.attendance)
+      .where(and(
+        gte(schema.attendance.date, startDate),
+        lte(schema.attendance.date, endDate)
+      ))
+      .orderBy(desc(schema.attendance.date));
+  }
+
+  async createAttendance(attendance: schema.InsertAttendance): Promise<schema.Attendance> {
+    const attendances = await db.insert(schema.attendance).values(attendance).returning();
+    return attendances[0];
+  }
+
+  async updateAttendance(id: string, attendance: Partial<schema.InsertAttendance>): Promise<schema.Attendance> {
+    const attendances = await db.update(schema.attendance).set(attendance).where(eq(schema.attendance.id, id)).returning();
+    return attendances[0];
+  }
+
+  async clockIn(employeeId: string, location?: string): Promise<schema.Attendance> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Check if already clocked in today
+    const existingAttendance = await db.select().from(schema.attendance)
+      .where(and(
+        eq(schema.attendance.employeeId, employeeId),
+        gte(schema.attendance.date, today)
+      ));
+    
+    if (existingAttendance.length > 0) {
+      throw new Error('Already clocked in today');
+    }
+
+    const attendance = await this.createAttendance({
+      employeeId,
+      date: new Date(),
+      clockIn: new Date(),
+      status: 'present',
+      location: location || 'office'
+    });
+
+    return attendance;
+  }
+
+  async clockOut(attendanceId: string): Promise<schema.Attendance> {
+    const clockOutTime = new Date();
+    const attendance = await this.getAttendanceByEmployee(attendanceId);
+    
+    if (!attendance) {
+      throw new Error('Attendance record not found');
+    }
+
+    return await this.updateAttendance(attendanceId, {
+      clockOut: clockOutTime
+    });
+  }
+
+  // HRMS Performance Management Implementation
+  async getPerformanceReviews(): Promise<schema.PerformanceReview[]> {
+    return await db.select().from(schema.performanceReviews).orderBy(desc(schema.performanceReviews.createdAt));
+  }
+
+  async getPerformanceReview(id: string): Promise<schema.PerformanceReview | undefined> {
+    const reviews = await db.select().from(schema.performanceReviews).where(eq(schema.performanceReviews.id, id));
+    return reviews[0];
+  }
+
+  async getPerformanceReviewsByEmployee(employeeId: string): Promise<schema.PerformanceReview[]> {
+    return await db.select().from(schema.performanceReviews)
+      .where(eq(schema.performanceReviews.employeeId, employeeId))
+      .orderBy(desc(schema.performanceReviews.createdAt));
+  }
+
+  async getPerformanceReviewsByReviewer(reviewerId: string): Promise<schema.PerformanceReview[]> {
+    return await db.select().from(schema.performanceReviews)
+      .where(eq(schema.performanceReviews.reviewerId, reviewerId))
+      .orderBy(desc(schema.performanceReviews.createdAt));
+  }
+
+  async createPerformanceReview(review: schema.InsertPerformanceReview): Promise<schema.PerformanceReview> {
+    const reviews = await db.insert(schema.performanceReviews).values(review).returning();
+    return reviews[0];
+  }
+
+  async updatePerformanceReview(id: string, review: Partial<schema.InsertPerformanceReview>): Promise<schema.PerformanceReview> {
+    const reviews = await db.update(schema.performanceReviews).set(review).where(eq(schema.performanceReviews.id, id)).returning();
+    return reviews[0];
+  }
+
+  // HRMS Training Management Implementation
+  async getTrainingPrograms(): Promise<schema.TrainingProgram[]> {
+    return await db.select().from(schema.trainingPrograms).orderBy(desc(schema.trainingPrograms.createdAt));
+  }
+
+  async getTrainingProgram(id: string): Promise<schema.TrainingProgram | undefined> {
+    const programs = await db.select().from(schema.trainingPrograms).where(eq(schema.trainingPrograms.id, id));
+    return programs[0];
+  }
+
+  async createTrainingProgram(program: schema.InsertTrainingProgram): Promise<schema.TrainingProgram> {
+    const programs = await db.insert(schema.trainingPrograms).values(program).returning();
+    return programs[0];
+  }
+
+  async updateTrainingProgram(id: string, program: Partial<schema.InsertTrainingProgram>): Promise<schema.TrainingProgram> {
+    const programs = await db.update(schema.trainingPrograms).set(program).where(eq(schema.trainingPrograms.id, id)).returning();
+    return programs[0];
+  }
+
+  async getTrainingEnrollments(): Promise<schema.TrainingEnrollment[]> {
+    return await db.select().from(schema.trainingEnrollments).orderBy(desc(schema.trainingEnrollments.createdAt));
+  }
+
+  async getTrainingEnrollmentsByEmployee(employeeId: string): Promise<schema.TrainingEnrollment[]> {
+    return await db.select().from(schema.trainingEnrollments)
+      .where(eq(schema.trainingEnrollments.employeeId, employeeId))
+      .orderBy(desc(schema.trainingEnrollments.createdAt));
+  }
+
+  async getTrainingEnrollmentsByProgram(programId: string): Promise<schema.TrainingEnrollment[]> {
+    return await db.select().from(schema.trainingEnrollments)
+      .where(eq(schema.trainingEnrollments.trainingProgramId, programId))
+      .orderBy(desc(schema.trainingEnrollments.createdAt));
+  }
+
+  async createTrainingEnrollment(enrollment: schema.InsertTrainingEnrollment): Promise<schema.TrainingEnrollment> {
+    const enrollments = await db.insert(schema.trainingEnrollments).values(enrollment).returning();
+    return enrollments[0];
+  }
+
+  async updateTrainingEnrollment(id: string, enrollment: Partial<schema.InsertTrainingEnrollment>): Promise<schema.TrainingEnrollment> {
+    const enrollments = await db.update(schema.trainingEnrollments).set(enrollment).where(eq(schema.trainingEnrollments.id, id)).returning();
+    return enrollments[0];
+  }
+
+  // HRMS Analytics Implementation
+  async getEmployeeMetrics(): Promise<{ totalEmployees: number, activeEmployees: number, departmentCounts: any, averageSalary: number }> {
+    const totalResult = await db.select({ count: sql<number>`count(*)` }).from(schema.employees);
+    const activeResult = await db.select({ count: sql<number>`count(*)` })
+      .from(schema.employees)
+      .where(eq(schema.employees.status, 'active'));
+    
+    const departmentResult = await db.select({
+      department: schema.employees.department,
+      count: sql<number>`count(*)`
+    })
+    .from(schema.employees)
+    .groupBy(schema.employees.department);
+
+    const salaryResult = await db.select({
+      avgSalary: sql<number>`avg(${schema.employees.salary})`
+    }).from(schema.employees);
+
+    const departmentCounts = departmentResult.reduce((acc, item) => {
+      acc[item.department] = item.count;
+      return acc;
+    }, {} as any);
+
+    return {
+      totalEmployees: totalResult[0].count,
+      activeEmployees: activeResult[0].count,
+      departmentCounts,
+      averageSalary: salaryResult[0].avgSalary || 0
+    };
+  }
+
+  async getAttendanceMetrics(startDate: Date, endDate: Date): Promise<{ presentDays: number, totalDays: number, averageHours: number, lateCount: number }> {
+    const presentResult = await db.select({ count: sql<number>`count(*)` })
+      .from(schema.attendance)
+      .where(and(
+        gte(schema.attendance.date, startDate),
+        lte(schema.attendance.date, endDate),
+        eq(schema.attendance.status, 'present')
+      ));
+
+    const totalResult = await db.select({ count: sql<number>`count(*)` })
+      .from(schema.attendance)
+      .where(and(
+        gte(schema.attendance.date, startDate),
+        lte(schema.attendance.date, endDate)
+      ));
+
+    const avgHoursResult = await db.select({
+      avgHours: sql<number>`avg(${schema.attendance.hoursWorked})`
+    })
+    .from(schema.attendance)
+    .where(and(
+      gte(schema.attendance.date, startDate),
+      lte(schema.attendance.date, endDate)
+    ));
+
+    const lateResult = await db.select({ count: sql<number>`count(*)` })
+      .from(schema.attendance)
+      .where(and(
+        gte(schema.attendance.date, startDate),
+        lte(schema.attendance.date, endDate),
+        eq(schema.attendance.status, 'late')
+      ));
+
+    return {
+      presentDays: presentResult[0].count,
+      totalDays: totalResult[0].count,
+      averageHours: avgHoursResult[0].avgHours || 0,
+      lateCount: lateResult[0].count
+    };
+  }
+
+  async getLeaveMetrics(): Promise<{ pendingRequests: number, approvedThisMonth: number, totalDaysUsed: number, averageBalance: number }> {
+    const pendingResult = await db.select({ count: sql<number>`count(*)` })
+      .from(schema.leaveRequests)
+      .where(eq(schema.leaveRequests.status, 'pending'));
+
+    const thisMonth = new Date();
+    thisMonth.setDate(1);
+    thisMonth.setHours(0, 0, 0, 0);
+
+    const approvedThisMonthResult = await db.select({ count: sql<number>`count(*)` })
+      .from(schema.leaveRequests)
+      .where(and(
+        eq(schema.leaveRequests.status, 'approved'),
+        gte(schema.leaveRequests.approvedAt, thisMonth)
+      ));
+
+    const totalDaysResult = await db.select({
+      totalDays: sql<number>`sum(${schema.leaveRequests.daysRequested})`
+    })
+    .from(schema.leaveRequests)
+    .where(eq(schema.leaveRequests.status, 'approved'));
+
+    const avgBalanceResult = await db.select({
+      avgBalance: sql<number>`avg(${schema.employees.annualLeaveBalance})`
+    }).from(schema.employees);
+
+    return {
+      pendingRequests: pendingResult[0].count,
+      approvedThisMonth: approvedThisMonthResult[0].count,
+      totalDaysUsed: totalDaysResult[0].totalDays || 0,
+      averageBalance: avgBalanceResult[0].avgBalance || 0
     };
   }
 }

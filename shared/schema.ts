@@ -22,7 +22,7 @@ export const activityStatusEnum = pgEnum('activity_status', ['open', 'in_progres
 export const activityPriorityEnum = pgEnum('activity_priority', ['low', 'medium', 'high', 'urgent', 'critical']);
 export const activityRecurrenceEnum = pgEnum('activity_recurrence', ['none', 'daily', 'weekly', 'monthly', 'quarterly', 'yearly', 'custom']);
 export const activityOutcomeEnum = pgEnum('activity_outcome', ['successful', 'no_answer', 'voicemail', 'busy', 'wrong_number', 'bounced', 'unsubscribed', 'interested', 'not_interested', 'rescheduled', 'completed', 'partial', 'cancelled']);
-export const employeeStatusEnum = pgEnum('employee_status', ['active', 'inactive']);
+export const employeeStatusEnum = pgEnum('employee_status', ['active', 'inactive', 'terminated', 'on_leave', 'suspended']);
 export const meetingStatusEnum = pgEnum('meeting_status', ['scheduled', 'ongoing', 'completed', 'cancelled']);
 export const meetingTypeEnum = pgEnum('meeting_type', ['call', 'video', 'in-person', 'presentation', 'demo']);
 export const participantStatusEnum = pgEnum('participant_status', ['invited', 'accepted', 'declined', 'tentative']);
@@ -1567,3 +1567,327 @@ export type InsertGamificationStreak = z.infer<typeof insertGamificationStreakSc
 
 export type GamificationNotification = typeof gamificationNotifications.$inferSelect;
 export type InsertGamificationNotification = z.infer<typeof insertGamificationNotificationSchema>;
+
+// HRMS Module - Comprehensive Employee Management System
+
+// Employee Status and Role Enums
+export const employmentTypeEnum = pgEnum('employment_type', ['full_time', 'part_time', 'contract', 'temporary', 'intern']);
+export const departmentEnum = pgEnum('department', ['hr', 'engineering', 'sales', 'marketing', 'finance', 'operations', 'support', 'design', 'legal', 'product']);
+export const leaveTypeEnum = pgEnum('leave_type', ['annual', 'sick', 'maternity', 'paternity', 'personal', 'bereavement', 'study', 'unpaid']);
+export const leaveStatusEnum = pgEnum('leave_status', ['pending', 'approved', 'rejected', 'cancelled']);
+export const attendanceStatusEnum = pgEnum('attendance_status', ['present', 'absent', 'late', 'partial', 'work_from_home']);
+export const performanceRatingEnum = pgEnum('performance_rating', ['exceptional', 'exceeds_expectations', 'meets_expectations', 'below_expectations', 'unsatisfactory']);
+
+// Core Employee Table
+export const employees = pgTable("employees", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  employeeId: text("employee_id").notNull().unique(), // Custom employee ID
+  userId: uuid("user_id").references(() => users.id).unique(), // Link to user account
+  
+  // Personal Information
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  middleName: text("middle_name"),
+  preferredName: text("preferred_name"),
+  email: text("email").notNull().unique(),
+  personalEmail: text("personal_email"),
+  phone: text("phone"),
+  personalPhone: text("personal_phone"),
+  dateOfBirth: timestamp("date_of_birth"),
+  gender: text("gender"),
+  nationality: text("nationality"),
+  maritalStatus: text("marital_status"),
+  
+  // Address Information
+  address: text("address"),
+  city: text("city"),
+  state: text("state"),
+  zipCode: text("zip_code"),
+  country: text("country").default('US'),
+  
+  // Emergency Contact
+  emergencyContactName: text("emergency_contact_name"),
+  emergencyContactPhone: text("emergency_contact_phone"),
+  emergencyContactRelationship: text("emergency_contact_relationship"),
+  
+  // Employment Details
+  department: departmentEnum("department").notNull(),
+  position: text("position").notNull(),
+  jobTitle: text("job_title").notNull(),
+  employmentType: employmentTypeEnum("employment_type").notNull().default('full_time'),
+  status: employeeStatusEnum("status").notNull().default('active'),
+  hireDate: timestamp("hire_date").notNull(),
+  terminationDate: timestamp("termination_date"),
+  probationEndDate: timestamp("probation_end_date"),
+  
+  // Reporting Structure
+  managerId: uuid("manager_id").references(() => employees.id),
+  teamId: uuid("team_id"),
+  
+  // Compensation
+  salary: decimal("salary", { precision: 12, scale: 2 }),
+  currency: text("currency").default('USD'),
+  payFrequency: text("pay_frequency").default('monthly'), // weekly, bi_weekly, monthly
+  payGrade: text("pay_grade"),
+  
+  // Work Schedule
+  workingHours: integer("working_hours").default(40), // per week
+  workSchedule: jsonb("work_schedule"), // Custom schedule object
+  timezone: text("timezone").default('UTC'),
+  
+  // Benefits and Leave
+  annualLeaveBalance: decimal("annual_leave_balance", { precision: 5, scale: 2 }).default('0'),
+  sickLeaveBalance: decimal("sick_leave_balance", { precision: 5, scale: 2 }).default('0'),
+  personalLeaveBalance: decimal("personal_leave_balance", { precision: 5, scale: 2 }).default('0'),
+  
+  // Performance and Development
+  currentPerformanceRating: performanceRatingEnum("current_performance_rating"),
+  lastReviewDate: timestamp("last_review_date"),
+  nextReviewDate: timestamp("next_review_date"),
+  
+  // Documents and Assets
+  profilePhoto: text("profile_photo"),
+  documents: jsonb("documents"), // Array of document metadata
+  assets: jsonb("assets"), // Company assets assigned
+  
+  // Skills and Certifications
+  skills: jsonb("skills"), // Array of skills
+  certifications: jsonb("certifications"), // Array of certifications
+  education: jsonb("education"), // Array of education records
+  
+  // System and Access
+  workLocation: text("work_location"), // office, remote, hybrid
+  accessLevel: text("access_level").default('standard'),
+  systemAccounts: jsonb("system_accounts"), // Various system access
+  
+  // Custom Fields and Tags
+  customFields: jsonb("custom_fields"),
+  tags: text("tags").array(),
+  notes: text("notes"),
+  
+  // Audit Fields
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  createdBy: uuid("created_by").references(() => users.id),
+  lastModifiedBy: uuid("last_modified_by").references(() => users.id),
+});
+
+// Leave Management
+export const leaveRequests = pgTable("leave_requests", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  employeeId: uuid("employee_id").references(() => employees.id).notNull(),
+  type: leaveTypeEnum("type").notNull(),
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
+  daysRequested: decimal("days_requested", { precision: 5, scale: 2 }).notNull(),
+  reason: text("reason"),
+  status: leaveStatusEnum("status").notNull().default('pending'),
+  
+  // Approval Workflow
+  submittedAt: timestamp("submitted_at").notNull().defaultNow(),
+  submittedBy: uuid("submitted_by").references(() => employees.id).notNull(),
+  reviewedBy: uuid("reviewed_by").references(() => employees.id),
+  reviewedAt: timestamp("reviewed_at"),
+  approverComments: text("approver_comments"),
+  
+  // HR Processing
+  hrProcessedBy: uuid("hr_processed_by").references(() => employees.id),
+  hrProcessedAt: timestamp("hr_processed_at"),
+  hrComments: text("hr_comments"),
+  
+  // Supporting Documents
+  attachments: jsonb("attachments"),
+  
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Attendance Tracking
+export const attendance = pgTable("attendance", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  employeeId: uuid("employee_id").references(() => employees.id).notNull(),
+  date: timestamp("date").notNull(),
+  
+  // Clock In/Out Times
+  clockIn: timestamp("clock_in"),
+  clockOut: timestamp("clock_out"),
+  breakStart: timestamp("break_start"),
+  breakEnd: timestamp("break_end"),
+  
+  // Calculated Fields
+  hoursWorked: decimal("hours_worked", { precision: 5, scale: 2 }),
+  overtimeHours: decimal("overtime_hours", { precision: 5, scale: 2 }).default('0'),
+  breakDuration: integer("break_duration"), // in minutes
+  
+  // Status and Location
+  status: attendanceStatusEnum("status").notNull(),
+  location: text("location"), // office, home, client_site
+  ipAddress: text("ip_address"),
+  deviceInfo: text("device_info"),
+  
+  // Manager Override
+  managerOverride: boolean("manager_override").default(false),
+  overrideReason: text("override_reason"),
+  overrideBy: uuid("override_by").references(() => employees.id),
+  
+  notes: text("notes"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Performance Reviews
+export const performanceReviews = pgTable("performance_reviews", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  employeeId: uuid("employee_id").references(() => employees.id).notNull(),
+  reviewerId: uuid("reviewer_id").references(() => employees.id).notNull(),
+  reviewPeriodStart: timestamp("review_period_start").notNull(),
+  reviewPeriodEnd: timestamp("review_period_end").notNull(),
+  
+  // Review Scores
+  overallRating: performanceRatingEnum("overall_rating"),
+  jobKnowledgeScore: integer("job_knowledge_score"), // 1-5
+  qualityOfWorkScore: integer("quality_of_work_score"), // 1-5
+  productivityScore: integer("productivity_score"), // 1-5
+  communicationScore: integer("communication_score"), // 1-5
+  teamworkScore: integer("teamwork_score"), // 1-5
+  leadershipScore: integer("leadership_score"), // 1-5
+  
+  // Goal Assessment
+  goalsAchieved: jsonb("goals_achieved"), // Array of goal objects
+  goalsInProgress: jsonb("goals_in_progress"),
+  newGoals: jsonb("new_goals"),
+  
+  // Feedback
+  strengths: text("strengths"),
+  areasForImprovement: text("areas_for_improvement"),
+  developmentPlan: text("development_plan"),
+  reviewerComments: text("reviewer_comments"),
+  employeeComments: text("employee_comments"),
+  
+  // Review Status
+  status: text("status").default('draft'), // draft, submitted, completed
+  submittedAt: timestamp("submitted_at"),
+  completedAt: timestamp("completed_at"),
+  
+  // Signatures
+  employeeSignature: boolean("employee_signature").default(false),
+  reviewerSignature: boolean("reviewer_signature").default(false),
+  hrApproval: boolean("hr_approval").default(false),
+  
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Employee Training and Development
+export const trainingPrograms = pgTable("training_programs", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  description: text("description"),
+  category: text("category"), // technical, soft_skills, compliance, leadership
+  duration: integer("duration"), // in hours
+  format: text("format"), // online, in_person, hybrid
+  provider: text("provider"),
+  cost: decimal("cost", { precision: 10, scale: 2 }),
+  maxParticipants: integer("max_participants"),
+  
+  // Requirements
+  prerequisites: jsonb("prerequisites"),
+  targetAudience: text("target_audience"),
+  
+  // Scheduling
+  startDate: timestamp("start_date"),
+  endDate: timestamp("end_date"),
+  registrationDeadline: timestamp("registration_deadline"),
+  
+  // Status
+  status: text("status").default('active'), // active, inactive, completed
+  
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  createdBy: uuid("created_by").references(() => employees.id),
+});
+
+export const trainingEnrollments = pgTable("training_enrollments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  trainingProgramId: uuid("training_program_id").references(() => trainingPrograms.id).notNull(),
+  employeeId: uuid("employee_id").references(() => employees.id).notNull(),
+  
+  // Enrollment Details
+  enrolledAt: timestamp("enrolled_at").notNull().defaultNow(),
+  enrolledBy: uuid("enrolled_by").references(() => employees.id),
+  status: text("status").default('enrolled'), // enrolled, in_progress, completed, dropped
+  
+  // Progress Tracking
+  completionPercentage: integer("completion_percentage").default(0),
+  startedAt: timestamp("started_at"),
+  completedAt: timestamp("completed_at"),
+  
+  // Assessment
+  finalScore: decimal("final_score", { precision: 5, scale: 2 }),
+  certificateIssued: boolean("certificate_issued").default(false),
+  certificateUrl: text("certificate_url"),
+  
+  // Feedback
+  employeeFeedback: text("employee_feedback"),
+  employeeRating: integer("employee_rating"), // 1-5
+  
+  notes: text("notes"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// HRMS Insert Schemas
+export const insertEmployeeSchema = createInsertSchema(employees).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertLeaveRequestSchema = createInsertSchema(leaveRequests).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertAttendanceSchema = createInsertSchema(attendance).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertPerformanceReviewSchema = createInsertSchema(performanceReviews).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertTrainingProgramSchema = createInsertSchema(trainingPrograms).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertTrainingEnrollmentSchema = createInsertSchema(trainingEnrollments).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+// HRMS Types
+export type Employee = typeof employees.$inferSelect;
+export type InsertEmployee = z.infer<typeof insertEmployeeSchema>;
+
+export type LeaveRequest = typeof leaveRequests.$inferSelect;
+export type InsertLeaveRequest = z.infer<typeof insertLeaveRequestSchema>;
+
+export type Attendance = typeof attendance.$inferSelect;
+export type InsertAttendance = z.infer<typeof insertAttendanceSchema>;
+
+export type PerformanceReview = typeof performanceReviews.$inferSelect;
+export type InsertPerformanceReview = z.infer<typeof insertPerformanceReviewSchema>;
+
+export type TrainingProgram = typeof trainingPrograms.$inferSelect;
+export type InsertTrainingProgram = z.infer<typeof insertTrainingProgramSchema>;
+
+export type TrainingEnrollment = typeof trainingEnrollments.$inferSelect;
+export type InsertTrainingEnrollment = z.infer<typeof insertTrainingEnrollmentSchema>;
