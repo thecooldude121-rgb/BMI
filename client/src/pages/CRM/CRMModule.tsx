@@ -18,6 +18,7 @@ import WorkingActivitiesPage from './WorkingActivitiesPage';
 import DiagnosticPage from './DiagnosticPage';
 import CRMAnalyticsDashboard from './CRMAnalyticsDashboard';
 import GamificationModule from './GamificationModuleNextGen';
+import EmployeesPage from '../HRMS/EmployeesPage';
 
 const CRMModule = () => {
   console.log('CRMModule rendering');
@@ -49,6 +50,9 @@ const CRMModule = () => {
         </Route>
         <Route path="/crm/gamification">
           <GamificationModule />
+        </Route>
+        <Route path="/crm/employees">
+          <EmployeesPage />
         </Route>
         <Route path="/crm/tasks">
           <div className="p-6">
