@@ -1356,7 +1356,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         status: 'planned' as const,
         scheduledAt: customizations.scheduledAt || new Date(),
         duration: customizations.duration || 30,
-        description: customizations.description || '',
+        description: customizations?.description || '',
         assignedTo: req.body.userId || '1',
         createdBy: req.body.userId || '1',
         ...(customizations.relatedToType === 'lead' && { leadId: customizations.relatedToId }),
