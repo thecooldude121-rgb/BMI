@@ -1117,45 +1117,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/activities/metrics", async (req, res) => {
     try {
       const activities = await storage.getActivities();
+      console.log(`📊 Processing ${activities.length} activities for metrics calculation`);
+      
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       
       const totalActivities = activities.length;
-      const openActivities = activities.filter(a => a.status === 'planned').length;
-      const completedToday = activities.filter(a => 
-        a.status === 'completed' && 
-        a.completedAt && 
-        new Date(a.completedAt) >= today
-      ).length;
-      const overdueActivities = activities.filter(a => 
-        a.status === 'planned' &&
-        a.dueDate && 
-        new Date(a.dueDate) < now
-      ).length;
+      const openActivities = activities.filter(a => a.status === 'planned' || a.status === 'in_progress').length;
+      
+      // Safe date parsing for completedToday
+      const completedToday = activities.filter(a => {
+        if (a.status !== 'completed') return false;
+        if (!a.completedAt) return false;
+        
+        try {
+          const completedDate = new Date(a.completedAt);
+          return !isNaN(completedDate.getTime()) && completedDate >= today;
+        } catch (error) {
+          console.warn(`Invalid completedAt date for activity ${a.id}:`, a.completedAt);
+          return false;
+        }
+      }).length;
+      
+      // Safe date parsing for overdue activities
+      const overdueActivities = activities.filter(a => {
+        if (a.status !== 'planned' && a.status !== 'in_progress') return false;
+        if (!a.dueDate && !a.scheduledAt) return false;
+        
+        try {
+          const dueDate = new Date(a.dueDate || a.scheduledAt);
+          return !isNaN(dueDate.getTime()) && dueDate < now;
+        } catch (error) {
+          console.warn(`Invalid dueDate for activity ${a.id}:`, a.dueDate);
+          return false;
+        }
+      }).length;
       
       // Calculate average completion time (in minutes)
-      const completedActivities = activities.filter(a => a.status === 'completed' && a.duration);
+      const completedActivities = activities.filter(a => a.status === 'completed' && a.duration && typeof a.duration === 'number');
       const avgCompletionTime = completedActivities.length > 0 
         ? Math.round(completedActivities.reduce((sum, a) => sum + (a.duration || 0), 0) / completedActivities.length)
         : 0;
       
       // Calculate completion rate
-      const totalTasksWithDueDate = activities.filter(a => a.dueDate).length;
+      const totalTasksWithDueDate = activities.filter(a => a.dueDate || a.scheduledAt).length;
       const completedTasks = activities.filter(a => a.status === 'completed').length;
       const completionRate = totalTasksWithDueDate > 0 
         ? Math.round((completedTasks / totalTasksWithDueDate) * 100)
         : 0;
 
-      res.json({
+      const metrics = {
         totalActivities,
         openActivities,
         completedToday,
         overdueActivities,
         avgCompletionTime,
         completionRate
-      });
+      };
+
+      console.log('📈 Activities metrics calculated:', metrics);
+      res.json(metrics);
     } catch (error) {
-      handleError(error, res);
+      console.error('❌ Error calculating activities metrics:', error);
+      // Return default metrics in case of error
+      res.json({
+        totalActivities: 0,
+        openActivities: 0,
+        completedToday: 0,
+        overdueActivities: 0,
+        avgCompletionTime: 0,
+        completionRate: 0
+      });
     }
   });
 
