@@ -26,12 +26,12 @@ const Header: React.FC = () => {
     { name: 'Leads', href: '/crm/leads', icon: UserPlus },
     { name: 'Accounts', href: '/crm/accounts', icon: Building },
     { name: 'Deals', href: '/crm/deals', icon: DollarSign },
-    { name: 'Tasks', href: '/crm/tasks', icon: Phone }
+    { name: 'Activities', href: '/crm/activities', icon: Activity }
   ];
 
   const moreNavigation = [
     { name: 'Contacts', href: '/crm/contacts', icon: Users },
-    { name: 'Activities', href: '/crm/activities', icon: Activity },
+    { name: 'Tasks', href: '/crm/tasks', icon: Phone },
     { name: 'Pipeline', href: '/crm/pipeline', icon: Target },
   ];
 
@@ -53,7 +53,7 @@ const Header: React.FC = () => {
     { name: 'Add Contact', action: () => setLocation('/crm/contacts/new'), icon: Users },
     { name: 'Add Company', action: () => setLocation('/crm/accounts/new'), icon: Building2 },
     { name: 'Schedule Meeting', action: () => setLocation('/calendar/new'), icon: Calendar },
-    { name: 'Add Task', action: () => setLocation('/crm/tasks/new'), icon: Phone },
+    { name: 'Add Activity', action: () => setLocation('/crm/activities/new'), icon: Activity },
   ];
 
   return (
