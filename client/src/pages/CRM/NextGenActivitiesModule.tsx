@@ -87,14 +87,29 @@ const NextGenActivitiesModule = () => {
   const queryClient = useQueryClient();
 
   // Fetch activities data
-  const { data: activities = [], isLoading } = useQuery<Activity[]>({
+  const { data: activities = [], isLoading, error: activitiesError } = useQuery<Activity[]>({
     queryKey: ['/api/activities'],
+    retry: 3,
+    retryDelay: 1000,
   });
 
   // Fetch activity metrics
-  const { data: metrics } = useQuery<ActivityMetrics>({
+  const { data: metrics, error: metricsError } = useQuery<ActivityMetrics>({
     queryKey: ['/api/activities/metrics'],
+    retry: 3,
+    retryDelay: 1000,
+    refetchInterval: 30000, // Refresh every 30 seconds
   });
+
+  // Log data for debugging
+  React.useEffect(() => {
+    console.log('🔍 Activities Module Debug:', {
+      activitiesCount: activities.length,
+      activitiesError,
+      metrics,
+      metricsError
+    });
+  }, [activities, activitiesError, metrics, metricsError]);
 
   // Fuzzy search setup
   const fuse = useMemo(() => {
