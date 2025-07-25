@@ -12,6 +12,7 @@ import NextGenChallenges from '../../components/gamification/NextGenChallenges';
 import NextGenRewardsMarketplace from '../../components/gamification/NextGenRewardsMarketplace';
 
 export function GamificationModule() {
+  console.log('GamificationModule rendering');
   const [activeTab, setActiveTab] = useState('dashboard');
 
   // Render the appropriate next-gen component based on active tab

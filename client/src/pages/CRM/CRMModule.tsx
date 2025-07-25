@@ -23,7 +23,7 @@ const CRMModule = () => {
   console.log('CRMModule rendering');
   
   return (
-    <div className="h-full overflow-auto bg-gray-50">
+    <div className="min-h-screen w-full overflow-auto">
 
 
       <Switch>
@@ -67,7 +67,9 @@ const CRMModule = () => {
           </div>
         </Route>
         <Route path="/crm">
-          <GamificationModule />
+          <div className="min-h-screen w-full">
+            <GamificationModule />
+          </div>
         </Route>
       </Switch>
     </div>

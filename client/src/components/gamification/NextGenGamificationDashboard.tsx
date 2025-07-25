@@ -56,6 +56,7 @@ const RARITY_GLOW: Record<string, string> = {
 };
 
 export const NextGenGamificationDashboard: React.FC = () => {
+  console.log('NextGenGamificationDashboard rendering');
   const [profile, setProfile] = useState<UserProfile>({
     id: '1',
     userId: 'user-1',
