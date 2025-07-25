@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import AIAutomationPanel from '../../components/activities/AIAutomationPanel';
 import { 
   Calendar, Clock, Users, Phone, Mail, Video, MessageSquare, 
   CheckCircle, AlertCircle, TrendingUp, Plus, Filter, Search,
@@ -83,6 +84,7 @@ const NextGenActivitiesModule = () => {
     dateRange?: string;
   }>({});
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showAIAutomation, setShowAIAutomation] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -261,7 +263,10 @@ const NextGenActivitiesModule = () => {
               <Plus className="w-4 h-4 mr-2" />
               Create Activity
             </button>
-            <button className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors flex items-center">
+            <button 
+              onClick={() => setShowAIAutomation(true)}
+              className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors flex items-center"
+            >
               <Zap className="w-4 h-4 mr-2" />
               AI Automation
             </button>
@@ -658,6 +663,12 @@ const NextGenActivitiesModule = () => {
           </motion.div>
         )}
       </div>
+
+      {/* AI Automation Panel */}
+      <AIAutomationPanel 
+        isOpen={showAIAutomation} 
+        onClose={() => setShowAIAutomation(false)} 
+      />
     </div>
   );
 };
