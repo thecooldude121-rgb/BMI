@@ -34,11 +34,16 @@ export function GamificationModule() {
 
   return (
     <div className="relative min-h-screen">
-      {/* Ultra-modern tab navigation overlay */}
+      {/* Ultra-modern tab navigation overlay - Fixed and Frozen */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-black/20 backdrop-blur-lg border border-white/20 rounded-2xl p-2"
+        className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[9999] bg-black/30 backdrop-blur-xl border border-white/30 rounded-2xl p-3 shadow-2xl"
+        style={{
+          position: 'fixed',
+          willChange: 'transform',
+          backfaceVisibility: 'hidden'
+        }}
       >
         <div className="flex space-x-2">
           {[
@@ -81,7 +86,7 @@ export function GamificationModule() {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.3 }}
-          className="pt-20"
+          className="pt-24"
         >
           {renderNextGenContent()}
         </motion.div>
