@@ -14,6 +14,7 @@ import SimpleAdvancedDealsModule from './SimpleAdvancedDealsModule';
 import NextGenActivitiesModule from './NextGenActivitiesModule';
 import WorkingActivitiesPage from './WorkingActivitiesPage';
 import DiagnosticPage from './DiagnosticPage';
+import CRMAnalyticsDashboard from './CRMAnalyticsDashboard';
 
 const CRMModule = () => {
   console.log('CRMModule rendering');
@@ -39,6 +40,9 @@ const CRMModule = () => {
         </Route>
         <Route path="/crm/activities">
           <NextGenActivitiesModule />
+        </Route>
+        <Route path="/crm/analytics">
+          <CRMAnalyticsDashboard />
         </Route>
         <Route path="/crm/gamification">
           <div className="p-6">
