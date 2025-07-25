@@ -17,7 +17,7 @@ import NextGenActivitiesModule from './NextGenActivitiesModule';
 import WorkingActivitiesPage from './WorkingActivitiesPage';
 import DiagnosticPage from './DiagnosticPage';
 import CRMAnalyticsDashboard from './CRMAnalyticsDashboard';
-import { GamificationModule } from './GamificationModuleNextGen';
+import GamificationModule from './GamificationModuleNextGen';
 
 const CRMModule = () => {
   console.log('CRMModule rendering');

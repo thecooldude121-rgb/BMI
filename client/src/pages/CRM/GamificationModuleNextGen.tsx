@@ -11,7 +11,7 @@ import NextGenLeaderboard from '../../components/gamification/NextGenLeaderboard
 import NextGenChallenges from '../../components/gamification/NextGenChallenges';
 import NextGenRewardsMarketplace from '../../components/gamification/NextGenRewardsMarketplace';
 
-export function GamificationModule() {
+function GamificationModule() {
   console.log('GamificationModule rendering');
   const [activeTab, setActiveTab] = useState('dashboard');
 
@@ -94,3 +94,5 @@ export function GamificationModule() {
     </div>
   );
 }
+
+export default GamificationModule;
