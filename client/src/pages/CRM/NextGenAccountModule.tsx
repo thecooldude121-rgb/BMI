@@ -455,7 +455,11 @@ const NextGenAccountModule: React.FC = () => {
                     transition={{ delay: index * 0.05 }}
                     whileHover={{ y: -4, boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}
                     className="bg-white rounded-lg border border-gray-200 p-6 hover:border-blue-300 transition-all duration-200 cursor-pointer"
-                    onClick={() => setLocation(`/crm/accounts/${account.id}`)}
+                    onClick={() => {
+                      console.log('Clicking account card:', account.id, account.name);
+                      console.log('Setting location to:', `/crm/accounts/${account.id}`);
+                      setLocation(`/crm/accounts/${account.id}`);
+                    }}
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center space-x-3">
@@ -573,7 +577,11 @@ const NextGenAccountModule: React.FC = () => {
                               )}
                               <div>
                                 <button 
-                                  onClick={() => setLocation(`/crm/accounts/${account.id}`)}
+                                  onClick={() => {
+                                    console.log('Clicking account name:', account.id, account.name);
+                                    console.log('Setting location to:', `/crm/accounts/${account.id}`);
+                                    setLocation(`/crm/accounts/${account.id}`);
+                                  }}
                                   className="font-medium text-gray-900 hover:text-blue-600 text-left"
                                 >
                                   {account.name}
