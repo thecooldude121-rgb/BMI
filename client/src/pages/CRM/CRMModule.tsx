@@ -69,7 +69,9 @@ const CRMModule = () => {
           </div>
         </Route>
         <Route path="/crm">
-          <BasicAccountsPage />
+          <div className="p-6">
+            <GamificationModule />
+          </div>
         </Route>
       </Switch>
     </div>
