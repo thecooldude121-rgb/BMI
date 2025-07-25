@@ -5,6 +5,7 @@ import LeadDetailPage from './LeadDetailPage';
 import EnterpriseContactsModule from './EnterpriseContactsModule';
 import NextGenAccountModule from './NextGenAccountModule';
 import TestAccountDetailPage from './TestAccountDetailPage';
+import SimpleTestPage from './SimpleTestPage';
 import AccountHealthDashboard from './AccountHealthDashboard';
 import SimpleAdvancedDealsModule from './SimpleAdvancedDealsModule';
 import NextGenActivitiesModule from './NextGenActivitiesModule';
@@ -22,7 +23,13 @@ const CRMModule = () => {
           <EnterpriseContactsModule />
         </Route>
         <Route path="/crm/accounts/health" component={AccountHealthDashboard} />
-        <Route path="/crm/accounts/:id" component={TestAccountDetailPage} />
+        <Route path="/crm/accounts/test" component={SimpleTestPage} />
+        <Route path="/crm/accounts/:id">
+          {(params) => {
+            console.log('Route matched with params:', params);
+            return <TestAccountDetailPage />;
+          }}
+        </Route>
         <Route path="/crm/accounts">
           <NextGenAccountModule />
         </Route>
