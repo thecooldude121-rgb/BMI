@@ -63,6 +63,8 @@ interface AccountMetrics {
 }
 
 const NextGenAccountModule: React.FC = () => {
+  console.log('NextGenAccountModule rendering');
+  
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'kanban'>('grid');
   const [selectedFilters, setSelectedFilters] = useState<any>({});
