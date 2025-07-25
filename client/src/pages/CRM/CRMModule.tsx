@@ -4,6 +4,8 @@ import NextGenLeadsModule from './NextGenLeadsModule';
 import LeadDetailPage from './LeadDetailPage';
 import EnterpriseContactsModule from './EnterpriseContactsModule';
 import NextGenAccountModule from './NextGenAccountModule';
+import NextGenAccountsModule from './NextGenAccountsModule';
+import NextGenContactsModule from './NextGenContactsModule';
 import BasicAccountsPage from './BasicAccountsPage';
 import TestAccountDetailPage from './TestAccountDetailPage';
 import SimpleTestPage from './SimpleTestPage';
@@ -28,12 +30,12 @@ const CRMModule = () => {
         <Route path="/crm/leads" component={NextGenLeadsModule} />
         <Route path="/crm/contacts/:id" component={() => <div>Contact Detail Page Coming Soon</div>} />
         <Route path="/crm/contacts">
-          <EnterpriseContactsModule />
+          <NextGenContactsModule />
         </Route>
         <Route path="/crm/accounts/health" component={AccountHealthDashboard} />
         <Route path="/crm/accounts/test" component={SimpleTestPage} />
         <Route path="/crm/accounts">
-          <BasicAccountsPage />
+          <NextGenAccountsModule />
         </Route>
         <Route path="/crm/deals">
           <SimpleAdvancedDealsModule />
