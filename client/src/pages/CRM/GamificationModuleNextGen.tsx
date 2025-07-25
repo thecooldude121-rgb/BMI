@@ -38,7 +38,7 @@ export function GamificationModule() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[9999] bg-black/30 backdrop-blur-xl border border-white/30 rounded-2xl p-3 shadow-2xl"
+        className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[9999] bg-black/30 backdrop-blur-xl border border-white/30 rounded-2xl p-3 shadow-2xl ml-[250px] mr-[250px] mt-[57px] mb-[57px] pl-[18px] pr-[18px] pt-[10px] pb-[10px]"
         style={{
           position: 'fixed',
           willChange: 'transform',
@@ -77,7 +77,6 @@ export function GamificationModule() {
           ))}
         </div>
       </motion.div>
-
       {/* Next-Gen Content */}
       <AnimatePresence mode="wait">
         <motion.div
