@@ -1568,31 +1568,59 @@ export type InsertGamificationStreak = z.infer<typeof insertGamificationStreakSc
 export type GamificationNotification = typeof gamificationNotifications.$inferSelect;
 export type InsertGamificationNotification = z.infer<typeof insertGamificationNotificationSchema>;
 
-// HRMS Module - Comprehensive Employee Management System
+// HRMS Module - Comprehensive AI-Powered Employee Lifecycle Management System
 
 // Employee Status and Role Enums
-export const employmentTypeEnum = pgEnum('employment_type', ['full_time', 'part_time', 'contract', 'temporary', 'intern']);
-export const departmentEnum = pgEnum('department', ['hr', 'engineering', 'sales', 'marketing', 'finance', 'operations', 'support', 'design', 'legal', 'product']);
-export const leaveTypeEnum = pgEnum('leave_type', ['annual', 'sick', 'maternity', 'paternity', 'personal', 'bereavement', 'study', 'unpaid']);
-export const leaveStatusEnum = pgEnum('leave_status', ['pending', 'approved', 'rejected', 'cancelled']);
-export const attendanceStatusEnum = pgEnum('attendance_status', ['present', 'absent', 'late', 'partial', 'work_from_home']);
-export const performanceRatingEnum = pgEnum('performance_rating', ['exceptional', 'exceeds_expectations', 'meets_expectations', 'below_expectations', 'unsatisfactory']);
+export const employmentTypeEnum = pgEnum('employment_type', ['full_time', 'part_time', 'contract', 'temporary', 'intern', 'freelance', 'consultant']);
+export const departmentEnum = pgEnum('department', ['hr', 'engineering', 'sales', 'marketing', 'finance', 'operations', 'support', 'design', 'legal', 'product', 'executive', 'research', 'quality_assurance', 'security']);
+export const leaveTypeEnum = pgEnum('leave_type', ['annual', 'sick', 'maternity', 'paternity', 'personal', 'bereavement', 'study', 'unpaid', 'sabbatical', 'medical', 'mental_health', 'family_emergency']);
+export const leaveStatusEnum = pgEnum('leave_status', ['pending', 'approved', 'rejected', 'cancelled', 'in_review', 'expired']);
+export const attendanceStatusEnum = pgEnum('attendance_status', ['present', 'absent', 'late', 'partial', 'work_from_home', 'sick_leave', 'vacation', 'business_trip']);
+export const performanceRatingEnum = pgEnum('performance_rating', ['exceptional', 'exceeds_expectations', 'meets_expectations', 'below_expectations', 'unsatisfactory', 'not_rated']);
 
-// Core Employee Table
+// AI-Powered HRMS Enums
+export const onboardingStageEnum = pgEnum('onboarding_stage', ['pre_boarding', 'documentation', 'orientation', 'training', 'probation', 'completed', 'delayed']);
+export const offboardingStageEnum = pgEnum('offboarding_stage', ['initiated', 'handover', 'asset_return', 'exit_interview', 'final_settlement', 'completed']);
+export const skillLevelEnum = pgEnum('skill_level', ['beginner', 'intermediate', 'advanced', 'expert', 'master']);
+export const learningStatusEnum = pgEnum('learning_status', ['not_started', 'in_progress', 'completed', 'certified', 'expired', 'failed']);
+export const assessmentTypeEnum = pgEnum('assessment_type', ['technical', 'behavioral', 'leadership', 'cultural_fit', 'performance', 'skill_gap']);
+export const recruitmentStageEnum = pgEnum('recruitment_stage', ['applied', 'screening', 'interview', 'assessment', 'reference_check', 'offer', 'hired', 'rejected']);
+export const payrollStatusEnum = pgEnum('payroll_status', ['draft', 'calculated', 'approved', 'processed', 'paid', 'error']);
+export const complianceStatusEnum = pgEnum('compliance_status', ['compliant', 'non_compliant', 'pending_review', 'action_required', 'exempt']);
+export const aiInsightTypeEnum = pgEnum('ai_insight_type', ['performance_prediction', 'retention_risk', 'skill_gap', 'training_recommendation', 'career_path', 'workload_analysis', 'team_dynamics']);
+export const workflowStatusEnum = pgEnum('workflow_status', ['pending', 'in_progress', 'completed', 'rejected', 'cancelled', 'escalated']);
+export const communicationChannelEnum = pgEnum('communication_channel', ['email', 'slack', 'teams', 'sms', 'push_notification', 'in_app', 'voice']);
+export const documentTypeEnum = pgEnum('document_type', ['contract', 'policy', 'handbook', 'certificate', 'form', 'report', 'legal', 'personal']);
+export const integrationTypeEnum = pgEnum('integration_type', ['payroll', 'benefits', 'learning', 'communication', 'compliance', 'analytics', 'recruitment']);
+export const feedbackTypeEnum = pgEnum('feedback_type', ['performance', 'peer', 'manager', 'self', 'customer', 'exit', 'continuous']);
+export const wellnessMetricEnum = pgEnum('wellness_metric', ['stress_level', 'work_life_balance', 'job_satisfaction', 'burnout_risk', 'engagement_score']);
+export const goalTypeEnum = pgEnum('goal_type', ['performance', 'learning', 'career', 'project', 'team', 'personal']);
+export const goalStatusEnum = pgEnum('goal_status', ['draft', 'active', 'in_progress', 'completed', 'overdue', 'cancelled']);
+export const mentorshipStatusEnum = pgEnum('mentorship_status', ['active', 'completed', 'paused', 'cancelled', 'pending_match']);
+export const migrationStatusEnum = pgEnum('migration_status', ['pending', 'in_progress', 'completed', 'failed', 'rollback']);
+export const auditActionEnum = pgEnum('audit_action', ['create', 'update', 'delete', 'view', 'export', 'import', 'approve', 'reject']);
+export const alertSeverityEnum = pgEnum('alert_severity', ['low', 'medium', 'high', 'critical', 'urgent']);
+export const tenantStatusEnum = pgEnum('tenant_status', ['active', 'inactive', 'trial', 'suspended', 'churned']);
+export const subscriptionTierEnum = pgEnum('subscription_tier', ['basic', 'professional', 'enterprise', 'unlimited']);
+
+// ===============================
+// AI-POWERED HRMS COMPREHENSIVE SCHEMA
+// ===============================
+
+// 1. CORE EMPLOYEE LIFECYCLE MANAGEMENT
+
+// Enhanced Employee Table with AI-powered features
 export const employees = pgTable("employees", {
   id: uuid("id").primaryKey().defaultRandom(),
-  employeeId: text("employee_id").notNull().unique(), // Custom employee ID
-  userId: uuid("user_id").references(() => users.id).unique(), // Link to user account
+  employeeId: text("employee_id").notNull().unique(), // EMP001, EMP002, etc.
+  userId: uuid("user_id").references(() => users.id), // Link to auth user
   
   // Personal Information
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   middleName: text("middle_name"),
-  preferredName: text("preferred_name"),
   email: text("email").notNull().unique(),
-  personalEmail: text("personal_email"),
   phone: text("phone"),
-  personalPhone: text("personal_phone"),
   dateOfBirth: timestamp("date_of_birth"),
   gender: text("gender"),
   nationality: text("nationality"),
@@ -1602,77 +1630,464 @@ export const employees = pgTable("employees", {
   address: text("address"),
   city: text("city"),
   state: text("state"),
-  zipCode: text("zip_code"),
-  country: text("country").default('US'),
-  
-  // Emergency Contact
-  emergencyContactName: text("emergency_contact_name"),
-  emergencyContactPhone: text("emergency_contact_phone"),
-  emergencyContactRelationship: text("emergency_contact_relationship"),
+  postalCode: text("postal_code"),
+  country: text("country").default("US"),
   
   // Employment Details
   department: departmentEnum("department").notNull(),
   position: text("position").notNull(),
   jobTitle: text("job_title").notNull(),
   employmentType: employmentTypeEnum("employment_type").notNull().default('full_time'),
-  status: employeeStatusEnum("status").notNull().default('active'),
   hireDate: timestamp("hire_date").notNull(),
-  terminationDate: timestamp("termination_date"),
   probationEndDate: timestamp("probation_end_date"),
+  terminationDate: timestamp("termination_date"),
+  status: employeeStatusEnum("status").notNull().default('active'),
   
   // Reporting Structure
   managerId: uuid("manager_id").references(() => employees.id),
-  teamId: uuid("team_id"),
+  workLocation: text("work_location").notNull().default('office'), // office, remote, hybrid
+  timeZone: text("time_zone").default('UTC'),
   
   // Compensation
-  salary: decimal("salary", { precision: 12, scale: 2 }),
+  salary: decimal("salary", { precision: 15, scale: 2 }),
   currency: text("currency").default('USD'),
-  payFrequency: text("pay_frequency").default('monthly'), // weekly, bi_weekly, monthly
-  payGrade: text("pay_grade"),
+  payFrequency: text("pay_frequency").default('monthly'), // weekly, bi-weekly, monthly
+  overtimeEligible: boolean("overtime_eligible").default(false),
   
-  // Work Schedule
-  workingHours: integer("working_hours").default(40), // per week
-  workSchedule: jsonb("work_schedule"), // Custom schedule object
-  timezone: text("timezone").default('UTC'),
+  // Leave Balances
+  annualLeaveBalance: decimal("annual_leave_balance", { precision: 5, scale: 2 }).default('25.0'),
+  sickLeaveBalance: decimal("sick_leave_balance", { precision: 5, scale: 2 }).default('10.0'),
+  personalLeaveBalance: decimal("personal_leave_balance", { precision: 5, scale: 2 }).default('5.0'),
   
-  // Benefits and Leave
-  annualLeaveBalance: decimal("annual_leave_balance", { precision: 5, scale: 2 }).default('0'),
-  sickLeaveBalance: decimal("sick_leave_balance", { precision: 5, scale: 2 }).default('0'),
-  personalLeaveBalance: decimal("personal_leave_balance", { precision: 5, scale: 2 }).default('0'),
+  // Emergency Contact
+  emergencyContactName: text("emergency_contact_name"),
+  emergencyContactPhone: text("emergency_contact_phone"),
+  emergencyContactRelation: text("emergency_contact_relation"),
   
-  // Performance and Development
-  currentPerformanceRating: performanceRatingEnum("current_performance_rating"),
-  lastReviewDate: timestamp("last_review_date"),
-  nextReviewDate: timestamp("next_review_date"),
+  // AI-Powered Analytics
+  performanceScore: decimal("performance_score", { precision: 5, scale: 2 }), // 0-100
+  engagementScore: decimal("engagement_score", { precision: 5, scale: 2 }), // 0-100
+  retentionRisk: decimal("retention_risk", { precision: 5, scale: 2 }), // 0-100
+  skillGapScore: decimal("skill_gap_score", { precision: 5, scale: 2 }), // 0-100
+  workloadIndex: decimal("workload_index", { precision: 5, scale: 2 }), // 0-100
+  wellnessScore: decimal("wellness_score", { precision: 5, scale: 2 }), // 0-100
   
-  // Documents and Assets
-  profilePhoto: text("profile_photo"),
-  documents: jsonb("documents"), // Array of document metadata
-  assets: jsonb("assets"), // Company assets assigned
-  
-  // Skills and Certifications
-  skills: jsonb("skills"), // Array of skills
+  // Profile Information
+  profilePicture: text("profile_picture"),
+  bio: text("bio"),
+  skills: jsonb("skills"), // Array of skills with proficiency levels
+  languages: jsonb("languages"), // Array of languages with proficiency
   certifications: jsonb("certifications"), // Array of certifications
-  education: jsonb("education"), // Array of education records
+  socialLinks: jsonb("social_links"), // LinkedIn, GitHub, etc.
   
-  // System and Access
-  workLocation: text("work_location"), // office, remote, hybrid
-  accessLevel: text("access_level").default('standard'),
-  systemAccounts: jsonb("system_accounts"), // Various system access
+  // Preferences
+  communicationPreference: communicationChannelEnum("communication_preference").default('email'),
+  workingHours: jsonb("working_hours"), // Flexible working hours
+  notifications: jsonb("notifications"), // Notification preferences
+  accessibility: jsonb("accessibility"), // Accessibility requirements
   
-  // Custom Fields and Tags
-  customFields: jsonb("custom_fields"),
-  tags: text("tags").array(),
-  notes: text("notes"),
+  // Multi-tenant Support
+  tenantId: uuid("tenant_id"),
   
-  // Audit Fields
+  // Metadata
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
-  createdBy: uuid("created_by").references(() => users.id),
-  lastModifiedBy: uuid("last_modified_by").references(() => users.id),
+  lastActiveAt: timestamp("last_active_at"),
 });
 
-// Leave Management
+// 2. AI-POWERED ONBOARDING MODULE
+export const onboardingProcesses = pgTable("onboarding_processes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  employeeId: uuid("employee_id").references(() => employees.id).notNull(),
+  stage: onboardingStageEnum("stage").notNull().default('pre_boarding'),
+  startDate: timestamp("start_date").notNull(),
+  expectedCompletionDate: timestamp("expected_completion_date"),
+  actualCompletionDate: timestamp("actual_completion_date"),
+  
+  // AI-powered personalization
+  personalizedPlan: jsonb("personalized_plan"), // AI-generated onboarding plan
+  progress: decimal("progress", { precision: 5, scale: 2 }).default('0'), // 0-100%
+  automatedTasks: jsonb("automated_tasks"), // AI-generated task list
+  
+  // Buddy/Mentor Assignment
+  buddyId: uuid("buddy_id").references(() => employees.id),
+  mentorId: uuid("mentor_id").references(() => employees.id),
+  
+  // Feedback and Experience
+  satisfactionScore: decimal("satisfaction_score", { precision: 3, scale: 2 }), // 1-5
+  feedback: text("feedback"),
+  improvementSuggestions: text("improvement_suggestions"),
+  
+  // Resources and Documents
+  documentsCompleted: jsonb("documents_completed"),
+  trainingModulesCompleted: jsonb("training_modules_completed"),
+  systemAccessProvided: jsonb("system_access_provided"),
+  
+  tenantId: uuid("tenant_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// 3. AI-POWERED RECRUITMENT MODULE
+export const jobPostings = pgTable("job_postings", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: text("title").notNull(),
+  department: departmentEnum("department").notNull(),
+  employmentType: employmentTypeEnum("employment_type").notNull(),
+  location: text("location").notNull(),
+  description: text("description").notNull(),
+  requirements: jsonb("requirements"), // Skills, experience, education
+  responsibilities: jsonb("responsibilities"),
+  
+  // AI-enhanced features
+  aiGeneratedDescription: text("ai_generated_description"),
+  skillsExtracted: jsonb("skills_extracted"), // AI-extracted skills
+  salaryRange: jsonb("salary_range"), // min/max with AI suggestions
+  diversityTargets: jsonb("diversity_targets"), // AI-powered diversity goals
+  
+  // Posting Configuration
+  isActive: boolean("is_active").default(true),
+  applicationDeadline: timestamp("application_deadline"),
+  hiringManagerId: uuid("hiring_manager_id").references(() => employees.id),
+  
+  // Analytics
+  viewCount: integer("view_count").default(0),
+  applicationCount: integer("application_count").default(0),
+  qualifiedCandidateCount: integer("qualified_candidate_count").default(0),
+  
+  tenantId: uuid("tenant_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const candidates = pgTable("candidates", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  jobPostingId: uuid("job_posting_id").references(() => jobPostings.id).notNull(),
+  
+  // Personal Information
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone"),
+  
+  // Application Data
+  resumeUrl: text("resume_url"),
+  coverLetterUrl: text("cover_letter_url"),
+  portfolioUrl: text("portfolio_url"),
+  linkedinUrl: text("linkedin_url"),
+  
+  // AI-powered Analysis
+  aiScore: decimal("ai_score", { precision: 5, scale: 2 }), // 0-100 AI compatibility score
+  skillsMatched: jsonb("skills_matched"), // AI-matched skills
+  experienceScore: decimal("experience_score", { precision: 5, scale: 2 }),
+  culturalFitScore: decimal("cultural_fit_score", { precision: 5, scale: 2 }),
+  
+  // Recruitment Pipeline
+  stage: recruitmentStageEnum("stage").notNull().default('applied'),
+  status: text("status").default('active'), // active, rejected, hired, withdrawn
+  
+  // Interview Process
+  interviews: jsonb("interviews"), // Array of interview records
+  assessmentResults: jsonb("assessment_results"), // Technical/behavioral assessments
+  referenceChecks: jsonb("reference_checks"),
+  
+  // Decision Making
+  rating: decimal("rating", { precision: 3, scale: 2 }), // 1-5 overall rating
+  feedback: text("feedback"),
+  rejectionReason: text("rejection_reason"),
+  
+  tenantId: uuid("tenant_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// 4. AI-POWERED PERFORMANCE MODULE
+export const performanceReviews = pgTable("performance_reviews", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  employeeId: uuid("employee_id").references(() => employees.id).notNull(),
+  reviewerId: uuid("reviewer_id").references(() => employees.id).notNull(),
+  reviewPeriod: text("review_period").notNull(), // Q1-2024, Annual-2024, etc.
+  reviewType: text("review_type").notNull(), // annual, quarterly, probation, project
+  
+  // Performance Metrics
+  overallRating: performanceRatingEnum("overall_rating"),
+  goals: jsonb("goals"), // Performance goals and achievements
+  competencies: jsonb("competencies"), // Technical and behavioral competencies
+  achievements: jsonb("achievements"), // Key accomplishments
+  
+  // AI-powered Insights
+  aiInsights: jsonb("ai_insights"), // AI-generated performance insights
+  improvementAreas: jsonb("improvement_areas"), // AI-identified areas for growth
+  careerRecommendations: jsonb("career_recommendations"), // AI career path suggestions
+  
+  // Feedback
+  managerFeedback: text("manager_feedback"),
+  employeeSelfReview: text("employee_self_review"),
+  peerFeedback: jsonb("peer_feedback"), // 360-degree feedback
+  
+  // Development Planning
+  developmentGoals: jsonb("development_goals"),
+  trainingRecommendations: jsonb("training_recommendations"),
+  mentorshipNeeds: jsonb("mentorship_needs"),
+  
+  // Timeline
+  reviewStartDate: timestamp("review_start_date"),
+  reviewEndDate: timestamp("review_end_date"),
+  submittedAt: timestamp("submitted_at"),
+  approvedAt: timestamp("approved_at"),
+  approvedBy: uuid("approved_by").references(() => employees.id),
+  
+  tenantId: uuid("tenant_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// 5. AI-POWERED LEARNING & DEVELOPMENT MODULE
+export const learningPaths = pgTable("learning_paths", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  category: text("category").notNull(), // technical, leadership, compliance, soft_skills
+  level: skillLevelEnum("level").notNull(),
+  
+  // AI-powered personalization
+  prerequisites: jsonb("prerequisites"), // Required skills/courses
+  aiRecommendedFor: jsonb("ai_recommended_for"), // AI-recommended employee profiles
+  adaptiveLearning: boolean("adaptive_learning").default(false),
+  
+  // Content Structure
+  modules: jsonb("modules"), // Course modules and content
+  estimatedDuration: integer("estimated_duration"), // in hours
+  
+  // Gamification
+  points: integer("points").default(0),
+  badges: jsonb("badges"), // Badges earned upon completion
+  
+  // Analytics
+  enrollmentCount: integer("enrollment_count").default(0),
+  completionRate: decimal("completion_rate", { precision: 5, scale: 2 }).default('0'),
+  averageRating: decimal("average_rating", { precision: 3, scale: 2 }),
+  
+  tenantId: uuid("tenant_id"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const learningEnrollments = pgTable("learning_enrollments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  employeeId: uuid("employee_id").references(() => employees.id).notNull(),
+  learningPathId: uuid("learning_path_id").references(() => learningPaths.id).notNull(),
+  
+  // Progress Tracking
+  status: learningStatusEnum("status").notNull().default('not_started'),
+  progress: decimal("progress", { precision: 5, scale: 2 }).default('0'), // 0-100%
+  currentModule: text("current_module"),
+  
+  // AI-personalized Learning
+  personalizedContent: jsonb("personalized_content"), // AI-customized content
+  adaptivePacing: jsonb("adaptive_pacing"), // AI-adjusted learning pace
+  aiCoachingInsights: jsonb("ai_coaching_insights"), // AI learning coach feedback
+  
+  // Completion Data
+  startedAt: timestamp("started_at"),
+  lastAccessedAt: timestamp("last_accessed_at"),
+  completedAt: timestamp("completed_at"),
+  certificateUrl: text("certificate_url"),
+  
+  // Feedback
+  rating: decimal("rating", { precision: 3, scale: 2 }), // 1-5 course rating
+  feedback: text("feedback"),
+  
+  tenantId: uuid("tenant_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// 6. AI-POWERED PAYROLL & COMPENSATION MODULE
+export const payrollCycles = pgTable("payroll_cycles", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(), // "January 2024 Payroll"
+  periodStart: timestamp("period_start").notNull(),
+  periodEnd: timestamp("period_end").notNull(),
+  payDate: timestamp("pay_date").notNull(),
+  status: payrollStatusEnum("status").notNull().default('draft'),
+  
+  // AI-powered calculations
+  aiCalculationSummary: jsonb("ai_calculation_summary"), // AI analysis of payroll
+  anomaliesDetected: jsonb("anomalies_detected"), // AI-detected irregularities
+  complianceChecks: jsonb("compliance_checks"), // AI compliance validation
+  
+  // Processing
+  totalGrossPay: decimal("total_gross_pay", { precision: 15, scale: 2 }),
+  totalDeductions: decimal("total_deductions", { precision: 15, scale: 2 }),
+  totalNetPay: decimal("total_net_pay", { precision: 15, scale: 2 }),
+  
+  processedBy: uuid("processed_by").references(() => employees.id),
+  processedAt: timestamp("processed_at"),
+  approvedBy: uuid("approved_by").references(() => employees.id),
+  approvedAt: timestamp("approved_at"),
+  
+  tenantId: uuid("tenant_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// 7. AI-POWERED ANALYTICS & INSIGHTS MODULE
+export const hrmsAnalytics = pgTable("hrms_analytics", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  
+  // Analytics Configuration
+  reportType: text("report_type").notNull(), // turnover, performance, engagement, diversity
+  dataSource: jsonb("data_source"), // Tables and fields analyzed
+  timeRange: jsonb("time_range"), // Start/end dates
+  filters: jsonb("filters"), // Applied filters
+  
+  // AI-Generated Insights
+  insights: jsonb("insights"), // AI-generated insights and patterns
+  predictions: jsonb("predictions"), // AI predictions and forecasts
+  recommendations: jsonb("recommendations"), // AI action recommendations
+  trends: jsonb("trends"), // Identified trends and patterns
+  
+  // Report Data
+  reportData: jsonb("report_data"), // Calculated metrics and data
+  visualizations: jsonb("visualizations"), // Chart configurations
+  
+  // Metadata
+  generatedBy: uuid("generated_by").references(() => employees.id),
+  scheduledReport: boolean("scheduled_report").default(false),
+  reportFrequency: text("report_frequency"), // daily, weekly, monthly
+  lastRun: timestamp("last_run"),
+  nextRun: timestamp("next_run"),
+  
+  tenantId: uuid("tenant_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// 8. AI-POWERED INTEGRATION & API MODULE
+export const systemIntegrations = pgTable("system_integrations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  type: integrationTypeEnum("type").notNull(),
+  provider: text("provider").notNull(), // ADP, Workday, BambooHR, etc.
+  
+  // Configuration
+  apiEndpoint: text("api_endpoint"),
+  authMethod: text("auth_method"), // oauth, api_key, basic_auth
+  credentials: jsonb("credentials"), // Encrypted credentials
+  configuration: jsonb("configuration"), // Integration-specific settings
+  
+  // AI-powered data mapping
+  fieldMappings: jsonb("field_mappings"), // AI-suggested field mappings
+  dataTransformations: jsonb("data_transformations"), // AI transformation rules
+  validationRules: jsonb("validation_rules"), // AI-generated validation
+  
+  // Status and Monitoring
+  isActive: boolean("is_active").default(false),
+  lastSync: timestamp("last_sync"),
+  syncFrequency: text("sync_frequency"), // realtime, hourly, daily
+  syncStatus: text("sync_status"), // success, error, in_progress
+  errorLog: jsonb("error_log"), // Integration errors and warnings
+  
+  // Performance Metrics
+  totalRecordsSynced: integer("total_records_synced").default(0),
+  averageSyncTime: decimal("average_sync_time", { precision: 8, scale: 2 }), // seconds
+  successRate: decimal("success_rate", { precision: 5, scale: 2 }), // 0-100%
+  
+  tenantId: uuid("tenant_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// 9. AI-POWERED MULTI-TENANT & MIGRATION MODULE
+export const tenants = pgTable("tenants", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  subdomain: text("subdomain").notNull().unique(),
+  domain: text("domain"), // Custom domain
+  
+  // Subscription and Billing
+  subscriptionTier: subscriptionTierEnum("subscription_tier").notNull().default('basic'),
+  status: tenantStatusEnum("status").notNull().default('active'),
+  billingEmail: text("billing_email").notNull(),
+  
+  // Features and Limits
+  maxEmployees: integer("max_employees").default(50),
+  featuresEnabled: jsonb("features_enabled"), // Array of enabled features
+  apiRateLimit: integer("api_rate_limit").default(1000), // per hour
+  
+  // Customization
+  branding: jsonb("branding"), // Logo, colors, themes
+  localization: jsonb("localization"), // Language, timezone, currency
+  customFields: jsonb("custom_fields"), // Tenant-specific custom fields
+  
+  // AI Configuration
+  aiFeatures: jsonb("ai_features"), // Enabled AI features
+  aiUsageQuota: integer("ai_usage_quota").default(1000), // Monthly AI requests
+  aiUsageCount: integer("ai_usage_count").default(0),
+  
+  // Compliance and Security
+  dataRetentionPolicy: jsonb("data_retention_policy"),
+  securitySettings: jsonb("security_settings"),
+  complianceFrameworks: text("compliance_frameworks").array(),
+  
+  // Analytics
+  totalEmployees: integer("total_employees").default(0),
+  totalUsers: integer("total_users").default(0),
+  storageUsed: decimal("storage_used", { precision: 12, scale: 2 }).default('0'), // in GB
+  
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const dataMigrations = pgTable("data_migrations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  tenantId: uuid("tenant_id").references(() => tenants.id).notNull(),
+  
+  // Migration Details
+  sourceSystem: text("source_system").notNull(), // BambooHR, Workday, ADP, etc.
+  migrationType: text("migration_type").notNull(), // full, incremental, selective
+  
+  // AI-powered migration planning
+  aiMigrationPlan: jsonb("ai_migration_plan"), // AI-generated migration strategy
+  fieldMappings: jsonb("field_mappings"), // AI-suggested field mappings
+  dataTransformations: jsonb("data_transformations"), // AI transformation rules
+  riskAssessment: jsonb("risk_assessment"), // AI-identified migration risks
+  
+  // Progress Tracking
+  status: migrationStatusEnum("status").notNull().default('pending'),
+  progress: decimal("progress", { precision: 5, scale: 2 }).default('0'), // 0-100%
+  currentStep: text("current_step"),
+  
+  // Data Statistics
+  totalRecords: integer("total_records").default(0),
+  migratedRecords: integer("migrated_records").default(0),
+  failedRecords: integer("failed_records").default(0),
+  
+  // Timeline
+  startedAt: timestamp("started_at"),
+  completedAt: timestamp("completed_at"),
+  estimatedDuration: integer("estimated_duration"), // in hours
+  
+  // Results
+  migrationLog: jsonb("migration_log"), // Detailed migration log
+  errorReport: jsonb("error_report"), // Failed records and errors
+  validationReport: jsonb("validation_report"), // Post-migration validation
+  
+  // Rollback Information
+  rollbackPlan: jsonb("rollback_plan"), // AI-generated rollback strategy
+  canRollback: boolean("can_rollback").default(true),
+  
+  processedBy: uuid("processed_by").references(() => employees.id),
+  
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// 10. EXISTING HRMS TABLES (Updated for compatibility)
+// Note: Updating existing attendance and leave tables to work with new schema
+
 export const leaveRequests = pgTable("leave_requests", {
   id: uuid("id").primaryKey().defaultRandom(),
   employeeId: uuid("employee_id").references(() => employees.id).notNull(),
@@ -1683,166 +2098,144 @@ export const leaveRequests = pgTable("leave_requests", {
   reason: text("reason"),
   status: leaveStatusEnum("status").notNull().default('pending'),
   
-  // Approval Workflow
+  // Enhanced workflow
   submittedAt: timestamp("submitted_at").notNull().defaultNow(),
-  submittedBy: uuid("submitted_by").references(() => employees.id).notNull(),
   reviewedBy: uuid("reviewed_by").references(() => employees.id),
   reviewedAt: timestamp("reviewed_at"),
   approverComments: text("approver_comments"),
   
-  // HR Processing
-  hrProcessedBy: uuid("hr_processed_by").references(() => employees.id),
-  hrProcessedAt: timestamp("hr_processed_at"),
-  hrComments: text("hr_comments"),
+  // AI features
+  aiRecommendation: text("ai_recommendation"), // AI approval recommendation
+  workloadImpact: jsonb("workload_impact"), // AI workload analysis
   
-  // Supporting Documents
-  attachments: jsonb("attachments"),
-  
+  tenantId: uuid("tenant_id"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-// Attendance Tracking
 export const attendance = pgTable("attendance", {
   id: uuid("id").primaryKey().defaultRandom(),
   employeeId: uuid("employee_id").references(() => employees.id).notNull(),
   date: timestamp("date").notNull(),
-  
-  // Clock In/Out Times
-  clockIn: timestamp("clock_in"),
-  clockOut: timestamp("clock_out"),
-  breakStart: timestamp("break_start"),
-  breakEnd: timestamp("break_end"),
-  
-  // Calculated Fields
-  hoursWorked: decimal("hours_worked", { precision: 5, scale: 2 }),
-  overtimeHours: decimal("overtime_hours", { precision: 5, scale: 2 }).default('0'),
-  breakDuration: integer("break_duration"), // in minutes
-  
-  // Status and Location
   status: attendanceStatusEnum("status").notNull(),
-  location: text("location"), // office, home, client_site
-  ipAddress: text("ip_address"),
-  deviceInfo: text("device_info"),
+  clockInTime: timestamp("clock_in_time"),
+  clockOutTime: timestamp("clock_out_time"),
+  totalHours: decimal("total_hours", { precision: 4, scale: 2 }),
+  breakHours: decimal("break_hours", { precision: 4, scale: 2 }).default('0'),
+  overtimeHours: decimal("overtime_hours", { precision: 4, scale: 2 }).default('0'),
+  location: text("location"),
   
-  // Manager Override
-  managerOverride: boolean("manager_override").default(false),
-  overrideReason: text("override_reason"),
-  overrideBy: uuid("override_by").references(() => employees.id),
+  // AI-powered features
+  aiAnomalyDetection: jsonb("ai_anomaly_detection"), // AI-detected irregularities
+  productivityScore: decimal("productivity_score", { precision: 5, scale: 2 }), // AI productivity rating
   
   notes: text("notes"),
+  tenantId: uuid("tenant_id"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-// Performance Reviews
-export const performanceReviews = pgTable("performance_reviews", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  employeeId: uuid("employee_id").references(() => employees.id).notNull(),
-  reviewerId: uuid("reviewer_id").references(() => employees.id).notNull(),
-  reviewPeriodStart: timestamp("review_period_start").notNull(),
-  reviewPeriodEnd: timestamp("review_period_end").notNull(),
-  
-  // Review Scores
-  overallRating: performanceRatingEnum("overall_rating"),
-  jobKnowledgeScore: integer("job_knowledge_score"), // 1-5
-  qualityOfWorkScore: integer("quality_of_work_score"), // 1-5
-  productivityScore: integer("productivity_score"), // 1-5
-  communicationScore: integer("communication_score"), // 1-5
-  teamworkScore: integer("teamwork_score"), // 1-5
-  leadershipScore: integer("leadership_score"), // 1-5
-  
-  // Goal Assessment
-  goalsAchieved: jsonb("goals_achieved"), // Array of goal objects
-  goalsInProgress: jsonb("goals_in_progress"),
-  newGoals: jsonb("new_goals"),
-  
-  // Feedback
-  strengths: text("strengths"),
-  areasForImprovement: text("areas_for_improvement"),
-  developmentPlan: text("development_plan"),
-  reviewerComments: text("reviewer_comments"),
-  employeeComments: text("employee_comments"),
-  
-  // Review Status
-  status: text("status").default('draft'), // draft, submitted, completed
-  submittedAt: timestamp("submitted_at"),
-  completedAt: timestamp("completed_at"),
-  
-  // Signatures
-  employeeSignature: boolean("employee_signature").default(false),
-  reviewerSignature: boolean("reviewer_signature").default(false),
-  hrApproval: boolean("hr_approval").default(false),
-  
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
-
-// Employee Training and Development
+// Training programs remain the same but with tenant support
 export const trainingPrograms = pgTable("training_programs", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
-  description: text("description"),
-  category: text("category"), // technical, soft_skills, compliance, leadership
+  description: text("description").notNull(),
+  type: text("type").notNull(), // onboarding, compliance, skills, leadership
   duration: integer("duration"), // in hours
-  format: text("format"), // online, in_person, hybrid
-  provider: text("provider"),
-  cost: decimal("cost", { precision: 10, scale: 2 }),
-  maxParticipants: integer("max_participants"),
   
-  // Requirements
-  prerequisites: jsonb("prerequisites"),
-  targetAudience: text("target_audience"),
+  // AI enhancements
+  aiPersonalization: boolean("ai_personalization").default(false),
+  adaptiveLearning: boolean("adaptive_learning").default(false),
   
-  // Scheduling
-  startDate: timestamp("start_date"),
-  endDate: timestamp("end_date"),
-  registrationDeadline: timestamp("registration_deadline"),
-  
-  // Status
-  status: text("status").default('active'), // active, inactive, completed
-  
+  isActive: boolean("is_active").default(true),
+  tenantId: uuid("tenant_id"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
-  createdBy: uuid("created_by").references(() => employees.id),
 });
 
 export const trainingEnrollments = pgTable("training_enrollments", {
   id: uuid("id").primaryKey().defaultRandom(),
-  trainingProgramId: uuid("training_program_id").references(() => trainingPrograms.id).notNull(),
   employeeId: uuid("employee_id").references(() => employees.id).notNull(),
-  
-  // Enrollment Details
-  enrolledAt: timestamp("enrolled_at").notNull().defaultNow(),
-  enrolledBy: uuid("enrolled_by").references(() => employees.id),
-  status: text("status").default('enrolled'), // enrolled, in_progress, completed, dropped
-  
-  // Progress Tracking
-  completionPercentage: integer("completion_percentage").default(0),
-  startedAt: timestamp("started_at"),
+  trainingProgramId: uuid("training_program_id").references(() => trainingPrograms.id).notNull(),
+  status: learningStatusEnum("status").notNull().default('not_started'),
+  progress: decimal("progress", { precision: 5, scale: 2 }).default('0'),
   completedAt: timestamp("completed_at"),
   
-  // Assessment
-  finalScore: decimal("final_score", { precision: 5, scale: 2 }),
-  certificateIssued: boolean("certificate_issued").default(false),
-  certificateUrl: text("certificate_url"),
+  // AI features
+  personalizedPath: jsonb("personalized_path"), // AI-customized learning path
+  aiCoaching: jsonb("ai_coaching"), // AI coaching insights
   
-  // Feedback
-  employeeFeedback: text("employee_feedback"),
-  employeeRating: integer("employee_rating"), // 1-5
-  
-  notes: text("notes"),
+  tenantId: uuid("tenant_id"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-// HRMS Insert Schemas
-export const insertEmployeeSchema = createInsertSchema(employees).omit({
+// ===============================
+// AI-POWERED HRMS INSERT SCHEMAS & TYPES
+// ===============================
+
+// Insert Schemas for new HRMS tables
+export const insertOnboardingProcessSchema = createInsertSchema(onboardingProcesses).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
 });
 
+export const insertJobPostingSchema = createInsertSchema(jobPostings).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertCandidateSchema = createInsertSchema(candidates).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertLearningPathSchema = createInsertSchema(learningPaths).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertLearningEnrollmentSchema = createInsertSchema(learningEnrollments).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertPayrollCycleSchema = createInsertSchema(payrollCycles).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertHrmsAnalyticsSchema = createInsertSchema(hrmsAnalytics).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertSystemIntegrationSchema = createInsertSchema(systemIntegrations).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertTenantSchema = createInsertSchema(tenants).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertDataMigrationSchema = createInsertSchema(dataMigrations).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+// Updated insert schemas for existing tables
 export const insertLeaveRequestSchema = createInsertSchema(leaveRequests).omit({
   id: true,
   createdAt: true,
@@ -1873,18 +2266,48 @@ export const insertTrainingEnrollmentSchema = createInsertSchema(trainingEnrollm
   updatedAt: true,
 });
 
-// HRMS Types
+// AI-Powered HRMS Types
 export type Employee = typeof employees.$inferSelect;
 export type InsertEmployee = z.infer<typeof insertEmployeeSchema>;
+
+export type OnboardingProcess = typeof onboardingProcesses.$inferSelect;
+export type InsertOnboardingProcess = z.infer<typeof insertOnboardingProcessSchema>;
+
+export type JobPosting = typeof jobPostings.$inferSelect;
+export type InsertJobPosting = z.infer<typeof insertJobPostingSchema>;
+
+export type Candidate = typeof candidates.$inferSelect;
+export type InsertCandidate = z.infer<typeof insertCandidateSchema>;
+
+export type PerformanceReview = typeof performanceReviews.$inferSelect;
+export type InsertPerformanceReview = z.infer<typeof insertPerformanceReviewSchema>;
+
+export type LearningPath = typeof learningPaths.$inferSelect;
+export type InsertLearningPath = z.infer<typeof insertLearningPathSchema>;
+
+export type LearningEnrollment = typeof learningEnrollments.$inferSelect;
+export type InsertLearningEnrollment = z.infer<typeof insertLearningEnrollmentSchema>;
+
+export type PayrollCycle = typeof payrollCycles.$inferSelect;
+export type InsertPayrollCycle = z.infer<typeof insertPayrollCycleSchema>;
+
+export type HrmsAnalytics = typeof hrmsAnalytics.$inferSelect;
+export type InsertHrmsAnalytics = z.infer<typeof insertHrmsAnalyticsSchema>;
+
+export type SystemIntegration = typeof systemIntegrations.$inferSelect;
+export type InsertSystemIntegration = z.infer<typeof insertSystemIntegrationSchema>;
+
+export type Tenant = typeof tenants.$inferSelect;
+export type InsertTenant = z.infer<typeof insertTenantSchema>;
+
+export type DataMigration = typeof dataMigrations.$inferSelect;
+export type InsertDataMigration = z.infer<typeof insertDataMigrationSchema>;
 
 export type LeaveRequest = typeof leaveRequests.$inferSelect;
 export type InsertLeaveRequest = z.infer<typeof insertLeaveRequestSchema>;
 
 export type Attendance = typeof attendance.$inferSelect;
 export type InsertAttendance = z.infer<typeof insertAttendanceSchema>;
-
-export type PerformanceReview = typeof performanceReviews.$inferSelect;
-export type InsertPerformanceReview = z.infer<typeof insertPerformanceReviewSchema>;
 
 export type TrainingProgram = typeof trainingPrograms.$inferSelect;
 export type InsertTrainingProgram = z.infer<typeof insertTrainingProgramSchema>;

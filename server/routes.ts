@@ -2691,6 +2691,473 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ===============================================
+  // AI-POWERED HRMS COMPREHENSIVE API ROUTES
+  // ===============================================
+
+  // AI-Powered Onboarding Module Routes
+  app.get("/api/hrms/onboarding", async (req, res) => {
+    try {
+      const processes = await storage.getOnboardingProcesses();
+      res.json(processes);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/hrms/onboarding/:id", async (req, res) => {
+    try {
+      const process = await storage.getOnboardingProcess(req.params.id);
+      if (!process) {
+        res.status(404).json({ error: "Onboarding process not found" });
+        return;
+      }
+      res.json(process);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/hrms/onboarding/employee/:employeeId", async (req, res) => {
+    try {
+      const processes = await storage.getOnboardingProcessesByEmployee(req.params.employeeId);
+      res.json(processes);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/hrms/onboarding", async (req, res) => {
+    try {
+      const process = await storage.createOnboardingProcess(req.body);
+      res.status(201).json(process);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.patch("/api/hrms/onboarding/:id", async (req, res) => {
+    try {
+      const process = await storage.updateOnboardingProcess(req.params.id, req.body);
+      res.json(process);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/hrms/onboarding/ai-plan/:employeeId", async (req, res) => {
+    try {
+      const plan = await storage.generateAIOnboardingPlan(req.params.employeeId);
+      res.json(plan);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // AI-Powered Recruitment Module Routes
+  app.get("/api/hrms/jobs", async (req, res) => {
+    try {
+      const jobs = await storage.getJobPostings();
+      res.json(jobs);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/hrms/jobs/:id", async (req, res) => {
+    try {
+      const job = await storage.getJobPosting(req.params.id);
+      if (!job) {
+        res.status(404).json({ error: "Job posting not found" });
+        return;
+      }
+      res.json(job);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/hrms/jobs", async (req, res) => {
+    try {
+      const job = await storage.createJobPosting(req.body);
+      res.status(201).json(job);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.patch("/api/hrms/jobs/:id", async (req, res) => {
+    try {
+      const job = await storage.updateJobPosting(req.params.id, req.body);
+      res.json(job);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/hrms/applications", async (req, res) => {
+    try {
+      const applications = await storage.getJobApplications();
+      res.json(applications);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/hrms/applications/:id", async (req, res) => {
+    try {
+      const application = await storage.getJobApplication(req.params.id);
+      if (!application) {
+        res.status(404).json({ error: "Application not found" });
+        return;
+      }
+      res.json(application);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/hrms/jobs/:jobId/applications", async (req, res) => {
+    try {
+      const applications = await storage.getJobApplicationsByPosting(req.params.jobId);
+      res.json(applications);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/hrms/applications", async (req, res) => {
+    try {
+      const application = await storage.createJobApplication(req.body);
+      res.status(201).json(application);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.patch("/api/hrms/applications/:id", async (req, res) => {
+    try {
+      const application = await storage.updateJobApplication(req.params.id, req.body);
+      res.json(application);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/hrms/applications/:id/ai-screen", async (req, res) => {
+    try {
+      const screening = await storage.aiScreenApplication(req.params.id);
+      res.json(screening);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // AI-Powered Learning & Development Module Routes
+  app.get("/api/hrms/learning-paths", async (req, res) => {
+    try {
+      const paths = await storage.getLearningPaths();
+      res.json(paths);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/hrms/learning-paths/:id", async (req, res) => {
+    try {
+      const path = await storage.getLearningPath(req.params.id);
+      if (!path) {
+        res.status(404).json({ error: "Learning path not found" });
+        return;
+      }
+      res.json(path);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/hrms/learning-paths", async (req, res) => {
+    try {
+      const path = await storage.createLearningPath(req.body);
+      res.status(201).json(path);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.patch("/api/hrms/learning-paths/:id", async (req, res) => {
+    try {
+      const path = await storage.updateLearningPath(req.params.id, req.body);
+      res.json(path);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/hrms/learning-enrollments", async (req, res) => {
+    try {
+      const enrollments = await storage.getLearningEnrollments();
+      res.json(enrollments);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/hrms/learning-enrollments/employee/:employeeId", async (req, res) => {
+    try {
+      const enrollments = await storage.getLearningEnrollmentsByEmployee(req.params.employeeId);
+      res.json(enrollments);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/hrms/learning-enrollments", async (req, res) => {
+    try {
+      const enrollment = await storage.createLearningEnrollment(req.body);
+      res.status(201).json(enrollment);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.patch("/api/hrms/learning-enrollments/:id", async (req, res) => {
+    try {
+      const enrollment = await storage.updateLearningEnrollment(req.params.id, req.body);
+      res.json(enrollment);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/hrms/learning/personalized-path/:employeeId", async (req, res) => {
+    try {
+      const path = await storage.generatePersonalizedLearningPath(req.params.employeeId);
+      res.json(path);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // AI-Powered Payroll Module Routes
+  app.get("/api/hrms/payroll", async (req, res) => {
+    try {
+      const cycles = await storage.getPayrollCycles();
+      res.json(cycles);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/hrms/payroll/:id", async (req, res) => {
+    try {
+      const cycle = await storage.getPayrollCycle(req.params.id);
+      if (!cycle) {
+        res.status(404).json({ error: "Payroll cycle not found" });
+        return;
+      }
+      res.json(cycle);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/hrms/payroll", async (req, res) => {
+    try {
+      const cycle = await storage.createPayrollCycle(req.body);
+      res.status(201).json(cycle);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.patch("/api/hrms/payroll/:id", async (req, res) => {
+    try {
+      const cycle = await storage.updatePayrollCycle(req.params.id, req.body);
+      res.json(cycle);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/hrms/payroll/:id/process-ai", async (req, res) => {
+    try {
+      const result = await storage.processPayrollWithAI(req.params.id);
+      res.json(result);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // System Integration & Migration Routes
+  app.get("/api/hrms/integrations", async (req, res) => {
+    try {
+      const integrations = await storage.getSystemIntegrations();
+      res.json(integrations);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/hrms/integrations/:id", async (req, res) => {
+    try {
+      const integration = await storage.getSystemIntegration(req.params.id);
+      if (!integration) {
+        res.status(404).json({ error: "Integration not found" });
+        return;
+      }
+      res.json(integration);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/hrms/integrations", async (req, res) => {
+    try {
+      const integration = await storage.createSystemIntegration(req.body);
+      res.status(201).json(integration);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.patch("/api/hrms/integrations/:id", async (req, res) => {
+    try {
+      const integration = await storage.updateSystemIntegration(req.params.id, req.body);
+      res.json(integration);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Multi-tenant Support Routes
+  app.get("/api/hrms/tenants", async (req, res) => {
+    try {
+      const tenants = await storage.getTenants();
+      res.json(tenants);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/hrms/tenants/:id", async (req, res) => {
+    try {
+      const tenant = await storage.getTenant(req.params.id);
+      if (!tenant) {
+        res.status(404).json({ error: "Tenant not found" });
+        return;
+      }
+      res.json(tenant);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/hrms/tenants", async (req, res) => {
+    try {
+      const tenant = await storage.createTenant(req.body);
+      res.status(201).json(tenant);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.patch("/api/hrms/tenants/:id", async (req, res) => {
+    try {
+      const tenant = await storage.updateTenant(req.params.id, req.body);
+      res.json(tenant);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Data Migration Routes
+  app.get("/api/hrms/migrations", async (req, res) => {
+    try {
+      const migrations = await storage.getDataMigrations();
+      res.json(migrations);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/hrms/migrations/:id", async (req, res) => {
+    try {
+      const migration = await storage.getDataMigration(req.params.id);
+      if (!migration) {
+        res.status(404).json({ error: "Migration not found" });
+        return;
+      }
+      res.json(migration);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/hrms/migrations", async (req, res) => {
+    try {
+      const migration = await storage.createDataMigration(req.body);
+      res.status(201).json(migration);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.patch("/api/hrms/migrations/:id", async (req, res) => {
+    try {
+      const migration = await storage.updateDataMigration(req.params.id, req.body);
+      res.json(migration);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // AI Analytics & Insights Routes
+  app.get("/api/hrms/employees/:id/insights", async (req, res) => {
+    try {
+      const insights = await storage.generateEmployeeInsights(req.params.id);
+      res.json(insights);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/hrms/analytics", async (req, res) => {
+    try {
+      const analytics = await storage.getHRMSAnalytics();
+      res.json(analytics);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/hrms/analytics", async (req, res) => {
+    try {
+      const analytics = await storage.createHRMSAnalytics(req.body);
+      res.status(201).json(analytics);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/hrms/employees/:id/retention-prediction", async (req, res) => {
+    try {
+      const prediction = await storage.predictEmployeeRetention(req.params.id);
+      res.json(prediction);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/hrms/employees/:id/career-path", async (req, res) => {
+    try {
+      const careerPath = await storage.suggestCareerPath(req.params.id);
+      res.json(careerPath);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
   const server = createServer(app);
 
   return server;
