@@ -848,6 +848,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/deals/by-account/:accountId", async (req, res) => {
+    try {
+      const deals = await storage.getDealsByAccount(req.params.accountId);
+      res.json(deals);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
   app.get("/api/deals/:id/activities", async (req, res) => {
     try {
       const { id } = req.params;

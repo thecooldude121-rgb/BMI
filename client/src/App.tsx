@@ -23,7 +23,7 @@ import Settings from './pages/Settings/Settings';
 import Login from './pages/Auth/Login';
 import MeetingIntelligencePage from './pages/MeetingIntelligencePage';
 import MeetingDashboard from './pages/MeetingDashboard';
-import SimpleAccountDetail from './pages/CRM/SimpleAccountDetail';
+import SimpleRealAccountDetail from './pages/CRM/SimpleRealAccountDetail';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
@@ -45,7 +45,7 @@ const App = () => {
               <Route path="/dashboard" component={Dashboard} />
               <Route path="/crm/deals/create" component={CreateDealWrapper} />
               <Route path="/crm/deals/:id" component={DealDetailWrapper} />
-              <Route path="/crm/accounts/:id" component={SimpleAccountDetail} />
+              <Route path="/crm/accounts/:id" component={SimpleRealAccountDetail} />
               <Route path="/crm/:rest*" component={CRMModule} />
               <Route path="/hrms" component={HRMSModule} />
               <Route path="/analytics" component={Analytics} />
