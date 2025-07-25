@@ -6,6 +6,7 @@ import EnterpriseContactsModule from './EnterpriseContactsModule';
 import NextGenAccountModule from './NextGenAccountModule';
 import TestAccountDetailPage from './TestAccountDetailPage';
 import SimpleTestPage from './SimpleTestPage';
+import WorkingAccountDetail from './WorkingAccountDetail';
 import AccountHealthDashboard from './AccountHealthDashboard';
 import SimpleAdvancedDealsModule from './SimpleAdvancedDealsModule';
 import NextGenActivitiesModule from './NextGenActivitiesModule';
@@ -13,8 +14,13 @@ import WorkingActivitiesPage from './WorkingActivitiesPage';
 import DiagnosticPage from './DiagnosticPage';
 
 const CRMModule = () => {
+  console.log('CRMModule rendering');
+  
   return (
     <div className="h-full overflow-auto bg-gray-50">
+      <div style={{ padding: '10px', backgroundColor: 'yellow', marginBottom: '10px' }}>
+        DEBUG: CRM Module is loading
+      </div>
       <Switch>
         <Route path="/crm/leads/:id" component={LeadDetailPage} />
         <Route path="/crm/leads" component={NextGenLeadsModule} />
@@ -24,12 +30,7 @@ const CRMModule = () => {
         </Route>
         <Route path="/crm/accounts/health" component={AccountHealthDashboard} />
         <Route path="/crm/accounts/test" component={SimpleTestPage} />
-        <Route path="/crm/accounts/:id">
-          {(params) => {
-            console.log('Route matched with params:', params);
-            return <TestAccountDetailPage />;
-          }}
-        </Route>
+        <Route path="/crm/accounts/:id" component={WorkingAccountDetail} />
         <Route path="/crm/accounts">
           <NextGenAccountModule />
         </Route>
