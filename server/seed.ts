@@ -376,6 +376,159 @@ async function seedEnhancedActivities(userId: string, accountIds: string[], cont
   console.log(`✅ Created ${enhancedActivities.length} enhanced activities`);
 }
 
+// Function to create comprehensive activities for every deal
+async function seedDealSpecificActivities(
+  userId: string, 
+  deals: any[], 
+  accounts: any[], 
+  contacts: any[], 
+  leads: any[]
+) {
+  const dealActivitiesData: any[] = [];
+  
+  for (let i = 0; i < deals.length; i++) {
+    const deal = deals[i];
+    const account = accounts[i % accounts.length];
+    const contact = contacts[i % contacts.length];
+    const lead = leads[i % leads.length];
+    
+    // Create 3-5 activities per deal for comprehensive linking
+    const activitiesForDeal = [
+      {
+        subject: `Initial Discovery Call - ${deal.name}`,
+        type: "call",
+        direction: "outbound",
+        status: "completed",
+        priority: "high",
+        description: `Discovery call to understand requirements for ${deal.name}`,
+        outcome: "Identified key pain points and technical requirements",
+        duration: 45,
+        scheduledAt: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
+        completedAt: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
+        createdBy: userId,
+        assignedTo: userId,
+        dealId: deal.id,
+        contactId: contact.id,
+        accountId: account.id,
+        leadId: lead.id,
+        relatedToType: "deal",
+        relatedToId: deal.id,
+        callType: "outgoing",
+        phoneNumber: contact.phone || "+1-555-0100",
+        callResult: "answered",
+        source: "manual",
+        tags: ["discovery", "requirements", deal.stage.toLowerCase().replace(/\s+/g, '-')]
+      },
+      {
+        subject: `Technical Demo - ${deal.name}`,
+        type: "meeting",
+        direction: "outbound",
+        status: deal.stage === 'closed-won' ? "completed" : "planned",
+        priority: "high",
+        description: `Product demonstration tailored for ${account.name}`,
+        outcome: deal.stage === 'closed-won' ? "Successful demo, strong interest shown" : undefined,
+        duration: 60,
+        scheduledAt: new Date(Date.now() + Math.random() * 7 * 24 * 60 * 60 * 1000),
+        completedAt: deal.stage === 'closed-won' ? new Date(Date.now() - Math.random() * 3 * 24 * 60 * 60 * 1000) : undefined,
+        createdBy: userId,
+        assignedTo: userId,
+        dealId: deal.id,
+        contactId: contact.id,
+        accountId: account.id,
+        relatedToType: "deal",
+        relatedToId: deal.id,
+        meetingType: "video",
+        location: "Zoom Meeting Room",
+        attendees: [
+          { name: `${contact.firstName} ${contact.lastName}`, email: contact.email, role: contact.role },
+          { name: "Sales Representative", email: "sales@ourcompany.com", role: "Account Executive" }
+        ],
+        tags: ["demo", "technical", "presentation"]
+      },
+      {
+        subject: `Proposal Follow-up - ${deal.name}`,
+        type: "email",
+        direction: "outbound",
+        status: "completed",
+        priority: "medium",
+        description: `Follow-up email with proposal and next steps for ${deal.name}`,
+        outcome: "Email opened, proposal downloaded for review",
+        scheduledAt: new Date(Date.now() - Math.random() * 5 * 24 * 60 * 60 * 1000),
+        completedAt: new Date(Date.now() - Math.random() * 5 * 24 * 60 * 60 * 1000),
+        createdBy: userId,
+        assignedTo: userId,
+        dealId: deal.id,
+        contactId: contact.id,
+        accountId: account.id,
+        relatedToType: "deal",
+        relatedToId: deal.id,
+        emailSubject: `Proposal for ${deal.name} - Next Steps`,
+        emailTo: contact.email,
+        emailFrom: "sales@ourcompany.com",
+        tags: ["proposal", "follow-up", "email-campaign"]
+      },
+      {
+        subject: `Stakeholder Alignment - ${deal.name}`,
+        type: "meeting",
+        direction: "outbound",
+        status: Math.random() > 0.5 ? "completed" : "open",
+        priority: "critical",
+        description: `Meeting with key stakeholders to align on ${deal.name} implementation`,
+        outcome: Math.random() > 0.5 ? "All stakeholders aligned, moving to contract phase" : undefined,
+        duration: 90,
+        scheduledAt: new Date(Date.now() + Math.random() * 10 * 24 * 60 * 60 * 1000),
+        completedAt: Math.random() > 0.5 ? new Date(Date.now() - Math.random() * 2 * 24 * 60 * 60 * 1000) : undefined,
+        createdBy: userId,
+        assignedTo: userId,
+        dealId: deal.id,
+        contactId: contact.id,
+        accountId: account.id,
+        relatedToType: "deal",
+        relatedToId: deal.id,
+        meetingType: "in-person",
+        location: `${account.name} Conference Room`,
+        attendees: [
+          { name: `${contact.firstName} ${contact.lastName}`, email: contact.email, role: contact.role },
+          { name: "Decision Maker", email: `dm@${account.domain}`, role: "VP Technology" },
+          { name: "Account Executive", email: "ae@ourcompany.com", role: "Senior Sales" }
+        ],
+        tags: ["stakeholder", "alignment", "decision-making"]
+      },
+      {
+        subject: `Contract Negotiation - ${deal.name}`,
+        type: "call",
+        direction: "outbound",
+        status: deal.stage === 'closed-won' ? "completed" : "planned",
+        priority: "critical",
+        description: `Contract terms discussion for ${deal.name}`,
+        outcome: deal.stage === 'closed-won' ? "Terms agreed, contract signed" : undefined,
+        duration: 30,
+        scheduledAt: new Date(Date.now() + Math.random() * 14 * 24 * 60 * 60 * 1000),
+        completedAt: deal.stage === 'closed-won' ? new Date(Date.now() - 1 * 24 * 60 * 60 * 1000) : undefined,
+        createdBy: userId,
+        assignedTo: userId,
+        dealId: deal.id,
+        contactId: contact.id,
+        accountId: account.id,
+        leadId: lead.id,
+        relatedToType: "deal",
+        relatedToId: deal.id,
+        callType: "outgoing",
+        phoneNumber: contact.phone || "+1-555-0100",
+        callResult: deal.stage === 'closed-won' ? "answered" : "no_answer",
+        source: "manual",
+        tags: ["contract", "negotiation", "legal"]
+      }
+    ];
+    
+    dealActivitiesData.push(...activitiesForDeal);
+  }
+  
+  // Insert all deal-specific activities
+  const createdActivities = await db.insert(schema.activities).values(dealActivitiesData).returning();
+  console.log(`✅ Created ${createdActivities.length} deal-specific activities across ${deals.length} deals`);
+}
+
 export async function seedDatabase() {
   try {
     console.log("🌱 Starting database seeding...");
@@ -996,6 +1149,15 @@ export async function seedDatabase() {
       sampleContacts.map(c => c.id), 
       sampleLeads.map(l => l.id), 
       sampleDeals.map(d => d.id)
+    );
+
+    // Create comprehensive activities for every deal to ensure robust linking
+    await seedDealSpecificActivities(
+      userId,
+      sampleDeals,
+      sampleAccounts,
+      sampleContacts,
+      sampleLeads
     );
 
     // Create sample meeting
