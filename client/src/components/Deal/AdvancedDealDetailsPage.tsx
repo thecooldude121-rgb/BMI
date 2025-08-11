@@ -1113,67 +1113,91 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                 </button>
               </div>
 
+              {/* Activities Debug & Info */}
+              <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                <p className="text-sm text-gray-600">
+                  Found {activities.length} activities for this deal. 
+                  <Link href="/crm/activities">
+                    <button className="ml-2 text-blue-600 hover:text-blue-700 underline">
+                      View all activities in Activities Module →
+                    </button>
+                  </Link>
+                </p>
+              </div>
+
               {/* Activities Timeline */}
               <div className="space-y-4">
-                {activities.map((activity: any) => (
-                  <div key={activity.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
-                    <div className="flex items-start space-x-4">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                        activity.type === 'email' ? 'bg-blue-100' :
-                        activity.type === 'call' ? 'bg-green-100' :
-                        activity.type === 'meeting' ? 'bg-purple-100' :
-                        'bg-orange-100'
-                      }`}>
-                        {activity.type === 'email' && <Mail className="h-5 w-5 text-blue-600" />}
-                        {activity.type === 'call' && <Phone className="h-5 w-5 text-green-600" />}
-                        {activity.type === 'meeting' && <Calendar className="h-5 w-5 text-purple-600" />}
-                        {activity.type === 'task' && <CheckSquare className="h-5 w-5 text-orange-600" />}
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="text-sm font-semibold text-gray-900 truncate">
-                            {activity.subject}
-                          </h4>
-                          <div className="flex items-center space-x-2">
-                            <span className={`px-2 py-1 text-xs rounded-full ${
-                              activity.status === 'completed' ? 'bg-green-100 text-green-800' :
-                              activity.status === 'scheduled' ? 'bg-blue-100 text-blue-800' :
-                              'bg-yellow-100 text-yellow-800'
-                            }`}>
-                              {activity.status === 'completed' ? 'Completed' :
-                               activity.status === 'scheduled' ? 'Scheduled' : 'In Progress'}
-                            </span>
-                            <button className="text-gray-400 hover:text-gray-600">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </button>
-                          </div>
+                {activities && activities.length > 0 ? (
+                  activities.map((activity: any) => (
+                    <div key={activity.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                      <div className="flex items-start space-x-4">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                          activity.type === 'email' ? 'bg-blue-100' :
+                          activity.type === 'call' ? 'bg-green-100' :
+                          activity.type === 'meeting' ? 'bg-purple-100' :
+                          'bg-orange-100'
+                        }`}>
+                          {activity.type === 'email' && <Mail className="h-5 w-5 text-blue-600" />}
+                          {activity.type === 'call' && <Phone className="h-5 w-5 text-green-600" />}
+                          {activity.type === 'meeting' && <Calendar className="h-5 w-5 text-purple-600" />}
+                          {activity.type === 'task' && <CheckSquare className="h-5 w-5 text-orange-600" />}
                         </div>
                         
-                        <p className="text-sm text-gray-600 mb-3">
-                          {activity.description}
-                        </p>
-                        
-                        <div className="flex items-center space-x-4 text-xs text-gray-500">
-                          <span className="flex items-center">
-                            <User className="h-3 w-3 mr-1" />
-                            {activity.assignedTo}
-                          </span>
-                          <span className="flex items-center">
-                            <Clock className="h-3 w-3 mr-1" />
-                            {format(new Date(activity.createdAt), 'MMM dd, yyyy - h:mm a')}
-                          </span>
-                          {activity.duration && (
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="text-sm font-semibold text-gray-900 truncate">
+                              {activity.subject}
+                            </h4>
+                            <div className="flex items-center space-x-2">
+                              <span className={`px-2 py-1 text-xs rounded-full ${
+                                activity.status === 'completed' ? 'bg-green-100 text-green-800' :
+                                activity.status === 'in_progress' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-blue-100 text-blue-800'
+                              }`}>
+                                {activity.status === 'completed' ? 'Completed' :
+                                 activity.status === 'in_progress' ? 'In Progress' : 
+                                 activity.status || 'Open'}
+                              </span>
+                              <button className="text-gray-400 hover:text-gray-600">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </div>
+                          
+                          <p className="text-sm text-gray-600 mb-3">
+                            {activity.description || 'No description'}
+                          </p>
+                          
+                          <div className="flex items-center space-x-4 text-xs text-gray-500">
                             <span className="flex items-center">
-                              <Timer className="h-3 w-3 mr-1" />
-                              {activity.duration} min
+                              <User className="h-3 w-3 mr-1" />
+                              {activity.assignedTo || 'Unassigned'}
                             </span>
-                          )}
+                            <span className="flex items-center">
+                              <Clock className="h-3 w-3 mr-1" />
+                              {activity.createdAt ? format(new Date(activity.createdAt), 'MMM dd, yyyy - h:mm a') : 'No date'}
+                            </span>
+                            {activity.duration && (
+                              <span className="flex items-center">
+                                <Timer className="h-3 w-3 mr-1" />
+                                {activity.duration} min
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <Activity className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                    <p className="text-lg font-medium mb-2">No activities found</p>
+                    <p className="text-sm">No activities have been created for this deal yet.</p>
+                    <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                      Create First Activity
+                    </button>
                   </div>
-                ))}
+                )}
               </div>
 
               {/* Load More */}
