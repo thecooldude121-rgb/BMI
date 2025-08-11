@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { DollarSign, TrendingUp, Calendar, User, CheckSquare, Square } from 'lucide-react';
+import { DollarSign, TrendingUp, Calendar, User, CheckSquare, Square, Eye, Plus, Filter, Grid3x3, List } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Link } from 'wouter';
 import BulkActionsDropdown from '../../components/CRM/BulkActionsDropdown';
 import { apiRequest } from '../../lib/queryClient';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 const DealsPage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -14,6 +17,7 @@ const DealsPage: React.FC = () => {
   });
   const [selectedDeals, setSelectedDeals] = useState<string[]>([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   const deleteDealsMutation = useMutation({
     mutationFn: async (ids: string[]) => {
