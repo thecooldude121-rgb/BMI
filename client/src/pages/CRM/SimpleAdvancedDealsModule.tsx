@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Link, useLocation } from 'wouter';
 import Fuse from 'fuse.js';
 import { 
   Plus, 
@@ -320,9 +321,9 @@ export default function SimpleAdvancedDealsModule() {
       </div>
 
       {/* Clickable area for deal details */}
+      <Link href={`/crm/deals/${deal.id}`}>
       <div 
         className="cursor-pointer pl-6"
-        onClick={() => window.location.href = `/crm/deals/${deal.id}`}
       >
         <div className="flex items-start justify-between mb-2">
           <div className="flex-1">
@@ -380,6 +381,7 @@ export default function SimpleAdvancedDealsModule() {
           </div>
         </div>
       </div>
+      </Link>
     </div>
   );
 
@@ -465,12 +467,11 @@ export default function SimpleAdvancedDealsModule() {
                 </td>
                 <td className="px-4 py-3">
                   <div>
-                    <div 
-                      className="font-medium text-sm cursor-pointer hover:text-blue-600"
-                      onClick={() => window.location.href = `/crm/deals/${deal.id}`}
-                    >
-                      {deal.name}
-                    </div>
+                    <Link href={`/crm/deals/${deal.id}`}>
+                      <div className="font-medium text-sm cursor-pointer hover:text-blue-600">
+                        {deal.name}
+                      </div>
+                    </Link>
                     <div className="text-xs text-gray-500">{deal.title}</div>
                   </div>
                 </td>
@@ -493,12 +494,11 @@ export default function SimpleAdvancedDealsModule() {
                   {new Date(deal.expectedCloseDate).toLocaleDateString()}
                 </td>
                 <td className="px-4 py-3">
-                  <button 
-                    className="p-1 hover:bg-gray-100 rounded text-blue-600"
-                    onClick={() => window.location.href = `/crm/deals/${deal.id}`}
-                  >
-                    <Eye className="w-3 h-3" />
-                  </button>
+                  <Link href={`/crm/deals/${deal.id}`}>
+                    <button className="p-1 hover:bg-gray-100 rounded text-blue-600">
+                      <Eye className="w-3 h-3" />
+                    </button>
+                  </Link>
                 </td>
               </tr>
             ))}
