@@ -449,8 +449,8 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      {/* Header - Sticky */}
+      <div className="sticky top-0 z-30 bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
@@ -480,8 +480,8 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
       </div>
 
       <div className="flex">
-        {/* Sidebar Navigation */}
-        <div className="w-64 bg-white border-r border-gray-200 min-h-screen">
+        {/* Sidebar Navigation - Sticky */}
+        <div className="w-64 bg-white border-r border-gray-200 sticky top-[73px] h-[calc(100vh-73px)] overflow-y-auto">
           <div className="p-4">
             <h3 className="text-sm font-medium text-gray-900 mb-3">Deal Details</h3>
             <nav className="space-y-1">
