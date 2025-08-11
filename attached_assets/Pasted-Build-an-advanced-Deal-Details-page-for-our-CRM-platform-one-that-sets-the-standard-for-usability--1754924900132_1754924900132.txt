@@ -1,0 +1,24 @@
+Build an advanced Deal Details page for our CRM platform, one that sets the standard for usability, insight, and collaboration—firmly outperforming HubSpot, Zoho, Salesforce, and Pipedrive.
+
+**Page must include:**
+1. Full-width deal progress/stage bar showing current pipeline position, color-coded stages, and interactive vertical/horizontal timeline of stage history (with timestamps, user, notes, analytics on time-in-stage).
+2. “Deal Summary” block top-left: editable Deal Name, auto Deal Number, Pipeline/Stage selector, Amount, Probability, Owner (avatar, clickable), Account/Organization, Contacts (badges, hyperlinks), Country, Expected Close Date (calendar picker).
+3. “Deal Classification” block: Deal Type (dropdown), custom fields, Competitor info with strengths/weaknesses, associated campaigns.
+4. “Financials” block: editable multi-line-item table for products/services, breakdown of platform/custom/license/onboarding fees, margin/revenue metrics where relevant.
+5. “Activities” block: open/closed tasks, calls, meetings, quick-add function (smart suggestions for next step, inline completion, comment threads).
+6. “Communication” block: full email timeline (drafts, sent, scheduled), call/log records, notes with @mentions.
+7. “Attachments/Documents” block: drag-and-drop upload, preview capability, e-signature tracking, version history.
+8. “Linked Records” block: connect Leads, Contacts, Accounts, Related Deals, with bi-directional drill-down.
+9. “Stage History” block: interactive timeline/table showing all stage moves, durations, who/when/why, AI-stall/bottleneck detection.
+10. Collaboration/feed block: assign followers, internal comments and change log, with field/section-level role-based permission.
+11. Responsive/mobile-ready layout, sticky top summary on scroll, clear UI with animated transitions, and contextual tooltips/help.
+12. RESTful backend endpoints for deal fetch/update, stage transitions, activities/emails logging, file upload, related entity linking.
+13. Modular React (Material UI/Tailwind/AntD) structure; clean code, commented, with sample/mock data and demo/test instructions.
+
+**Prioritize:**
+- Navigability between blocks and records (deal→lead/account/contact/activity/file)
+- Real-time updates (transactional UX or optimistic UI where possible)
+- Smart recommendations/AI signals for next steps and risk highlights
+- Accessibility and mobile-first design.
+
+Return the complete React component, backend API endpoints (Node.js/Express preferred), schema definition for Deal and linked records, and code comments for extensibility.
