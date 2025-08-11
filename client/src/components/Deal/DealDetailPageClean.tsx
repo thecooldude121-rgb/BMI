@@ -6,7 +6,7 @@ import {
   ArrowLeft, Edit2, Save, X, Plus, Mail, Phone, Globe, Building,
   Calendar, DollarSign, User, Target, Clock, FileText, Paperclip,
   Activity, Users, MessageSquare, Briefcase, TrendingUp, CheckCircle,
-  CheckSquare
+  CheckSquare, Eye, History, ChevronRight, Award, Zap
 } from 'lucide-react';
 
 interface DealDetailPageProps {
@@ -117,6 +117,7 @@ const EditableField: React.FC<EditableFieldProps> = ({
 const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
   const [, setLocation] = useLocation();
   const [activeSection, setActiveSection] = useState('overview');
+  const [viewMode, setViewMode] = useState<'overview' | 'timeline'>('overview');
 
   // Section navigation for smooth scrolling
   const scrollToSection = (sectionId: string) => {
@@ -287,6 +288,123 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
     );
   };
 
+  // Timeline helper functions
+  const generateTimelineEvents = () => {
+    const stages = ['qualification', 'proposal', 'negotiation', 'closed-won', 'closed-lost'];
+    const currentStageIndex = stages.indexOf(deal?.stage || 'qualification');
+    
+    const events = [
+      {
+        id: '1',
+        title: 'Deal Created',
+        description: `Deal "${deal?.name}" was created and entered the pipeline`,
+        icon: <Plus className="h-4 w-4 text-gray-600" />,
+        date: new Date(deal?.createdAt || Date.now()).toLocaleDateString(),
+        time: new Date(deal?.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        isCompleted: true,
+        details: [
+          `Initial value: $${parseInt(deal?.value || '0').toLocaleString()}`,
+          `Assigned to: ${deal?.assignee?.name || 'Unassigned'}`,
+          `Source: ${deal?.source || 'Direct'}`
+        ]
+      },
+      {
+        id: '2',
+        title: 'Qualification Stage',
+        description: 'Initial assessment and lead qualification',
+        icon: <CheckCircle className="h-4 w-4 text-green-600" />,
+        date: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+        time: '10:30 AM',
+        duration: '5 days',
+        isCompleted: currentStageIndex >= 0,
+        isActive: currentStageIndex === 0,
+        progress: currentStageIndex === 0 ? 75 : undefined,
+        details: [
+          'Budget confirmed',
+          'Decision makers identified',
+          'Timeline established'
+        ]
+      },
+      {
+        id: '3',
+        title: 'Proposal Stage',
+        description: 'Proposal preparation and presentation',
+        icon: <FileText className="h-4 w-4 text-blue-600" />,
+        date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+        time: '2:15 PM',
+        duration: '3 days',
+        isCompleted: currentStageIndex > 1,
+        isActive: currentStageIndex === 1,
+        progress: currentStageIndex === 1 ? 45 : undefined,
+        details: [
+          'Proposal document sent',
+          'Demo completed',
+          'Follow-up scheduled'
+        ]
+      },
+      {
+        id: '4',
+        title: 'Negotiation Stage',
+        description: 'Terms negotiation and contract finalization',
+        icon: <MessageSquare className="h-4 w-4 text-purple-600" />,
+        date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+        time: '11:00 AM',
+        isCompleted: currentStageIndex > 2,
+        isActive: currentStageIndex === 2,
+        progress: currentStageIndex === 2 ? 60 : undefined,
+        details: [
+          'Pricing discussions',
+          'Contract review',
+          'Legal approval pending'
+        ]
+      },
+      {
+        id: '5',
+        title: deal?.stage === 'closed-won' ? 'Closed Won' : 'Pending Close',
+        description: deal?.stage === 'closed-won' ? 'Deal successfully closed' : 'Working towards closing',
+        icon: deal?.stage === 'closed-won' ? 
+          <Award className="h-4 w-4 text-green-600" /> : 
+          <Zap className="h-4 w-4 text-orange-600" />,
+        date: deal?.expectedCloseDate ? 
+          new Date(deal.expectedCloseDate).toLocaleDateString() : 
+          'TBD',
+        time: 'Expected',
+        isCompleted: deal?.stage === 'closed-won',
+        isActive: currentStageIndex === 3 || currentStageIndex === 4,
+        details: deal?.stage === 'closed-won' ? 
+          [`Final value: $${parseInt(deal?.value || '0').toLocaleString()}`, 'Contract signed', 'Implementation scheduled'] :
+          ['Final negotiations', 'Awaiting signatures', 'Implementation planning']
+      }
+    ];
+
+    return events;
+  };
+
+  const calculateDealAge = () => {
+    const created = new Date(deal?.createdAt || Date.now());
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - created.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
+
+  const countStageChanges = () => {
+    // Mock count - in real app would track from activity history
+    const stages = ['qualification', 'proposal', 'negotiation', 'closed-won', 'closed-lost'];
+    const currentIndex = stages.indexOf(deal?.stage || 'qualification');
+    return Math.max(1, currentIndex + 1);
+  };
+
+  const countCompletedActivities = () => {
+    return closedActivities.length;
+  };
+
+  const calculateVelocity = () => {
+    const age = calculateDealAge();
+    const stages = countStageChanges();
+    return stages > 0 ? Math.round(age / stages) : 0;
+  };
+
   const sidebarModules = [
     { id: 'overview', label: 'Deal Overview', icon: Briefcase },
     { id: 'activities', label: 'Open Activities', icon: Target },
@@ -392,8 +510,39 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
         <div className="flex-1 p-6 space-y-6">
           {/* Deal Overview */}
           <div id="overview" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">Deal Overview</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Toggle Buttons */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setViewMode('overview')}
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    viewMode === 'overview' 
+                      ? 'bg-blue-600 text-white' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  <Eye className="h-4 w-4 inline mr-2" />
+                  Overview
+                </button>
+                <button
+                  onClick={() => setViewMode('timeline')}
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    viewMode === 'timeline' 
+                      ? 'bg-blue-600 text-white' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  <Clock className="h-4 w-4 inline mr-2" />
+                  Timeline
+                </button>
+              </div>
+            </div>
+
+            {/* Overview Mode */}
+            {viewMode === 'overview' && (
+              <>
+                <h3 className="text-lg font-semibold text-gray-900 mb-6">Deal Overview</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <EditableField
                   label="Deal Name"
@@ -441,6 +590,126 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({ dealId }) => {
                 />
               </div>
             </div>
+              </>
+            )}
+
+            {/* Timeline Mode */}
+            {viewMode === 'timeline' && (
+              <div className="space-y-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-6">Deal Timeline</h3>
+                
+                {/* Timeline Header */}
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center space-x-3">
+                    <History className="h-5 w-5 text-blue-600" />
+                    <span className="text-sm text-gray-600">Tracking deal progression from creation to current stage</span>
+                  </div>
+                  <span className="text-sm text-gray-500">
+                    Created: {new Date(deal.createdAt || Date.now()).toLocaleDateString()}
+                  </span>
+                </div>
+
+                {/* Timeline Content */}
+                <div className="relative">
+                  {/* Timeline Line */}
+                  <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gray-300"></div>
+                  
+                  {/* Timeline Events */}
+                  <div className="space-y-6">
+                    {generateTimelineEvents().map((event, index) => (
+                      <div key={event.id} className="relative flex items-start">
+                        {/* Timeline Dot */}
+                        <div className={`absolute left-6 w-4 h-4 rounded-full border-2 border-white z-10 ${
+                          event.isActive ? 'bg-blue-600' : 
+                          event.isCompleted ? 'bg-green-600' : 'bg-gray-400'
+                        }`}>
+                          {event.isActive && (
+                            <div className="absolute inset-0 rounded-full bg-blue-600 animate-ping opacity-75"></div>
+                          )}
+                        </div>
+                        
+                        {/* Event Content */}
+                        <div className="ml-16 flex-1">
+                          <div className={`p-4 rounded-lg border ${
+                            event.isActive ? 'bg-blue-50 border-blue-200' : 
+                            event.isCompleted ? 'bg-green-50 border-green-200' : 
+                            'bg-gray-50 border-gray-200'
+                          }`}>
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center space-x-2 mb-2">
+                                  {event.icon}
+                                  <h4 className="font-semibold text-gray-900">{event.title}</h4>
+                                  {event.isActive && (
+                                    <span className="px-2 py-0.5 text-xs bg-blue-600 text-white rounded-full">Current</span>
+                                  )}
+                                </div>
+                                <p className="text-sm text-gray-600 mb-2">{event.description}</p>
+                                {event.details && (
+                                  <div className="space-y-1">
+                                    {event.details.map((detail, idx) => (
+                                      <div key={idx} className="flex items-center text-xs text-gray-500">
+                                        <ChevronRight className="h-3 w-3 mr-1" />
+                                        {detail}
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                              <div className="text-right ml-4">
+                                <div className="text-sm font-medium text-gray-900">{event.date}</div>
+                                <div className="text-xs text-gray-500">{event.time}</div>
+                                {event.duration && (
+                                  <div className="text-xs text-gray-400 mt-1">{event.duration}</div>
+                                )}
+                              </div>
+                            </div>
+                            
+                            {/* Progress Bar for Active Stage */}
+                            {event.isActive && event.progress !== undefined && (
+                              <div className="mt-3 pt-3 border-t border-gray-200">
+                                <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+                                  <span>Stage Progress</span>
+                                  <span>{event.progress}%</span>
+                                </div>
+                                <div className="w-full bg-gray-200 rounded-full h-2">
+                                  <div 
+                                    className="bg-blue-600 h-2 rounded-full transition-all"
+                                    style={{ width: `${event.progress}%` }}
+                                  />
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Timeline Summary */}
+                <div className="mt-8 p-4 bg-gray-50 rounded-lg">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-gray-900">{calculateDealAge()}</div>
+                      <div className="text-xs text-gray-500">Days in Pipeline</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600">{countStageChanges()}</div>
+                      <div className="text-xs text-gray-500">Stage Changes</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-green-600">{countCompletedActivities()}</div>
+                      <div className="text-xs text-gray-500">Completed Activities</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-orange-600">{calculateVelocity()}</div>
+                      <div className="text-xs text-gray-500">Avg Days/Stage</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Open Activities Section */}
