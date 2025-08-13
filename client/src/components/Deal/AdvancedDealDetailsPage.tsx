@@ -758,54 +758,71 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
               </div>
             </div>
           </div>
-          
-          {/* Tab Navigation */}
-          <div className="border-t border-gray-200 -mb-px">
-            <nav className="flex space-x-8">
-              {[
-                { id: 'overview', label: 'Overview', icon: Eye },
-                { id: 'activities', label: 'Activities', icon: Activity },
-                { id: 'communication', label: 'Communication', icon: MessageSquare },
-                { id: 'files', label: 'Files', icon: FileText },
-                { id: 'analytics', label: 'Analytics', icon: BarChart3 }
-              ].map((tab) => {
-                const Icon = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                      activeTab === tab.id
-                        ? 'border-blue-500 text-blue-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                    }`}
-                  >
-                    <Icon className="h-4 w-4" />
-                    <span>{tab.label}</span>
-                  </button>
-                );
-              })}
-            </nav>
-          </div>
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* Main Content with Sidebar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {activeTab === 'overview' && (
-          <div className="space-y-6">
-            {/* Deal Progress Bar */}
-            <DealProgressBar
-              currentStage={deal.stage}
-              stages={stages}
-              stageHistory={[]}
-              onStageClick={(stage) => handleFieldSave('stage', stage)}
-              dealValue={Number(deal.value || 0)}
-              probability={deal.probability || 0}
-            />
-            
-            {/* Main Content Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="flex gap-6">
+          {/* Left Sidebar Navigation */}
+          <div className="w-64 flex-shrink-0">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sticky top-24">
+              <h3 className="text-sm font-semibold text-gray-900 mb-4">Deal Functions</h3>
+              <nav className="space-y-2">
+                {[
+                  { id: 'overview', label: 'Overview & Summary', icon: Eye, description: 'Deal details and progress' },
+                  { id: 'activities', label: 'Activities', icon: Activity, description: 'Tasks, calls, emails' },
+                  { id: 'communication', label: 'Communication', icon: MessageSquare, description: 'Messages and notes' },
+                  { id: 'files', label: 'Files & Documents', icon: FileText, description: 'Attachments and contracts' },
+                  { id: 'analytics', label: 'Analytics & Reports', icon: BarChart3, description: 'Performance insights' }
+                ].map((tab) => {
+                  const Icon = tab.icon;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`w-full flex items-start space-x-3 px-3 py-3 rounded-lg text-left transition-all duration-200 ${
+                        activeTab === tab.id
+                          ? 'bg-blue-50 border border-blue-200 text-blue-700'
+                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      }`}
+                    >
+                      <Icon className={`h-5 w-5 mt-0.5 flex-shrink-0 ${
+                        activeTab === tab.id ? 'text-blue-600' : 'text-gray-400'
+                      }`} />
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-sm font-medium ${
+                          activeTab === tab.id ? 'text-blue-900' : 'text-gray-900'
+                        }`}>
+                          {tab.label}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-0.5">
+                          {tab.description}
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+          </div>
+
+          {/* Main Content Area */}
+          <div className="flex-1 min-w-0">
+            {activeTab === 'overview' && (
+              <div className="space-y-6">
+                {/* Deal Progress Bar */}
+                <DealProgressBar
+                  currentStage={deal.stage}
+                  stages={stages}
+                  stageHistory={[]}
+                  onStageClick={(stage) => handleFieldSave('stage', stage)}
+                  dealValue={Number(deal.value || 0)}
+                  probability={deal.probability || 0}
+                />
+                
+                {/* Main Content Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Left Column - 2/3 width */}
               <div className="lg:col-span-2 space-y-6">
                 {/* Deal Summary Block */}
@@ -1977,6 +1994,8 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
             </div>
           </div>
         )}
+          </div>
+        </div>
       </div>
     </div>
   );
