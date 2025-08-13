@@ -1,0 +1,52 @@
+Build a modern, responsive Deal Progress Bar UI for the Deal Details page in our CRM platform. The progress bar must set the standard for usability, transparency, and motivation, helping users instantly understand the current deal stage, progress through the pipeline, and historical movement.
+
+UI & UX Requirements
+Horizontal Progress Bar spanning the top or key summary block of the page.
+
+Distinct Segments for Each Deal Stage (e.g., Prospect, Qualified, Proposal, Negotiation, Closed Won, Closed Lost, Stalled):
+
+Each stage as a labeled step/node with unique color or icon (green for “Won,” red for “Lost,” orange for “Stalled”).
+
+Current stage highlighted (larger node, bold color, slight animation or glow).
+
+Connectors Between Stages:
+
+Lines or arrows between nodes that fill as the deal progresses.
+
+On hover/click: show tooltip/modal with entry date/time, user who moved the stage, and notes.
+
+Completion Percentage (optional):
+
+Number or subtle indicator under the bar for overall deal pipeline completion.
+
+Responsive & Accessible:
+
+Fluid resizing for desktop, tablet, and mobile; ensures legibility and tap targets.
+
+Keyboard and screenreader navigable. Use ARIA labels and sufficient color contrast.
+
+Delightful Microinteractions
+Smooth Fill Animations when a deal changes stages (ease-in or pulse effect).
+
+Confetti or Sparkle when “Closed Won” reached, subtle “slide down” for “Closed Lost.”
+
+Gradient Connectors as deal moves stages for modern look (gradient fills inspired by Dribbble/Material UI).
+
+UX Best Practices
+Simple, minimal interface—avoid excessive decoration.
+
+Use clear, short stage labels; supplement with icons if space allows.
+
+Show timeline/audit info on hover/click, but keep main bar clean and uncluttered.
+
+Make the bar sticky or visible as the user scrolls Deal Details.
+
+Inspiration
+Inspired by Material UI’s stepper/progress bar, Dribbble’s stage-based progress bars, and SaaS product onboarding flows (ActiveCampaign, Mural, ClickUp).
+
+Code/Tech Specs
+Use React with Material UI, Ant Design, or Tailwind CSS (motion libraries for animation: framer-motion or Lottie).
+
+Modular structure: <DealProgressBar stages={stageHistory} currentStage="Proposal" />
+
+Return clean React component code (with demo/mock data), full CSS for style, and code comments for extension.

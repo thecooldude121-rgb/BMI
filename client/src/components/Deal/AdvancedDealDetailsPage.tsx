@@ -12,7 +12,7 @@ import {
   ExternalLink, Copy, Share2, Bell, BellOff, UserPlus, Settings,
   Maximize2, Minimize2, RefreshCw, BookOpen, Calculator, PieChart,
   BarChart3, LineChart, Camera, Video, Mic, AtSign, Hash, Link as LinkIcon,
-  Tag, MoreHorizontal, Timer, FolderPlus, FolderOpen
+  Tag, MoreHorizontal, Timer, FolderPlus, FolderOpen, Trophy, Circle, Check
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -263,56 +263,192 @@ const AdvancedEditableField: React.FC<{
   );
 };
 
-// Progress Bar Component for Deal Stages
+// Enhanced Progress Bar Component for Deal Stages with Modern UX
 const DealProgressBar: React.FC<{
   currentStage: string;
   stages: Array<{ id: string; name: string; color: string }>;
   stageHistory: Array<any>;
   onStageClick: (stage: string) => void;
-}> = ({ currentStage, stages, stageHistory, onStageClick }) => {
+  dealValue?: number;
+  probability?: number;
+}> = ({ currentStage, stages, stageHistory, onStageClick, dealValue = 0, probability = 0 }) => {
+  const [hoveredStage, setHoveredStage] = useState<string | null>(null);
+  const [showConfetti, setShowConfetti] = useState(false);
   const currentIndex = stages.findIndex(s => s.id === currentStage);
-  
+  const completionPercentage = ((currentIndex + 1) / stages.length) * 100;
+
+  // Enhanced stage icons mapping
+  const getStageIcon = (stage: { id: string; name: string; color: string }, isCompleted: boolean, isActive: boolean) => {
+    if (stage.id === 'closed-won') {
+      return <Trophy className="h-4 w-4" />;
+    }
+    if (stage.id === 'closed-lost') {
+      return <X className="h-4 w-4" />;
+    }
+    if (isCompleted) {
+      return <CheckCircle className="h-4 w-4" />;
+    }
+    if (isActive) {
+      return <Circle className="h-4 w-4 animate-pulse" />;
+    }
+    return <Circle className="h-4 w-4" />;
+  };
+
+  // Enhanced styling for different stage states
+  const getStageButtonStyle = (stage: { id: string; name: string; color: string }, index: number) => {
+    const isActive = stage.id === currentStage;
+    const isCompleted = index < currentIndex;
+    const isHovered = hoveredStage === stage.id;
+    
+    if (stage.id === 'closed-won' && isActive) {
+      return 'bg-gradient-to-r from-green-500 to-emerald-600 border-green-600 text-white shadow-lg shadow-green-200 scale-110';
+    }
+    if (stage.id === 'closed-lost' && isActive) {
+      return 'bg-gradient-to-r from-red-500 to-rose-600 border-red-600 text-white shadow-lg shadow-red-200';
+    }
+    if (isActive) {
+      return `bg-gradient-to-r from-${stage.color}-500 to-${stage.color}-600 border-${stage.color}-600 text-white shadow-lg shadow-${stage.color}-200 scale-105`;
+    }
+    if (isCompleted) {
+      return 'bg-gradient-to-r from-green-500 to-emerald-600 border-green-600 text-white shadow-md';
+    }
+    if (isHovered) {
+      return 'bg-gray-100 border-gray-400 text-gray-700 scale-105';
+    }
+    return 'bg-white border-gray-300 text-gray-500 hover:border-gray-400';
+  };
+
+  // Connector line styling with gradients
+  const getConnectorStyle = (index: number) => {
+    if (index < currentIndex) {
+      return 'bg-gradient-to-r from-green-500 to-emerald-600';
+    }
+    if (index === currentIndex) {
+      return `bg-gradient-to-r from-green-500 to-${stages[currentIndex]?.color || 'blue'}-500`;
+    }
+    return 'bg-gray-300';
+  };
+
+  // Calculate days in current stage
+  const daysInCurrentStage = stageHistory.length > 0 ? 
+    Math.floor((Date.now() - new Date(stageHistory[stageHistory.length - 1]?.changedAt || Date.now()).getTime()) / (1000 * 60 * 60 * 24)) : 0;
+
+  // Trigger confetti effect for closed-won
+  React.useEffect(() => {
+    if (currentStage === 'closed-won') {
+      setShowConfetti(true);
+      const timer = setTimeout(() => setShowConfetti(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [currentStage]);
+
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">Deal Progress</h3>
-        <div className="flex items-center space-x-2 text-sm text-gray-600">
-          <Clock className="h-4 w-4" />
-          <span>Stage {currentIndex + 1} of {stages.length}</span>
+    <div className="bg-gradient-to-br from-white to-gray-50 p-6 rounded-xl shadow-sm border border-gray-200 mb-6 relative overflow-hidden">
+      {/* Confetti Effect for Closed Won */}
+      {showConfetti && (
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-1/4 w-2 h-2 bg-yellow-400 animate-bounce delay-75"></div>
+          <div className="absolute top-0 left-1/2 w-2 h-2 bg-green-400 animate-bounce delay-150"></div>
+          <div className="absolute top-0 left-3/4 w-2 h-2 bg-blue-400 animate-bounce delay-300"></div>
+        </div>
+      )}
+
+      {/* Header with Enhanced Metrics */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 space-y-2 sm:space-y-0">
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+            <BarChart3 className="h-5 w-5 mr-2 text-blue-600" />
+            Deal Progress
+          </h3>
+          <p className="text-sm text-gray-600 mt-1">
+            Stage {currentIndex + 1} of {stages.length} • {completionPercentage.toFixed(0)}% Complete
+          </p>
+        </div>
+        
+        <div className="flex items-center space-x-4 text-sm">
+          <div className="bg-blue-50 px-3 py-1 rounded-full">
+            <span className="text-blue-700 font-medium">
+              ${dealValue.toLocaleString()}
+            </span>
+          </div>
+          <div className="bg-green-50 px-3 py-1 rounded-full">
+            <span className="text-green-700 font-medium">
+              {probability}% Win Rate
+            </span>
+          </div>
         </div>
       </div>
-      
-      {/* Horizontal Progress Bar */}
-      <div className="relative">
-        <div className="flex items-center justify-between">
+
+      {/* Enhanced Progress Bar */}
+      <div className="relative mb-6">
+        {/* Background Progress Line */}
+        <div className="absolute top-8 left-0 right-0 h-1 bg-gray-200 rounded-full mx-8"></div>
+        
+        {/* Active Progress Line */}
+        <div 
+          className="absolute top-8 left-8 h-1 bg-gradient-to-r from-blue-500 via-green-500 to-emerald-600 rounded-full transition-all duration-1000 ease-out"
+          style={{ width: `calc(${completionPercentage}% - 4rem)` }}
+        ></div>
+
+        {/* Stage Nodes */}
+        <div className="flex justify-between items-start px-4">
           {stages.map((stage, index) => {
             const isActive = stage.id === currentStage;
             const isCompleted = index < currentIndex;
             const stageData = stageHistory.find(h => h.toStage === stage.id);
             
             return (
-              <div key={stage.id} className="flex flex-col items-center flex-1">
+              <div 
+                key={stage.id} 
+                className="flex flex-col items-center flex-1 relative group"
+                onMouseEnter={() => setHoveredStage(stage.id)}
+                onMouseLeave={() => setHoveredStage(null)}
+              >
+                {/* Tooltip */}
+                {hoveredStage === stage.id && (
+                  <div className="absolute bottom-full mb-2 bg-gray-900 text-white px-3 py-2 rounded-lg text-xs whitespace-nowrap z-20 shadow-lg">
+                    <div className="font-medium">{stage.name}</div>
+                    {stageData && (
+                      <div className="text-gray-300">
+                        Entered: {format(new Date(stageData.changedAt), 'MMM dd, yyyy')}
+                      </div>
+                    )}
+                    {isActive && (
+                      <div className="text-gray-300">
+                        Days in stage: {daysInCurrentStage}
+                      </div>
+                    )}
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+                  </div>
+                )}
+
+                {/* Stage Node */}
                 <button
                   onClick={() => onStageClick(stage.id)}
-                  className={`relative w-8 h-8 rounded-full border-2 transition-all hover:scale-110 ${
-                    isActive 
-                      ? `bg-${stage.color}-600 border-${stage.color}-600 text-white shadow-lg` 
-                      : isCompleted 
-                        ? `bg-green-600 border-green-600 text-white` 
-                        : 'bg-white border-gray-300 text-gray-400 hover:border-gray-400'
-                  }`}
+                  className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-full border-3 transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-blue-200 ${getStageButtonStyle(stage, index)}`}
+                  aria-label={`${stage.name} stage`}
+                  data-testid={`stage-button-${stage.id}`}
                 >
-                  {isCompleted ? (
-                    <CheckCircle className="h-4 w-4" />
-                  ) : (
-                    <span className="text-xs font-medium">{index + 1}</span>
-                  )}
+                  {getStageIcon(stage, isCompleted, isActive)}
+                  
+                  {/* Active Stage Pulse Effect */}
                   {isActive && (
-                    <div className="absolute inset-0 rounded-full bg-current animate-ping opacity-25"></div>
+                    <div className="absolute inset-0 rounded-full bg-current animate-ping opacity-20"></div>
+                  )}
+                  
+                  {/* Completion Badge */}
+                  {isCompleted && !isActive && (
+                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-green-600 rounded-full flex items-center justify-center">
+                      <Check className="h-3 w-3 text-white" />
+                    </div>
                   )}
                 </button>
-                <div className="mt-2 text-center">
-                  <p className={`text-xs font-medium ${isActive ? 'text-gray-900' : 'text-gray-600'}`}>
+
+                {/* Stage Label */}
+                <div className="mt-3 text-center min-h-[2.5rem] flex flex-col justify-start">
+                  <p className={`text-xs sm:text-sm font-medium transition-colors ${
+                    isActive ? 'text-gray-900' : 'text-gray-600'
+                  }`}>
                     {stage.name}
                   </p>
                   {stageData && (
@@ -320,27 +456,37 @@ const DealProgressBar: React.FC<{
                       {format(new Date(stageData.changedAt), 'MMM dd')}
                     </p>
                   )}
+                  {isActive && (
+                    <p className="text-xs text-blue-600 font-medium mt-1">
+                      {daysInCurrentStage} days
+                    </p>
+                  )}
                 </div>
-                {index < stages.length - 1 && (
-                  <div className={`absolute top-4 left-1/2 w-full h-0.5 transform -translate-y-1/2 translate-x-4 ${
-                    index < currentIndex ? 'bg-green-600' : 'bg-gray-300'
-                  }`} style={{ zIndex: -1 }} />
-                )}
               </div>
             );
           })}
         </div>
       </div>
-      
-      {/* Stage Duration Info */}
-      <div className="mt-4 flex items-center justify-center space-x-6 text-sm text-gray-600">
-        <div className="flex items-center space-x-1">
-          <TrendingUp className="h-4 w-4" />
-          <span>Avg: 12 days/stage</span>
+
+      {/* Enhanced Metrics Footer */}
+      <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-gray-200 space-y-3 sm:space-y-0">
+        <div className="flex items-center space-x-6 text-sm text-gray-600">
+          <div className="flex items-center space-x-2">
+            <TrendingUp className="h-4 w-4 text-blue-500" />
+            <span>Avg: 12 days/stage</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Clock className="h-4 w-4 text-orange-500" />
+            <span>Current: {daysInCurrentStage} days</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Target className="h-4 w-4 text-green-500" />
+            <span>{completionPercentage.toFixed(0)}% Complete</span>
+          </div>
         </div>
-        <div className="flex items-center space-x-1">
-          <Clock className="h-4 w-4" />
-          <span>Current: 5 days</span>
+        
+        <div className="text-xs text-gray-500">
+          Last updated: {format(new Date(), 'MMM dd, HH:mm')}
         </div>
       </div>
     </div>
@@ -573,6 +719,8 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
               stages={stages}
               stageHistory={[]}
               onStageClick={(stage) => handleFieldSave('stage', stage)}
+              dealValue={Number(deal.value || 0)}
+              probability={deal.probability || 0}
             />
             
             {/* Main Content Grid */}
