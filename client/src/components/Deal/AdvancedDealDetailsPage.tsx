@@ -343,13 +343,32 @@ const DealProgressBar: React.FC<{
   }, [currentStage]);
 
   return (
-    <div className="bg-gradient-to-br from-white to-gray-50 p-6 rounded-xl shadow-sm border border-gray-200 mb-6 relative overflow-hidden">
-      {/* Confetti Effect for Closed Won */}
+    <div className="bg-gradient-to-br from-white via-blue-50/20 to-purple-50/20 p-8 rounded-2xl shadow-lg border border-gray-200/50 mb-6 relative overflow-hidden backdrop-blur-sm">
+      {/* Enhanced Background Pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-0 left-0 w-40 h-40 bg-blue-500 rounded-full filter blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-40 h-40 bg-purple-500 rounded-full filter blur-3xl"></div>
+      </div>
+
+      {/* Enhanced Confetti Effect for Closed Won */}
       {showConfetti && (
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/4 w-2 h-2 bg-yellow-400 animate-bounce delay-75"></div>
-          <div className="absolute top-0 left-1/2 w-2 h-2 bg-green-400 animate-bounce delay-150"></div>
-          <div className="absolute top-0 left-3/4 w-2 h-2 bg-blue-400 animate-bounce delay-300"></div>
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {[...Array(12)].map((_, i) => (
+            <div
+              key={i}
+              className={`absolute w-3 h-3 animate-bounce`}
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `-20px`,
+                animationDelay: `${Math.random() * 0.5}s`,
+                animationDuration: `${2 + Math.random()}s`
+              }}
+            >
+              <div className={`w-full h-full rounded-sm transform rotate-45 ${
+                ['bg-yellow-400', 'bg-green-400', 'bg-blue-400', 'bg-purple-400', 'bg-pink-400'][Math.floor(Math.random() * 5)]
+              }`}></div>
+            </div>
+          ))}
         </div>
       )}
 
@@ -381,85 +400,147 @@ const DealProgressBar: React.FC<{
 
       {/* Enhanced Progress Bar */}
       <div className="relative mb-6">
-        {/* Background Progress Line */}
-        <div className="absolute top-8 left-0 right-0 h-1 bg-gray-200 rounded-full mx-8"></div>
-        
-        {/* Active Progress Line */}
-        <div 
-          className="absolute top-8 left-8 h-1 bg-gradient-to-r from-blue-500 via-green-500 to-emerald-600 rounded-full transition-all duration-1000 ease-out"
-          style={{ width: `calc(${completionPercentage}% - 4rem)` }}
-        ></div>
+        {/* Connecting Lines Between Stages */}
+        <div className="absolute top-10 left-12 right-12 flex items-center">
+          {stages.slice(0, -1).map((_, index) => {
+            const isCompleted = index < currentIndex;
+            const isActive = index === currentIndex - 1;
+            
+            return (
+              <div
+                key={`connector-${index}`}
+                className="flex-1 relative mx-1"
+              >
+                <div className={`h-1 rounded-full transition-all duration-700 ${
+                  isCompleted 
+                    ? 'bg-gradient-to-r from-emerald-400 to-emerald-500 shadow-sm shadow-emerald-200' 
+                    : isActive
+                      ? 'bg-gradient-to-r from-emerald-400 to-blue-400 shadow-sm shadow-blue-200'
+                      : 'bg-gray-200'
+                }`}>
+                  {(isCompleted || isActive) && (
+                    <div className="absolute inset-0 bg-white/30 rounded-full animate-pulse"></div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
 
         {/* Stage Nodes */}
-        <div className="flex justify-between items-start px-4">
+        <div className="flex justify-between items-start relative z-10">
           {stages.map((stage, index) => {
             const isActive = stage.id === currentStage;
             const isCompleted = index < currentIndex;
             const stageData = stageHistory.find(h => h.toStage === stage.id);
+            const isHovered = hoveredStage === stage.id;
             
             return (
               <div 
                 key={stage.id} 
-                className="flex flex-col items-center flex-1 relative group"
+                className="flex flex-col items-center flex-1 relative"
                 onMouseEnter={() => setHoveredStage(stage.id)}
                 onMouseLeave={() => setHoveredStage(null)}
               >
-                {/* Tooltip */}
+                {/* Enhanced Tooltip */}
                 {hoveredStage === stage.id && (
-                  <div className="absolute bottom-full mb-2 bg-gray-900 text-white px-3 py-2 rounded-lg text-xs whitespace-nowrap z-20 shadow-lg">
-                    <div className="font-medium">{stage.name}</div>
+                  <div className="absolute bottom-full mb-4 bg-gradient-to-br from-gray-900 to-gray-800 text-white px-4 py-3 rounded-xl text-xs whitespace-nowrap z-30 shadow-2xl border border-gray-700 animate-fadeIn">
+                    <div className="font-semibold text-sm mb-1">{stage.name}</div>
                     {stageData && (
-                      <div className="text-gray-300">
-                        Entered: {format(new Date(stageData.changedAt), 'MMM dd, yyyy')}
+                      <div className="text-gray-300 text-xs">
+                        <span className="text-gray-400">Entered:</span> {format(new Date(stageData.changedAt), 'MMM dd, yyyy')}
                       </div>
                     )}
                     {isActive && (
-                      <div className="text-gray-300">
-                        Days in stage: {daysInCurrentStage}
+                      <div className="text-blue-300 text-xs mt-1">
+                        <span className="text-gray-400">Duration:</span> {daysInCurrentStage} days
                       </div>
                     )}
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 -translate-y-1">
+                      <div className="border-8 border-transparent border-t-gray-800"></div>
+                    </div>
                   </div>
                 )}
 
-                {/* Stage Node */}
-                <button
-                  onClick={() => onStageClick(stage.id)}
-                  className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-full border-3 transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-blue-200 ${getStageButtonStyle(stage, index)}`}
-                  aria-label={`${stage.name} stage`}
-                  data-testid={`stage-button-${stage.id}`}
-                >
-                  {getStageIcon(stage, isCompleted, isActive)}
-                  
-                  {/* Active Stage Pulse Effect */}
+                {/* Enhanced Stage Node */}
+                <div className="relative">
+                  {/* Outer Glow Ring for Active Stage */}
                   {isActive && (
-                    <div className="absolute inset-0 rounded-full bg-current animate-ping opacity-20"></div>
+                    <div className="absolute -inset-2 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-full opacity-30 blur-md animate-pulse"></div>
                   )}
                   
-                  {/* Completion Badge */}
+                  <button
+                    onClick={() => onStageClick(stage.id)}
+                    className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 transition-all duration-500 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-blue-300 shadow-lg ${
+                      isActive 
+                        ? stage.id === 'closed-won'
+                          ? 'bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600 border-emerald-600 text-white shadow-xl shadow-emerald-300/50'
+                          : stage.id === 'closed-lost'
+                            ? 'bg-gradient-to-br from-red-400 via-rose-500 to-pink-600 border-rose-600 text-white shadow-xl shadow-rose-300/50'
+                            : 'bg-gradient-to-br from-blue-400 via-blue-500 to-indigo-600 border-blue-600 text-white shadow-xl shadow-blue-300/50'
+                        : isCompleted 
+                          ? 'bg-gradient-to-br from-emerald-400 to-green-500 border-emerald-500 text-white shadow-md shadow-emerald-200/50' 
+                          : isHovered
+                            ? 'bg-gray-50 border-gray-400 text-gray-700 shadow-md'
+                            : 'bg-white border-gray-300 text-gray-400 hover:border-gray-400 hover:shadow-md'
+                    }`}
+                    aria-label={`${stage.name} stage`}
+                    data-testid={`stage-button-${stage.id}`}
+                  >
+                    <span className="relative z-10 flex items-center justify-center">
+                      {getStageIcon(stage, isCompleted, isActive)}
+                    </span>
+                    
+                    {/* Inner Ring Animation for Active Stage */}
+                    {isActive && (
+                      <>
+                        <div className="absolute inset-0 rounded-full bg-white/20 animate-ping"></div>
+                        <div className="absolute inset-1 rounded-full bg-white/10 animate-pulse"></div>
+                      </>
+                    )}
+                  </button>
+                  
+                  {/* Enhanced Completion Badge */}
                   {isCompleted && !isActive && (
-                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-green-600 rounded-full flex items-center justify-center">
+                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-br from-emerald-400 to-green-600 rounded-full flex items-center justify-center shadow-md border-2 border-white">
                       <Check className="h-3 w-3 text-white" />
                     </div>
                   )}
-                </button>
+                  
+                  {/* Stage Number for Incomplete */}
+                  {!isCompleted && !isActive && (
+                    <div className="absolute inset-0 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-semibold">{index + 1}</span>
+                    </div>
+                  )}
+                </div>
 
-                {/* Stage Label */}
-                <div className="mt-3 text-center min-h-[2.5rem] flex flex-col justify-start">
-                  <p className={`text-xs sm:text-sm font-medium transition-colors ${
-                    isActive ? 'text-gray-900' : 'text-gray-600'
+                {/* Enhanced Stage Label */}
+                <div className="mt-4 text-center min-h-[3rem] flex flex-col justify-start">
+                  <p className={`text-xs sm:text-sm font-semibold transition-all duration-300 ${
+                    isActive 
+                      ? 'text-gray-900 scale-110' 
+                      : isCompleted
+                        ? 'text-emerald-700'
+                        : 'text-gray-500'
                   }`}>
                     {stage.name}
                   </p>
                   {stageData && (
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-400 mt-1 font-medium">
                       {format(new Date(stageData.changedAt), 'MMM dd')}
                     </p>
                   )}
                   {isActive && (
-                    <p className="text-xs text-blue-600 font-medium mt-1">
-                      {daysInCurrentStage} days
-                    </p>
+                    <div className="flex items-center justify-center space-x-1 mt-1">
+                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
+                      <p className="text-xs text-blue-600 font-semibold">
+                        {daysInCurrentStage} days
+                      </p>
+                    </div>
+                  )}
+                  {!isActive && !isCompleted && (
+                    <p className="text-xs text-gray-400 mt-1">Pending</p>
                   )}
                 </div>
               </div>
