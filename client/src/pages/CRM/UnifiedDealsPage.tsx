@@ -9,7 +9,7 @@ import {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import BulkActionsDropdown from '../../components/CRM/BulkActionsDropdown';
-import DealKanbanView from '../../components/Deal/DealKanbanView';
+import ImprovedDealKanbanView from '../../components/Deal/ImprovedDealKanbanView';
 import DealListView from '../../components/Deal/DealListView';
 // Dashboard metrics will be calculated from API data
 
@@ -393,12 +393,75 @@ const UnifiedDealsPage = () => {
     </div>
   );
 
+  // Helper function to convert deals
+  const convertToFullDeal = (deal: UnifiedDeal) => ({
+    id: deal.id,
+    dealNumber: `DEAL-${deal.id.slice(0, 8)}`,
+    name: deal.name,
+    ownerId: deal.ownerId,
+    dealType: 'New Business',
+    country: 'US',
+    pipelineId: 'default',
+    accountId: deal.id,
+    contactId: deal.id,
+    amount: deal.amount,
+    currency: 'USD',
+    closingDate: deal.expectedCloseDate,
+    stageId: deal.stage,
+    probability: deal.probability,
+    createdBy: deal.ownerId,
+    products: [],
+    platformFee: 0,
+    customFee: 0,
+    licenseFee: 0,
+    onboardingFee: 0,
+    totalAmount: deal.amount,
+    description: '',
+    tags: ['sample'],
+    attachments: [],
+    customFields: {},
+    createdAt: deal.createdAt,
+    updatedAt: deal.createdAt,
+    lastActivityAt: deal.createdAt,
+    stageHistory: [{
+      id: `${deal.id}-history`,
+      dealId: deal.id,
+      fromStageId: undefined,
+      toStageId: deal.stage,
+      toStageName: stages.find(s => s.id === deal.stage)?.name || 'Unknown',
+      enteredAt: deal.createdAt,
+      exitedAt: undefined,
+      reason: 'Initial creation',
+      durationInStage: 0,
+      changedBy: deal.ownerId,
+    }],
+    activities: [],
+    emails: [],
+    tasks: [],
+    meetings: [],
+  });
+
   const renderKanbanView = () => {
     // Create proper pipeline and deal filters for the kanban view
     const mockPipeline = {
       id: 'default',
       name: 'Sales Pipeline',
-      stages: stages.map(s => ({ ...s, order: stages.indexOf(s) })),
+      description: 'Default sales pipeline',
+      stages: stages.map(s => ({ 
+        ...s, 
+        position: stages.indexOf(s),
+        description: s.name,
+        isClosedWon: s.id === 'closed-won',
+        isClosedLost: s.id === 'closed-lost',
+        requirements: [],
+        automations: []
+      })),
+      isDefault: true,
+      isActive: true,
+      dealType: 'standard',
+      createdBy: 'system',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
     
     const dealFilters = {
@@ -407,46 +470,21 @@ const UnifiedDealsPage = () => {
       ownerId: ownerFilter !== 'all' ? ownerFilter : undefined,
     };
 
-    const convertedDeals = filteredDeals.map(deal => ({
-      id: deal.id,
-      name: deal.name,
-      amount: deal.amount,
-      stageId: deal.stage,
-      ownerId: deal.ownerId,
-      probability: deal.probability,
-      createdAt: deal.createdAt,
-      closingDate: deal.expectedCloseDate,
-      dealNumber: `DEAL-${deal.id.slice(0, 8)}`,
-      country: 'US',
-      dealType: 'New Business',
-      tags: ['sample'],
-      customFields: {},
-      stageHistory: [{
-        id: `${deal.id}-history`,
-        dealId: deal.id,
-        fromStageId: null,
-        toStageId: deal.stage,
-        enteredAt: deal.createdAt,
-        exitedAt: null,
-        reason: 'Initial creation',
-      }],
-      tasks: [],
-      emails: [],
-    }));
+    const convertedDeals = filteredDeals.map(convertToFullDeal);
 
     return (
-      <DealKanbanView
+      <ImprovedDealKanbanView
         pipeline={mockPipeline}
         deals={convertedDeals}
         filters={dealFilters}
-        onDealMove={(dealId, newStageId) => {
+        onDealMove={(dealId: string, newStageId: string) => {
           alert(`Move deal ${dealId} to stage ${newStageId} - Coming Soon!`);
         }}
-        onDealClick={(deal) => console.log('Deal clicked:', deal.id)}
-        onAddDeal={(stageId) => {
+        onDealClick={(deal: any) => console.log('Deal clicked:', deal.id)}
+        onAddDeal={(stageId: string) => {
           alert(`Add deal to stage ${stageId} - Coming Soon!`);
         }}
-        onFiltersChange={(filters) => {
+        onFiltersChange={(filters: any) => {
           if (filters.searchTerm !== undefined) setSearchTerm(filters.searchTerm);
           if (filters.stageId) setStageFilter(filters.stageId);
           if (filters.ownerId) setOwnerFilter(filters.ownerId);
@@ -466,32 +504,7 @@ const UnifiedDealsPage = () => {
       ownerId: ownerFilter !== 'all' ? ownerFilter : undefined,
     };
 
-    const convertedDeals = filteredDeals.map(deal => ({
-      id: deal.id,
-      name: deal.name,
-      amount: deal.amount,
-      stageId: deal.stage,
-      ownerId: deal.ownerId,
-      probability: deal.probability,
-      createdAt: deal.createdAt,
-      closingDate: deal.expectedCloseDate,
-      dealNumber: `DEAL-${deal.id.slice(0, 8)}`,
-      country: 'US',
-      dealType: 'New Business',
-      tags: ['sample'],
-      customFields: {},
-      stageHistory: [{
-        id: `${deal.id}-history`,
-        dealId: deal.id,
-        fromStageId: null,
-        toStageId: deal.stage,
-        enteredAt: deal.createdAt,
-        exitedAt: null,
-        reason: 'Initial creation',
-      }],
-      tasks: [],
-      emails: [],
-    }));
+    const convertedDeals = filteredDeals.map(convertToFullDeal);
 
     return (
       <DealListView
