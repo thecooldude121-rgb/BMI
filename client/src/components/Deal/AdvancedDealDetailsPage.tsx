@@ -13,9 +13,10 @@ import {
   Maximize2, Minimize2, RefreshCw, BookOpen, Calculator, PieChart,
   BarChart3, LineChart, Camera, Video, Mic, AtSign, Hash, Link as LinkIcon,
   Tag, MoreHorizontal, Timer, FolderPlus, FolderOpen, Trophy, Circle, Check,
-  ArrowUpDown
+  ArrowUpDown, HelpCircle
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { ContextualHelpBubble, DealStageHelp, FieldHelp } from '../AI/ContextualHelpSystem';
 
 // Comprehensive list of countries for the searchable dropdown
 const COUNTRIES = [
@@ -910,15 +911,23 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
           <div className="flex-1 min-w-0 px-4 py-4">
             {activeTab === 'overview' && (
               <div className="space-y-4">
-                {/* Deal Progress Bar */}
-                <DealProgressBar
-                  currentStage={deal.stage}
-                  stages={stages}
-                  stageHistory={[]}
-                  onStageClick={(stage) => handleFieldSave('stage', stage)}
-                  dealValue={Number(deal.value || 0)}
-                  probability={deal.probability || 0}
-                />
+                {/* Deal Progress Bar with AI Help */}
+                <div className="relative">
+                  <div className="absolute top-2 right-2 z-20">
+                    <DealStageHelp 
+                      stage={deal.stage}
+                      dealValue={Number(deal.value || 0)}
+                    />
+                  </div>
+                  <DealProgressBar
+                    currentStage={deal.stage}
+                    stages={stages}
+                    stageHistory={[]}
+                    onStageClick={(stage) => handleFieldSave('stage', stage)}
+                    dealValue={Number(deal.value || 0)}
+                    probability={deal.probability || 0}
+                  />
+                </div>
                 
                 {/* Main Content Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -926,10 +935,24 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
               <div className="lg:col-span-2 space-y-0">
                 {/* Deal Summary Block */}
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
-                    <Briefcase className="h-5 w-5 mr-2 text-blue-600" />
-                    Deal Summary
-                  </h3>
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                      <Briefcase className="h-5 w-5 mr-2 text-blue-600" />
+                      Deal Summary
+                    </h3>
+                    <ContextualHelpBubble
+                      trigger={<HelpCircle className="h-4 w-4 text-gray-400 hover:text-blue-500 transition-colors" />}
+                      context={{
+                        page: 'deals',
+                        section: 'deal_summary',
+                        dealStage: deal.stage,
+                        dealValue: Number(deal.value || 0),
+                        currentData: { dealName: deal.name, pipeline: deal.pipeline }
+                      }}
+                      variant="info"
+                      placement="left"
+                    />
+                  </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-5 gap-12">
                     {/* Left Column - Takes 2 parts */}
@@ -1017,14 +1040,22 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                     
                     {/* Right Column - Takes rightmost 2 parts, offset by 1 for gap */}
                     <div className="md:col-span-2 md:col-start-4 space-y-4">
-                      <AdvancedEditableField
-                        label="Closing Date"
-                        value={deal.closeDate ? format(new Date(deal.closeDate), 'MMM dd, yyyy') : 'Aug 29, 2025'}
-                        field="closeDate"
-                        type="date"
-                        icon={<Calendar className="h-4 w-4" />}
-                        onSave={handleFieldSave}
-                      />
+                      <div className="relative">
+                        <AdvancedEditableField
+                          label="Closing Date"
+                          value={deal.closeDate ? format(new Date(deal.closeDate), 'MMM dd, yyyy') : 'Aug 29, 2025'}
+                          field="closeDate"
+                          type="date"
+                          icon={<Calendar className="h-4 w-4" />}
+                          onSave={handleFieldSave}
+                        />
+                        <div className="absolute top-0 right-0">
+                          <FieldHelp 
+                            fieldName="closeDate" 
+                            currentValue={deal.closeDate}
+                          />
+                        </div>
+                      </div>
                       
                       <AdvancedEditableField
                         label="Stage"
@@ -1042,14 +1073,22 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                         onSave={handleFieldSave}
                       />
                       
-                      <AdvancedEditableField
-                        label="Probability (%)"
-                        value={deal.probability || '20'}
-                        field="probability"
-                        type="number"
-                        icon={<Target className="h-4 w-4" />}
-                        onSave={handleFieldSave}
-                      />
+                      <div className="relative">
+                        <AdvancedEditableField
+                          label="Probability (%)"
+                          value={deal.probability || '20'}
+                          field="probability"
+                          type="number"
+                          icon={<Target className="h-4 w-4" />}
+                          onSave={handleFieldSave}
+                        />
+                        <div className="absolute top-0 right-0">
+                          <FieldHelp 
+                            fieldName="probability" 
+                            currentValue={deal.probability}
+                          />
+                        </div>
+                      </div>
                       
                       <AdvancedEditableField
                         label="Country of Origin"
@@ -1061,14 +1100,22 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                         onSave={handleFieldSave}
                       />
                       
-                      <AdvancedEditableField
-                        label="Amount"
-                        value={deal.value || '100000.00'}
-                        field="value"
-                        type="currency"
-                        icon={<DollarSign className="h-4 w-4" />}
-                        onSave={handleFieldSave}
-                      />
+                      <div className="relative">
+                        <AdvancedEditableField
+                          label="Amount"
+                          value={deal.value || '100000.00'}
+                          field="value"
+                          type="currency"
+                          icon={<DollarSign className="h-4 w-4" />}
+                          onSave={handleFieldSave}
+                        />
+                        <div className="absolute top-0 right-0">
+                          <FieldHelp 
+                            fieldName="amount" 
+                            currentValue={deal.value}
+                          />
+                        </div>
+                      </div>
                       
                       <AdvancedEditableField
                         label="Currency"
@@ -1399,10 +1446,24 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
 
                 {/* Recent Activities */}
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-3">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-                    <Activity className="h-5 w-5 mr-2 text-blue-600" />
-                    Recent Activities
-                  </h3>
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                      <Activity className="h-5 w-5 mr-2 text-blue-600" />
+                      Recent Activities
+                    </h3>
+                    <ContextualHelpBubble
+                      trigger={<HelpCircle className="h-4 w-4 text-gray-400 hover:text-blue-500 transition-colors" />}
+                      context={{
+                        page: 'deals',
+                        section: 'activities',
+                        dealStage: deal.stage,
+                        dealValue: Number(deal.value || 0),
+                        currentData: { activitiesCount: activities.length }
+                      }}
+                      variant="tip"
+                      placement="left"
+                    />
+                  </div>
                   
                   <div className="space-y-3">
                     {activities.slice(0, 5).map((activity: any) => (
