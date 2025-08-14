@@ -426,20 +426,7 @@ const ProspectDiscovery: React.FC = () => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* Filters Toggle Bar */}
-        {showFilters && (
-          <div className="bg-gray-50 border-b border-gray-200 px-6 py-3">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-medium text-gray-900">Filters</h3>
-              <button
-                onClick={() => setShowFilters(false)}
-                className="text-sm text-gray-600 hover:text-gray-900"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-        )}
+        
 
         {/* Top Bar */}
         <div className="bg-white border-b border-gray-200">
