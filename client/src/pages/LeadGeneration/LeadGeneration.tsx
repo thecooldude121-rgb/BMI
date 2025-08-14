@@ -5,6 +5,7 @@ import {
   Plus, TrendingUp, Zap, Activity, Globe, Shield 
 } from 'lucide-react';
 import AIProspectingEngine from '../../components/LeadGeneration/AIProspectingEngine';
+import ProspectDiscovery from '../../components/LeadGeneration/ProspectDiscovery';
 
 const LeadGeneration: React.FC = () => {
   const [activeModule, setActiveModule] = useState<'prospecting' | 'enrichment' | 'sequences' | 'analytics' | 'compliance'>('prospecting');
@@ -125,7 +126,7 @@ const LeadGeneration: React.FC = () => {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
             >
-              <AIProspectingEngine />
+              <ProspectDiscovery />
             </motion.div>
           )}
 
