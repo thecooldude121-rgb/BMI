@@ -484,14 +484,11 @@ export default function SimpleAdvancedDealsModule() {
             </div>
           </div>
 
-          {/* Last Activity */}
-          <div className="flex items-center justify-between text-xs text-gray-500">
+          {/* Closing Date */}
+          <div className="flex items-center justify-center text-xs text-gray-500">
             <div className="flex items-center space-x-1">
               <Calendar className="w-3 h-3" />
-              <span>Last: {new Date(deal.lastActivityDate).toLocaleDateString()}</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <span>Due: {new Date(deal.expectedCloseDate).toLocaleDateString()}</span>
+              <span>Closing: {new Date(deal.expectedCloseDate).toLocaleDateString()}</span>
             </div>
           </div>
         </div>
