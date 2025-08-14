@@ -832,181 +832,191 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                     Deal Summary
                   </h3>
                   
-                  {/* First Row */}
-                  <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
-                    <AdvancedEditableField
-                      label="Deal Name"
-                      value={deal.name}
-                      field="name"
-                      required
-                      icon={<FileText className="h-4 w-4" />}
-                      onSave={handleFieldSave}
-                    />
-                    
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700">Deal Number</label>
-                      <input
-                        type="text"
-                        value={`Deal-${deal.id.slice(-4).toUpperCase()}`}
-                        disabled
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-gray-50"
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Left Column */}
+                    <div className="space-y-4">
+                      <AdvancedEditableField
+                        label="Deal Name"
+                        value={deal.name}
+                        field="name"
+                        required
+                        icon={<FileText className="h-4 w-4" />}
+                        onSave={handleFieldSave}
+                      />
+                      
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-gray-700">Deal Number</label>
+                        <input
+                          type="text"
+                          value={`Deal-${deal.id.slice(-4).toUpperCase()}`}
+                          disabled
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-gray-50"
+                        />
+                      </div>
+                      
+                      <AdvancedEditableField
+                        label="Pipeline"
+                        value={deal.pipeline || 'MediaTech'}
+                        field="pipeline"
+                        type="select"
+                        options={[
+                          { value: 'MediaTech', label: 'MediaTech' },
+                          { value: 'Sales Pipeline', label: 'Sales Pipeline' },
+                          { value: 'Marketing Pipeline', label: 'Marketing Pipeline' }
+                        ]}
+                        icon={<TrendingUp className="h-4 w-4" />}
+                        onSave={handleFieldSave}
+                      />
+                      
+                      <AdvancedEditableField
+                        label="Deal Type"
+                        value={deal.dealType || 'Mediatech - Fixed Subscription'}
+                        field="dealType"
+                        type="select"
+                        options={[
+                          { value: 'Mediatech - Fixed Subscription', label: 'Mediatech - Fixed Subscription' },
+                          { value: 'new-business', label: 'New Business' },
+                          { value: 'existing-customer', label: 'Existing Customer' },
+                          { value: 'renewal', label: 'Renewal' }
+                        ]}
+                        icon={<Tag className="h-4 w-4" />}
+                        onSave={handleFieldSave}
+                      />
+                      
+                      <AdvancedEditableField
+                        label="Account Name"
+                        value={account?.name || 'FC Media'}
+                        field="accountName"
+                        icon={<Building className="h-4 w-4" />}
+                        onSave={handleFieldSave}
+                      />
+                      
+                      <AdvancedEditableField
+                        label="Contact Name"
+                        value={contacts.length > 0 ? `${contacts[0].firstName} ${contacts[0].lastName}` : ''}
+                        field="contactName"
+                        icon={<Users className="h-4 w-4" />}
+                        onSave={handleFieldSave}
+                      />
+                      
+                      <AdvancedEditableField
+                        label="Deal Owner"
+                        value={deal.owner?.name || deal.ownerId || 'Venkatraj Radhakrishnan'}
+                        field="dealOwner"
+                        icon={<User className="h-4 w-4" />}
+                        onSave={handleFieldSave}
+                      />
+                      
+                      <AdvancedEditableField
+                        label="Created By"
+                        value={deal.createdBy || 'Venkatraj Radhakrishnan'}
+                        field="createdBy"
+                        icon={<User className="h-4 w-4" />}
+                        onSave={handleFieldSave}
                       />
                     </div>
                     
-                    <AdvancedEditableField
-                      label="Pipeline"
-                      value={deal.pipeline || 'MediaTech'}
-                      field="pipeline"
-                      type="select"
-                      options={[
-                        { value: 'MediaTech', label: 'MediaTech' },
-                        { value: 'Sales Pipeline', label: 'Sales Pipeline' },
-                        { value: 'Marketing Pipeline', label: 'Marketing Pipeline' }
-                      ]}
-                      icon={<TrendingUp className="h-4 w-4" />}
-                      onSave={handleFieldSave}
-                    />
-                    
-                    <AdvancedEditableField
-                      label="Deal Type"
-                      value={deal.dealType || 'Mediatech - Fixed Subscription'}
-                      field="dealType"
-                      type="select"
-                      options={[
-                        { value: 'Mediatech - Fixed Subscription', label: 'Mediatech - Fixed Subscription' },
-                        { value: 'new-business', label: 'New Business' },
-                        { value: 'existing-customer', label: 'Existing Customer' },
-                        { value: 'renewal', label: 'Renewal' }
-                      ]}
-                      icon={<Tag className="h-4 w-4" />}
-                      onSave={handleFieldSave}
-                    />
-                    
-                    <AdvancedEditableField
-                      label="Account Name"
-                      value={account?.name || 'FC Media'}
-                      field="accountName"
-                      icon={<Building className="h-4 w-4" />}
-                      onSave={handleFieldSave}
-                    />
-                    
-                    <AdvancedEditableField
-                      label="Contact Name"
-                      value={contacts.length > 0 ? `${contacts[0].firstName} ${contacts[0].lastName}` : ''}
-                      field="contactName"
-                      icon={<Users className="h-4 w-4" />}
-                      onSave={handleFieldSave}
-                    />
+                    {/* Right Column */}
+                    <div className="space-y-4">
+                      <AdvancedEditableField
+                        label="Closing Date"
+                        value={deal.closeDate ? format(new Date(deal.closeDate), 'MMM dd, yyyy') : 'Aug 29, 2025'}
+                        field="closeDate"
+                        type="date"
+                        icon={<Calendar className="h-4 w-4" />}
+                        onSave={handleFieldSave}
+                      />
+                      
+                      <AdvancedEditableField
+                        label="Stage"
+                        value={deal.stage || '2 - Pitch'}
+                        field="stage"
+                        type="select"
+                        options={[
+                          { value: '1 - Prospecting', label: '1 - Prospecting' },
+                          { value: '2 - Pitch', label: '2 - Pitch' },
+                          { value: '3 - Proposal', label: '3 - Proposal' },
+                          { value: '4 - Negotiation', label: '4 - Negotiation' },
+                          { value: '5 - Closed Won', label: '5 - Closed Won' }
+                        ]}
+                        icon={<TrendingUp className="h-4 w-4" />}
+                        onSave={handleFieldSave}
+                      />
+                      
+                      <AdvancedEditableField
+                        label="Probability (%)"
+                        value={deal.probability || '20'}
+                        field="probability"
+                        type="number"
+                        icon={<Target className="h-4 w-4" />}
+                        onSave={handleFieldSave}
+                      />
+                      
+                      <AdvancedEditableField
+                        label="Social Lead ID"
+                        value={deal.socialLeadId || ''}
+                        field="socialLeadId"
+                        icon={<Globe className="h-4 w-4" />}
+                        onSave={handleFieldSave}
+                      />
+                      
+                      <AdvancedEditableField
+                        label="Country of Origin"
+                        value={account?.country || 'Morocco'}
+                        field="countryOfOrigin"
+                        icon={<Globe className="h-4 w-4" />}
+                        onSave={handleFieldSave}
+                      />
+                      
+                      <AdvancedEditableField
+                        label="Amount"
+                        value={deal.value || '100000.00'}
+                        field="value"
+                        type="currency"
+                        icon={<DollarSign className="h-4 w-4" />}
+                        onSave={handleFieldSave}
+                      />
+                      
+                      <AdvancedEditableField
+                        label="Currency"
+                        value={deal.currency || 'USD'}
+                        field="currency"
+                        type="select"
+                        options={[
+                          { value: 'USD', label: 'USD' },
+                          { value: 'EUR', label: 'EUR' },
+                          { value: 'GBP', label: 'GBP' },
+                          { value: 'CAD', label: 'CAD' }
+                        ]}
+                        icon={<DollarSign className="h-4 w-4" />}
+                        onSave={handleFieldSave}
+                      />
+                      
+                      <AdvancedEditableField
+                        label="Exchange Rate"
+                        value="1"
+                        field="exchangeRate"
+                        type="number"
+                        icon={<Calculator className="h-4 w-4" />}
+                        onSave={handleFieldSave}
+                      />
+                    </div>
                   </div>
                   
-                  {/* Second Row */}
-                  <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-                    <AdvancedEditableField
-                      label="Deal Owner"
-                      value={deal.owner?.name || deal.ownerId || 'Venkatraj Radhakrishnan'}
-                      field="dealOwner"
-                      icon={<User className="h-4 w-4" />}
-                      onSave={handleFieldSave}
-                    />
-                    
-                    <AdvancedEditableField
-                      label="Created By"
-                      value={deal.createdBy || 'Venkatraj Radhakrishnan'}
-                      field="createdBy"
-                      icon={<User className="h-4 w-4" />}
-                      onSave={handleFieldSave}
-                    />
-                    
-                    <AdvancedEditableField
-                      label="Closing Date"
-                      value={deal.closeDate ? format(new Date(deal.closeDate), 'MMM dd, yyyy') : 'Aug 29, 2025'}
-                      field="closeDate"
-                      type="date"
-                      icon={<Calendar className="h-4 w-4" />}
-                      onSave={handleFieldSave}
-                    />
-                    
-                    <AdvancedEditableField
-                      label="Stage"
-                      value={deal.stage || '2 - Pitch'}
-                      field="stage"
-                      type="select"
-                      options={[
-                        { value: '1 - Prospecting', label: '1 - Prospecting' },
-                        { value: '2 - Pitch', label: '2 - Pitch' },
-                        { value: '3 - Proposal', label: '3 - Proposal' },
-                        { value: '4 - Negotiation', label: '4 - Negotiation' },
-                        { value: '5 - Closed Won', label: '5 - Closed Won' }
-                      ]}
-                      icon={<TrendingUp className="h-4 w-4" />}
-                      onSave={handleFieldSave}
-                    />
-                    
-                    <AdvancedEditableField
-                      label="Probability (%)"
-                      value={deal.probability || '20'}
-                      field="probability"
-                      type="number"
-                      icon={<Target className="h-4 w-4" />}
-                      onSave={handleFieldSave}
-                    />
-                    
-                    <AdvancedEditableField
-                      label="Social Lead ID"
-                      value={deal.socialLeadId || ''}
-                      field="socialLeadId"
-                      icon={<Globe className="h-4 w-4" />}
-                      onSave={handleFieldSave}
-                    />
-                  </div>
-                  
-                  {/* Third Row - Additional Fields */}
-                  <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mt-4">
-                    <AdvancedEditableField
-                      label="Country of Origin"
-                      value={account?.country || 'Morocco'}
-                      field="countryOfOrigin"
-                      icon={<Globe className="h-4 w-4" />}
-                      onSave={handleFieldSave}
-                    />
-                    
-                    <AdvancedEditableField
-                      label="Amount"
-                      value={deal.value || '100000.00'}
-                      field="value"
-                      type="currency"
-                      icon={<DollarSign className="h-4 w-4" />}
-                      onSave={handleFieldSave}
-                    />
-                    
-                    <AdvancedEditableField
-                      label="Currency"
-                      value={deal.currency || 'USD'}
-                      field="currency"
-                      type="select"
-                      options={[
-                        { value: 'USD', label: 'USD' },
-                        { value: 'EUR', label: 'EUR' },
-                        { value: 'GBP', label: 'GBP' },
-                        { value: 'CAD', label: 'CAD' }
-                      ]}
-                      icon={<DollarSign className="h-4 w-4" />}
-                      onSave={handleFieldSave}
-                    />
-                    
-                    <AdvancedEditableField
-                      label="Exchange Rate"
-                      value="1"
-                      field="exchangeRate"
-                      type="number"
-                      icon={<Calculator className="h-4 w-4" />}
-                      onSave={handleFieldSave}
-                    />
-                    
-                    <div className="col-span-2">
-                      <label className="text-sm font-medium text-gray-700 mb-2 block">Expected Revenue</label>
-                      <div className="text-lg font-semibold text-green-600 bg-green-50 px-3 py-2 rounded-md border border-green-200">
-                        ${((Number(deal.value || 100000)) * (Number(deal.probability || 20)) / 100).toLocaleString()}
+                  {/* Expected Revenue - Full Width */}
+                  <div className="mt-6 pt-4 border-t border-gray-200">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="md:col-span-2">
+                        <label className="text-sm font-medium text-gray-700 mb-2 block">Expected Revenue Calculation</label>
+                        <div className="text-sm text-gray-600">
+                          {deal.probability || 20}% probability × ${Number(deal.value || 100000).toLocaleString()} amount
+                        </div>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 mb-2 block">Expected Revenue</label>
+                        <div className="text-xl font-bold text-green-600 bg-green-50 px-4 py-3 rounded-lg border border-green-200">
+                          ${((Number(deal.value || 100000)) * (Number(deal.probability || 20)) / 100).toLocaleString()}
+                        </div>
                       </div>
                     </div>
                   </div>
