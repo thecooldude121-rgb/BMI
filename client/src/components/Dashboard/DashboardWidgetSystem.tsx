@@ -64,19 +64,19 @@ const DashboardWidgetSystem: React.FC<DashboardWidgetSystemProps> = ({ userId })
   const queryClient = useQueryClient();
 
   // Fetch user's widgets
-  const { data: widgets = [], isLoading: widgetsLoading } = useQuery({
+  const { data: widgets = [], isLoading: widgetsLoading } = useQuery<DashboardWidget[]>({
     queryKey: ['/api/dashboard/widgets', userId],
     enabled: !!userId
   });
 
   // Fetch widget templates
-  const { data: templates = [] } = useQuery({
+  const { data: templates = [] } = useQuery<WidgetTemplate[]>({
     queryKey: ['/api/dashboard/templates']
   });
 
   // Create widget mutation
   const createWidgetMutation = useMutation({
-    mutationFn: (data: any) => apiRequest('/api/dashboard/widgets', 'POST', data),
+    mutationFn: (data: any) => apiRequest('/api/dashboard/widgets', { method: 'POST', body: data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/dashboard/widgets', userId] });
       setShowWidgetSelector(false);
@@ -86,7 +86,7 @@ const DashboardWidgetSystem: React.FC<DashboardWidgetSystemProps> = ({ userId })
   // Update widget mutation
   const updateWidgetMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: any }) => 
-      apiRequest(`/api/dashboard/widgets/${id}`, 'PATCH', data),
+      apiRequest(`/api/dashboard/widgets/${id}`, { method: 'PATCH', body: data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/dashboard/widgets', userId] });
     }
@@ -94,7 +94,7 @@ const DashboardWidgetSystem: React.FC<DashboardWidgetSystemProps> = ({ userId })
 
   // Delete widget mutation
   const deleteWidgetMutation = useMutation({
-    mutationFn: (id: string) => apiRequest(`/api/dashboard/widgets/${id}`, 'DELETE'),
+    mutationFn: (id: string) => apiRequest(`/api/dashboard/widgets/${id}`, { method: 'DELETE' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/dashboard/widgets', userId] });
     }
@@ -105,7 +105,10 @@ const DashboardWidgetSystem: React.FC<DashboardWidgetSystemProps> = ({ userId })
     if (widgets.length > 0) {
       const layout = widgets.map((widget: DashboardWidget) => ({
         i: widget.id,
-        ...widget.position
+        x: (widget.position as any)?.x || 0,
+        y: (widget.position as any)?.y || 0,
+        w: (widget.position as any)?.w || 4,
+        h: (widget.position as any)?.h || 3
       }));
       setGridLayout(layout);
     }
@@ -185,8 +188,8 @@ const DashboardWidgetSystem: React.FC<DashboardWidgetSystemProps> = ({ userId })
           ${!widget.isVisible ? 'opacity-50' : ''}
         `}
         style={{
-          minHeight: `${widget.position.h * 120}px`,
-          height: `${widget.position.h * 120}px`
+          minHeight: `${(widget.position as any)?.h * 120 || 360}px`,
+          height: `${(widget.position as any)?.h * 120 || 360}px`
         }}
       >
         {/* Widget Header */}
@@ -370,8 +373,8 @@ const WidgetContent: React.FC<{ widget: DashboardWidget }> = ({ widget }) => {
 
 // Individual Widget Components
 const StatsWidget: React.FC<{ widget: DashboardWidget }> = ({ widget }) => {
-  const { data: deals = [] } = useQuery({ queryKey: ['/api/deals'] });
-  const { data: leads = [] } = useQuery({ queryKey: ['/api/leads'] });
+  const { data: deals = [] } = useQuery<any[]>({ queryKey: ['/api/deals'] });
+  const { data: leads = [] } = useQuery<any[]>({ queryKey: ['/api/leads'] });
 
   const stats = {
     totalDeals: deals.length,
@@ -419,7 +422,7 @@ const ChartWidget: React.FC<{ widget: DashboardWidget }> = ({ widget }) => {
 };
 
 const RecentActivitiesWidget: React.FC<{ widget: DashboardWidget }> = ({ widget }) => {
-  const { data: activities = [] } = useQuery({ queryKey: ['/api/activities'] });
+  const { data: activities = [] } = useQuery<any[]>({ queryKey: ['/api/activities'] });
 
   const recentActivities = activities.slice(0, 5);
 
@@ -442,7 +445,7 @@ const RecentActivitiesWidget: React.FC<{ widget: DashboardWidget }> = ({ widget 
 };
 
 const PipelineWidget: React.FC<{ widget: DashboardWidget }> = ({ widget }) => {
-  const { data: deals = [] } = useQuery({ queryKey: ['/api/deals'] });
+  const { data: deals = [] } = useQuery<any[]>({ queryKey: ['/api/deals'] });
 
   const pipelineStages = ['qualification', 'proposal', 'negotiation', 'closed-won'];
   const stageData = pipelineStages.map(stage => ({
