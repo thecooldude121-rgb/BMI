@@ -24,6 +24,7 @@ import {
   Minimize2,
   Maximize2
 } from 'lucide-react';
+import DealProgressSparkline from '../../components/Deal/DealProgressSparkline';
 
 interface Deal {
   id: string;
@@ -359,6 +360,17 @@ export default function SimpleAdvancedDealsModule() {
             </div>
           </div>
 
+          {/* Compact Sparkline */}
+          <div className="mb-1 flex justify-center">
+            <DealProgressSparkline 
+              dealId={deal.id}
+              probability={deal.probability}
+              dealHealth={deal.dealHealth}
+              animated={true}
+              className="scale-75"
+            />
+          </div>
+
           <div className="mt-1">
             <div 
               className="w-full bg-gray-200 rounded-full h-1 overflow-hidden"
@@ -516,6 +528,19 @@ export default function SimpleAdvancedDealsModule() {
           <div className="text-blue-600 hover:text-blue-800 flex items-center space-x-1 text-xs font-medium">
             <span>View Details</span>
             <ArrowRight className="w-3 h-3" />
+          </div>
+        </div>
+
+        {/* Deal Progress Sparkline */}
+        <div className="mt-3 mb-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-gray-500 font-medium">Progress Trend</span>
+            <DealProgressSparkline 
+              dealId={deal.id}
+              probability={deal.probability}
+              dealHealth={deal.dealHealth}
+              animated={true}
+            />
           </div>
         </div>
 
