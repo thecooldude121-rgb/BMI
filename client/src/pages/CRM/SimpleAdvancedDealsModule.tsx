@@ -481,7 +481,7 @@ export default function SimpleAdvancedDealsModule() {
           </div>
 
           {/* Closing Date */}
-          <div className="flex items-center justify-center text-xs text-gray-500">
+          <div className="flex items-center justify-start text-xs text-gray-500">
             <div className="flex items-center space-x-1">
               <Calendar className="w-3 h-3" />
               <span>Closing: {new Date(deal.expectedCloseDate).toLocaleDateString()}</span>
