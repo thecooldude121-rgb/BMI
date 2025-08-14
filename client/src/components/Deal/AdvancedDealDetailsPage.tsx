@@ -762,11 +762,11 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
       </div>
 
       {/* Main Content with Sidebar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="flex gap-6">
+      <div className="w-full px-0 py-0">
+        <div className="flex gap-0">
           {/* Left Sidebar Navigation */}
           <div className="w-64 flex-shrink-0">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sticky top-24">
+            <div className="bg-white shadow-sm border-r border-gray-200 p-4 sticky top-0 h-screen overflow-y-auto">
               <h3 className="text-sm font-semibold text-gray-900 mb-4">Deal Functions</h3>
               <nav className="space-y-2">
                 {[
@@ -808,9 +808,9 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
           </div>
 
           {/* Main Content Area */}
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 px-4 py-4">
             {activeTab === 'overview' && (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {/* Deal Progress Bar */}
                 <DealProgressBar
                   currentStage={deal.stage}
@@ -822,9 +822,9 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                 />
                 
                 {/* Main Content Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-0">
               {/* Left Column - 2/3 width */}
-              <div className="lg:col-span-2 space-y-6">
+              <div className="lg:col-span-2 space-y-0 pr-4">
                 {/* Deal Summary Block */}
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
@@ -832,8 +832,8 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                     Deal Summary
                   </h3>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
                       <AdvancedEditableField
                         label="Deal Name"
                         value={deal.name}
@@ -864,7 +864,7 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                       />
                     </div>
                     
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                       <AdvancedEditableField
                         label="Probability"
                         value={deal.probability}
@@ -904,8 +904,8 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                   </div>
                   
                   {/* Account & Contacts */}
-                  <div className="mt-6 pt-6 border-t border-gray-200">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
                           <Building className="h-4 w-4 mr-2" />
@@ -958,8 +958,8 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                     Deal Classification
                   </h3>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
                       <AdvancedEditableField
                         label="Deal Type"
                         value={deal.dealType || 'new-business'}
@@ -992,7 +992,7 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                       />
                     </div>
                     
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                       <AdvancedEditableField
                         label="Description"
                         value={deal.description}
@@ -1005,17 +1005,17 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                   </div>
                   
                   {/* Competitors Section */}
-                  <div className="mt-6 pt-6 border-t border-gray-200">
+                  <div className="mt-4 pt-4 border-t border-gray-200">
                     <h4 className="text-md font-semibold text-gray-900 mb-4 flex items-center">
                       <Flag className="h-4 w-4 mr-2" />
                       Competitive Intelligence
                     </h4>
                     
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                       {mockCompetitors.map((competitor, index) => (
-                        <div key={index} className="border border-gray-200 rounded-lg p-4">
-                          <h5 className="font-medium text-gray-900 mb-3">{competitor.name}</h5>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div key={index} className="border border-gray-200 rounded-lg p-3">
+                          <h5 className="font-medium text-gray-900 mb-2">{competitor.name}</h5>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div>
                               <p className="text-sm font-medium text-green-700 mb-2">Strengths:</p>
                               <ul className="text-sm text-gray-600 space-y-1">
@@ -1139,7 +1139,7 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                     </table>
                   </div>
                   
-                  <div className="mt-4">
+                  <div className="mt-3">
                     <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
                       <Plus className="h-4 w-4 inline mr-2" />
                       Add Line Item
@@ -1149,11 +1149,11 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
               </div>
 
               {/* Right Column - 1/3 width */}
-              <div className="space-y-6">
+              <div className="space-y-0 pl-2">
                 {/* Quick Actions */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-                  <div className="space-y-3">
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-3">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Quick Actions</h3>
+                  <div className="space-y-2">
                     <button className="w-full flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
                       <Plus className="h-4 w-4 mr-2" />
                       Add Activity
@@ -1174,13 +1174,13 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                 </div>
 
                 {/* Deal Health & Insights */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-3">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                     <PieChart className="h-5 w-5 mr-2 text-orange-600" />
                     Deal Health
                   </h3>
                   
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-600">Overall Health</span>
                       <div className="flex items-center space-x-2">
@@ -1210,9 +1210,9 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                     </div>
                   </div>
                   
-                  <div className="mt-6 pt-4 border-t border-gray-200">
-                    <h4 className="text-sm font-medium text-gray-900 mb-3">AI Insights</h4>
-                    <div className="space-y-3">
+                  <div className="mt-4 pt-3 border-t border-gray-200">
+                    <h4 className="text-sm font-medium text-gray-900 mb-2">AI Insights</h4>
+                    <div className="space-y-2">
                       <div className="flex items-start space-x-3">
                         <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
                         <p className="text-sm text-gray-600">
@@ -1230,13 +1230,13 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                 </div>
 
                 {/* Recent Activities */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-3">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                     <Activity className="h-5 w-5 mr-2 text-blue-600" />
                     Recent Activities
                   </h3>
                   
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {activities.slice(0, 5).map((activity: any) => (
                       <div key={activity.id} className="flex items-start space-x-3">
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
@@ -1319,10 +1319,10 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
         
         {/* Activities Tab */}
         {activeTab === 'activities' && (
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* Activities Header */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+              <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                   <Activity className="h-5 w-5 mr-2 text-blue-600" />
                   Activities & Tasks
@@ -1340,7 +1340,7 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
               </div>
 
               {/* Activity Types Quick Add */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
                 <button className="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2">
                   <Phone className="h-4 w-4 text-green-600" />
                   <span className="text-sm font-medium">Call</span>
@@ -1360,7 +1360,7 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
               </div>
 
               {/* Activities Debug & Info */}
-              <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+              <div className="mb-3 p-2 bg-gray-50 rounded-lg">
                 <p className="text-sm text-gray-600">
                   Found {activities.length} activities for this deal. 
                   <Link href="/crm/activities">
@@ -1372,7 +1372,7 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
               </div>
 
               {/* Activities Timeline */}
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {activities && activities.length > 0 ? (
                   activities.map((activity: any) => (
                     <div key={activity.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
