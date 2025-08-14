@@ -20,7 +20,9 @@ import {
   BarChart3,
   Settings,
   AlertTriangle,
-  MoreVertical
+  MoreVertical,
+  Minimize2,
+  Maximize2
 } from 'lucide-react';
 
 interface Deal {
@@ -72,6 +74,7 @@ export default function SimpleAdvancedDealsModule() {
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
   const [searchSuggestions, setSearchSuggestions] = useState<any[]>([]);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
+  const [isCompactView, setIsCompactView] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
@@ -296,6 +299,88 @@ export default function SimpleAdvancedDealsModule() {
     return highlighted;
   };
 
+  const renderCompactDealCard = (deal: Deal) => (
+    <div
+      key={deal.id}
+      draggable
+      onDragStart={(e) => handleDragStart(e, deal.id)}
+      className="bg-white border border-gray-200 rounded-lg p-2 mb-2 cursor-move relative transform transition-all duration-200 hover:scale-[1.01] hover:shadow-lg shadow-sm"
+      style={{
+        boxShadow: '0 2px 6px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.7)',
+        background: 'linear-gradient(145deg, #ffffff 0%, #fafafa 100%)',
+        border: '1px solid rgba(0, 0, 0, 0.06)'
+      }}
+    >
+      {/* Multi-select checkbox */}
+      <div className="absolute top-1 left-1 z-10">
+        <input
+          type="checkbox"
+          checked={selectedDeals.includes(deal.id)}
+          onChange={(e) => {
+            e.stopPropagation();
+            if (e.target.checked) {
+              setSelectedDeals([...selectedDeals, deal.id]);
+            } else {
+              setSelectedDeals(selectedDeals.filter(id => id !== deal.id));
+            }
+          }}
+          className="w-3 h-3 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500"
+        />
+      </div>
+
+      {/* Clickable area for deal details */}
+      <Link href={`/crm/deals/${deal.id}`}>
+        <div className="cursor-pointer pl-4">
+          <div className="flex items-start justify-between mb-1">
+            <h4 className="font-medium text-xs line-clamp-1 hover:text-blue-600 transition-colors flex-1 mr-1">
+              {deal.name}
+            </h4>
+            <span 
+              className={`px-1.5 py-0.5 text-xs rounded-full font-medium shadow-sm flex-shrink-0 ${DEAL_HEALTH_COLORS[deal.dealHealth as keyof typeof DEAL_HEALTH_COLORS]}`}
+              style={{
+                boxShadow: '0 1px 2px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.4)'
+              }}
+            >
+              {calculateDealHealth(deal).icon}
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between mb-1">
+            <div 
+              className="text-sm font-bold text-green-600 px-1 py-0.5 rounded text-xs"
+              style={{
+                background: 'linear-gradient(145deg, rgba(34, 197, 94, 0.06) 0%, rgba(34, 197, 94, 0.02) 100%)'
+              }}
+            >
+              ${Math.round(parseInt(deal.value) / 1000)}k
+            </div>
+            <div className="flex items-center space-x-1">
+              <span className="text-xs font-medium text-blue-700">{deal.probability}%</span>
+            </div>
+          </div>
+
+          <div className="mt-1">
+            <div 
+              className="w-full bg-gray-200 rounded-full h-1 overflow-hidden"
+              style={{
+                background: 'linear-gradient(145deg, #e5e7eb 0%, #d1d5db 100%)',
+                boxShadow: 'inset 0 0.5px 1px rgba(0, 0, 0, 0.08)'
+              }}
+            >
+              <div 
+                className="h-1 rounded-full transition-all duration-300"
+                style={{ 
+                  width: `${deal.probability}%`,
+                  background: 'linear-gradient(145deg, #3b82f6 0%, #1d4ed8 100%)'
+                }}
+              ></div>
+            </div>
+          </div>
+        </div>
+      </Link>
+    </div>
+  );
+
   const renderDealCard = (deal: Deal) => (
     <div
       key={deal.id}
@@ -473,8 +558,10 @@ export default function SimpleAdvancedDealsModule() {
             </button>
           </div>
 
-            <div className="min-h-[600px] max-h-[600px] overflow-y-auto stage-scroll">
-              {column.deals.map((deal: Deal) => renderDealCard(deal))}
+            <div className={`${isCompactView ? 'min-h-[600px] max-h-[600px]' : 'min-h-[600px] max-h-[600px]'} overflow-y-auto stage-scroll`}>
+              {column.deals.map((deal: Deal) => 
+                isCompactView ? renderCompactDealCard(deal) : renderDealCard(deal)
+              )}
             </div>
           </div>
         ))}
@@ -851,6 +938,24 @@ export default function SimpleAdvancedDealsModule() {
           </div>
 
           <div className="flex items-center space-x-2">
+            {/* Compact View Toggle (only visible in Kanban mode) */}
+            {viewMode === 'kanban' && (
+              <div className="flex items-center space-x-2 border rounded-lg p-1 bg-gray-50">
+                <button
+                  className={`px-3 py-1 text-sm rounded transition-all duration-200 flex items-center space-x-1 ${
+                    isCompactView 
+                      ? 'bg-blue-500 text-white shadow-sm' 
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                  onClick={() => setIsCompactView(!isCompactView)}
+                  title={isCompactView ? 'Switch to detailed view' : 'Switch to compact view'}
+                >
+                  {isCompactView ? <Minimize2 className="w-3 h-3" /> : <Maximize2 className="w-3 h-3" />}
+                  <span>{isCompactView ? 'Compact' : 'Detailed'}</span>
+                </button>
+              </div>
+            )}
+            
             <div className="flex items-center space-x-1 border rounded-lg p-1">
               <button
                 className={`px-3 py-1 text-sm rounded ${viewMode === 'kanban' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
