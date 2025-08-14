@@ -248,7 +248,7 @@ const AdvancedEditableField: React.FC<{
       <div className="relative group">
         <div
           onClick={() => setIsEditing(true)}
-          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-white cursor-pointer hover:border-blue-400 hover:shadow-sm transition-all duration-200 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500"
+          className="w-full px-3 py-2 text-sm border border-transparent rounded-md bg-transparent cursor-pointer hover:border-gray-300 hover:bg-white hover:shadow-sm transition-all duration-200 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500"
           title={`Click to edit ${label}`}
         >
           <div className="flex items-center justify-between">
