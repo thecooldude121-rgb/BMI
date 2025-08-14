@@ -24,6 +24,7 @@ import {
   Minimize2,
   Maximize2
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import DealProgressSparkline from '../../components/Deal/DealProgressSparkline';
 
 interface Deal {
@@ -76,6 +77,10 @@ export default function SimpleAdvancedDealsModule() {
   const [searchSuggestions, setSearchSuggestions] = useState<any[]>([]);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
   const [isCompactView, setIsCompactView] = useState(false);
+  const [draggedDeal, setDraggedDeal] = useState<Deal | null>(null);
+  const [dragOverStage, setDragOverStage] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragPreview, setDragPreview] = useState<{x: number, y: number}>({x: 0, y: 0});
   const searchInputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
@@ -185,20 +190,112 @@ export default function SimpleAdvancedDealsModule() {
   }, [fuse]);
 
   const handleDragStart = (e: React.DragEvent, dealId: string) => {
+    const deal = deals.find((d: Deal) => d.id === dealId);
+    if (!deal) return;
+    
+    setDraggedDeal(deal);
+    setIsDragging(true);
     e.dataTransfer.setData('text/plain', dealId);
+    e.dataTransfer.effectAllowed = 'move';
+    
+    // Create a custom drag image
+    const dragElement = e.currentTarget as HTMLElement;
+    const rect = dragElement.getBoundingClientRect();
+    
+    // Set drag image offset to cursor position
+    e.dataTransfer.setDragImage(dragElement, e.clientX - rect.left, e.clientY - rect.top);
+    
+    // Add visual feedback to the original element
+    setTimeout(() => {
+      dragElement.style.opacity = '0.5';
+      dragElement.style.transform = 'scale(0.95)';
+    }, 0);
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragEnd = (e: React.DragEvent) => {
+    setDraggedDeal(null);
+    setIsDragging(false);
+    setDragOverStage(null);
+    
+    // Reset visual state
+    const dragElement = e.currentTarget as HTMLElement;
+    dragElement.style.opacity = '1';
+    dragElement.style.transform = 'scale(1)';
+  };
+
+  const handleDragOver = (e: React.DragEvent, stageId?: string) => {
     e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    
+    if (stageId && stageId !== dragOverStage) {
+      setDragOverStage(stageId);
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent, stageId: string) => {
+    // Only clear drag over state if we're actually leaving the stage
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const x = e.clientX;
+    const y = e.clientY;
+    
+    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+      if (dragOverStage === stageId) {
+        setDragOverStage(null);
+      }
+    }
+  };
+
+  const validateStageTransition = (fromStage: string, toStage: string): { allowed: boolean, message?: string } => {
+    const stageOrder = ['discovery', 'qualification', 'proposal', 'negotiation', 'closed-won', 'closed-lost'];
+    const fromIndex = stageOrder.indexOf(fromStage);
+    const toIndex = stageOrder.indexOf(toStage);
+    
+    // Allow moving to adjacent stages or backwards
+    if (Math.abs(fromIndex - toIndex) <= 1 || toIndex < fromIndex) {
+      return { allowed: true };
+    }
+    
+    // Warn about skipping stages
+    if (toIndex > fromIndex + 1) {
+      return { 
+        allowed: true, 
+        message: `Skipping ${toIndex - fromIndex - 1} stage(s). Are you sure?` 
+      };
+    }
+    
+    return { allowed: true };
   };
 
   const handleDrop = (e: React.DragEvent, newStage: string) => {
     e.preventDefault();
+    setDragOverStage(null);
+    
     const dealId = e.dataTransfer.getData('text/plain');
-    updateDealMutation.mutate({
-      dealId,
-      updates: { stage: newStage }
-    });
+    const deal = deals.find((d: Deal) => d.id === dealId);
+    
+    if (!deal || deal.stage === newStage) return;
+    
+    const validation = validateStageTransition(deal.stage, newStage);
+    
+    if (validation.allowed) {
+      // Show confirmation if there's a warning message
+      if (validation.message) {
+        if (!confirm(validation.message)) {
+          return;
+        }
+      }
+      
+      updateDealMutation.mutate({
+        dealId,
+        updates: { stage: newStage }
+      });
+      
+      // Show success feedback
+      setTimeout(() => {
+        // Could add a toast notification here
+        console.log(`✅ Deal "${deal.name}" moved to ${newStage}`);
+      }, 100);
+    }
   };
 
   // Advanced deal health calculation
@@ -305,6 +402,7 @@ export default function SimpleAdvancedDealsModule() {
       key={deal.id}
       draggable
       onDragStart={(e) => handleDragStart(e, deal.id)}
+      onDragEnd={handleDragEnd}
       className="bg-white border border-gray-200 rounded-lg p-2 mb-2 cursor-move relative transform transition-all duration-200 hover:scale-[1.01] hover:shadow-lg shadow-sm"
       style={{
         boxShadow: '0 2px 6px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.7)',
@@ -398,6 +496,7 @@ export default function SimpleAdvancedDealsModule() {
       key={deal.id}
       draggable
       onDragStart={(e) => handleDragStart(e, deal.id)}
+      onDragEnd={handleDragEnd}
       className="bg-white border border-gray-200 rounded-xl p-5 mb-3 cursor-move relative transform transition-all duration-200 hover:scale-[1.02] hover:shadow-xl shadow-md"
       style={{
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
@@ -603,19 +702,35 @@ export default function SimpleAdvancedDealsModule() {
         }
       `}</style>
       <div className="flex gap-6 h-full min-w-max kanban-container">
-        {dealColumns.map((column) => (
-          <div 
-            key={column.id} 
-            className="bg-gray-50 rounded-xl p-4 flex-shrink-0 w-80"
-            onDragOver={handleDragOver}
-            onDrop={(e) => handleDrop(e, column.id)}
-            style={{ 
-              minWidth: '320px',
-              background: 'linear-gradient(145deg, #f8fafc 0%, #f1f5f9 100%)',
-              boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06)',
-              border: '1px solid rgba(0, 0, 0, 0.05)'
-            }}
-          >
+        {dealColumns.map((column) => {
+          const isDropTarget = dragOverStage === column.id;
+          const canAcceptDrop = draggedDeal && draggedDeal.stage !== column.id;
+          
+          return (
+            <motion.div 
+              key={column.id} 
+              className={`bg-gray-50 rounded-xl p-4 flex-shrink-0 w-80 transition-all duration-300 ${
+                isDropTarget ? 'ring-2 ring-blue-400 ring-opacity-50' : ''
+              }`}
+              onDragOver={(e) => handleDragOver(e, column.id)}
+              onDragLeave={(e) => handleDragLeave(e, column.id)}
+              onDrop={(e) => handleDrop(e, column.id)}
+              animate={{
+                scale: isDropTarget ? 1.02 : 1,
+                boxShadow: isDropTarget 
+                  ? '0 8px 32px rgba(59, 130, 246, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.04)'
+                  : 'inset 0 2px 4px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06)'
+              }}
+              style={{ 
+                minWidth: '320px',
+                background: isDropTarget 
+                  ? 'linear-gradient(145deg, #eff6ff 0%, #dbeafe 100%)'
+                  : 'linear-gradient(145deg, #f8fafc 0%, #f1f5f9 100%)',
+                border: isDropTarget 
+                  ? '1px solid rgba(59, 130, 246, 0.2)'
+                  : '1px solid rgba(0, 0, 0, 0.05)'
+              }}
+            >
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
               <div className={`w-3 h-3 rounded-full ${column.color}`} />
@@ -634,8 +749,25 @@ export default function SimpleAdvancedDealsModule() {
                 isCompactView ? renderCompactDealCard(deal) : renderDealCard(deal)
               )}
             </div>
-          </div>
-        ))}
+            
+            {/* Drop Zone Indicator */}
+            {isDropTarget && canAcceptDrop && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="border-2 border-dashed border-blue-300 bg-blue-50 rounded-lg p-4 mt-2 text-center"
+              >
+                <div className="text-blue-600 text-sm font-medium">
+                  Drop "{draggedDeal?.name}" here
+                </div>
+                <div className="text-blue-500 text-xs mt-1">
+                  Move to {column.title}
+                </div>
+              </motion.div>
+            )}
+          </motion.div>
+        );
+        })}
       </div>
     </div>
   );
