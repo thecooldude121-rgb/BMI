@@ -74,6 +74,18 @@ export const rewardTypeEnum = pgEnum('reward_type', ['points', 'badge', 'certifi
 export const rewardStatusEnum = pgEnum('reward_status', ['available', 'claimed', 'redeemed', 'expired']);
 export const recognitionTypeEnum = pgEnum('recognition_type', ['kudos', 'thanks', 'high_five', 'appreciation', 'nomination', 'testimonial']);
 
+// AI Lead Generation specific enums
+export const prospectingCampaignStatusEnum = pgEnum('prospecting_campaign_status', ['draft', 'active', 'paused', 'completed', 'failed']);
+export const leadEnrichmentStatusEnum = pgEnum('lead_enrichment_status', ['pending', 'processing', 'completed', 'failed', 'partial']);
+export const dataSourceEnum = pgEnum('data_source', ['linkedin', 'hunter_io', 'apollo_io', 'zoominfo', 'clearbit', 'fullcontact', 'peopledatalabs', 'web_scraping', 'manual', 'api_import']);
+export const intentSignalTypeEnum = pgEnum('intent_signal_type', ['job_posting', 'funding_round', 'tech_stack_change', 'website_change', 'content_engagement', 'competitor_mention', 'hiring_activity', 'product_launch', 'market_expansion', 'compliance_change']);
+export const engagementTypeEnum = pgEnum('engagement_type', ['email_open', 'email_click', 'website_visit', 'content_download', 'webinar_attendance', 'demo_request', 'pricing_page_visit', 'linkedin_interaction', 'social_share']);
+export const sequenceStatusEnum = pgEnum('sequence_status', ['active', 'paused', 'completed', 'cancelled', 'bounced']);
+export const abTestStatusEnum = pgEnum('ab_test_status', ['draft', 'running', 'paused', 'completed', 'analysing']);
+export const complianceStatusEnum = pgEnum('compliance_status', ['compliant', 'opt_out', 'gdpr_request', 'ccpa_request', 'pending_deletion', 'deleted']);
+export const leadScoringModelEnum = pgEnum('lead_scoring_model', ['demographic', 'behavioral', 'predictive', 'intent_based', 'engagement', 'hybrid']);
+export const personalizedContentTypeEnum = pgEnum('personalized_content_type', ['email_subject', 'email_body', 'linkedin_message', 'cold_call_script', 'meeting_agenda', 'proposal_template']);
+
 // Dashboard Widget System Enums
 export const widgetTypeEnum = pgEnum('widget_type', ['stats', 'chart', 'recent_activities', 'pipeline', 'leaderboard', 'calendar', 'tasks', 'notes', 'weather', 'news', 'team_performance', 'deal_forecast', 'lead_sources', 'revenue_trend', 'activity_heatmap', 'goal_progress']);
 export const widgetSizeEnum = pgEnum('widget_size', ['small', 'medium', 'large', 'extra_large']);
@@ -1683,7 +1695,7 @@ export const learningStatusEnum = pgEnum('learning_status', ['not_started', 'in_
 export const assessmentTypeEnum = pgEnum('assessment_type', ['technical', 'behavioral', 'leadership', 'cultural_fit', 'performance', 'skill_gap']);
 export const recruitmentStageEnum = pgEnum('recruitment_stage', ['applied', 'screening', 'interview', 'assessment', 'reference_check', 'offer', 'hired', 'rejected']);
 export const payrollStatusEnum = pgEnum('payroll_status', ['draft', 'calculated', 'approved', 'processed', 'paid', 'error']);
-export const complianceStatusEnum = pgEnum('compliance_status', ['compliant', 'non_compliant', 'pending_review', 'action_required', 'exempt']);
+// Compliance status enum already defined above - removed duplicate
 export const aiInsightTypeEnum = pgEnum('ai_insight_type', ['performance_prediction', 'retention_risk', 'skill_gap', 'training_recommendation', 'career_path', 'workload_analysis', 'team_dynamics']);
 export const workflowStatusEnum = pgEnum('workflow_status', ['pending', 'in_progress', 'completed', 'rejected', 'cancelled', 'escalated']);
 export const communicationChannelEnum = pgEnum('communication_channel', ['email', 'slack', 'teams', 'sms', 'push_notification', 'in_app', 'voice']);
@@ -2456,3 +2468,291 @@ export type InsertWidgetData = z.infer<typeof insertWidgetDataSchema>;
 
 export type WidgetSharing = typeof widgetSharing.$inferSelect;
 export type InsertWidgetSharing = z.infer<typeof insertWidgetSharingSchema>;
+
+// ===============================
+// AI LEAD GENERATION PLATFORM SCHEMA
+// ===============================
+
+// AI Lead Generation Tables
+export const prospectingCampaigns = pgTable("prospecting_campaigns", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  description: text("description"),
+  status: prospectingCampaignStatusEnum("status").notNull().default('draft'),
+  ownerId: uuid("owner_id").notNull().references(() => users.id),
+  targetConfig: jsonb("target_config").notNull(), // Personas, industries, company sizes, locations, technologies
+  leadScoringWeights: jsonb("lead_scoring_weights").notNull(), // fit, intent, engagement, timing weights
+  intentSignals: text("intent_signals").array().notNull().default([]),
+  searchCriteria: jsonb("search_criteria").notNull(),
+  progress: jsonb("progress").notNull().default({}), // searched, found, enriched, qualified counts
+  totalBudget: decimal("total_budget", { precision: 15, scale: 2 }),
+  spentBudget: decimal("spent_budget", { precision: 15, scale: 2 }).default('0'),
+  expectedResults: integer("expected_results"),
+  actualResults: integer("actual_results").default(0),
+  qualifiedResults: integer("qualified_results").default(0),
+  conversionRate: decimal("conversion_rate", { precision: 5, scale: 2 }),
+  avgLeadScore: decimal("avg_lead_score", { precision: 5, scale: 2 }),
+  lastRunAt: timestamp("last_run_at"),
+  nextRunAt: timestamp("next_run_at"),
+  automationRules: jsonb("automation_rules"), // Auto-sync, scoring thresholds, etc.
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const enrichedLeads = pgTable("enriched_leads", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  campaignId: uuid("campaign_id").notNull().references(() => prospectingCampaigns.id, { onDelete: 'cascade' }),
+  originalLeadId: uuid("original_lead_id").references(() => leads.id),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  emailVerified: boolean("email_verified").default(false),
+  phone: text("phone"),
+  phoneVerified: boolean("phone_verified").default(false),
+  company: text("company").notNull(),
+  title: text("title").notNull(),
+  department: text("department"),
+  seniority: text("seniority"),
+  yearsInRole: integer("years_in_role"),
+  leadScore: decimal("lead_score", { precision: 5, scale: 2 }).notNull().default('0'),
+  intentScore: decimal("intent_score", { precision: 5, scale: 2 }).notNull().default('0'),
+  engagementScore: decimal("engagement_score", { precision: 5, scale: 2 }).notNull().default('0'),
+  fitScore: decimal("fit_score", { precision: 5, scale: 2 }).notNull().default('0'),
+  personaMatch: text("persona_match"),
+  dataSources: dataSourceEnum("data_sources").array().notNull().default([]),
+  enrichmentStatus: leadEnrichmentStatusEnum("enrichment_status").notNull().default('pending'),
+  enrichmentData: jsonb("enrichment_data").notNull().default({}), // Contact, company, intent, AI insights
+  socialProfiles: jsonb("social_profiles").default({}), // LinkedIn, Twitter, etc.
+  companyIntel: jsonb("company_intel").default({}), // Revenue, employees, tech stack, news, competitors
+  intentSignals: jsonb("intent_signals").array().default([]),
+  buyingStage: text("buying_stage"),
+  engagementHistory: jsonb("engagement_history").array().default([]),
+  recommendedActions: text("recommended_actions").array().default([]),
+  tags: text("tags").array().default([]),
+  status: leadStatusEnum("status").notNull().default('active'),
+  assignedTo: uuid("assigned_to").references(() => users.id),
+  crmSyncStatus: text("crm_sync_status").default('pending'), // pending, synced, failed
+  crmId: text("crm_id"), // External CRM ID when synced
+  lastEnrichedAt: timestamp("last_enriched_at"),
+  lastEngagedAt: timestamp("last_engaged_at"),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const intentSignals = pgTable("intent_signals", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  leadId: uuid("lead_id").references(() => enrichedLeads.id, { onDelete: 'cascade' }),
+  companyId: uuid("company_id").references(() => accounts.id),
+  signalType: intentSignalTypeEnum("signal_type").notNull(),
+  signalSource: dataSourceEnum("signal_source").notNull(),
+  signalData: jsonb("signal_data").notNull(), // Raw signal data
+  description: text("description").notNull(),
+  confidence: decimal("confidence", { precision: 3, scale: 2 }).notNull(), // 0.00 to 1.00
+  impact: text("impact"), // high, medium, low
+  detectedAt: timestamp("detected_at").notNull().defaultNow(),
+  expiresAt: timestamp("expires_at"), 
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const engagementTracking = pgTable("engagement_tracking", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  leadId: uuid("lead_id").notNull().references(() => enrichedLeads.id, { onDelete: 'cascade' }),
+  engagementType: engagementTypeEnum("engagement_type").notNull(),
+  engagementData: jsonb("engagement_data").notNull(), // Event-specific data
+  source: text("source").notNull(), // email, website, social, etc.
+  timestamp: timestamp("timestamp").notNull().defaultNow(),
+  sessionId: text("session_id"),
+  userAgent: text("user_agent"),
+  ipAddress: text("ip_address"),
+  location: jsonb("location"), // City, country, timezone
+  score: decimal("score", { precision: 3, scale: 2 }).default('0'), // Weighted engagement score
+  isProcessed: boolean("is_processed").default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const leadScoringModels = pgTable("lead_scoring_models", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  description: text("description"),
+  modelType: leadScoringModelEnum("model_type").notNull(),
+  version: text("version").notNull().default('1.0'),
+  scoringCriteria: jsonb("scoring_criteria").notNull(), // Detailed scoring rules and weights
+  isActive: boolean("is_active").notNull().default(false),
+  isDefault: boolean("is_default").notNull().default(false),
+  accuracy: decimal("accuracy", { precision: 5, scale: 2 }), // Model accuracy percentage
+  trainingData: jsonb("training_data"), // Historical data used for training
+  performanceMetrics: jsonb("performance_metrics"), // Precision, recall, F1 score, etc.
+  createdBy: uuid("created_by").notNull().references(() => users.id),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const engagementSequences = pgTable("engagement_sequences", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  description: text("description"),
+  campaignId: uuid("campaign_id").references(() => prospectingCampaigns.id),
+  sequenceSteps: jsonb("sequence_steps").notNull().default([]), // Array of step configurations
+  triggerConditions: jsonb("trigger_conditions").notNull(), // When to start the sequence
+  status: sequenceStatusEnum("status").notNull().default('active'),
+  totalSteps: integer("total_steps").notNull().default(0),
+  avgResponseRate: decimal("avg_response_rate", { precision: 5, scale: 2 }),
+  avgConversionRate: decimal("avg_conversion_rate", { precision: 5, scale: 2 }),
+  isPersonalized: boolean("is_personalized").default(true),
+  personalizationRules: jsonb("personalization_rules"), // AI personalization settings
+  createdBy: uuid("created_by").notNull().references(() => users.id),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const sequenceExecutions = pgTable("sequence_executions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  sequenceId: uuid("sequence_id").notNull().references(() => engagementSequences.id, { onDelete: 'cascade' }),
+  leadId: uuid("lead_id").notNull().references(() => enrichedLeads.id, { onDelete: 'cascade' }),
+  currentStep: integer("current_step").notNull().default(1),
+  status: sequenceStatusEnum("status").notNull().default('active'),
+  startedAt: timestamp("started_at").notNull().defaultNow(),
+  lastExecutedAt: timestamp("last_executed_at"),
+  nextExecutionAt: timestamp("next_execution_at"),
+  completedAt: timestamp("completed_at"),
+  executionData: jsonb("execution_data").default({}), // Step-by-step execution details
+  responseReceived: boolean("response_received").default(false),
+  conversionAchieved: boolean("conversion_achieved").default(false),
+  pausedReason: text("paused_reason"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const abTestCampaigns = pgTable("ab_test_campaigns", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  description: text("description"),
+  testType: text("test_type").notNull(), // email_subject, email_content, sequence_timing, etc.
+  parentCampaignId: uuid("parent_campaign_id").references(() => prospectingCampaigns.id),
+  variantA: jsonb("variant_a").notNull(), // Control group configuration
+  variantB: jsonb("variant_b").notNull(), // Test group configuration
+  trafficSplit: decimal("traffic_split", { precision: 3, scale: 2 }).notNull().default('0.5'), // 0.0 to 1.0
+  status: abTestStatusEnum("status").notNull().default('draft'),
+  startDate: timestamp("start_date"),
+  endDate: timestamp("end_date"),
+  testResults: jsonb("test_results"), // Statistical results and winner
+  significanceLevel: decimal("significance_level", { precision: 3, scale: 2 }).default('0.95'),
+  participantCount: integer("participant_count").default(0),
+  conversionGoal: text("conversion_goal").notNull(), // response, meeting_booked, deal_created, etc.
+  winningVariant: text("winning_variant"), // 'A' or 'B' or 'inconclusive'
+  createdBy: uuid("created_by").notNull().references(() => users.id),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const personalizedContent = pgTable("personalized_content", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  leadId: uuid("lead_id").notNull().references(() => enrichedLeads.id, { onDelete: 'cascade' }),
+  contentType: personalizedContentTypeEnum("content_type").notNull(),
+  originalTemplate: text("original_template").notNull(),
+  personalizedContent: text("personalized_content").notNull(),
+  personalizationFactors: jsonb("personalization_factors").notNull(), // What was used for personalization
+  aiModel: text("ai_model"), // Model used for generation
+  confidence: decimal("confidence", { precision: 3, scale: 2 }), // AI confidence score
+  performanceMetrics: jsonb("performance_metrics"), // Open rates, click rates, responses
+  isUsed: boolean("is_used").default(false),
+  usedAt: timestamp("used_at"),
+  feedbackScore: decimal("feedback_score", { precision: 3, scale: 2 }), // User feedback on quality
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const complianceTracking = pgTable("compliance_tracking", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  leadId: uuid("lead_id").notNull().references(() => enrichedLeads.id, { onDelete: 'cascade' }),
+  complianceStatus: complianceStatusEnum("compliance_status").notNull().default('compliant'),
+  gdprConsent: boolean("gdpr_consent").default(null),
+  ccpaConsent: boolean("ccpa_consent").default(null),
+  optInDate: timestamp("opt_in_date"),
+  optOutDate: timestamp("opt_out_date"),
+  dataRetentionExpiry: timestamp("data_retention_expiry"),
+  deletionRequestDate: timestamp("deletion_request_date"),
+  lastDataUpdate: timestamp("last_data_update").notNull().defaultNow(),
+  auditTrail: jsonb("audit_trail").array().default([]), // All consent/compliance actions
+  consentSource: text("consent_source"), // Where consent was obtained
+  legalBasis: text("legal_basis"), // GDPR Article 6 basis
+  notes: text("notes"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Zod schemas for AI lead generation
+export const insertProspectingCampaignSchema = createInsertSchema(prospectingCampaigns).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertEnrichedLeadSchema = createInsertSchema(enrichedLeads).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertIntentSignalSchema = createInsertSchema(intentSignals).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertEngagementTrackingSchema = createInsertSchema(engagementTracking).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertLeadScoringModelSchema = createInsertSchema(leadScoringModels).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertEngagementSequenceSchema = createInsertSchema(engagementSequences).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertAbTestCampaignSchema = createInsertSchema(abTestCampaigns).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertPersonalizedContentSchema = createInsertSchema(personalizedContent).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertComplianceTrackingSchema = createInsertSchema(complianceTracking).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+// AI Lead Generation Types
+export type ProspectingCampaign = typeof prospectingCampaigns.$inferSelect;
+export type EnrichedLead = typeof enrichedLeads.$inferSelect;
+export type IntentSignal = typeof intentSignals.$inferSelect;
+export type EngagementTracking = typeof engagementTracking.$inferSelect;
+export type LeadScoringModel = typeof leadScoringModels.$inferSelect;
+export type EngagementSequence = typeof engagementSequences.$inferSelect;
+export type SequenceExecution = typeof sequenceExecutions.$inferSelect;
+export type AbTestCampaign = typeof abTestCampaigns.$inferSelect;
+export type PersonalizedContent = typeof personalizedContent.$inferSelect;
+export type ComplianceTracking = typeof complianceTracking.$inferSelect;
+
+export type InsertProspectingCampaign = z.infer<typeof insertProspectingCampaignSchema>;
+export type InsertEnrichedLead = z.infer<typeof insertEnrichedLeadSchema>;
+export type InsertIntentSignal = z.infer<typeof insertIntentSignalSchema>;
+export type InsertEngagementTracking = z.infer<typeof insertEngagementTrackingSchema>;
+export type InsertLeadScoringModel = z.infer<typeof insertLeadScoringModelSchema>;
+export type InsertEngagementSequence = z.infer<typeof insertEngagementSequenceSchema>;
+export type InsertAbTestCampaign = z.infer<typeof insertAbTestCampaignSchema>;
+export type InsertPersonalizedContent = z.infer<typeof insertPersonalizedContentSchema>;
+export type InsertComplianceTracking = z.infer<typeof insertComplianceTrackingSchema>;

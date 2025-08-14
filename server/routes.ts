@@ -3175,6 +3175,317 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Deep AI Insights Endpoint with web intelligence
+  // ===============================
+  // AI LEAD GENERATION API ROUTES
+  // ===============================
+
+  // Get all prospecting campaigns
+  app.get("/api/lead-generation/campaigns", async (req, res) => {
+    try {
+      const campaigns = await storage.getProspectingCampaigns();
+      res.json(campaigns);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Create new prospecting campaign
+  app.post("/api/lead-generation/campaigns", async (req, res) => {
+    try {
+      const result = schema.insertProspectingCampaignSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ error: "Invalid campaign data", details: result.error });
+      }
+      const campaign = await storage.createProspectingCampaign(result.data);
+      res.status(201).json(campaign);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Run prospecting campaign
+  app.post("/api/lead-generation/campaigns/:id/run", async (req, res) => {
+    try {
+      const campaignId = req.params.id;
+      const campaign = await storage.getProspectingCampaign(campaignId);
+      
+      if (!campaign) {
+        return res.status(404).json({ error: "Campaign not found" });
+      }
+
+      // Import AI engine
+      const { aiLeadGenerationEngine } = await import('./ai-lead-generation');
+      
+      // Run campaign with AI prospecting
+      const results = await aiLeadGenerationEngine.runProspectingCampaign(
+        campaignId,
+        campaign.targetConfig as any
+      );
+
+      // Store enriched leads in database
+      for (const leadData of results.leads) {
+        await storage.createEnrichedLead({
+          campaignId: campaignId,
+          name: leadData.name,
+          email: leadData.email,
+          company: leadData.company,
+          title: leadData.title,
+          leadScore: leadData.leadScore,
+          intentScore: leadData.intentScore,
+          enrichmentData: leadData.enrichmentData,
+          enrichmentStatus: 'completed',
+          personaMatch: leadData.personaMatch,
+          dataSources: ['ai_prospecting'],
+          isActive: true
+        });
+      }
+
+      // Update campaign progress
+      await storage.updateProspectingCampaign(campaignId, {
+        progress: {
+          searched: results.searched,
+          found: results.found,
+          enriched: results.enriched,
+          qualified: results.qualified
+        },
+        actualResults: results.qualified,
+        lastRunAt: new Date().toISOString()
+      });
+
+      res.json(results);
+    } catch (error) {
+      console.error("Campaign execution error:", error);
+      handleError(error, res);
+    }
+  });
+
+  // Get enriched leads for campaign
+  app.get("/api/lead-generation/campaigns/:id/leads", async (req, res) => {
+    try {
+      const campaignId = req.params.id;
+      const leads = await storage.getEnrichedLeadsByCampaign(campaignId);
+      res.json(leads);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Get all enriched leads
+  app.get("/api/lead-generation/leads", async (req, res) => {
+    try {
+      const leads = await storage.getEnrichedLeads();
+      res.json(leads);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Get single enriched lead
+  app.get("/api/lead-generation/leads/:id", async (req, res) => {
+    try {
+      const lead = await storage.getEnrichedLead(req.params.id);
+      if (!lead) {
+        return res.status(404).json({ error: "Lead not found" });
+      }
+      res.json(lead);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Update enriched lead
+  app.patch("/api/lead-generation/leads/:id", async (req, res) => {
+    try {
+      const lead = await storage.updateEnrichedLead(req.params.id, req.body);
+      res.json(lead);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Sync enriched lead to CRM
+  app.post("/api/lead-generation/leads/:id/sync-to-crm", async (req, res) => {
+    try {
+      const leadId = req.params.id;
+      const enrichedLead = await storage.getEnrichedLead(leadId);
+      
+      if (!enrichedLead) {
+        return res.status(404).json({ error: "Lead not found" });
+      }
+
+      // Create standard CRM lead from enriched data
+      const crmLead = {
+        name: enrichedLead.name,
+        email: enrichedLead.email,
+        phone: enrichedLead.phone || '',
+        company: enrichedLead.company,
+        title: enrichedLead.title,
+        source: 'ai_prospecting',
+        stage: 'new',
+        priority: enrichedLead.leadScore >= 85 ? 'high' : 'medium',
+        assignedTo: enrichedLead.assignedTo,
+        tags: enrichedLead.tags || [],
+        notes: `AI Lead Score: ${enrichedLead.leadScore}, Intent Score: ${enrichedLead.intentScore}\nPersona Match: ${enrichedLead.personaMatch}`
+      };
+
+      const createdLead = await storage.createLead(crmLead);
+
+      // Update enriched lead with CRM sync status
+      await storage.updateEnrichedLead(leadId, {
+        crmSyncStatus: 'synced',
+        crmId: createdLead.id
+      });
+
+      res.json({ success: true, crmLeadId: createdLead.id });
+    } catch (error) {
+      console.error("CRM sync error:", error);
+      handleError(error, res);
+    }
+  });
+
+  // Create engagement sequence
+  app.post("/api/lead-generation/sequences", async (req, res) => {
+    try {
+      const result = schema.insertEngagementSequenceSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ error: "Invalid sequence data", details: result.error });
+      }
+      const sequence = await storage.createEngagementSequence(result.data);
+      res.status(201).json(sequence);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Start sequence for lead
+  app.post("/api/lead-generation/leads/:id/start-sequence/:sequenceId", async (req, res) => {
+    try {
+      const { id: leadId, sequenceId } = req.params;
+      
+      const sequenceExecution = await storage.createSequenceExecution({
+        sequenceId: sequenceId,
+        leadId: leadId,
+        currentStep: 1,
+        status: 'active',
+        nextExecutionAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours
+      });
+
+      res.status(201).json(sequenceExecution);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // AI Lead Enrichment endpoint
+  app.post("/api/lead-generation/enrich", async (req, res) => {
+    try {
+      const { email, company, name } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ error: "Email is required for enrichment" });
+      }
+
+      const { aiLeadGenerationEngine } = await import('./ai-lead-generation');
+      const enrichedData = await aiLeadGenerationEngine.enrichLeadData({
+        email,
+        company,
+        name
+      });
+
+      res.json(enrichedData);
+    } catch (error) {
+      console.error("Lead enrichment error:", error);
+      handleError(error, res);
+    }
+  });
+
+  // A/B Test Campaign endpoints
+  app.post("/api/lead-generation/ab-tests", async (req, res) => {
+    try {
+      const result = schema.insertAbTestCampaignSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ error: "Invalid A/B test data", details: result.error });
+      }
+      
+      const { abTestingEngine } = await import('./ai-lead-generation');
+      const testId = await abTestingEngine.createABTest(result.data);
+      
+      const abTest = await storage.createAbTestCampaign({
+        ...result.data,
+        id: testId
+      });
+      
+      res.status(201).json(abTest);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Get A/B test results
+  app.get("/api/lead-generation/ab-tests/:id/results", async (req, res) => {
+    try {
+      const { abTestingEngine } = await import('./ai-lead-generation');
+      const results = await abTestingEngine.analyzeTestResults(req.params.id);
+      res.json(results);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // GDPR Compliance endpoints
+  app.post("/api/lead-generation/compliance/gdpr/:leadId", async (req, res) => {
+    try {
+      const { leadId } = req.params;
+      const { requestType } = req.body; // 'access', 'delete', 'rectify'
+      
+      const { complianceEngine } = await import('./ai-lead-generation');
+      const success = await complianceEngine.processGDPRRequest(leadId, requestType);
+      
+      if (success) {
+        // Log compliance action
+        await storage.updateEnrichedLead(leadId, {
+          [`${requestType}RequestDate`]: new Date().toISOString()
+        });
+      }
+      
+      res.json({ success });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Lead Generation Analytics
+  app.get("/api/lead-generation/analytics", async (req, res) => {
+    try {
+      const campaigns = await storage.getProspectingCampaigns();
+      const leads = await storage.getEnrichedLeads();
+      
+      const analytics = {
+        campaigns: {
+          total: campaigns.length,
+          active: campaigns.filter(c => c.status === 'active').length,
+          totalProspected: campaigns.reduce((sum, c) => sum + (c.progress?.found || 0), 0),
+          totalQualified: campaigns.reduce((sum, c) => sum + (c.progress?.qualified || 0), 0)
+        },
+        leads: {
+          total: leads.length,
+          avgLeadScore: leads.reduce((sum, l) => sum + (parseFloat(l.leadScore) || 0), 0) / leads.length,
+          avgIntentScore: leads.reduce((sum, l) => sum + (parseFloat(l.intentScore) || 0), 0) / leads.length,
+          conversionRate: leads.filter(l => l.status === 'converted').length / leads.length * 100
+        },
+        enrichment: {
+          emailVerified: leads.filter(l => l.emailVerified).length / leads.length * 100,
+          phoneVerified: leads.filter(l => l.phoneVerified).length / leads.length * 100,
+          fullyEnriched: leads.filter(l => l.enrichmentStatus === 'completed').length / leads.length * 100
+        }
+      };
+      
+      res.json(analytics);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
   app.post("/api/ai/deep-insights", async (req, res) => {
     try {
       const { deal, account, activities, context } = req.body;
