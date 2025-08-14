@@ -203,7 +203,7 @@ const ProspectDiscovery: React.FC = () => {
 
   const toggleProspectSelection = (id: string) => {
     setSelectedProspects(prev => 
-      prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((p: string) => p !== id) : [...prev, id]
     );
   };
 
@@ -211,7 +211,7 @@ const ProspectDiscovery: React.FC = () => {
     if (selectedProspects.length === prospects.length) {
       setSelectedProspects([]);
     } else {
-      setSelectedProspects(prospects.map(p => p.id));
+      setSelectedProspects(prospects.map((prospect: ProspectData) => prospect.id));
     }
   };
 
@@ -426,10 +426,31 @@ const ProspectDiscovery: React.FC = () => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
+        {/* Filters Toggle Bar */}
+        {showFilters && (
+          <div className="bg-gray-50 border-b border-gray-200 px-6 py-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-medium text-gray-900">Filters</h3>
+              <button
+                onClick={() => setShowFilters(false)}
+                className="text-sm text-gray-600 hover:text-gray-900"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Top Bar */}
         <div className="bg-white border-b border-gray-200">
           <div className="px-6 py-4">
             <div className="flex items-center justify-between">
+              {/* Left side - Title */}
+              <div className="flex items-center space-x-4">
+                <h1 className="text-xl font-semibold text-gray-900">People</h1>
+                <span className="text-gray-500">({totalCount.toLocaleString()})</span>
+              </div>
+
               {/* Right side - Actions */}
               <div className="flex items-center space-x-3">
                 <button
@@ -508,7 +529,7 @@ const ProspectDiscovery: React.FC = () => {
             </div>
           ) : (
             <div className="divide-y divide-gray-200">
-              {prospects.map((prospect) => (
+              {prospects.map((prospect: ProspectData) => (
                 <div key={prospect.id} className="px-6 py-4 hover:bg-gray-50">
                   <div className="flex items-center">
                     <input
