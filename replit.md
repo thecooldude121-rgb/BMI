@@ -22,7 +22,7 @@ The platform is built with a modern full-stack architecture:
     - **Gamification**: Integrated directly into the CRM, offering real-time XP tracking, level progression, badges, challenges, leaderboards, and peer recognition to motivate sales teams.
     - **AI Automation**: Intelligent activity suggestion engine based on CRM data patterns, lead behavior, and deal stages, with features like contextual reasoning, confidence scoring, and one-click activity creation.
     - **Analytics (BI Board)**: Comprehensive dashboard with real-time business intelligence, pipeline analytics, account health monitoring, and performance metrics.
-    - **Deal Management**: Features a drag-and-drop Kanban board, multi-view support, inline editing, and a single scrollable deal detail view with timeline activities and robust attachment/comment management.
+    - **Deal Management**: Features a drag-and-drop Kanban board, multi-view support, inline editing, and a single scrollable deal detail view with timeline activities and robust attachment/comment management. Enhanced with AI-powered contextual help and comprehensive deal intelligence including web-based company analysis, market trends monitoring, and actionable insights for deal closure.
     - **Account Management**: Next-generation module with account hierarchy, documents, enrichment, audit tracking, and AI-powered health dashboards.
     - **Activity Management**: Enhanced module supporting cross-module synchronization, recurrence, audit logs, comments, attachments, tags, and automation triggers.
 - **Security**: Input validation with Zod schemas, environment-based configuration, and secure API endpoints with robust error handling.
