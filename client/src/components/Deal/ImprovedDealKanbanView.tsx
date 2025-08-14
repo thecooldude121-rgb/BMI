@@ -142,6 +142,37 @@ const ImprovedDealKanbanView: React.FC<ImprovedDealKanbanViewProps> = ({
 
   return (
     <div className="h-full flex flex-col bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20">
+      <style>{`
+        .kanban-scroll::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+        }
+        .kanban-scroll::-webkit-scrollbar-track {
+          background: rgba(0, 0, 0, 0.05);
+          border-radius: 10px;
+        }
+        .kanban-scroll::-webkit-scrollbar-thumb {
+          background: rgba(0, 0, 0, 0.2);
+          border-radius: 10px;
+        }
+        .kanban-scroll::-webkit-scrollbar-thumb:hover {
+          background: rgba(0, 0, 0, 0.3);
+        }
+        .stage-scroll::-webkit-scrollbar {
+          width: 6px;
+        }
+        .stage-scroll::-webkit-scrollbar-track {
+          background: rgba(0, 0, 0, 0.03);
+          border-radius: 8px;
+        }
+        .stage-scroll::-webkit-scrollbar-thumb {
+          background: rgba(0, 0, 0, 0.15);
+          border-radius: 8px;
+        }
+        .stage-scroll::-webkit-scrollbar-thumb:hover {
+          background: rgba(0, 0, 0, 0.25);
+        }
+      `}</style>
       {/* Enhanced Modern Header */}
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
@@ -472,13 +503,14 @@ const ImprovedDealKanbanView: React.FC<ImprovedDealKanbanViewProps> = ({
       </AnimatePresence>
 
       {/* Enhanced Kanban Board */}
-      <div className="flex-1 overflow-x-auto px-8 py-6">
+      <div className="flex-1 overflow-x-auto overflow-y-hidden px-8 py-6 kanban-scroll">
         <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="flex space-x-6 h-full min-w-max"
+            className="flex space-x-8 h-full min-w-max pb-4"
+            style={{ width: 'max-content' }}
           >
             {pipeline.stages.map((stage, stageIndex) => {
               const stageDeals = getStageDeals(stage.id);
@@ -490,7 +522,7 @@ const ImprovedDealKanbanView: React.FC<ImprovedDealKanbanViewProps> = ({
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 + stageIndex * 0.1 }}
-                  className="flex-shrink-0 w-96"
+                  className="flex-shrink-0 w-[500px]"
                 >
                   {/* Enhanced Stage Header */}
                   <motion.div 
@@ -566,7 +598,7 @@ const ImprovedDealKanbanView: React.FC<ImprovedDealKanbanViewProps> = ({
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
-                        className={`min-h-[700px] rounded-2xl p-3 transition-all duration-300 ${
+                        className={`min-h-[700px] max-h-[700px] overflow-y-auto rounded-2xl p-3 transition-all duration-300 stage-scroll ${
                           snapshot.isDraggingOver 
                             ? 'bg-gradient-to-b from-blue-50/80 to-indigo-50/80 border-2 border-dashed border-blue-400 shadow-2xl scale-105' 
                             : 'bg-transparent'
@@ -580,19 +612,12 @@ const ImprovedDealKanbanView: React.FC<ImprovedDealKanbanViewProps> = ({
                               return (
                                 <Draggable key={deal.id} draggableId={deal.id} index={index}>
                                   {(provided, snapshot) => (
-                                    <motion.div
+                                    <div
                                       ref={provided.innerRef}
                                       {...provided.draggableProps}
                                       {...provided.dragHandleProps}
-                                      layout
-                                      initial={{ opacity: 0, y: 20 }}
-                                      animate={{ opacity: 1, y: 0 }}
-                                      exit={{ opacity: 0, y: -20 }}
-                                      transition={{ duration: 0.2 }}
-                                      whileHover={{ y: -4, scale: 1.02 }}
-                                      whileTap={{ scale: 0.98 }}
                                       onClick={() => setLocation(`/crm/deals/${deal.id}`)}
-                                      className={`bg-white rounded-2xl border border-gray-200/50 p-6 cursor-pointer transition-all duration-300 group hover:shadow-2xl hover:border-gray-300 ${
+                                      className={`bg-white rounded-2xl border border-gray-200/50 p-6 cursor-pointer transition-all duration-300 group hover:shadow-2xl hover:border-gray-300 hover:-translate-y-1 hover:scale-[1.02] ${
                                         snapshot.isDragging 
                                           ? 'shadow-2xl rotate-3 scale-110 border-blue-400 ring-4 ring-blue-100' 
                                           : 'shadow-lg hover:shadow-xl'
@@ -706,7 +731,7 @@ const ImprovedDealKanbanView: React.FC<ImprovedDealKanbanViewProps> = ({
                                           <ChevronRight className="h-3 w-3" />
                                         </motion.div>
                                       </div>
-                                    </motion.div>
+                                    </div>
                                   )}
                                 </Draggable>
                               );
