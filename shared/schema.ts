@@ -74,6 +74,12 @@ export const rewardTypeEnum = pgEnum('reward_type', ['points', 'badge', 'certifi
 export const rewardStatusEnum = pgEnum('reward_status', ['available', 'claimed', 'redeemed', 'expired']);
 export const recognitionTypeEnum = pgEnum('recognition_type', ['kudos', 'thanks', 'high_five', 'appreciation', 'nomination', 'testimonial']);
 
+// Dashboard Widget System Enums
+export const widgetTypeEnum = pgEnum('widget_type', ['stats', 'chart', 'recent_activities', 'pipeline', 'leaderboard', 'calendar', 'tasks', 'notes', 'weather', 'news', 'team_performance', 'deal_forecast', 'lead_sources', 'revenue_trend', 'activity_heatmap', 'goal_progress']);
+export const widgetSizeEnum = pgEnum('widget_size', ['small', 'medium', 'large', 'extra_large']);
+export const chartTypeEnum = pgEnum('chart_type', ['line', 'bar', 'pie', 'doughnut', 'area', 'scatter', 'radar']);
+export const timeRangeEnum = pgEnum('time_range', ['today', 'yesterday', 'this_week', 'last_week', 'this_month', 'last_month', 'this_quarter', 'last_quarter', 'this_year', 'last_year', 'custom']);
+
 export const accounts: any = pgTable("accounts", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
@@ -1517,6 +1523,93 @@ export const gamificationNotifications = pgTable("gamification_notifications", {
   readAt: timestamp("read_at")
 });
 
+// Dashboard Widget System Tables
+export const dashboardWidgets = pgTable("dashboard_widgets", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  widgetType: widgetTypeEnum("widget_type").notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  size: widgetSizeEnum("size").notNull().default('medium'),
+  position: jsonb("position").notNull(), // { x: number, y: number, w: number, h: number }
+  configuration: jsonb("configuration").default('{}'), // Widget-specific settings
+  dataSource: text("data_source"), // API endpoint or data query
+  refreshInterval: integer("refresh_interval").default(300), // seconds
+  isVisible: boolean("is_visible").notNull().default(true),
+  isMovable: boolean("is_movable").notNull().default(true),
+  isResizable: boolean("is_resizable").notNull().default(true),
+  minWidth: integer("min_width").default(2),
+  minHeight: integer("min_height").default(2),
+  maxWidth: integer("max_width").default(12),
+  maxHeight: integer("max_height").default(12),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+export const dashboardLayouts = pgTable("dashboard_layouts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  name: text("name").notNull(),
+  description: text("description"),
+  layout: jsonb("layout").notNull(), // Grid layout configuration
+  isDefault: boolean("is_default").notNull().default(false),
+  isShared: boolean("is_shared").notNull().default(false),
+  sharedWith: jsonb("shared_with").default('[]'), // Array of user IDs
+  theme: text("theme").default('light'), // light, dark, auto
+  gridCols: integer("grid_cols").default(12),
+  gridRows: integer("grid_rows").default(12),
+  compactMode: boolean("compact_mode").default(false),
+  autoSave: boolean("auto_save").default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+export const widgetTemplates = pgTable("widget_templates", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  widgetType: widgetTypeEnum("widget_type").notNull(),
+  category: text("category").notNull(), // analytics, productivity, communication
+  icon: text("icon"),
+  preview: text("preview"), // Screenshot or preview URL
+  defaultConfig: jsonb("default_config").notNull(),
+  defaultSize: widgetSizeEnum("default_size").default('medium'),
+  supportedSizes: jsonb("supported_sizes").default('["small", "medium", "large"]'),
+  dataRequirements: jsonb("data_requirements").default('{}'),
+  permissions: jsonb("permissions").default('{}'), // Required user permissions
+  isPublic: boolean("is_public").notNull().default(true),
+  isActive: boolean("is_active").notNull().default(true),
+  version: text("version").default('1.0.0'),
+  author: text("author"),
+  tags: jsonb("tags").default('[]'),
+  rating: decimal("rating", { precision: 3, scale: 2 }).default('0.00'),
+  installCount: integer("install_count").default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+export const widgetData = pgTable("widget_data", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  widgetId: uuid("widget_id").notNull().references(() => dashboardWidgets.id, { onDelete: 'cascade' }),
+  dataKey: text("data_key").notNull(),
+  dataValue: jsonb("data_value").notNull(),
+  metadata: jsonb("metadata").default('{}'),
+  expiresAt: timestamp("expires_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+export const widgetSharing = pgTable("widget_sharing", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  widgetId: uuid("widget_id").notNull().references(() => dashboardWidgets.id, { onDelete: 'cascade' }),
+  ownerId: uuid("owner_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  sharedWithId: uuid("shared_with_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  permissions: jsonb("permissions").default('{"view": true, "edit": false, "share": false}'),
+  message: text("message"),
+  expiresAt: timestamp("expires_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+});
+
 // Schema exports for gamification
 export const insertGamificationActionSchema = createInsertSchema(gamificationActions);
 export const insertGamificationBadgeSchema = createInsertSchema(gamificationBadges);
@@ -2314,3 +2407,48 @@ export type InsertTrainingProgram = z.infer<typeof insertTrainingProgramSchema>;
 
 export type TrainingEnrollment = typeof trainingEnrollments.$inferSelect;
 export type InsertTrainingEnrollment = z.infer<typeof insertTrainingEnrollmentSchema>;
+
+// Dashboard Widget System Types and Schemas
+export const insertDashboardWidgetSchema = createInsertSchema(dashboardWidgets).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertDashboardLayoutSchema = createInsertSchema(dashboardLayouts).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertWidgetTemplateSchema = createInsertSchema(widgetTemplates).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertWidgetDataSchema = createInsertSchema(widgetData).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertWidgetSharingSchema = createInsertSchema(widgetSharing).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type DashboardWidget = typeof dashboardWidgets.$inferSelect;
+export type InsertDashboardWidget = z.infer<typeof insertDashboardWidgetSchema>;
+
+export type DashboardLayout = typeof dashboardLayouts.$inferSelect;
+export type InsertDashboardLayout = z.infer<typeof insertDashboardLayoutSchema>;
+
+export type WidgetTemplate = typeof widgetTemplates.$inferSelect;
+export type InsertWidgetTemplate = z.infer<typeof insertWidgetTemplateSchema>;
+
+export type WidgetData = typeof widgetData.$inferSelect;
+export type InsertWidgetData = z.infer<typeof insertWidgetDataSchema>;
+
+export type WidgetSharing = typeof widgetSharing.$inferSelect;
+export type InsertWidgetSharing = z.infer<typeof insertWidgetSharingSchema>;

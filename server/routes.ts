@@ -3381,6 +3381,140 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Dashboard Widget System Routes
+  app.get("/api/dashboard/widgets/:userId", async (req, res) => {
+    try {
+      const widgets = await storage.getDashboardWidgets(req.params.userId);
+      res.json(widgets);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/dashboard/widgets/single/:id", async (req, res) => {
+    try {
+      const widget = await storage.getDashboardWidget(req.params.id);
+      if (!widget) return res.status(404).json({ error: "Widget not found" });
+      res.json(widget);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/dashboard/widgets", async (req, res) => {
+    try {
+      const result = schema.insertDashboardWidgetSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ error: "Invalid widget data", details: result.error });
+      }
+      const widget = await storage.createDashboardWidget(result.data);
+      res.status(201).json(widget);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.patch("/api/dashboard/widgets/:id", async (req, res) => {
+    try {
+      const widget = await storage.updateDashboardWidget(req.params.id, req.body);
+      res.json(widget);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.delete("/api/dashboard/widgets/:id", async (req, res) => {
+    try {
+      const success = await storage.deleteDashboardWidget(req.params.id);
+      if (!success) return res.status(404).json({ error: "Widget not found" });
+      res.json({ success: true });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Dashboard Layout Routes
+  app.get("/api/dashboard/layouts/:userId", async (req, res) => {
+    try {
+      const layouts = await storage.getDashboardLayouts(req.params.userId);
+      res.json(layouts);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/dashboard/layouts", async (req, res) => {
+    try {
+      const result = schema.insertDashboardLayoutSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ error: "Invalid layout data", details: result.error });
+      }
+      const layout = await storage.createDashboardLayout(result.data);
+      res.status(201).json(layout);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.patch("/api/dashboard/layouts/:id", async (req, res) => {
+    try {
+      const layout = await storage.updateDashboardLayout(req.params.id, req.body);
+      res.json(layout);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Widget Template Routes
+  app.get("/api/dashboard/templates", async (req, res) => {
+    try {
+      const templates = await storage.getWidgetTemplates();
+      res.json(templates);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/dashboard/templates", async (req, res) => {
+    try {
+      const result = schema.insertWidgetTemplateSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ error: "Invalid template data", details: result.error });
+      }
+      const template = await storage.createWidgetTemplate(result.data);
+      res.status(201).json(template);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Widget Data Routes
+  app.get("/api/dashboard/widgets/:widgetId/data", async (req, res) => {
+    try {
+      const data = await storage.getWidgetData(req.params.widgetId);
+      res.json(data);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/dashboard/widgets/:widgetId/data", async (req, res) => {
+    try {
+      const widgetData = {
+        ...req.body,
+        widgetId: req.params.widgetId
+      };
+      const result = schema.insertWidgetDataSchema.safeParse(widgetData);
+      if (!result.success) {
+        return res.status(400).json({ error: "Invalid widget data", details: result.error });
+      }
+      const data = await storage.createWidgetData(result.data);
+      res.status(201).json(data);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
   const server = createServer(app);
 
   return server;

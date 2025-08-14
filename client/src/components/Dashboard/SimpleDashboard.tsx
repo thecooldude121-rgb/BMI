@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Plus, Users, DollarSign, Target, TrendingUp, BarChart3, Brain } from 'lucide-react';
+import { Plus, Users, DollarSign, Target, TrendingUp, BarChart3, Brain, Layout } from 'lucide-react';
 import AIInsightsSidebar from './AIInsightsSidebar';
+import DashboardWidgetSystem from './DashboardWidgetSystem';
 
 interface StatCardProps {
   title: string;
@@ -41,6 +42,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon, change, c
 export const SimpleDashboard: React.FC = () => {
   const [showWidgetSelector, setShowWidgetSelector] = useState(false);
   const [showAIInsights, setShowAIInsights] = useState(false);
+  const [viewMode, setViewMode] = useState<'traditional' | 'widgets'>('traditional');
 
   const { data: leads = [], isLoading: leadsLoading, error: leadsError } = useQuery({
     queryKey: ['/api/leads'],
@@ -92,6 +94,32 @@ export const SimpleDashboard: React.FC = () => {
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
         <div className="flex items-center space-x-3">
+          {/* View Mode Toggle */}
+          <div className="flex bg-gray-100 rounded-lg p-1">
+            <button
+              onClick={() => setViewMode('traditional')}
+              className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+                viewMode === 'traditional'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <BarChart3 className="h-4 w-4 inline mr-1" />
+              Traditional
+            </button>
+            <button
+              onClick={() => setViewMode('widgets')}
+              className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+                viewMode === 'widgets'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <Layout className="h-4 w-4 inline mr-1" />
+              Widgets
+            </button>
+          </div>
+          
           <button
             onClick={() => setShowAIInsights(true)}
             className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors flex items-center space-x-2"
@@ -99,20 +127,27 @@ export const SimpleDashboard: React.FC = () => {
             <Brain className="h-4 w-4" />
             <span>AI Insights</span>
           </button>
-          <button
-            onClick={() => setShowWidgetSelector(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors flex items-center space-x-2"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Add Widget</span>
-          </button>
+          {viewMode === 'traditional' && (
+            <button
+              onClick={() => setShowWidgetSelector(true)}
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors flex items-center space-x-2"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Add Widget</span>
+            </button>
+          )}
         </div>
       </div>
 
 
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Conditional Content Based on View Mode */}
+      {viewMode === 'widgets' ? (
+        <DashboardWidgetSystem userId="user-1" />
+      ) : (
+        <>
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Total Leads"
           value={stats.totalLeads.toString()}
@@ -202,19 +237,21 @@ export const SimpleDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Recent Deals */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Deals</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {dealsArray.slice(0, 4).map((deal: any) => (
-            <div key={deal.id} className="p-3 bg-gray-50 rounded-md">
-              <p className="font-medium text-gray-900">{deal.name}</p>
-              <p className="text-sm text-gray-600">{deal.stage}</p>
-              <p className="text-sm font-medium text-green-600">${parseInt(deal.value || 0).toLocaleString()}</p>
+          {/* Recent Deals */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Deals</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {dealsArray.slice(0, 4).map((deal: any) => (
+                <div key={deal.id} className="p-3 bg-gray-50 rounded-md">
+                  <p className="font-medium text-gray-900">{deal.name}</p>
+                  <p className="text-sm text-gray-600">{deal.stage}</p>
+                  <p className="text-sm font-medium text-green-600">${parseInt(deal.value || 0).toLocaleString()}</p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
+        </>
+      )}
 
       {/* AI Insights Sidebar */}
       <AIInsightsSidebar 
