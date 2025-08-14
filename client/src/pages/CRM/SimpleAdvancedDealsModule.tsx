@@ -386,11 +386,12 @@ export default function SimpleAdvancedDealsModule() {
       key={deal.id}
       draggable
       onDragStart={(e) => handleDragStart(e, deal.id)}
-      className="bg-white border border-gray-200 rounded-xl p-4 mb-3 cursor-move relative transform transition-all duration-200 hover:scale-[1.02] hover:shadow-xl shadow-md"
+      className="bg-white border border-gray-200 rounded-xl p-5 mb-3 cursor-move relative transform transition-all duration-200 hover:scale-[1.02] hover:shadow-xl shadow-md"
       style={{
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
         background: 'linear-gradient(145deg, #ffffff 0%, #fafafa 100%)',
-        border: '1px solid rgba(0, 0, 0, 0.08)'
+        border: '1px solid rgba(0, 0, 0, 0.08)',
+        minHeight: '280px'
       }}
     >
       {/* Multi-select checkbox */}
@@ -415,20 +416,20 @@ export default function SimpleAdvancedDealsModule() {
       <div 
         className="cursor-pointer pl-6"
       >
-        <div className="flex items-start justify-between mb-2">
+        <div className="flex items-start justify-between mb-3">
           <div className="flex-1">
-            <h4 className="font-semibold text-sm mb-1 line-clamp-2 hover:text-blue-600 transition-colors">{deal.name}</h4>
-            <p className="text-xs text-gray-600 mb-2 line-clamp-1">{deal.title}</p>
-          </div>
-          <div className="flex items-center space-x-1 ml-2">
-            <span 
-              className={`px-3 py-1 text-xs rounded-full font-medium shadow-sm ${DEAL_HEALTH_COLORS[deal.dealHealth as keyof typeof DEAL_HEALTH_COLORS]}`}
-              style={{
-                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.5)'
-              }}
-            >
-              {calculateDealHealth(deal).icon} {deal.dealHealth}
-            </span>
+            <div className="flex items-center space-x-2 mb-2">
+              <h4 className="font-semibold text-sm line-clamp-2 hover:text-blue-600 transition-colors flex-1">{deal.name}</h4>
+              <span 
+                className={`px-3 py-1 text-xs rounded-full font-medium shadow-sm flex-shrink-0 ${DEAL_HEALTH_COLORS[deal.dealHealth as keyof typeof DEAL_HEALTH_COLORS]}`}
+                style={{
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.5)'
+                }}
+              >
+                {calculateDealHealth(deal).icon} {deal.dealHealth}
+              </span>
+            </div>
+            <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">{deal.title}</p>
           </div>
         </div>
 
@@ -448,27 +449,79 @@ export default function SimpleAdvancedDealsModule() {
           </div>
         </div>
 
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center space-x-2">
-            <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-xs">
-              {deal.contact?.firstName?.[0]}{deal.contact?.lastName?.[0]}
+        <div className="space-y-3 mb-3">
+          {/* Account & Contact Info */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-xs">
+                {deal.contact?.firstName?.[0]}{deal.contact?.lastName?.[0]}
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs text-gray-600 line-clamp-1">
+                  {deal.contact?.firstName} {deal.contact?.lastName}
+                </span>
+                <span className="text-xs text-blue-600 font-medium line-clamp-1">
+                  {deal.account?.name}
+                </span>
+              </div>
             </div>
-            <span className="text-xs text-gray-600">
-              {deal.contact?.firstName} {deal.contact?.lastName}
-            </span>
+            <div className="flex items-center space-x-1">
+              <Star className={`w-3 h-3 ${deal.aiScore > 80 ? 'text-yellow-500 fill-current' : 'text-gray-300'}`} />
+              <span className="text-xs font-medium">{deal.aiScore}</span>
+            </div>
           </div>
-          <div className="flex items-center space-x-1">
-            <Star className={`w-3 h-3 ${deal.aiScore > 80 ? 'text-yellow-500 fill-current' : 'text-gray-300'}`} />
-            <span className="text-xs">{deal.aiScore}</span>
+
+          {/* Deal Type & Assigned To */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <span className="px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded-full font-medium">
+                {deal.dealType || 'Standard'}
+              </span>
+            </div>
+            <div className="flex items-center space-x-1 text-xs text-gray-600">
+              <UserPlus className="w-3 h-3" />
+              <span className="line-clamp-1">{deal.assignedTo || 'Unassigned'}</span>
+            </div>
+          </div>
+
+          {/* Last Activity */}
+          <div className="flex items-center justify-between text-xs text-gray-500">
+            <div className="flex items-center space-x-1">
+              <Calendar className="w-3 h-3" />
+              <span>Last: {new Date(deal.lastActivityDate).toLocaleDateString()}</span>
+            </div>
+            <div className="flex items-center space-x-1">
+              <span>Due: {new Date(deal.expectedCloseDate).toLocaleDateString()}</span>
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
-          <div className="flex items-center space-x-1">
-            <Calendar className="w-3 h-3" />
-            <span>{new Date(deal.expectedCloseDate).toLocaleDateString()}</span>
+        {/* Quick Actions Footer */}
+        <div className="flex items-center justify-between pt-2 border-t border-gray-100 mt-3">
+          <div className="flex items-center space-x-2">
+            <button 
+              className="p-1 hover:bg-gray-100 rounded text-gray-400 hover:text-blue-600 transition-colors"
+              title="Add Activity"
+              onClick={(e) => {
+                e.stopPropagation();
+                alert('Add Activity feature coming soon!');
+              }}
+            >
+              <Plus className="w-3 h-3" />
+            </button>
+            <button 
+              className="p-1 hover:bg-gray-100 rounded text-gray-400 hover:text-green-600 transition-colors"
+              title="Edit Deal"
+              onClick={(e) => {
+                e.stopPropagation();
+                alert('Edit Deal feature coming soon!');
+              }}
+            >
+              <Edit className="w-3 h-3" />
+            </button>
           </div>
-          <div className="text-blue-600 hover:text-blue-800 flex items-center space-x-1">
+          <div className="text-blue-600 hover:text-blue-800 flex items-center space-x-1 text-xs font-medium">
+            <span>View Details</span>
             <ArrowRight className="w-3 h-3" />
           </div>
         </div>
