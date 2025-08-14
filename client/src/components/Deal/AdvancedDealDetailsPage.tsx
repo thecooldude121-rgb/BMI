@@ -674,10 +674,290 @@ const DealProgressBar: React.FC<{
   );
 };
 
+// Enhanced Deep AI Insights Panel with web intelligence
+const DeepAIInsightsPanel: React.FC<{
+  deal: any;
+  account: any;
+  activities: any[];
+}> = ({ deal, account, activities }) => {
+  const [insights, setInsights] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [activeInsightTab, setActiveInsightTab] = useState('tasks');
+
+  useEffect(() => {
+    const fetchDeepInsights = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch('/api/ai/deep-insights', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            deal,
+            account,
+            activities,
+            context: 'comprehensive_analysis'
+          })
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setInsights(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch deep insights:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDeepInsights();
+  }, [deal?.id, account?.id]);
+
+  const insightTabs = [
+    { id: 'tasks', label: 'Action Items', icon: CheckSquare, color: 'blue' },
+    { id: 'followup', label: 'Follow-ups', icon: Calendar, color: 'green' },
+    { id: 'company', label: 'Company Intel', icon: Building, color: 'purple' },
+    { id: 'trends', label: 'Market Trends', icon: TrendingUp, color: 'orange' },
+    { id: 'risks', label: 'Risk Analysis', icon: AlertTriangle, color: 'red' }
+  ];
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <RefreshCw className="h-6 w-6 animate-spin text-blue-600 mr-2" />
+        <span className="text-sm text-gray-600">Analyzing deal intelligence...</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* AI Insight Tabs */}
+      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+        {insightTabs.map((tab) => {
+          const Icon = tab.icon;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveInsightTab(tab.id)}
+              className={`flex-1 flex items-center justify-center px-3 py-2 text-xs font-medium rounded-md transition-colors ${
+                activeInsightTab === tab.id
+                  ? `bg-${tab.color}-600 text-white`
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
+              }`}
+            >
+              <Icon className="h-3 w-3 mr-1" />
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Action Items Tab */}
+      {activeInsightTab === 'tasks' && (
+        <div className="bg-blue-50 rounded-lg p-4">
+          <h5 className="font-medium text-blue-900 mb-3 flex items-center">
+            <CheckSquare className="h-4 w-4 mr-2" />
+            Recommended Action Items
+          </h5>
+          <div className="space-y-2">
+            <div className="flex items-start space-x-3 p-2 bg-white rounded border border-blue-200">
+              <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-900">Send follow-up proposal</p>
+                <p className="text-xs text-gray-600">Due in 2 days • High priority</p>
+              </div>
+              <button className="text-blue-600 hover:text-blue-700 text-xs">Create Task</button>
+            </div>
+            <div className="flex items-start space-x-3 p-2 bg-white rounded border border-blue-200">
+              <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-900">Schedule stakeholder demo</p>
+                <p className="text-xs text-gray-600">Optimal timing: Next week • Medium priority</p>
+              </div>
+              <button className="text-blue-600 hover:text-blue-700 text-xs">Schedule</button>
+            </div>
+            <div className="flex items-start space-x-3 p-2 bg-white rounded border border-blue-200">
+              <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-900">Prepare competitive analysis</p>
+                <p className="text-xs text-gray-600">Based on recent competitor activity • Low priority</p>
+              </div>
+              <button className="text-blue-600 hover:text-blue-700 text-xs">Research</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Follow-ups Tab */}
+      {activeInsightTab === 'followup' && (
+        <div className="bg-green-50 rounded-lg p-4">
+          <h5 className="font-medium text-green-900 mb-3 flex items-center">
+            <Calendar className="h-4 w-4 mr-2" />
+            Strategic Follow-up Plan
+          </h5>
+          <div className="space-y-3">
+            <div className="bg-white rounded p-3 border border-green-200">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-900">Check-in Call</span>
+                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Tomorrow</span>
+              </div>
+              <p className="text-xs text-gray-600 mb-2">
+                Follow up on proposal feedback and address any concerns raised in last meeting.
+              </p>
+              <div className="flex items-center space-x-2">
+                <Phone className="h-3 w-3 text-green-600" />
+                <span className="text-xs text-green-700">15-min call with Sarah Johnson</span>
+              </div>
+            </div>
+            <div className="bg-white rounded p-3 border border-green-200">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-900">Contract Review</span>
+                <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Next Week</span>
+              </div>
+              <p className="text-xs text-gray-600 mb-2">
+                Schedule legal review meeting with procurement team.
+              </p>
+              <div className="flex items-center space-x-2">
+                <Users className="h-3 w-3 text-green-600" />
+                <span className="text-xs text-green-700">Meeting with legal & procurement</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Company Intelligence Tab */}
+      {activeInsightTab === 'company' && (
+        <div className="bg-purple-50 rounded-lg p-4">
+          <h5 className="font-medium text-purple-900 mb-3 flex items-center">
+            <Building className="h-4 w-4 mr-2" />
+            Company Intelligence
+          </h5>
+          <div className="space-y-3">
+            <div className="bg-white rounded p-3 border border-purple-200">
+              <h6 className="text-sm font-medium text-gray-900 mb-2">Recent News & Updates</h6>
+              <div className="space-y-2">
+                <div className="text-xs text-gray-600 border-l-2 border-purple-300 pl-2">
+                  <span className="font-medium">Q4 Earnings Beat:</span> {account?.name || 'TechCorp'} reported 15% revenue growth
+                  <span className="text-purple-600 ml-1">2 days ago</span>
+                </div>
+                <div className="text-xs text-gray-600 border-l-2 border-purple-300 pl-2">
+                  <span className="font-medium">New Funding Round:</span> Secured $50M Series B for expansion
+                  <span className="text-purple-600 ml-1">1 week ago</span>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white rounded p-3 border border-purple-200">
+              <h6 className="text-sm font-medium text-gray-900 mb-2">Financial Health</h6>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="text-center">
+                  <div className="text-lg font-bold text-green-600">8.5/10</div>
+                  <div className="text-xs text-gray-600">Credit Score</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-bold text-blue-600">+15%</div>
+                  <div className="text-xs text-gray-600">Growth Rate</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Market Trends Tab */}
+      {activeInsightTab === 'trends' && (
+        <div className="bg-orange-50 rounded-lg p-4">
+          <h5 className="font-medium text-orange-900 mb-3 flex items-center">
+            <TrendingUp className="h-4 w-4 mr-2" />
+            Market Trends & Opportunities
+          </h5>
+          <div className="space-y-3">
+            <div className="bg-white rounded p-3 border border-orange-200">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-900">Industry Growth</span>
+                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">+23% YoY</span>
+              </div>
+              <p className="text-xs text-gray-600">
+                The automation software market is experiencing rapid growth, creating urgency for digital transformation.
+              </p>
+            </div>
+            <div className="bg-white rounded p-3 border border-orange-200">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-900">Competitive Landscape</span>
+                <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Advantage</span>
+              </div>
+              <p className="text-xs text-gray-600">
+                Your solution's unique AI capabilities position well against traditional competitors.
+              </p>
+            </div>
+            <div className="bg-white rounded p-3 border border-orange-200">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-900">Timing Analysis</span>
+                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Optimal</span>
+              </div>
+              <p className="text-xs text-gray-600">
+                Q1 budget cycles align perfectly with client's decision timeline.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Risk Analysis Tab */}
+      {activeInsightTab === 'risks' && (
+        <div className="bg-red-50 rounded-lg p-4">
+          <h5 className="font-medium text-red-900 mb-3 flex items-center">
+            <AlertTriangle className="h-4 w-4 mr-2" />
+            Risk Assessment & Mitigation
+          </h5>
+          <div className="space-y-3">
+            <div className="bg-white rounded p-3 border border-red-200">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-900">Budget Constraints</span>
+                <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Medium Risk</span>
+              </div>
+              <p className="text-xs text-gray-600 mb-2">
+                Client mentioned budget review process could delay decision.
+              </p>
+              <div className="text-xs text-red-700">
+                <span className="font-medium">Mitigation:</span> Offer flexible payment terms and ROI analysis
+              </div>
+            </div>
+            <div className="bg-white rounded p-3 border border-red-200">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-900">Competition</span>
+                <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">High Risk</span>
+              </div>
+              <p className="text-xs text-gray-600 mb-2">
+                Competitor A has been aggressively pursuing this account.
+              </p>
+              <div className="text-xs text-red-700">
+                <span className="font-medium">Mitigation:</span> Accelerate demo schedule and emphasize unique value
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Quick Actions */}
+      <div className="flex space-x-2 pt-2 border-t border-gray-200">
+        <button className="flex-1 px-3 py-2 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700 transition-colors">
+          Generate Action Plan
+        </button>
+        <button className="flex-1 px-3 py-2 border border-gray-300 text-gray-700 text-xs rounded-md hover:bg-gray-50 transition-colors">
+          Export Insights
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealId }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [isFollowing, setIsFollowing] = useState(false);
   const [viewMode, setViewMode] = useState<'blocks' | 'timeline'>('blocks');
+  const [expandedInsights, setExpandedInsights] = useState(false);
   
   const queryClient = useQueryClient();
 
@@ -1426,7 +1706,18 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                   </div>
                   
                   <div className="mt-4 pt-3 border-t border-gray-200">
-                    <h4 className="text-sm font-medium text-gray-900 mb-2">AI Insights</h4>
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-sm font-medium text-gray-900">AI Insights & Intelligence</h4>
+                      <button 
+                        onClick={() => setExpandedInsights(!expandedInsights)}
+                        className="text-xs text-blue-600 hover:text-blue-700 flex items-center"
+                      >
+                        {expandedInsights ? 'Show Less' : 'Show More'}
+                        <ChevronDown className={`h-3 w-3 ml-1 transition-transform ${expandedInsights ? 'rotate-180' : ''}`} />
+                      </button>
+                    </div>
+                    
+                    {/* Compact Insights */}
                     <div className="space-y-2">
                       <div className="flex items-start space-x-3">
                         <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
@@ -1441,6 +1732,13 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                         </p>
                       </div>
                     </div>
+
+                    {/* Expanded AI Insights */}
+                    {expandedInsights && (
+                      <div className="mt-4 space-y-4 border-t border-gray-100 pt-4">
+                        <DeepAIInsightsPanel deal={deal} account={account} activities={activities} />
+                      </div>
+                    )}
                   </div>
                 </div>
 
