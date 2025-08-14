@@ -6,16 +6,9 @@ import { z } from "zod";
 import { aiInsightsService } from "./aiService";
 import { meetingIntelligenceService } from "./meetingIntelligence";
 import { aiGrowthService, AccountAnalysisData } from "./services/aiGrowthService";
+import { generateContextualInsights, type ContextualHelpRequest } from "./ai-insights";
 
-// Import HRMS schemas
-const { 
-  insertEmployeeSchema,
-  insertLeaveRequestSchema,
-  insertAttendanceSchema,
-  insertPerformanceReviewSchema,
-  insertTrainingProgramSchema,
-  insertTrainingEnrollmentSchema
-} = schema;
+// Note: HRMS schemas will be added when HRMS module is implemented
 
 // Helper function for error handling
 const handleError = (error: unknown, res: any) => {
@@ -3155,6 +3148,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(careerPath);
     } catch (error) {
       handleError(error, res);
+    }
+  });
+
+  // AI Contextual Help Endpoint
+  app.post("/api/ai/contextual-help", async (req, res) => {
+    try {
+      const helpRequest: ContextualHelpRequest = req.body;
+      
+      // Validate request structure
+      if (!helpRequest.context || !helpRequest.context.page || !helpRequest.context.section) {
+        return res.status(400).json({ 
+          error: "Invalid request: context with page and section are required" 
+        });
+      }
+
+      const insights = await generateContextualInsights(helpRequest);
+      res.json({ insights });
+    } catch (error) {
+      console.error('Error generating contextual insights:', error);
+      res.status(500).json({ 
+        error: "Failed to generate contextual insights",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
     }
   });
 
