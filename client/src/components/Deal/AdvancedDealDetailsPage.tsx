@@ -12,7 +12,8 @@ import {
   ExternalLink, Copy, Share2, Bell, BellOff, UserPlus, Settings,
   Maximize2, Minimize2, RefreshCw, BookOpen, Calculator, PieChart,
   BarChart3, LineChart, Camera, Video, Mic, AtSign, Hash, Link as LinkIcon,
-  Tag, MoreHorizontal, Timer, FolderPlus, FolderOpen, Trophy, Circle, Check
+  Tag, MoreHorizontal, Timer, FolderPlus, FolderOpen, Trophy, Circle, Check,
+  ArrowUpDown
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -713,11 +714,11 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
               <div>
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{deal.name}</h1>
                 <div className="flex items-center space-x-4 text-sm text-gray-600">
-                  <span>Deal #{deal.id.slice(0, 8)}</span>
+                  <span>Deal #{deal.id ? deal.id.slice(0, 8) : 'N/A'}</span>
                   <span>•</span>
                   <span>{account?.name}</span>
                   <span>•</span>
-                  <span className="capitalize">{deal.stage?.replace('-', ' ')}</span>
+                  <span className="capitalize">{deal.stage && typeof deal.stage === 'string' ? deal.stage.replace('-', ' ') : deal.stage || 'N/A'}</span>
                 </div>
               </div>
             </div>
@@ -848,7 +849,7 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                         <label className="text-sm font-medium text-gray-700">Deal Number</label>
                         <input
                           type="text"
-                          value={`Deal-${deal.id.slice(-4).toUpperCase()}`}
+                          value={`Deal-${deal.id ? deal.id.slice(-4).toUpperCase() : 'N/A'}`}
                           disabled
                           className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-gray-50"
                         />
