@@ -432,10 +432,6 @@ const ProspectDiscovery: React.FC = () => {
             <div className="flex items-center justify-between">
               {/* Right side - Actions */}
               <div className="flex items-center space-x-3">
-                <button className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg border border-gray-300">
-                  <Layers className="h-4 w-4 inline mr-2" />
-                  Programmatic
-                </button>
                 <button
                   onClick={() => setShowFilters(!showFilters)}
                   className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg border border-gray-300"
