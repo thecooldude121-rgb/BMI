@@ -17,6 +17,30 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 
+// Comprehensive list of countries for the searchable dropdown
+const COUNTRIES = [
+  'Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Antigua and Barbuda', 'Argentina', 'Armenia', 'Australia', 'Austria',
+  'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bhutan',
+  'Bolivia', 'Bosnia and Herzegovina', 'Botswana', 'Brazil', 'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cabo Verde', 'Cambodia',
+  'Cameroon', 'Canada', 'Central African Republic', 'Chad', 'Chile', 'China', 'Colombia', 'Comoros', 'Congo', 'Costa Rica',
+  'Croatia', 'Cuba', 'Cyprus', 'Czech Republic', 'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'Ecuador', 'Egypt',
+  'El Salvador', 'Equatorial Guinea', 'Eritrea', 'Estonia', 'Eswatini', 'Ethiopia', 'Fiji', 'Finland', 'France', 'Gabon',
+  'Gambia', 'Georgia', 'Germany', 'Ghana', 'Greece', 'Grenada', 'Guatemala', 'Guinea', 'Guinea-Bissau', 'Guyana',
+  'Haiti', 'Honduras', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran', 'Iraq', 'Ireland', 'Israel',
+  'Italy', 'Jamaica', 'Japan', 'Jordan', 'Kazakhstan', 'Kenya', 'Kiribati', 'Kuwait', 'Kyrgyzstan', 'Laos',
+  'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Madagascar', 'Malawi',
+  'Malaysia', 'Maldives', 'Mali', 'Malta', 'Marshall Islands', 'Mauritania', 'Mauritius', 'Mexico', 'Micronesia', 'Moldova',
+  'Monaco', 'Mongolia', 'Montenegro', 'Morocco', 'Mozambique', 'Myanmar', 'Namibia', 'Nauru', 'Nepal', 'Netherlands',
+  'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'North Korea', 'North Macedonia', 'Norway', 'Oman', 'Pakistan', 'Palau',
+  'Palestine', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Qatar', 'Romania',
+  'Russia', 'Rwanda', 'Saint Kitts and Nevis', 'Saint Lucia', 'Saint Vincent and the Grenadines', 'Samoa', 'San Marino', 'Sao Tome and Principe', 'Saudi Arabia', 'Senegal',
+  'Serbia', 'Seychelles', 'Sierra Leone', 'Singapore', 'Slovakia', 'Slovenia', 'Solomon Islands', 'Somalia', 'South Africa', 'South Korea',
+  'South Sudan', 'Spain', 'Sri Lanka', 'Sudan', 'Suriname', 'Sweden', 'Switzerland', 'Syria', 'Taiwan', 'Tajikistan',
+  'Tanzania', 'Thailand', 'Timor-Leste', 'Togo', 'Tonga', 'Trinidad and Tobago', 'Tunisia', 'Turkey', 'Turkmenistan', 'Tuvalu',
+  'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Vanuatu', 'Vatican City', 'Venezuela',
+  'Vietnam', 'Yemen', 'Zambia', 'Zimbabwe'
+];
+
 interface AdvancedDealDetailsPageProps {
   dealId: string;
 }
@@ -105,7 +129,7 @@ const AdvancedEditableField: React.FC<{
   label: string;
   value: any;
   field: string;
-  type?: 'text' | 'number' | 'email' | 'tel' | 'date' | 'textarea' | 'select' | 'currency';
+  type?: 'text' | 'number' | 'email' | 'tel' | 'date' | 'textarea' | 'select' | 'currency' | 'searchable-select';
   options?: Array<{ value: string; label: string }>;
   onSave: (field: string, value: any) => void;
   required?: boolean;
@@ -125,10 +149,30 @@ const AdvancedEditableField: React.FC<{
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(value);
   const [isValid, setIsValid] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     setEditValue(value);
-  }, [value]);
+    if (type === 'searchable-select' && value) {
+      setSearchTerm(value);
+    }
+  }, [value, type]);
+
+  // Handle clicks outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (showDropdown && !target.closest('.searchable-dropdown')) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showDropdown]);
 
   const validateField = (val: any) => {
     if (required && (!val || val.toString().trim() === '')) {
@@ -154,7 +198,16 @@ const AdvancedEditableField: React.FC<{
     setEditValue(value);
     setIsEditing(false);
     setIsValid(true);
+    setSearchTerm('');
+    setShowDropdown(false);
   };
+
+  // Filter options for searchable select
+  const filteredOptions = type === 'searchable-select' 
+    ? options.filter(option => 
+        option.label.toLowerCase().includes(searchTerm.toLowerCase())
+      ).slice(0, 10) // Limit to 10 results for performance
+    : options;
 
   const formatDisplayValue = () => {
     if (!value) return '-';
@@ -192,6 +245,49 @@ const AdvancedEditableField: React.FC<{
                 </option>
               ))}
             </select>
+          ) : type === 'searchable-select' ? (
+            <div className="relative flex-1 searchable-dropdown">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setShowDropdown(true);
+                }}
+                onFocus={() => {
+                  setShowDropdown(true);
+                  if (!searchTerm && editValue) {
+                    setSearchTerm(editValue);
+                  }
+                }}
+                placeholder={`Search ${label.toLowerCase()}...`}
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  isValid ? 'border-gray-300' : 'border-red-300'
+                }`}
+              />
+              {showDropdown && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-50 max-h-48 overflow-y-auto">
+                  {filteredOptions.length > 0 ? (
+                    filteredOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => {
+                          setEditValue(option.value);
+                          setSearchTerm(option.label);
+                          setShowDropdown(false);
+                        }}
+                        className="w-full px-3 py-2 text-left hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                      >
+                        {option.label}
+                      </button>
+                    ))
+                  ) : (
+                    <div className="px-3 py-2 text-gray-500">No countries found</div>
+                  )}
+                </div>
+              )}
+            </div>
           ) : type === 'textarea' ? (
             <textarea
               value={editValue || ''}
@@ -956,17 +1052,11 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                       />
                       
                       <AdvancedEditableField
-                        label="Social Lead ID"
-                        value={deal.socialLeadId || ''}
-                        field="socialLeadId"
-                        icon={<Globe className="h-4 w-4" />}
-                        onSave={handleFieldSave}
-                      />
-                      
-                      <AdvancedEditableField
                         label="Country of Origin"
                         value={account?.country || 'Morocco'}
                         field="countryOfOrigin"
+                        type="searchable-select"
+                        options={COUNTRIES.map(country => ({ value: country, label: country }))}
                         icon={<Globe className="h-4 w-4" />}
                         onSave={handleFieldSave}
                       />
