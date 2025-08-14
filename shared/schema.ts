@@ -1582,7 +1582,7 @@ export const widgetTemplates = pgTable("widget_templates", {
   version: text("version").default('1.0.0'),
   author: text("author"),
   tags: jsonb("tags").default('[]'),
-  rating: decimal("rating", { precision: 3, scale: 2 }).default('0.00'),
+  rating: text("rating").default('0.00'),
   installCount: integer("install_count").default(0),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow()
@@ -1624,6 +1624,8 @@ export const insertGamificationLeaderboardSchema = createInsertSchema(gamificati
 export const insertGamificationStreakSchema = createInsertSchema(gamificationStreaks);
 export const insertGamificationNotificationSchema = createInsertSchema(gamificationNotifications);
 
+
+
 // Types
 export type GamificationAction = typeof gamificationActions.$inferSelect;
 export type InsertGamificationAction = z.infer<typeof insertGamificationActionSchema>;
@@ -1660,6 +1662,8 @@ export type InsertGamificationStreak = z.infer<typeof insertGamificationStreakSc
 
 export type GamificationNotification = typeof gamificationNotifications.$inferSelect;
 export type InsertGamificationNotification = z.infer<typeof insertGamificationNotificationSchema>;
+
+
 
 // HRMS Module - Comprehensive AI-Powered Employee Lifecycle Management System
 
