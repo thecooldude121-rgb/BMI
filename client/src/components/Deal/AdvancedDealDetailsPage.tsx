@@ -833,9 +833,9 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                     Deal Summary
                   </h3>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                    {/* Left Column */}
-                    <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-5 gap-12">
+                    {/* Left Column - Takes 2 parts */}
+                    <div className="md:col-span-2 space-y-4">
                       <AdvancedEditableField
                         label="Deal Name"
                         value={deal.name}
@@ -917,8 +917,8 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                       />
                     </div>
                     
-                    {/* Right Column */}
-                    <div className="space-y-4">
+                    {/* Right Column - Takes rightmost 2 parts, offset by 1 for gap */}
+                    <div className="md:col-span-2 md:col-start-4 space-y-4">
                       <AdvancedEditableField
                         label="Closing Date"
                         value={deal.closeDate ? format(new Date(deal.closeDate), 'MMM dd, yyyy') : 'Aug 29, 2025'}
