@@ -957,7 +957,7 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
   const [activeTab, setActiveTab] = useState('overview');
   const [isFollowing, setIsFollowing] = useState(false);
   const [viewMode, setViewMode] = useState<'blocks' | 'timeline'>('blocks');
-  const [expandedInsights, setExpandedInsights] = useState(false);
+  const [expandedInsights, setExpandedInsights] = useState(true);
   
   const queryClient = useQueryClient();
 
