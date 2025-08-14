@@ -53,6 +53,14 @@ app.use((req, res, next) => {
     console.log("Gamification seeding error:", error.message);
   }
 
+  // Seed widget templates
+  try {
+    const { seedWidgetTemplates } = await import("./widget-template-seeder");
+    await seedWidgetTemplates();
+  } catch (error: any) {
+    console.log("Widget template seeding error:", error.message);
+  }
+
   // Skip meeting seeding temporarily
   // try {
   //   const { seedMeetingData } = await import("./meeting-seeder");

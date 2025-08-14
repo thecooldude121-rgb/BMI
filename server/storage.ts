@@ -238,6 +238,29 @@ export interface IStorage {
   createHRMSAnalytics(analytics: schema.InsertHrmsAnalytics): Promise<schema.HrmsAnalytics>;
   predictEmployeeRetention(employeeId: string): Promise<{ risk: number, factors: any[] }>;
   suggestCareerPath(employeeId: string): Promise<any>;
+
+  // Dashboard Widget System
+  getDashboardWidgets(userId: string): Promise<schema.DashboardWidget[]>;
+  getDashboardWidget(id: string): Promise<schema.DashboardWidget | undefined>;
+  createDashboardWidget(widget: schema.InsertDashboardWidget): Promise<schema.DashboardWidget>;
+  updateDashboardWidget(id: string, widget: Partial<schema.InsertDashboardWidget>): Promise<schema.DashboardWidget>;
+  deleteDashboardWidget(id: string): Promise<boolean>;
+  
+  getDashboardLayouts(userId: string): Promise<schema.DashboardLayout[]>;
+  getDashboardLayout(id: string): Promise<schema.DashboardLayout | undefined>;
+  createDashboardLayout(layout: schema.InsertDashboardLayout): Promise<schema.DashboardLayout>;
+  updateDashboardLayout(id: string, layout: Partial<schema.InsertDashboardLayout>): Promise<schema.DashboardLayout>;
+  deleteDashboardLayout(id: string): Promise<boolean>;
+  
+  getWidgetTemplates(): Promise<schema.WidgetTemplate[]>;
+  getWidgetTemplate(id: string): Promise<schema.WidgetTemplate | undefined>;
+  createWidgetTemplate(template: schema.InsertWidgetTemplate): Promise<schema.WidgetTemplate>;
+  updateWidgetTemplate(id: string, template: Partial<schema.InsertWidgetTemplate>): Promise<schema.WidgetTemplate>;
+  
+  getWidgetData(widgetId: string): Promise<schema.WidgetData[]>;
+  createWidgetData(data: schema.InsertWidgetData): Promise<schema.WidgetData>;
+  updateWidgetData(id: string, data: Partial<schema.InsertWidgetData>): Promise<schema.WidgetData>;
+  deleteWidgetData(id: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -2448,6 +2471,111 @@ Respond with only valid JSON in this format:
         'Seek cross-functional project opportunities'
       ]
     };
+  }
+
+  // Dashboard Widget System Implementation
+  async getDashboardWidgets(userId: string): Promise<schema.DashboardWidget[]> {
+    return await db.select().from(schema.dashboardWidgets)
+      .where(eq(schema.dashboardWidgets.userId, userId))
+      .orderBy(desc(schema.dashboardWidgets.createdAt));
+  }
+
+  async getDashboardWidget(id: string): Promise<schema.DashboardWidget | undefined> {
+    const widgets = await db.select().from(schema.dashboardWidgets)
+      .where(eq(schema.dashboardWidgets.id, id));
+    return widgets[0];
+  }
+
+  async createDashboardWidget(widget: schema.InsertDashboardWidget): Promise<schema.DashboardWidget> {
+    const widgets = await db.insert(schema.dashboardWidgets).values(widget).returning();
+    return widgets[0];
+  }
+
+  async updateDashboardWidget(id: string, widget: Partial<schema.InsertDashboardWidget>): Promise<schema.DashboardWidget> {
+    const widgets = await db.update(schema.dashboardWidgets).set(widget)
+      .where(eq(schema.dashboardWidgets.id, id)).returning();
+    return widgets[0];
+  }
+
+  async deleteDashboardWidget(id: string): Promise<boolean> {
+    const result = await db.delete(schema.dashboardWidgets)
+      .where(eq(schema.dashboardWidgets.id, id));
+    return result.rowCount > 0;
+  }
+  
+  async getDashboardLayouts(userId: string): Promise<schema.DashboardLayout[]> {
+    return await db.select().from(schema.dashboardLayouts)
+      .where(eq(schema.dashboardLayouts.userId, userId))
+      .orderBy(desc(schema.dashboardLayouts.createdAt));
+  }
+
+  async getDashboardLayout(id: string): Promise<schema.DashboardLayout | undefined> {
+    const layouts = await db.select().from(schema.dashboardLayouts)
+      .where(eq(schema.dashboardLayouts.id, id));
+    return layouts[0];
+  }
+
+  async createDashboardLayout(layout: schema.InsertDashboardLayout): Promise<schema.DashboardLayout> {
+    const layouts = await db.insert(schema.dashboardLayouts).values(layout).returning();
+    return layouts[0];
+  }
+
+  async updateDashboardLayout(id: string, layout: Partial<schema.InsertDashboardLayout>): Promise<schema.DashboardLayout> {
+    const layouts = await db.update(schema.dashboardLayouts).set(layout)
+      .where(eq(schema.dashboardLayouts.id, id)).returning();
+    return layouts[0];
+  }
+
+  async deleteDashboardLayout(id: string): Promise<boolean> {
+    const result = await db.delete(schema.dashboardLayouts)
+      .where(eq(schema.dashboardLayouts.id, id));
+    return result.rowCount > 0;
+  }
+  
+  async getWidgetTemplates(): Promise<schema.WidgetTemplate[]> {
+    return await db.select().from(schema.widgetTemplates)
+      .where(eq(schema.widgetTemplates.isActive, true))
+      .orderBy(desc(schema.widgetTemplates.installCount));
+  }
+
+  async getWidgetTemplate(id: string): Promise<schema.WidgetTemplate | undefined> {
+    const templates = await db.select().from(schema.widgetTemplates)
+      .where(eq(schema.widgetTemplates.id, id));
+    return templates[0];
+  }
+
+  async createWidgetTemplate(template: schema.InsertWidgetTemplate): Promise<schema.WidgetTemplate> {
+    const templates = await db.insert(schema.widgetTemplates).values(template).returning();
+    return templates[0];
+  }
+
+  async updateWidgetTemplate(id: string, template: Partial<schema.InsertWidgetTemplate>): Promise<schema.WidgetTemplate> {
+    const templates = await db.update(schema.widgetTemplates).set(template)
+      .where(eq(schema.widgetTemplates.id, id)).returning();
+    return templates[0];
+  }
+  
+  async getWidgetData(widgetId: string): Promise<schema.WidgetData[]> {
+    return await db.select().from(schema.widgetData)
+      .where(eq(schema.widgetData.widgetId, widgetId))
+      .orderBy(desc(schema.widgetData.createdAt));
+  }
+
+  async createWidgetData(data: schema.InsertWidgetData): Promise<schema.WidgetData> {
+    const widgetData = await db.insert(schema.widgetData).values(data).returning();
+    return widgetData[0];
+  }
+
+  async updateWidgetData(id: string, data: Partial<schema.InsertWidgetData>): Promise<schema.WidgetData> {
+    const widgetData = await db.update(schema.widgetData).set(data)
+      .where(eq(schema.widgetData.id, id)).returning();
+    return widgetData[0];
+  }
+
+  async deleteWidgetData(id: string): Promise<boolean> {
+    const result = await db.delete(schema.widgetData)
+      .where(eq(schema.widgetData.id, id));
+    return result.rowCount > 0;
   }
 }
 
