@@ -261,6 +261,53 @@ export interface IStorage {
   createWidgetData(data: schema.InsertWidgetData): Promise<schema.WidgetData>;
   updateWidgetData(id: string, data: Partial<schema.InsertWidgetData>): Promise<schema.WidgetData>;
   deleteWidgetData(id: string): Promise<boolean>;
+
+  // AI Lead Generation methods
+  getProspectingCampaigns(): Promise<schema.ProspectingCampaign[]>;
+  getProspectingCampaign(id: string): Promise<schema.ProspectingCampaign | undefined>;
+  createProspectingCampaign(campaign: schema.InsertProspectingCampaign): Promise<schema.ProspectingCampaign>;
+  updateProspectingCampaign(id: string, campaign: Partial<schema.InsertProspectingCampaign>): Promise<schema.ProspectingCampaign>;
+  deleteProspectingCampaign(id: string): Promise<boolean>;
+
+  getEnrichedLeads(): Promise<schema.EnrichedLead[]>;
+  getEnrichedLead(id: string): Promise<schema.EnrichedLead | undefined>;
+  getEnrichedLeadsByCampaign(campaignId: string): Promise<schema.EnrichedLead[]>;
+  createEnrichedLead(lead: schema.InsertEnrichedLead): Promise<schema.EnrichedLead>;
+  updateEnrichedLead(id: string, lead: Partial<schema.InsertEnrichedLead>): Promise<schema.EnrichedLead>;
+  deleteEnrichedLead(id: string): Promise<boolean>;
+
+  getIntentSignals(leadId?: string): Promise<schema.IntentSignal[]>;
+  createIntentSignal(signal: schema.InsertIntentSignal): Promise<schema.IntentSignal>;
+  updateIntentSignal(id: string, signal: Partial<schema.InsertIntentSignal>): Promise<schema.IntentSignal>;
+
+  getEngagementTracking(leadId: string): Promise<schema.EngagementTracking[]>;
+  createEngagementTracking(tracking: schema.InsertEngagementTracking): Promise<schema.EngagementTracking>;
+
+  getLeadScoringModels(): Promise<schema.LeadScoringModel[]>;
+  getLeadScoringModel(id: string): Promise<schema.LeadScoringModel | undefined>;
+  createLeadScoringModel(model: schema.InsertLeadScoringModel): Promise<schema.LeadScoringModel>;
+  updateLeadScoringModel(id: string, model: Partial<schema.InsertLeadScoringModel>): Promise<schema.LeadScoringModel>;
+
+  getEngagementSequences(): Promise<schema.EngagementSequence[]>;
+  getEngagementSequence(id: string): Promise<schema.EngagementSequence | undefined>;
+  createEngagementSequence(sequence: schema.InsertEngagementSequence): Promise<schema.EngagementSequence>;
+  updateEngagementSequence(id: string, sequence: Partial<schema.InsertEngagementSequence>): Promise<schema.EngagementSequence>;
+
+  getSequenceExecutions(sequenceId?: string, leadId?: string): Promise<schema.SequenceExecution[]>;
+  createSequenceExecution(execution: any): Promise<schema.SequenceExecution>;
+  updateSequenceExecution(id: string, execution: any): Promise<schema.SequenceExecution>;
+
+  getAbTestCampaigns(): Promise<schema.AbTestCampaign[]>;
+  getAbTestCampaign(id: string): Promise<schema.AbTestCampaign | undefined>;
+  createAbTestCampaign(campaign: schema.InsertAbTestCampaign): Promise<schema.AbTestCampaign>;
+  updateAbTestCampaign(id: string, campaign: Partial<schema.InsertAbTestCampaign>): Promise<schema.AbTestCampaign>;
+
+  getPersonalizedContent(leadId: string): Promise<schema.PersonalizedContent[]>;
+  createPersonalizedContent(content: schema.InsertPersonalizedContent): Promise<schema.PersonalizedContent>;
+
+  getComplianceTracking(leadId: string): Promise<schema.ComplianceTracking[]>;
+  createComplianceTracking(tracking: schema.InsertComplianceTracking): Promise<schema.ComplianceTracking>;
+  updateComplianceTracking(id: string, tracking: Partial<schema.InsertComplianceTracking>): Promise<schema.ComplianceTracking>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -2576,6 +2623,244 @@ Respond with only valid JSON in this format:
     const result = await db.delete(schema.widgetData)
       .where(eq(schema.widgetData.id, id));
     return result.rowCount > 0;
+  }
+
+  // ===============================
+  // AI LEAD GENERATION METHODS
+  // ===============================
+
+  // Prospecting Campaign methods
+  async getProspectingCampaigns(): Promise<schema.ProspectingCampaign[]> {
+    return await db.select().from(schema.prospectingCampaigns)
+      .where(eq(schema.prospectingCampaigns.isActive, true))
+      .orderBy(desc(schema.prospectingCampaigns.createdAt));
+  }
+
+  async getProspectingCampaign(id: string): Promise<schema.ProspectingCampaign | undefined> {
+    const campaigns = await db.select().from(schema.prospectingCampaigns)
+      .where(eq(schema.prospectingCampaigns.id, id));
+    return campaigns[0];
+  }
+
+  async createProspectingCampaign(campaign: schema.InsertProspectingCampaign): Promise<schema.ProspectingCampaign> {
+    const campaigns = await db.insert(schema.prospectingCampaigns).values(campaign).returning();
+    return campaigns[0];
+  }
+
+  async updateProspectingCampaign(id: string, campaign: Partial<schema.InsertProspectingCampaign>): Promise<schema.ProspectingCampaign> {
+    const campaigns = await db.update(schema.prospectingCampaigns).set(campaign)
+      .where(eq(schema.prospectingCampaigns.id, id)).returning();
+    return campaigns[0];
+  }
+
+  async deleteProspectingCampaign(id: string): Promise<boolean> {
+    const result = await db.delete(schema.prospectingCampaigns)
+      .where(eq(schema.prospectingCampaigns.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  // Enriched Lead methods
+  async getEnrichedLeads(): Promise<schema.EnrichedLead[]> {
+    return await db.select().from(schema.enrichedLeads)
+      .where(eq(schema.enrichedLeads.isActive, true))
+      .orderBy(desc(schema.enrichedLeads.leadScore), desc(schema.enrichedLeads.createdAt));
+  }
+
+  async getEnrichedLead(id: string): Promise<schema.EnrichedLead | undefined> {
+    const leads = await db.select().from(schema.enrichedLeads)
+      .where(eq(schema.enrichedLeads.id, id));
+    return leads[0];
+  }
+
+  async getEnrichedLeadsByCampaign(campaignId: string): Promise<schema.EnrichedLead[]> {
+    return await db.select().from(schema.enrichedLeads)
+      .where(and(
+        eq(schema.enrichedLeads.campaignId, campaignId),
+        eq(schema.enrichedLeads.isActive, true)
+      ))
+      .orderBy(desc(schema.enrichedLeads.leadScore));
+  }
+
+  async createEnrichedLead(lead: schema.InsertEnrichedLead): Promise<schema.EnrichedLead> {
+    const leads = await db.insert(schema.enrichedLeads).values(lead).returning();
+    return leads[0];
+  }
+
+  async updateEnrichedLead(id: string, lead: Partial<schema.InsertEnrichedLead>): Promise<schema.EnrichedLead> {
+    const leads = await db.update(schema.enrichedLeads).set(lead)
+      .where(eq(schema.enrichedLeads.id, id)).returning();
+    return leads[0];
+  }
+
+  async deleteEnrichedLead(id: string): Promise<boolean> {
+    const result = await db.delete(schema.enrichedLeads)
+      .where(eq(schema.enrichedLeads.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  // Intent Signal methods
+  async getIntentSignals(leadId?: string): Promise<schema.IntentSignal[]> {
+    let query = db.select().from(schema.intentSignals)
+      .where(eq(schema.intentSignals.isActive, true));
+      
+    if (leadId) {
+      query = query.where(eq(schema.intentSignals.leadId, leadId));
+    }
+    
+    return await query.orderBy(desc(schema.intentSignals.confidence), desc(schema.intentSignals.detectedAt));
+  }
+
+  async createIntentSignal(signal: schema.InsertIntentSignal): Promise<schema.IntentSignal> {
+    const signals = await db.insert(schema.intentSignals).values(signal).returning();
+    return signals[0];
+  }
+
+  async updateIntentSignal(id: string, signal: Partial<schema.InsertIntentSignal>): Promise<schema.IntentSignal> {
+    const signals = await db.update(schema.intentSignals).set(signal)
+      .where(eq(schema.intentSignals.id, id)).returning();
+    return signals[0];
+  }
+
+  // Engagement Tracking methods
+  async getEngagementTracking(leadId: string): Promise<schema.EngagementTracking[]> {
+    return await db.select().from(schema.engagementTracking)
+      .where(eq(schema.engagementTracking.leadId, leadId))
+      .orderBy(desc(schema.engagementTracking.timestamp));
+  }
+
+  async createEngagementTracking(tracking: schema.InsertEngagementTracking): Promise<schema.EngagementTracking> {
+    const trackings = await db.insert(schema.engagementTracking).values(tracking).returning();
+    return trackings[0];
+  }
+
+  // Lead Scoring Model methods
+  async getLeadScoringModels(): Promise<schema.LeadScoringModel[]> {
+    return await db.select().from(schema.leadScoringModels)
+      .where(eq(schema.leadScoringModels.isActive, true))
+      .orderBy(desc(schema.leadScoringModels.createdAt));
+  }
+
+  async getLeadScoringModel(id: string): Promise<schema.LeadScoringModel | undefined> {
+    const models = await db.select().from(schema.leadScoringModels)
+      .where(eq(schema.leadScoringModels.id, id));
+    return models[0];
+  }
+
+  async createLeadScoringModel(model: schema.InsertLeadScoringModel): Promise<schema.LeadScoringModel> {
+    const models = await db.insert(schema.leadScoringModels).values(model).returning();
+    return models[0];
+  }
+
+  async updateLeadScoringModel(id: string, model: Partial<schema.InsertLeadScoringModel>): Promise<schema.LeadScoringModel> {
+    const models = await db.update(schema.leadScoringModels).set(model)
+      .where(eq(schema.leadScoringModels.id, id)).returning();
+    return models[0];
+  }
+
+  // Engagement Sequence methods
+  async getEngagementSequences(): Promise<schema.EngagementSequence[]> {
+    return await db.select().from(schema.engagementSequences)
+      .where(eq(schema.engagementSequences.isActive, true))
+      .orderBy(desc(schema.engagementSequences.createdAt));
+  }
+
+  async getEngagementSequence(id: string): Promise<schema.EngagementSequence | undefined> {
+    const sequences = await db.select().from(schema.engagementSequences)
+      .where(eq(schema.engagementSequences.id, id));
+    return sequences[0];
+  }
+
+  async createEngagementSequence(sequence: schema.InsertEngagementSequence): Promise<schema.EngagementSequence> {
+    const sequences = await db.insert(schema.engagementSequences).values(sequence).returning();
+    return sequences[0];
+  }
+
+  async updateEngagementSequence(id: string, sequence: Partial<schema.InsertEngagementSequence>): Promise<schema.EngagementSequence> {
+    const sequences = await db.update(schema.engagementSequences).set(sequence)
+      .where(eq(schema.engagementSequences.id, id)).returning();
+    return sequences[0];
+  }
+
+  // Sequence Execution methods
+  async getSequenceExecutions(sequenceId?: string, leadId?: string): Promise<schema.SequenceExecution[]> {
+    let query = db.select().from(schema.sequenceExecutions);
+    
+    if (sequenceId && leadId) {
+      query = query.where(and(
+        eq(schema.sequenceExecutions.sequenceId, sequenceId),
+        eq(schema.sequenceExecutions.leadId, leadId)
+      ));
+    } else if (sequenceId) {
+      query = query.where(eq(schema.sequenceExecutions.sequenceId, sequenceId));
+    } else if (leadId) {
+      query = query.where(eq(schema.sequenceExecutions.leadId, leadId));
+    }
+    
+    return await query.orderBy(desc(schema.sequenceExecutions.startedAt));
+  }
+
+  async createSequenceExecution(execution: any): Promise<schema.SequenceExecution> {
+    const executions = await db.insert(schema.sequenceExecutions).values(execution).returning();
+    return executions[0];
+  }
+
+  async updateSequenceExecution(id: string, execution: any): Promise<schema.SequenceExecution> {
+    const executions = await db.update(schema.sequenceExecutions).set(execution)
+      .where(eq(schema.sequenceExecutions.id, id)).returning();
+    return executions[0];
+  }
+
+  // A/B Test Campaign methods
+  async getAbTestCampaigns(): Promise<schema.AbTestCampaign[]> {
+    return await db.select().from(schema.abTestCampaigns)
+      .orderBy(desc(schema.abTestCampaigns.createdAt));
+  }
+
+  async getAbTestCampaign(id: string): Promise<schema.AbTestCampaign | undefined> {
+    const campaigns = await db.select().from(schema.abTestCampaigns)
+      .where(eq(schema.abTestCampaigns.id, id));
+    return campaigns[0];
+  }
+
+  async createAbTestCampaign(campaign: schema.InsertAbTestCampaign): Promise<schema.AbTestCampaign> {
+    const campaigns = await db.insert(schema.abTestCampaigns).values(campaign).returning();
+    return campaigns[0];
+  }
+
+  async updateAbTestCampaign(id: string, campaign: Partial<schema.InsertAbTestCampaign>): Promise<schema.AbTestCampaign> {
+    const campaigns = await db.update(schema.abTestCampaigns).set(campaign)
+      .where(eq(schema.abTestCampaigns.id, id)).returning();
+    return campaigns[0];
+  }
+
+  // Personalized Content methods
+  async getPersonalizedContent(leadId: string): Promise<schema.PersonalizedContent[]> {
+    return await db.select().from(schema.personalizedContent)
+      .where(eq(schema.personalizedContent.leadId, leadId))
+      .orderBy(desc(schema.personalizedContent.createdAt));
+  }
+
+  async createPersonalizedContent(content: schema.InsertPersonalizedContent): Promise<schema.PersonalizedContent> {
+    const contents = await db.insert(schema.personalizedContent).values(content).returning();
+    return contents[0];
+  }
+
+  // Compliance Tracking methods
+  async getComplianceTracking(leadId: string): Promise<schema.ComplianceTracking[]> {
+    return await db.select().from(schema.complianceTracking)
+      .where(eq(schema.complianceTracking.leadId, leadId))
+      .orderBy(desc(schema.complianceTracking.updatedAt));
+  }
+
+  async createComplianceTracking(tracking: schema.InsertComplianceTracking): Promise<schema.ComplianceTracking> {
+    const trackings = await db.insert(schema.complianceTracking).values(tracking).returning();
+    return trackings[0];
+  }
+
+  async updateComplianceTracking(id: string, tracking: Partial<schema.InsertComplianceTracking>): Promise<schema.ComplianceTracking> {
+    const trackings = await db.update(schema.complianceTracking).set(tracking)
+      .where(eq(schema.complianceTracking.id, id)).returning();
+    return trackings[0];
   }
 }
 

@@ -1,0 +1,44 @@
+You are an expert AI product developer working on an advanced AI lead generation platform, fully integrated with a CRM module (BMI platform). The goal is to build a system that is superior to existing market leaders such as Apollo.io, Hunter.io, and ZoomInfo.
+
+Design and develop the following modules and features:
+
+1. **Core Architecture**
+   - Data Aggregation Engine: Multisource crawling (web, business databases, social, proprietary).
+   - AI Lead Intelligence: Machine learning for lead scoring, segmentation, enrichment.
+   - CRM Integration Layer: Real-time data sync with CRM.
+
+2. **Lead Generation**
+   - AI Prospecting: NLP/predictive analytics for high-value persona/business identification.
+   - Contact Discovery: Automated search for verified emails, phone, social profiles.
+   - Account Enrichment: Append company data (revenue, tech stack, decision-makers, etc.).
+   - Intent Scoring: Analyze digital signals for prioritization.
+
+3. **Data Enrichment & Validation**
+   - Automated data cleansing, live verification, dynamic data refresh.
+
+4. **AI-Powered Insights**
+   - Lead scoring algorithms (fit, intent, likelihood to close).
+   - Persona matching and opportunity prediction.
+
+5. **Engagement Automation**
+   - Personalized campaign builder: Auto-generate outreach scripts.
+   - Omnichannel sequencing (email, LinkedIn, SMS, calls).
+   - A/B testing engine.
+
+6. **CRM Integration**
+   - 1-Click sync to CRM, lead-to-deal workflow tracking, custom field mapping.
+
+7. **Reporting & Analytics**
+   - Insight dashboards, pipeline analytics, exportable reports and API endpoints.
+
+8. **Compliance & Security**
+   - Built-in GDPR/CCPA tools, user permissions, audit trails, and auto-purge compliance features.
+
+9. **Differentiation**
+   - Next-gen AI (deep learning for prospecting and scoring).
+   - Real-time bi-directional CRM sync.
+   - Modular analytics drill down.
+   - Privacy by design.
+
+Proceed to build core modules in iterative MVP fashion, prioritizing end-to-end lead lifecycle management and deep CRM integration. Output wireframes, code samples, or component designs for each module as needed.
+
