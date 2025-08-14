@@ -430,37 +430,6 @@ const ProspectDiscovery: React.FC = () => {
         <div className="bg-white border-b border-gray-200">
           <div className="px-6 py-4">
             <div className="flex items-center justify-between">
-              {/* Left side - Title and Tabs */}
-              <div className="flex items-center space-x-8">
-                <div className="flex items-center space-x-4">
-                  <h1 className="text-xl font-semibold text-gray-900">People</h1>
-                  <span className="text-gray-500">({totalCount.toLocaleString()})</span>
-                </div>
-
-                {/* Tabs */}
-                <div className="flex space-x-6">
-                  <button
-                    onClick={() => setActiveTab('total')}
-                    className={`pb-3 border-b-2 ${activeTab === 'total' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600'}`}
-                  >
-                    Total
-                    <span className="ml-2 text-sm">924</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('netNew')}
-                    className={`pb-3 border-b-2 ${activeTab === 'netNew' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600'}`}
-                  >
-                    Net New
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('saved')}
-                    className={`pb-3 border-b-2 ${activeTab === 'saved' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600'}`}
-                  >
-                    Saved
-                  </button>
-                </div>
-              </div>
-
               {/* Right side - Actions */}
               <div className="flex items-center space-x-3">
                 <button className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg border border-gray-300">
