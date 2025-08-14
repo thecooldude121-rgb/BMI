@@ -471,16 +471,12 @@ export default function SimpleAdvancedDealsModule() {
             </div>
           </div>
 
-          {/* Deal Type & Assigned To */}
+          {/* Deal Type */}
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <span className="px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded-full font-medium">
                 {deal.dealType || 'Standard'}
               </span>
-            </div>
-            <div className="flex items-center space-x-1 text-xs text-gray-600">
-              <UserPlus className="w-3 h-3" />
-              <span className="line-clamp-1">{deal.assignedTo || 'Unassigned'}</span>
             </div>
           </div>
 
