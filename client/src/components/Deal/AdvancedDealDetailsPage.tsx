@@ -245,20 +245,22 @@ const AdvancedEditableField: React.FC<{
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </label>
-      <div className="flex items-center justify-between group">
-        <span className="text-gray-900 flex-1">
-          {formatDisplayValue()}
-        </span>
-        <button
+      <div className="relative group">
+        <div
           onClick={() => setIsEditing(true)}
-          className="opacity-0 group-hover:opacity-100 ml-2 p-1 text-gray-400 hover:text-blue-600 transition-all"
-          title={`Edit ${label}`}
+          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-white cursor-pointer hover:border-blue-400 hover:shadow-sm transition-all duration-200 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500"
+          title={`Click to edit ${label}`}
         >
-          <Edit2 className="h-4 w-4" />
-        </button>
+          <div className="flex items-center justify-between">
+            <span className="text-gray-900 flex-1 min-h-[1.25rem]">
+              {formatDisplayValue()}
+            </span>
+            <Edit2 className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+        </div>
       </div>
       {helpText && (
-        <p className="text-gray-500 text-xs">{helpText}</p>
+        <p className="text-gray-500 text-xs mt-1">{helpText}</p>
       )}
     </div>
   );
