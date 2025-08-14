@@ -386,14 +386,49 @@ export default function SimpleAdvancedDealsModule() {
   );
 
   const renderKanbanView = () => (
-    <div className="grid grid-cols-6 gap-4 h-full">
-      {dealColumns.map((column) => (
-        <div 
-          key={column.id} 
-          className="bg-gray-50 rounded-lg p-3"
-          onDragOver={handleDragOver}
-          onDrop={(e) => handleDrop(e, column.id)}
-        >
+    <div className="overflow-x-auto pb-4" style={{
+      scrollbarWidth: 'thin',
+      scrollbarColor: '#cbd5e1 transparent'
+    }}>
+      <style>{`
+        .kanban-container::-webkit-scrollbar {
+          height: 8px;
+        }
+        .kanban-container::-webkit-scrollbar-track {
+          background: rgba(0, 0, 0, 0.05);
+          border-radius: 10px;
+        }
+        .kanban-container::-webkit-scrollbar-thumb {
+          background: rgba(0, 0, 0, 0.2);
+          border-radius: 10px;
+        }
+        .kanban-container::-webkit-scrollbar-thumb:hover {
+          background: rgba(0, 0, 0, 0.3);
+        }
+        .stage-scroll::-webkit-scrollbar {
+          width: 6px;
+        }
+        .stage-scroll::-webkit-scrollbar-track {
+          background: rgba(0, 0, 0, 0.03);
+          border-radius: 8px;
+        }
+        .stage-scroll::-webkit-scrollbar-thumb {
+          background: rgba(0, 0, 0, 0.15);
+          border-radius: 8px;
+        }
+        .stage-scroll::-webkit-scrollbar-thumb:hover {
+          background: rgba(0, 0, 0, 0.25);
+        }
+      `}</style>
+      <div className="flex gap-6 h-full min-w-max kanban-container">
+        {dealColumns.map((column) => (
+          <div 
+            key={column.id} 
+            className="bg-gray-50 rounded-lg p-4 flex-shrink-0 w-80"
+            onDragOver={handleDragOver}
+            onDrop={(e) => handleDrop(e, column.id)}
+            style={{ minWidth: '320px' }}
+          >
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
               <div className={`w-3 h-3 rounded-full ${column.color}`} />
@@ -407,11 +442,12 @@ export default function SimpleAdvancedDealsModule() {
             </button>
           </div>
 
-          <div className="min-h-[200px]">
-            {column.deals.map((deal: Deal) => renderDealCard(deal))}
+            <div className="min-h-[600px] max-h-[600px] overflow-y-auto stage-scroll">
+              {column.deals.map((deal: Deal) => renderDealCard(deal))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 
