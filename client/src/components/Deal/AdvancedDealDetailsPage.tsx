@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'wouter';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowLeft, Edit2, Save, X, Plus, Mail, Phone, Globe, Building,
   Calendar, DollarSign, User, Target, Clock, FileText, Paperclip,
@@ -17,6 +18,18 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ContextualHelpBubble, DealStageHelp, FieldHelp } from '../AI/ContextualHelpSystem';
+import { 
+  AnimatedCard, 
+  AnimatedButton, 
+  AnimatedTabContent, 
+  StaggeredContainer, 
+  AnimatedListItem,
+  fadeInUp,
+  scaleIn,
+  staggerContainer,
+  staggerItem,
+  tabTransition
+} from './AnimatedDealComponents';
 
 // Comprehensive list of countries for the searchable dropdown
 const COUNTRIES = [
@@ -1079,16 +1092,30 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <motion.div 
+      className="min-h-screen bg-gray-50"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
       {/* Sticky Header */}
-      <div className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+      <motion.div 
+        className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm"
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center space-x-4">
               <Link href="/crm/deals">
-                <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                <motion.button 
+                  className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
                   <ArrowLeft className="h-5 w-5" />
-                </button>
+                </motion.button>
               </Link>
               <div>
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{deal.name}</h1>
@@ -1139,7 +1166,7 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Main Content with Sidebar */}
       <div className="w-full px-0 py-0">
@@ -1148,25 +1175,26 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
           <div className="w-64 flex-shrink-0">
             <div className="bg-white shadow-sm border-r border-gray-200 p-4 sticky top-0 h-screen overflow-y-auto">
               <h3 className="text-sm font-semibold text-gray-900 mb-4">Deal Functions</h3>
-              <nav className="space-y-2">
+              <StaggeredContainer className="space-y-2">
                 {[
                   { id: 'overview', label: 'Overview & Summary', icon: Eye, description: 'Deal details and progress' },
                   { id: 'activities', label: 'Activities', icon: Activity, description: 'Tasks, calls, emails' },
                   { id: 'communication', label: 'Communication', icon: MessageSquare, description: 'Messages and notes' },
                   { id: 'files', label: 'Files & Documents', icon: FileText, description: 'Attachments and contracts' },
                   { id: 'analytics', label: 'Analytics & Reports', icon: BarChart3, description: 'Performance insights' }
-                ].map((tab) => {
+                ].map((tab, index) => {
                   const Icon = tab.icon;
                   return (
-                    <button
+                    <AnimatedListItem
                       key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`w-full flex items-start space-x-3 px-3 py-3 rounded-lg text-left transition-all duration-200 ${
+                      className={`w-full flex items-start space-x-3 px-3 py-3 rounded-lg text-left transition-all duration-200 cursor-pointer ${
                         activeTab === tab.id
                           ? 'bg-blue-50 border border-blue-200 text-blue-700'
                           : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                       }`}
+                      index={index}
                     >
+                      <div onClick={() => setActiveTab(tab.id)} className="w-full flex items-start space-x-3">
                       <Icon className={`h-5 w-5 mt-0.5 flex-shrink-0 ${
                         activeTab === tab.id ? 'text-blue-600' : 'text-gray-400'
                       }`} />
@@ -1179,18 +1207,21 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                         <p className="text-xs text-gray-500 mt-0.5">
                           {tab.description}
                         </p>
+                        </div>
                       </div>
-                    </button>
+                    </AnimatedListItem>
                   );
                 })}
-              </nav>
+              </StaggeredContainer>
             </div>
           </div>
 
           {/* Main Content Area */}
           <div className="flex-1 min-w-0 px-4 py-4">
+            <div>
             {activeTab === 'overview' && (
-              <div className="space-y-4">
+              <AnimatedTabContent tabKey="overview" isActive={true}>
+                <div className="space-y-4">
                 {/* Deal Progress Bar with AI Help */}
                 <div className="relative">
                   <div className="absolute top-2 right-2 z-20">
@@ -1214,7 +1245,10 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
               {/* Left Column - 2/3 width */}
               <div className="lg:col-span-2 space-y-0">
                 {/* Deal Summary Block */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <AnimatedCard 
+                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+                  hoverable={true}
+                >
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                       <Briefcase className="h-5 w-5 mr-2 text-blue-600" />
@@ -1444,10 +1478,10 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
 
                   
                   {/* Account & Contact Name (moved to main grid) - handled in main deal summary above */}
-                </div>
+                </AnimatedCard>
 
                 {/* Deal Classification Block */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <AnimatedCard className="bg-white rounded-lg shadow-sm border border-gray-200 p-6" hoverable={true}>
                   <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
                     <Tag className="h-5 w-5 mr-2 text-purple-600" />
                     Deal Classification
@@ -1543,10 +1577,10 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                       </button>
                     </div>
                   </div>
-                </div>
+                </AnimatedCard>
 
                 {/* Financials Block */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <AnimatedCard className="bg-white rounded-lg shadow-sm border border-gray-200 p-6" hoverable={true}>
                   <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
                     <Calculator className="h-5 w-5 mr-2 text-green-600" />
                     Financials & Line Items
@@ -1640,7 +1674,7 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                       Add Line Item
                     </button>
                   </div>
-                </div>
+                </AnimatedCard>
               </div>
 
               {/* Right Column - 1/3 width */}
@@ -2520,11 +2554,69 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
               </div>
             </div>
           </div>
-        )}
+        </AnimatedTabContent>
+      )}
+            
+      {activeTab === 'activities' && (
+        <AnimatedTabContent tabKey="activities" isActive={true}>
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                <Activity className="h-5 w-5 mr-2 text-blue-600" />
+                Activities Tab Content
+              </h3>
+              <p>Activities content will be implemented here...</p>
+            </div>
+          </div>
+        </AnimatedTabContent>
+      )}
+      
+      {activeTab === 'communication' && (
+        <AnimatedTabContent tabKey="communication" isActive={true}>
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                <MessageSquare className="h-5 w-5 mr-2 text-green-600" />
+                Communication Tab Content
+              </h3>
+              <p>Communication content will be implemented here...</p>
+            </div>
+          </div>
+        </AnimatedTabContent>
+      )}
+      
+      {activeTab === 'files' && (
+        <AnimatedTabContent tabKey="files" isActive={true}>
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                <FileText className="h-5 w-5 mr-2 text-purple-600" />
+                Files & Documents Tab Content
+              </h3>
+              <p>Files content will be implemented here...</p>
+            </div>
+          </div>
+        </AnimatedTabContent>
+      )}
+      
+      {activeTab === 'analytics' && (
+        <AnimatedTabContent tabKey="analytics" isActive={true}>
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                <BarChart3 className="h-5 w-5 mr-2 text-orange-600" />
+                Analytics & Reports Tab Content
+              </h3>
+              <p>Analytics content will be implemented here...</p>
+            </div>
+          </div>
+        </AnimatedTabContent>
+      )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

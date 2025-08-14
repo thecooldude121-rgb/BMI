@@ -15,7 +15,7 @@ The platform is built with a modern full-stack architecture:
 - **Database**: PostgreSQL (Neon) with Drizzle ORM, featuring a comprehensive schema with proper relations, UUID-based primary keys, and server-side operations only.
 - **Frontend**: React with TypeScript, TanStack Query, and Tailwind CSS, featuring a collapsible sidebar navigation and responsive design.
 - **Authentication**: JWT-based authentication system.
-- **UI/UX**: Emphasis on a modern enterprise design with features like glassmorphism effects, animated backgrounds, 3D cards, particle effects, and subtle page transition animations using Framer Motion. UI components are primarily standard HTML with Tailwind CSS. Layouts are optimized for compact presentation with minimal spacing.
+- **UI/UX**: Emphasis on a modern enterprise design with features like glassmorphism effects, animated backgrounds, 3D cards, particle effects, and comprehensive animated micro-interactions using Framer Motion. Enhanced with smooth tab transitions, staggered sidebar animations, card hover effects, and button interactions. UI components are primarily standard HTML with Tailwind CSS. Layouts are optimized for compact presentation with minimal spacing.
 - **Core Modules**:
     - **HRMS**: Standalone module with dedicated routing and navigation, including employee management, attendance tracking, and performance reviews.
     - **CRM**: Comprehensive module featuring advanced Leads, Accounts, Contacts, Deals, and Activities management. Includes multi-view modes (Kanban, Tile, List), AI-powered fuzzy search, advanced filtering, and analytics dashboards.
