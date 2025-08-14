@@ -301,7 +301,12 @@ export default function SimpleAdvancedDealsModule() {
       key={deal.id}
       draggable
       onDragStart={(e) => handleDragStart(e, deal.id)}
-      className="bg-white border rounded-lg p-4 mb-3 cursor-move hover:shadow-md transition-shadow relative"
+      className="bg-white border border-gray-200 rounded-xl p-4 mb-3 cursor-move relative transform transition-all duration-200 hover:scale-[1.02] hover:shadow-xl shadow-md"
+      style={{
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+        background: 'linear-gradient(145deg, #ffffff 0%, #fafafa 100%)',
+        border: '1px solid rgba(0, 0, 0, 0.08)'
+      }}
     >
       {/* Multi-select checkbox */}
       <div className="absolute top-2 left-2 z-10">
@@ -327,23 +332,34 @@ export default function SimpleAdvancedDealsModule() {
       >
         <div className="flex items-start justify-between mb-2">
           <div className="flex-1">
-            <h4 className="font-semibold text-sm mb-1 line-clamp-2 hover:text-blue-600">{deal.name}</h4>
+            <h4 className="font-semibold text-sm mb-1 line-clamp-2 hover:text-blue-600 transition-colors">{deal.name}</h4>
             <p className="text-xs text-gray-600 mb-2 line-clamp-1">{deal.title}</p>
           </div>
           <div className="flex items-center space-x-1 ml-2">
-            <span className={`px-2 py-1 text-xs rounded-full ${DEAL_HEALTH_COLORS[deal.dealHealth as keyof typeof DEAL_HEALTH_COLORS]}`}>
+            <span 
+              className={`px-3 py-1 text-xs rounded-full font-medium shadow-sm ${DEAL_HEALTH_COLORS[deal.dealHealth as keyof typeof DEAL_HEALTH_COLORS]}`}
+              style={{
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.5)'
+              }}
+            >
               {calculateDealHealth(deal).icon} {deal.dealHealth}
             </span>
           </div>
         </div>
 
         <div className="flex items-center justify-between mb-3">
-          <div className="text-lg font-bold text-green-600">
+          <div 
+            className="text-lg font-bold text-green-600 px-2 py-1 rounded-lg"
+            style={{
+              background: 'linear-gradient(145deg, rgba(34, 197, 94, 0.08) 0%, rgba(34, 197, 94, 0.04) 100%)',
+              boxShadow: 'inset 0 1px 2px rgba(34, 197, 94, 0.1)'
+            }}
+          >
             ${parseInt(deal.value).toLocaleString()}
           </div>
-          <div className="flex items-center space-x-1">
-            <TrendingUp className="w-3 h-3" />
-            <span className="text-xs">{deal.probability}%</span>
+          <div className="flex items-center space-x-1 px-2 py-1 rounded-lg bg-blue-50">
+            <TrendingUp className="w-3 h-3 text-blue-600" />
+            <span className="text-xs font-medium text-blue-700">{deal.probability}%</span>
           </div>
         </div>
 
@@ -373,10 +389,20 @@ export default function SimpleAdvancedDealsModule() {
         </div>
 
         <div className="mt-2">
-          <div className="w-full bg-gray-200 rounded-full h-1">
+          <div 
+            className="w-full bg-gray-200 rounded-full h-2 overflow-hidden"
+            style={{
+              background: 'linear-gradient(145deg, #e5e7eb 0%, #d1d5db 100%)',
+              boxShadow: 'inset 0 1px 3px rgba(0, 0, 0, 0.1)'
+            }}
+          >
             <div 
-              className="bg-blue-500 h-1 rounded-full" 
-              style={{ width: `${deal.probability}%` }}
+              className="h-2 rounded-full transition-all duration-300"
+              style={{ 
+                width: `${deal.probability}%`,
+                background: 'linear-gradient(145deg, #3b82f6 0%, #1d4ed8 100%)',
+                boxShadow: '0 1px 2px rgba(59, 130, 246, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
+              }}
             ></div>
           </div>
         </div>
@@ -424,10 +450,15 @@ export default function SimpleAdvancedDealsModule() {
         {dealColumns.map((column) => (
           <div 
             key={column.id} 
-            className="bg-gray-50 rounded-lg p-4 flex-shrink-0 w-80"
+            className="bg-gray-50 rounded-xl p-4 flex-shrink-0 w-80"
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, column.id)}
-            style={{ minWidth: '320px' }}
+            style={{ 
+              minWidth: '320px',
+              background: 'linear-gradient(145deg, #f8fafc 0%, #f1f5f9 100%)',
+              boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06)',
+              border: '1px solid rgba(0, 0, 0, 0.05)'
+            }}
           >
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
