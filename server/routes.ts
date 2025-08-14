@@ -3189,6 +3189,86 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Prospect Discovery Routes (Apollo-like interface)
+  app.get("/api/lead-generation/prospects", async (req, res) => {
+    try {
+      const { tab, search, filters, sort, page = 1, limit = 25 } = req.query;
+      
+      // Get enriched leads from database
+      const allLeads = await storage.getEnrichedLeads();
+      
+      // Transform to ProspectData format
+      const prospects = allLeads.map(lead => ({
+        id: lead.id,
+        name: lead.name,
+        firstName: lead.firstName || lead.name?.split(' ')[0],
+        lastName: lead.lastName || lead.name?.split(' ')[1],
+        jobTitle: lead.title,
+        company: lead.company,
+        companyLogo: lead.companyLogo || '🏢',
+        location: lead.location || 'Unknown',
+        email: lead.email,
+        emailVerified: lead.emailVerified,
+        phone: lead.phone,
+        phoneVerified: lead.phoneVerified,
+        linkedinUrl: lead.socialProfiles?.linkedin,
+        department: lead.department,
+        seniority: lead.seniority,
+        companySize: lead.companyIntel?.size || 'Unknown',
+        industry: lead.companyIntel?.industry,
+        revenue: lead.companyIntel?.revenue,
+        technologies: lead.companyIntel?.techStack || [],
+        lastActivity: lead.lastEngagedAt,
+        leadScore: parseFloat(lead.leadScore),
+        saved: lead.saved || false,
+        optedOut: lead.optedOut || false,
+        lists: lead.lists || [],
+        persona: lead.personaMatch,
+        emailStatus: lead.emailVerified ? 'verified' : 'unverified'
+      }));
+
+      // Apply filters
+      let filteredProspects = prospects;
+      
+      if (search) {
+        const searchLower = search.toString().toLowerCase();
+        filteredProspects = filteredProspects.filter(p => 
+          p.name.toLowerCase().includes(searchLower) ||
+          p.company.toLowerCase().includes(searchLower) ||
+          p.jobTitle.toLowerCase().includes(searchLower) ||
+          p.email.toLowerCase().includes(searchLower)
+        );
+      }
+
+      if (tab === 'saved') {
+        filteredProspects = filteredProspects.filter(p => p.saved);
+      } else if (tab === 'netNew') {
+        filteredProspects = filteredProspects.filter(p => !p.saved);
+      }
+
+      // Apply sorting
+      if (sort === 'recent') {
+        filteredProspects.sort((a, b) => new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime());
+      } else if (sort === 'score') {
+        filteredProspects.sort((a, b) => b.leadScore - a.leadScore);
+      }
+
+      // Apply pagination
+      const startIndex = (parseInt(page.toString()) - 1) * parseInt(limit.toString());
+      const endIndex = startIndex + parseInt(limit.toString());
+      const paginatedProspects = filteredProspects.slice(startIndex, endIndex);
+
+      res.json({
+        prospects: paginatedProspects,
+        total: filteredProspects.length,
+        page: parseInt(page.toString()),
+        limit: parseInt(limit.toString())
+      });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
   // Create new prospecting campaign
   app.post("/api/lead-generation/campaigns", async (req, res) => {
     try {
