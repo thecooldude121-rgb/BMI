@@ -13,8 +13,9 @@ import {
   ExternalLink, Copy, Share2, Bell, BellOff, UserPlus, Settings,
   Maximize2, Minimize2, RefreshCw, BookOpen, Calculator, PieChart,
   BarChart3, LineChart, Camera, Video, Mic, AtSign, Hash, Link as LinkIcon,
-  Tag, MoreHorizontal, Timer, FolderPlus, FolderOpen, Trophy, Circle, Check,
-  ArrowUpDown, HelpCircle
+  Tag, MoreHorizontal, Timer, FolderPlus, FolderOpen, Trophy, Check, Circle,
+  ArrowUpDown, HelpCircle, UserCheck, FileCheck, Handshake, CheckCheck,
+  XCircle
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ContextualHelpBubble, DealStageHelp, FieldHelp } from '../AI/ContextualHelpSystem';
@@ -60,6 +61,34 @@ interface AdvancedDealDetailsPageProps {
 }
 
 // Enhanced Deal interface with all required fields
+// Helper function to render stage icon
+const renderStageIcon = (stageId: string, className: string) => {
+  switch (stageId) {
+    case 'qualification':
+      return <UserCheck className={className} />;
+    case 'proposal':
+      return <FileCheck className={className} />;
+    case 'negotiation':
+      return <Handshake className={className} />;
+    case 'closed-won':
+      return <Trophy className={className} />;
+    case 'closed-lost':
+      return <XCircle className={className} />;
+    case 'prospecting':
+      return <Target className={className} />;
+    case 'demo':
+      return <Eye className={className} />;
+    case 'decision':
+      return <CheckSquare className={className} />;
+    case 'contract':
+      return <FileText className={className} />;
+    case 'implementation':
+      return <Settings className={className} />;
+    default:
+      return <Target className={className} />;
+  }
+};
+
 interface AdvancedDeal {
   id: string;
   dealNumber: string;
@@ -620,10 +649,10 @@ const DealProgressBar: React.FC<{
                     </div>
                   )}
                   
-                  {/* Stage Number for Incomplete */}
+                  {/* Stage Icon for Incomplete */}
                   {!isCompleted && !isActive && (
                     <div className="absolute inset-0 rounded-full flex items-center justify-center">
-                      <span className="text-sm font-semibold">{index + 1}</span>
+                      {renderStageIcon(stage.id, "h-5 w-5 text-gray-400")}
                     </div>
                   )}
                 </div>
