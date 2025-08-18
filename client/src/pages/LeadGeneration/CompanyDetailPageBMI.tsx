@@ -471,12 +471,8 @@ const CompanyDetailPageBMI: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Right Sidebar - Tasks, Notes, and Company Insights */}
-        <div className="flex-1 bg-gray-900 min-h-screen overflow-y-auto p-4 space-y-4">
-
-          {/* Tasks Widget - Full Size with Internal Scroll */}
+          {/* Tasks Widget */}
           <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
             <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
               <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
@@ -533,7 +529,7 @@ const CompanyDetailPageBMI: React.FC = () => {
             </div>
           </div>
 
-          {/* Notes Widget - Full Size with Internal Scroll */}
+          {/* Notes Widget */}
           <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
             <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
               <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
@@ -568,6 +564,10 @@ const CompanyDetailPageBMI: React.FC = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Right Sidebar - Company Insights */}
+        <div className="flex-1 bg-gray-900 min-h-screen overflow-y-auto p-4 space-y-4">
 
           
         </div>
