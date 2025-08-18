@@ -27,7 +27,8 @@ import {
   Search,
   Download,
   Share,
-  Shield
+  Shield,
+  CheckCircle
 } from 'lucide-react';
 import { Link } from 'wouter';
 import { companies, CompanyData as SharedCompanyData } from '../../data/companies';
@@ -473,7 +474,162 @@ const CompanyDetailPageBMI: React.FC = () => {
 
         {/* Main Content Area - Full Width */}
         <div className="flex-1 p-3">
-          
+          {/* Key Prospects Widget */}
+          <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
+            <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
+              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Users className="h-5 w-5 text-blue-400" />
+                    <h2 className="text-lg font-semibold text-white">Key Prospects</h2>
+                    <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">Live Data</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <span className="text-xs text-gray-400">23 contacts found</span>
+                    <Settings className="h-4 w-4 text-gray-400 cursor-pointer hover:text-blue-400 transition-colors" />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl p-4">
+                {/* Prospects List */}
+                <div className="space-y-3">
+                  {[
+                    {
+                      name: "Sarah Mitchell",
+                      title: "Chief Investment Officer",
+                      department: "Investment Management",
+                      source: "LinkedIn Premium",
+                      email: "s.mitchell@vgipartners.com",
+                      phone: "+61 2 8267 8000",
+                      connection: "2nd degree",
+                      lastActivity: "2 hours ago",
+                      verified: true
+                    },
+                    {
+                      name: "David Chen",
+                      title: "Senior Portfolio Manager",
+                      department: "Equities Division",
+                      source: "Company Database",
+                      email: "d.chen@vgipartners.com",
+                      phone: "+61 2 8267 8015",
+                      connection: "Direct contact",
+                      lastActivity: "1 day ago",
+                      verified: true
+                    },
+                    {
+                      name: "Emma Rodriguez",
+                      title: "ESG Investment Specialist",
+                      department: "Sustainable Investing",
+                      source: "LinkedIn Sales Navigator",
+                      email: "e.rodriguez@vgipartners.com",
+                      phone: "+61 2 8267 8023",
+                      connection: "3rd degree",
+                      lastActivity: "3 days ago",
+                      verified: false
+                    },
+                    {
+                      name: "Michael Thompson",
+                      title: "Head of Research",
+                      department: "Investment Research",
+                      source: "Company Database",
+                      email: "m.thompson@vgipartners.com",
+                      phone: "+61 2 8267 8045",
+                      connection: "Direct contact",
+                      lastActivity: "5 days ago",
+                      verified: true
+                    },
+                    {
+                      name: "Jennifer Wong",
+                      title: "Quantitative Analyst",
+                      department: "Research & Analytics",
+                      source: "LinkedIn Premium",
+                      email: "j.wong@vgipartners.com",
+                      phone: "+61 2 8267 8067",
+                      connection: "2nd degree",
+                      lastActivity: "1 week ago",
+                      verified: true
+                    }
+                  ].map((contact, index) => (
+                    <div key={index} className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600 hover:border-gray-500 transition-colors">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start space-x-3 flex-1">
+                          {/* Avatar */}
+                          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white font-medium text-sm">
+                            {contact.name.split(' ').map(n => n[0]).join('')}
+                          </div>
+                          
+                          {/* Contact Info */}
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2 mb-1">
+                              <h3 className="text-white font-medium text-sm">{contact.name}</h3>
+                              {contact.verified && (
+                                <CheckCircle className="h-3 w-3 text-green-400" />
+                              )}
+                              <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                contact.source.includes('LinkedIn') 
+                                  ? 'bg-blue-600 text-blue-100' 
+                                  : 'bg-green-600 text-green-100'
+                              }`}>
+                                {contact.source}
+                              </span>
+                            </div>
+                            
+                            <div className="text-gray-300 text-sm mb-1">{contact.title}</div>
+                            <div className="text-gray-400 text-xs mb-2">{contact.department}</div>
+                            
+                            <div className="flex items-center space-x-4 text-xs text-gray-400">
+                              <div className="flex items-center space-x-1">
+                                <Mail className="h-3 w-3" />
+                                <span>{contact.email}</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <Phone className="h-3 w-3" />
+                                <span>{contact.phone}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Actions & Status */}
+                        <div className="flex flex-col items-end space-y-2">
+                          <div className="flex items-center space-x-2">
+                            <button className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded transition-colors">
+                              Contact
+                            </button>
+                            <button className="bg-gray-600 hover:bg-gray-700 text-white text-xs px-3 py-1 rounded transition-colors">
+                              View
+                            </button>
+                          </div>
+                          
+                          <div className="text-xs text-gray-400 text-right">
+                            <div>{contact.connection}</div>
+                            <div>Active {contact.lastActivity}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Pagination */}
+                <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-600">
+                  <div className="text-sm text-gray-400">
+                    Showing 1-5 of 23 contacts
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <button className="bg-gray-600 hover:bg-gray-700 text-white text-sm px-3 py-1 rounded transition-colors disabled:opacity-50" disabled>
+                      Previous
+                    </button>
+                    <span className="text-sm text-gray-300">Page 1 of 5</span>
+                    <button className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 rounded transition-colors">
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* Company Insights Widget */}
           <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
