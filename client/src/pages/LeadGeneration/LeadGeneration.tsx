@@ -31,13 +31,13 @@ const LeadGeneration: React.FC = () => {
           <div className="mb-4">
             <button
               onClick={() => setEnrichDataExpanded(!enrichDataExpanded)}
-              className="flex items-center justify-between w-full text-left p-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
+              className="flex items-center justify-between w-full text-left p-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg btn-hover"
             >
               <span>Enrich & data</span>
               {enrichDataExpanded ? (
-                <ChevronDown className="w-4 h-4" />
+                <ChevronDown className="w-4 h-4 icon-hover" />
               ) : (
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className="w-4 h-4 icon-hover" />
               )}
             </button>
             
@@ -45,25 +45,25 @@ const LeadGeneration: React.FC = () => {
               <div className="ml-4 mt-2 space-y-1">
                 <button
                   onClick={() => setActiveSection('people')}
-                  className={`flex items-center space-x-3 w-full text-left p-2 text-sm rounded-lg transition-colors ${
+                  className={`flex items-center space-x-3 w-full text-left p-2 text-sm rounded-lg btn-hover ${
                     activeSection === 'people'
                       ? 'bg-blue-50 text-blue-700 border border-blue-200'
                       : 'text-gray-600 hover:bg-gray-50'
                   }`}
                 >
-                  <Users className="w-4 h-4" />
+                  <Users className="w-4 h-4 icon-hover" />
                   <span>People</span>
                 </button>
                 
                 <button
                   onClick={() => setActiveSection('companies')}
-                  className={`flex items-center space-x-3 w-full text-left p-2 text-sm rounded-lg transition-colors ${
+                  className={`flex items-center space-x-3 w-full text-left p-2 text-sm rounded-lg btn-hover ${
                     activeSection === 'companies'
                       ? 'bg-blue-50 text-blue-700 border border-blue-200'
                       : 'text-gray-600 hover:bg-gray-50'
                   }`}
                 >
-                  <Building2 className="w-4 h-4" />
+                  <Building2 className="w-4 h-4 icon-hover" />
                   <span>Companies</span>
                 </button>
               </div>
