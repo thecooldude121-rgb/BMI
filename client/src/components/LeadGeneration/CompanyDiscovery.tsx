@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Search, Filter, Building2, Globe, Users, MapPin, DollarSign,
   TrendingUp, Calendar, BarChart3, Star, Bookmark, MoreVertical,
   ExternalLink, Download, Settings, Layers, Database, RefreshCw,
-  Tag, BookmarkCheck, X, Zap
+  Tag, BookmarkCheck, X, Zap, Eye, EyeOff, Columns, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { SiLinkedin } from 'react-icons/si';
 
@@ -28,10 +28,50 @@ interface CompanyData {
   saved?: boolean;
 }
 
+interface TableColumn {
+  key: string;
+  label: string;
+  width: string;
+  visible: boolean;
+  sortable: boolean;
+}
+
 const CompanyDiscovery: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'relevance' | 'recent' | 'employees' | 'revenue'>('relevance');
   const [showFilters, setShowFilters] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(25);
+  const [showColumnManager, setShowColumnManager] = useState(false);
+  const columnManagerRef = useRef<HTMLDivElement>(null);
+
+  // Close column manager when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (columnManagerRef.current && !columnManagerRef.current.contains(event.target as Node)) {
+        setShowColumnManager(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+  
+  // Define table columns
+  const [columns, setColumns] = useState<TableColumn[]>([
+    { key: 'name', label: 'Company Name', width: 'col-span-3', visible: true, sortable: true },
+    { key: 'links', label: 'Links', width: 'col-span-2', visible: true, sortable: false },
+    { key: 'employees', label: 'Employees', width: 'col-span-1', visible: true, sortable: true },
+    { key: 'industry', label: 'Industry', width: 'col-span-2', visible: true, sortable: true },
+    { key: 'keywords', label: 'Keywords', width: 'col-span-2', visible: true, sortable: false },
+    { key: 'revenue', label: 'Revenue', width: 'col-span-1', visible: true, sortable: true },
+    { key: 'location', label: 'Location', width: 'col-span-2', visible: false, sortable: true },
+    { key: 'founded', label: 'Founded', width: 'col-span-1', visible: false, sortable: true },
+    { key: 'funding', label: 'Funding', width: 'col-span-2', visible: false, sortable: true },
+    { key: 'actions', label: 'Actions', width: 'col-span-1', visible: true, sortable: false }
+  ]);
 
   // Mock company data with comprehensive information
   const companies: CompanyData[] = [
@@ -124,10 +164,67 @@ const CompanyDiscovery: React.FC = () => {
       keywords: ['FinTech', 'Payments', 'Lending', 'Digital Banking', 'Blockchain'],
       funding: 'Pre-seed - $1.5M',
       saved: true
-    }
+    },
+    // Add more companies for demonstration
+    {
+      id: 'comp-6',
+      name: 'TechCorp Solutions',
+      logo: '⚡',
+      domain: 'techcorp.com',
+      website: 'https://techcorp.com',
+      linkedinUrl: 'https://linkedin.com/company/techcorp-solutions',
+      industry: 'Software Development',
+      location: 'Chicago, IL',
+      employeeCount: '301-500',
+      revenue: '$15M-$25M',
+      founded: 2016,
+      description: 'Custom software development and consulting',
+      technologies: ['React', 'Python', 'AWS', 'Docker'],
+      keywords: ['Software', 'Consulting', 'Custom Development', 'Agile'],
+      funding: 'Bootstrap',
+      saved: false
+    },
+    // Adding more entries to demonstrate pagination
+    ...Array.from({ length: 20 }, (_, i) => ({
+      id: `comp-${i + 7}`,
+      name: `Company ${i + 7}`,
+      logo: '🏢',
+      domain: `company${i + 7}.com`,
+      website: `https://company${i + 7}.com`,
+      linkedinUrl: `https://linkedin.com/company/company-${i + 7}`,
+      industry: ['Technology', 'Healthcare', 'Finance', 'Manufacturing', 'Retail'][i % 5],
+      location: ['San Francisco, CA', 'New York, NY', 'Austin, TX', 'Seattle, WA', 'Boston, MA'][i % 5],
+      employeeCount: ['1-50', '51-200', '201-500', '501-1000', '1001-5000'][i % 5],
+      revenue: ['$1M-$5M', '$5M-$10M', '$10M-$25M', '$25M-$50M', '$50M-$100M'][i % 5],
+      founded: 2010 + (i % 10),
+      description: `Sample company description for Company ${i + 7}`,
+      technologies: [['React', 'Node.js'], ['Python', 'Django'], ['Java', 'Spring'], ['Vue', 'Express'], ['Angular', 'Rails']][i % 5],
+      keywords: [['Tech', 'Innovation'], ['Health', 'Medical'], ['Finance', 'Banking'], ['Manufacturing', 'Industrial'], ['Retail', 'E-commerce']][i % 5],
+      funding: ['Seed', 'Series A', 'Series B', 'Series C', 'Bootstrap'][i % 5],
+      saved: i % 3 === 0
+    }))
   ];
 
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
+
+  // Filter and paginate companies
+  const filteredCompanies = useMemo(() => {
+    return companies.filter(company => 
+      company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      company.industry.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      company.keywords.some(keyword => keyword.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+  }, [companies, searchQuery]);
+
+  const paginatedCompanies = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredCompanies.slice(startIndex, endIndex);
+  }, [filteredCompanies, currentPage, itemsPerPage]);
+
+  const totalPages = Math.ceil(filteredCompanies.length / itemsPerPage);
+
+  const visibleColumns = useMemo(() => columns.filter(col => col.visible), [columns]);
 
   const toggleCompanySelection = (id: string) => {
     setSelectedCompanies(prev => 
@@ -136,15 +233,148 @@ const CompanyDiscovery: React.FC = () => {
   };
 
   const selectAllCompanies = () => {
-    if (selectedCompanies.length === companies.length) {
+    if (selectedCompanies.length === paginatedCompanies.length) {
       setSelectedCompanies([]);
     } else {
-      setSelectedCompanies(companies.map(company => company.id));
+      setSelectedCompanies(paginatedCompanies.map(company => company.id));
     }
   };
 
   const saveCompany = (id: string) => {
     console.log("Company saved:", id);
+  };
+
+  const toggleColumnVisibility = (columnKey: string) => {
+    setColumns(prev => prev.map(col => 
+      col.key === columnKey ? { ...col, visible: !col.visible } : col
+    ));
+  };
+
+  const renderColumnContent = (column: TableColumn, company: CompanyData) => {
+    switch (column.key) {
+      case 'name':
+        return (
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center text-lg">
+              {company.logo}
+            </div>
+            <div>
+              <div className="text-sm font-medium text-gray-900">{company.name}</div>
+              <div className="text-xs text-gray-500">{company.domain}</div>
+            </div>
+          </div>
+        );
+      
+      case 'links':
+        return (
+          <div className="flex items-center space-x-2">
+            <a
+              href={company.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center px-2 py-1 text-xs bg-blue-50 text-blue-700 rounded hover:bg-blue-100"
+            >
+              <Globe className="h-3 w-3 mr-1" />
+              Website
+            </a>
+            <a
+              href={company.linkedinUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center px-2 py-1 text-xs bg-blue-50 text-blue-700 rounded hover:bg-blue-100"
+            >
+              <SiLinkedin className="h-3 w-3 mr-1" />
+              LinkedIn
+            </a>
+          </div>
+        );
+      
+      case 'employees':
+        return (
+          <div className="flex items-center">
+            <Users className="h-3 w-3 mr-1 text-gray-400" />
+            <span className="text-sm text-gray-900">{company.employeeCount}</span>
+          </div>
+        );
+      
+      case 'industry':
+        return (
+          <div className="flex items-center">
+            <Building2 className="h-3 w-3 mr-1 text-gray-400" />
+            <span className="text-sm text-gray-900">{company.industry}</span>
+          </div>
+        );
+      
+      case 'keywords':
+        return (
+          <div className="flex flex-wrap gap-1">
+            {company.keywords.slice(0, 2).map((keyword, index) => (
+              <span
+                key={index}
+                className="inline-flex items-center px-2 py-0.5 text-xs bg-gray-100 text-gray-800 rounded"
+              >
+                <Tag className="h-2 w-2 mr-1" />
+                {keyword}
+              </span>
+            ))}
+            {company.keywords.length > 2 && (
+              <span className="text-xs text-gray-500">
+                +{company.keywords.length - 2} more
+              </span>
+            )}
+          </div>
+        );
+      
+      case 'revenue':
+        return (
+          <div className="flex items-center">
+            <DollarSign className="h-3 w-3 mr-1 text-gray-400" />
+            <span className="text-sm text-gray-900">{company.revenue}</span>
+          </div>
+        );
+      
+      case 'location':
+        return (
+          <div className="flex items-center">
+            <MapPin className="h-3 w-3 mr-1 text-gray-400" />
+            <span className="text-sm text-gray-900">{company.location}</span>
+          </div>
+        );
+      
+      case 'founded':
+        return (
+          <div className="flex items-center">
+            <Calendar className="h-3 w-3 mr-1 text-gray-400" />
+            <span className="text-sm text-gray-900">{company.founded}</span>
+          </div>
+        );
+      
+      case 'funding':
+        return (
+          <div className="flex items-center">
+            <TrendingUp className="h-3 w-3 mr-1 text-gray-400" />
+            <span className="text-sm text-gray-900">{company.funding}</span>
+          </div>
+        );
+      
+      case 'actions':
+        return (
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => saveCompany(company.id)}
+              className="p-1 text-gray-400 hover:text-gray-600"
+            >
+              {company.saved ? <BookmarkCheck className="h-4 w-4" /> : <Bookmark className="h-4 w-4" />}
+            </button>
+            <button className="p-1 text-gray-400 hover:text-gray-600">
+              <MoreVertical className="h-4 w-4" />
+            </button>
+          </div>
+        );
+      
+      default:
+        return null;
+    }
   };
 
   return (
@@ -231,167 +461,191 @@ const CompanyDiscovery: React.FC = () => {
                   <option value="revenue">Revenue</option>
                 </select>
               </div>
-              <button className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg">
-                <Settings className="h-4 w-4" />
-              </button>
+              <div className="relative" ref={columnManagerRef}>
+                <button 
+                  onClick={() => setShowColumnManager(!showColumnManager)}
+                  className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg"
+                >
+                  <Columns className="h-4 w-4" />
+                </button>
+                
+                {/* Column Manager Dropdown */}
+                {showColumnManager && (
+                  <div className="absolute right-0 top-12 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                    <div className="p-3 border-b border-gray-200">
+                      <h3 className="text-sm font-medium text-gray-900">Manage Columns</h3>
+                    </div>
+                    <div className="p-2 max-h-64 overflow-y-auto">
+                      {columns.map((column) => (
+                        <div key={column.key} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
+                          <div className="flex items-center">
+                            <span className="text-sm text-gray-700">{column.label}</span>
+                          </div>
+                          <button
+                            onClick={() => toggleColumnVisibility(column.key)}
+                            className="text-sm text-blue-600 hover:text-blue-700"
+                          >
+                            {column.visible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
         {/* Table Header */}
-        <div className="bg-gray-50 px-6 py-3 border-b border-gray-200">
+        <div className="bg-gray-50 px-6 py-3 border-b border-gray-200 sticky top-0 z-10">
           <div className="flex items-center">
             <input
               type="checkbox"
-              checked={selectedCompanies.length === companies.length && companies.length > 0}
+              checked={selectedCompanies.length === paginatedCompanies.length && paginatedCompanies.length > 0}
               onChange={selectAllCompanies}
               className="mr-4 rounded border-gray-300"
             />
             <div className="grid grid-cols-12 gap-4 flex-1 text-xs font-medium text-gray-600 uppercase tracking-wider">
-              <div className="col-span-3">Company Name</div>
-              <div className="col-span-2">Links</div>
-              <div className="col-span-1">Employees</div>
-              <div className="col-span-2">Industry</div>
-              <div className="col-span-2">Keywords</div>
-              <div className="col-span-1">Revenue</div>
-              <div className="col-span-1">Actions</div>
+              {visibleColumns.map((column) => (
+                <div key={column.key} className={column.width}>
+                  {column.label}
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Table Content */}
-        <div className="flex-1 overflow-y-auto bg-white">
+        {/* Table Content - Dynamic and Scrollable */}
+        <div className="flex-1 overflow-y-auto bg-white" style={{ maxHeight: 'calc(100vh - 300px)' }}>
           <div className="divide-y divide-gray-200">
-            {companies.map((company) => (
-              <div key={company.id} className="px-6 py-4 hover:bg-gray-50">
+            {paginatedCompanies.map((company) => (
+              <div key={company.id} className="px-6 py-4 hover:bg-gray-50 transition-colors">
                 <div className="flex items-center">
                   <input
                     type="checkbox"
                     checked={selectedCompanies.includes(company.id)}
                     onChange={() => toggleCompanySelection(company.id)}
-                    className="mr-4 rounded border-gray-300"
+                    className="mr-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
                   <div className="grid grid-cols-12 gap-4 flex-1 items-center">
-                    {/* Company Name */}
-                    <div className="col-span-3 flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center text-lg">
-                        {company.logo}
+                    {visibleColumns.map((column) => (
+                      <div key={column.key} className={column.width}>
+                        {renderColumnContent(column, company)}
                       </div>
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">{company.name}</div>
-                        <div className="text-xs text-gray-500">{company.domain}</div>
-                      </div>
-                    </div>
-
-                    {/* Links */}
-                    <div className="col-span-2 flex items-center space-x-2">
-                      <a
-                        href={company.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center px-2 py-1 text-xs bg-blue-50 text-blue-700 rounded hover:bg-blue-100"
-                      >
-                        <Globe className="h-3 w-3 mr-1" />
-                        Website
-                      </a>
-                      <a
-                        href={company.linkedinUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center px-2 py-1 text-xs bg-blue-50 text-blue-700 rounded hover:bg-blue-100"
-                      >
-                        <SiLinkedin className="h-3 w-3 mr-1" />
-                        LinkedIn
-                      </a>
-                    </div>
-
-                    {/* Number of Employees */}
-                    <div className="col-span-1 text-sm text-gray-900">
-                      <div className="flex items-center">
-                        <Users className="h-3 w-3 mr-1 text-gray-400" />
-                        {company.employeeCount}
-                      </div>
-                    </div>
-
-                    {/* Industry */}
-                    <div className="col-span-2 text-sm text-gray-900">
-                      <div className="flex items-center">
-                        <Building2 className="h-3 w-3 mr-1 text-gray-400" />
-                        {company.industry}
-                      </div>
-                    </div>
-
-                    {/* Keywords */}
-                    <div className="col-span-2">
-                      <div className="flex flex-wrap gap-1">
-                        {company.keywords.slice(0, 2).map((keyword, index) => (
-                          <span
-                            key={index}
-                            className="inline-flex items-center px-2 py-0.5 text-xs bg-gray-100 text-gray-800 rounded"
-                          >
-                            <Tag className="h-2 w-2 mr-1" />
-                            {keyword}
-                          </span>
-                        ))}
-                        {company.keywords.length > 2 && (
-                          <span className="text-xs text-gray-500">
-                            +{company.keywords.length - 2} more
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Revenue */}
-                    <div className="col-span-1 text-sm text-gray-900">
-                      <div className="flex items-center">
-                        <DollarSign className="h-3 w-3 mr-1 text-gray-400" />
-                        {company.revenue}
-                      </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="col-span-1 flex items-center space-x-2">
-                      <button
-                        onClick={() => saveCompany(company.id)}
-                        className="p-1 text-gray-400 hover:text-gray-600"
-                      >
-                        {company.saved ? <BookmarkCheck className="h-4 w-4" /> : <Bookmark className="h-4 w-4" />}
-                      </button>
-                      <button className="p-1 text-gray-400 hover:text-gray-600">
-                        <MoreVertical className="h-4 w-4" />
-                      </button>
-                    </div>
+                    ))}
                   </div>
                 </div>
               </div>
             ))}
           </div>
+          
+          {/* Loading State for Large Tables */}
+          {filteredCompanies.length === 0 && searchQuery && (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-center">
+                <Search className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No companies found</h3>
+                <p className="text-gray-600">Try adjusting your search terms or filters</p>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Bottom Bar */}
+        {/* Enhanced Bottom Bar with Pagination */}
         <div className="bg-white border-t border-gray-200 px-6 py-3">
           <div className="flex items-center justify-between">
+            {/* Left Section */}
             <div className="flex items-center space-x-4">
-              <button className="text-sm text-gray-600 hover:text-gray-900">
-                Clear all
-              </button>
-              <button className="text-sm text-blue-600 hover:text-blue-700">
-                More Filters
-              </button>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-600">Show:</span>
+                <select
+                  value={itemsPerPage}
+                  onChange={(e) => {
+                    setItemsPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="text-sm border border-gray-300 rounded px-2 py-1"
+                >
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+                <span className="text-sm text-gray-600">per page</span>
+              </div>
+              {selectedCompanies.length > 0 && (
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-600">
+                    {selectedCompanies.length} selected
+                  </span>
+                  <button 
+                    onClick={() => setSelectedCompanies([])}
+                    className="text-sm text-blue-600 hover:text-blue-700"
+                  >
+                    Clear
+                  </button>
+                </div>
+              )}
             </div>
+
+            {/* Center Section - Pagination Info */}
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-600">
-                1 - {companies.length} of {companies.length}
+                {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, filteredCompanies.length)} of {filteredCompanies.length}
               </span>
             </div>
+
+            {/* Right Section - Pagination Controls */}
             <div className="flex items-center space-x-3">
-              <button className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg border border-gray-300">
-                <Download className="h-4 w-4 inline mr-2" />
-                Export
-              </button>
-              <button className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                Add to Campaign
-              </button>
+              <div className="flex items-center space-x-1">
+                <button
+                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                  className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                
+                <div className="flex items-center space-x-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    const pageNum = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setCurrentPage(pageNum)}
+                        className={`px-3 py-1 text-sm rounded ${
+                          pageNum === currentPage
+                            ? 'bg-blue-600 text-white'
+                            : 'text-gray-600 hover:bg-gray-100'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                </div>
+                
+                <button
+                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                  disabled={currentPage === totalPages}
+                  className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+
+              <div className="border-l border-gray-200 pl-3 flex items-center space-x-2">
+                <button className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg border border-gray-300">
+                  <Download className="h-4 w-4 inline mr-2" />
+                  Export ({filteredCompanies.length})
+                </button>
+                {selectedCompanies.length > 0 && (
+                  <button className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    Add {selectedCompanies.length} to Campaign
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
