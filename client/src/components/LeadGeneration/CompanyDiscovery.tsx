@@ -303,18 +303,18 @@ const CompanyDiscovery: React.FC = () => {
               href={company.website}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center px-2 py-1 text-xs bg-blue-50 text-blue-700 rounded hover:bg-blue-100"
+              className="flex items-center px-2 py-1 text-xs bg-blue-50 text-blue-700 rounded hover:bg-blue-100 btn-hover"
             >
-              <Globe className="h-3 w-3 mr-1" />
+              <Globe className="h-3 w-3 mr-1 icon-hover" />
               Website
             </a>
             <a
               href={company.linkedinUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center px-2 py-1 text-xs bg-blue-50 text-blue-700 rounded hover:bg-blue-100"
+              className="flex items-center px-2 py-1 text-xs bg-blue-50 text-blue-700 rounded hover:bg-blue-100 btn-hover"
             >
-              <SiLinkedin className="h-3 w-3 mr-1" />
+              <SiLinkedin className="h-3 w-3 mr-1 icon-hover" />
               LinkedIn
             </a>
           </div>
@@ -393,11 +393,11 @@ const CompanyDiscovery: React.FC = () => {
           <div className="flex items-center space-x-2">
             <button
               onClick={() => saveCompany(company.id)}
-              className="p-1 text-gray-400 hover:text-gray-600"
+              className="p-1 text-gray-400 hover:text-gray-600 icon-hover"
             >
               {company.saved ? <BookmarkCheck className="h-4 w-4" /> : <Bookmark className="h-4 w-4" />}
             </button>
-            <button className="p-1 text-gray-400 hover:text-gray-600">
+            <button className="p-1 text-gray-400 hover:text-gray-600 icon-hover">
               <MoreVertical className="h-4 w-4" />
             </button>
           </div>
@@ -418,7 +418,7 @@ const CompanyDiscovery: React.FC = () => {
               <h3 className="font-semibold text-gray-900">Filters</h3>
               <button
                 onClick={() => setShowFilters(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 hover:text-gray-700 icon-hover"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -452,13 +452,13 @@ const CompanyDiscovery: React.FC = () => {
               <div className="flex items-center space-x-3">
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg border border-gray-300"
+                  className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg border border-gray-300 btn-hover"
                 >
-                  <Filter className="h-4 w-4 inline mr-2" />
+                  <Filter className="h-4 w-4 inline mr-2 icon-hover" />
                   {showFilters ? 'Hide' : 'Show'} Filters
                 </button>
-                <button className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                  <Zap className="h-4 w-4 inline mr-2" />
+                <button className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 btn-hover">
+                  <Zap className="h-4 w-4 inline mr-2 icon-hover" />
                   Enrich Data
                 </button>
               </div>
@@ -467,16 +467,16 @@ const CompanyDiscovery: React.FC = () => {
             {/* Search Bar */}
             <div className="mt-4 flex items-center space-x-4">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 icon-hover" />
                 <input
                   type="text"
                   placeholder="Search by company name, industry, keywords..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 hover-border-glow"
                 />
               </div>
-              <button className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg border border-gray-300">
+              <button className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg border border-gray-300 btn-hover">
                 Save search
               </button>
               <div className="flex items-center space-x-2">
@@ -484,7 +484,7 @@ const CompanyDiscovery: React.FC = () => {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as any)}
-                  className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 hover-border-glow"
                 >
                   <option value="relevance">Relevance</option>
                   <option value="recent">Most Recent</option>
@@ -495,29 +495,29 @@ const CompanyDiscovery: React.FC = () => {
               <div className="relative" ref={columnManagerRef}>
                 <button 
                   onClick={() => setShowColumnManager(!showColumnManager)}
-                  className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg border border-gray-300"
+                  className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg border border-gray-300 btn-hover"
                   title="Manage Columns"
                 >
-                  <Columns className="h-4 w-4 mr-2" />
+                  <Columns className="h-4 w-4 mr-2 icon-hover" />
                   Columns ({visibleColumns.length})
                 </button>
                 
                 {/* Column Manager Dropdown */}
                 {showColumnManager && (
-                  <div className="absolute right-0 top-12 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50">
+                  <div className="absolute right-0 top-12 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50 card-hover">
                     <div className="p-4 border-b border-gray-200">
                       <div className="flex items-center justify-between">
                         <h3 className="text-sm font-medium text-gray-900">Manage Table Columns</h3>
                         <div className="flex space-x-2">
                           <button
                             onClick={() => setColumns(prev => prev.map(col => ({ ...col, visible: true })))}
-                            className="text-xs text-blue-600 hover:text-blue-700"
+                            className="text-xs text-blue-600 hover:text-blue-700 hover-scale"
                           >
                             Show All
                           </button>
                           <button
                             onClick={() => setColumns(prev => prev.map(col => ({ ...col, visible: ['name', 'links', 'employees', 'actions'].includes(col.key) })))}
-                            className="text-xs text-gray-600 hover:text-gray-700"
+                            className="text-xs text-gray-600 hover:text-gray-700 hover-scale"
                           >
                             Default
                           </button>
@@ -526,21 +526,21 @@ const CompanyDiscovery: React.FC = () => {
                     </div>
                     <div className="p-2 max-h-64 overflow-y-auto">
                       {columns.map((column) => (
-                        <div key={column.key} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
+                        <div key={column.key} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg hover-lift cursor-pointer">
                           <div className="flex items-center space-x-3">
                             <input
                               type="checkbox"
                               checked={column.visible}
                               onChange={() => toggleColumnVisibility(column.key)}
-                              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 hover-scale"
                             />
                             <span className="text-sm text-gray-700 font-medium">{column.label}</span>
                           </div>
                           <div className="flex items-center space-x-1">
                             {column.visible ? (
-                              <Eye className="h-4 w-4 text-green-500" />
+                              <Eye className="h-4 w-4 text-green-500 icon-hover" />
                             ) : (
-                              <EyeOff className="h-4 w-4 text-gray-400" />
+                              <EyeOff className="h-4 w-4 text-gray-400 icon-hover" />
                             )}
                           </div>
                         </div>
@@ -557,7 +557,7 @@ const CompanyDiscovery: React.FC = () => {
         </div>
 
         {/* Table Container with Frozen First Column */}
-        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden card-hover">
           <div className="flex">
             {/* Frozen Left Column (Checkbox + Company Name) */}
             <div className="flex-shrink-0 bg-white border-r border-gray-200" style={{ width: '320px' }}>
@@ -568,7 +568,7 @@ const CompanyDiscovery: React.FC = () => {
                     type="checkbox"
                     checked={selectedCompanies.length === paginatedCompanies.length && paginatedCompanies.length > 0}
                     onChange={selectAllCompanies}
-                    className="mr-4 rounded border-gray-300 flex-shrink-0"
+                    className="mr-4 rounded border-gray-300 flex-shrink-0 hover-scale"
                   />
                   <div className="text-xs font-medium text-gray-600 uppercase tracking-wider">
                     Company Name
@@ -580,16 +580,16 @@ const CompanyDiscovery: React.FC = () => {
               <div ref={frozenScrollRef} className="overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
                 <div className="divide-y divide-gray-200">
                   {paginatedCompanies.map((company) => (
-                    <div key={`frozen-${company.id}`} className="px-4 py-4 hover:bg-gray-50 transition-colors">
+                    <div key={`frozen-${company.id}`} className="px-4 py-4 hover:bg-gray-50 transition-colors hover-lift cursor-pointer">
                       <div className="flex items-center">
                         <input
                           type="checkbox"
                           checked={selectedCompanies.includes(company.id)}
                           onChange={() => toggleCompanySelection(company.id)}
-                          className="mr-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 flex-shrink-0"
+                          className="mr-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 flex-shrink-0 hover-scale"
                         />
                         <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center text-lg flex-shrink-0">
+                          <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center text-lg flex-shrink-0 hover-scale">
                             {company.logo}
                           </div>
                           <div className="min-w-0 flex-1">
@@ -614,7 +614,7 @@ const CompanyDiscovery: React.FC = () => {
                       <div className="flex items-center space-x-1 text-xs font-medium text-gray-600 uppercase tracking-wider">
                         <span>{column.label}</span>
                         {column.sortable && (
-                          <button className="text-gray-400 hover:text-gray-600">
+                          <button className="text-gray-400 hover:text-gray-600 icon-hover">
                             <ChevronUp className="h-3 w-3" />
                           </button>
                         )}
@@ -628,7 +628,7 @@ const CompanyDiscovery: React.FC = () => {
               <div ref={scrollableScrollRef} className="overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
                 <div className="divide-y divide-gray-200">
                   {paginatedCompanies.map((company) => (
-                    <div key={`scrollable-${company.id}`} className="hover:bg-gray-50 transition-colors">
+                    <div key={`scrollable-${company.id}`} className="hover:bg-gray-50 transition-colors hover-lift cursor-pointer">
                       <div className="flex" style={{ minWidth: `${(visibleColumns.length - 1) * 150}px` }}>
                         {visibleColumns.filter(col => col.key !== 'name').map((column) => (
                           <div key={column.key} className="flex-shrink-0 px-4 py-4 border-r border-gray-200 last:border-r-0" style={{ minWidth: column.minWidth || '150px' }}>
