@@ -947,16 +947,19 @@ const CompanyDetailPageBMI: React.FC = () => {
           </div>
 
           {/* New Prospects */}
-          <div className="mb-3">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-white">New prospects</h2>
-              <div className="flex items-center space-x-2">
-                <Settings className="h-4 w-4 text-gray-400" />
-                <ChevronUp className="h-4 w-4 text-gray-400" />
+          <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
+            <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
+              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-semibold text-white">New prospects</h2>
+                  <div className="flex items-center space-x-2">
+                    <Settings className="h-4 w-4 text-gray-400" />
+                    <ChevronUp className="h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
               </div>
-            </div>
 
-            <div className="bg-gray-800 rounded-lg p-4">
+              <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl p-4">
               {/* Prospect Tabs */}
               <div className="flex space-x-4 mb-4">
                 {[
@@ -1029,6 +1032,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                     </div>
                   </div>
                 ))}
+              </div>
               </div>
             </div>
           </div>
