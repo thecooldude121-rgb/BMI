@@ -92,6 +92,7 @@ const CompanyDetailPageBMI: React.FC = () => {
   const [match, params] = useRoute('/lead-generation/company/:id');
   const [activeTab, setActiveTab] = useState<'overview' | 'employees' | 'recommendations' | 'existing-contacts' | 'sequences' | 'meetings' | 'deals' | 'conversations' | 'locations'>('overview');
   const [insightsExpanded, setInsightsExpanded] = useState(true);
+  const [companyInfoExpanded, setCompanyInfoExpanded] = useState(true);
   const [contactsExpanded, setContactsExpanded] = useState(true);
   const [notesExpanded, setNotesExpanded] = useState(true);
   const [dealsExpanded, setDealsExpanded] = useState(true);
@@ -337,63 +338,132 @@ const CompanyDetailPageBMI: React.FC = () => {
 
       {/* Main Content */}
       <div className="flex">
-        {/* Left Sidebar */}
-        <div className="w-80 bg-gray-800 border-r border-gray-700 h-screen overflow-y-auto">
-          {/* Company Information */}
-          <div className="p-4 border-b border-gray-700">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-white">Company information</h3>
-              <ChevronUp className="h-4 w-4 text-gray-400" />
-            </div>
-            <div className="text-sm text-gray-300 space-y-2">
-              <p>{companyData.description}</p>
-              <div className="mt-4">
-                <h4 className="text-gray-400 font-medium mb-2">INDUSTRIES</h4>
-                <span className="bg-gray-700 px-2 py-1 rounded text-xs">
-                  {companyData.industry}
-                </span>
-              </div>
-              <div className="mt-4">
-                <h4 className="text-gray-400 font-medium mb-2">KEYWORDS</h4>
-                <div className="space-y-1">
-                  {selectedCompany.keywords.slice(0, 3).map((keyword, index) => (
-                    <span key={index} className="bg-gray-700 px-2 py-1 rounded text-xs block w-fit">
-                      {keyword}
-                    </span>
-                  ))}
+        {/* Left Sidebar - Company Information Widget */}
+        <div className="w-80 h-screen bg-gray-900 p-4">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700 h-full">
+            <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600 h-full flex flex-col">
+              {/* Widget Header */}
+              <div className="p-6 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Building2 className="h-5 w-5 text-blue-400" />
+                    <h3 className="font-semibold text-white">Company Information</h3>
+                    <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">Overview</span>
+                  </div>
+                  <button 
+                    onClick={() => setCompanyInfoExpanded(!companyInfoExpanded)}
+                    className="p-1 rounded hover:bg-gray-600 transition-colors"
+                    data-testid="toggle-company-info"
+                  >
+                    {companyInfoExpanded ? (
+                      <ChevronUp className="h-4 w-4 text-gray-400" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4 text-gray-400" />
+                    )}
+                  </button>
                 </div>
-                <button className="text-blue-400 text-xs mt-2 hover:text-blue-300">
-                  Show all {selectedCompany.keywords.length}
-                </button>
               </div>
-              <div className="mt-4">
-                <h4 className="text-gray-400 font-medium mb-2">SUBSIDIARIES</h4>
-                <p className="text-gray-300">
-                  {companyData.name} has {companyData.subsidiaries} subsidiary
-                </p>
-              </div>
-            </div>
-          </div>
 
-          {/* Record Details */}
-          <div className="p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-white">Record details</h3>
-              <ChevronUp className="h-4 w-4 text-gray-400" />
-            </div>
-            <div className="space-y-3 text-sm">
-              <div>
-                <span className="text-gray-400">PHONE NUMBER</span>
-                <p className="text-gray-300">{companyData.phone}</p>
-              </div>
-              <div>
-                <span className="text-gray-400">TRADING SYMBOL</span>
-                <p className="text-gray-300">{companyData.tradingSymbol}</p>
-              </div>
-              <div>
-                <span className="text-gray-400">FOUNDING YEAR</span>
-                <p className="text-gray-300">{companyData.founded}</p>
-              </div>
+              {companyInfoExpanded && (
+                <div className="flex-1 p-6 overflow-y-auto bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl">
+                  <div className="space-y-6">
+                    {/* Company Description */}
+                    <div className="bg-gradient-to-r from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600">
+                      <h4 className="text-gray-300 font-medium mb-3 flex items-center">
+                        <FileText className="h-4 w-4 mr-2 text-blue-400" />
+                        About
+                      </h4>
+                      <p className="text-gray-300 text-sm leading-relaxed">{companyData.description}</p>
+                    </div>
+
+                    {/* Key Statistics Grid */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-gradient-to-r from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600 text-center">
+                        <Calendar className="h-6 w-6 text-green-400 mx-auto mb-2" />
+                        <div className="text-lg font-bold text-white">{companyData.founded}</div>
+                        <div className="text-xs text-gray-400">Founded</div>
+                      </div>
+                      <div className="bg-gradient-to-r from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600 text-center">
+                        <Building2 className="h-6 w-6 text-orange-400 mx-auto mb-2" />
+                        <div className="text-lg font-bold text-white">{companyData.subsidiaries}</div>
+                        <div className="text-xs text-gray-400">Subsidiaries</div>
+                      </div>
+                    </div>
+
+                    {/* Contact Information */}
+                    <div className="bg-gradient-to-r from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600">
+                      <h4 className="text-gray-300 font-medium mb-3 flex items-center">
+                        <Phone className="h-4 w-4 mr-2 text-green-400" />
+                        Contact Details
+                      </h4>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-400 text-sm">Phone</span>
+                          <span className="text-white font-medium text-sm">{companyData.phone}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-400 text-sm">Type</span>
+                          <span className="bg-purple-600 text-white px-2 py-1 rounded text-xs">{companyData.tradingSymbol}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Industries */}
+                    <div className="bg-gradient-to-r from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600">
+                      <h4 className="text-gray-300 font-medium mb-3 flex items-center">
+                        <Target className="h-4 w-4 mr-2 text-purple-400" />
+                        Industries
+                      </h4>
+                      <span className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium shadow-lg">
+                        {companyData.industry}
+                      </span>
+                    </div>
+
+                    {/* Keywords */}
+                    <div className="bg-gradient-to-r from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600">
+                      <h4 className="text-gray-300 font-medium mb-3 flex items-center">
+                        <Search className="h-4 w-4 mr-2 text-cyan-400" />
+                        Keywords ({selectedCompany.keywords.length})
+                      </h4>
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {selectedCompany.keywords.slice(0, 6).map((keyword, index) => (
+                          <span key={index} className="bg-gradient-to-r from-cyan-600 to-cyan-700 text-white px-2 py-1 rounded text-xs font-medium shadow-lg">
+                            {keyword}
+                          </span>
+                        ))}
+                      </div>
+                      {selectedCompany.keywords.length > 6 && (
+                        <button className="text-cyan-400 text-xs hover:text-cyan-300 transition-colors font-medium">
+                          + Show {selectedCompany.keywords.length - 6} more
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Company Health Score */}
+                    <div className="bg-gradient-to-r from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600">
+                      <h4 className="text-gray-300 font-medium mb-3 flex items-center">
+                        <TrendingUp className="h-4 w-4 mr-2 text-green-400" />
+                        Company Health
+                      </h4>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-700 rounded-full flex items-center justify-center">
+                            <span className="text-white font-bold text-sm">A+</span>
+                          </div>
+                          <div>
+                            <div className="text-green-400 font-medium">Excellent</div>
+                            <div className="text-gray-400 text-xs">Financial stability</div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-white font-bold text-lg">92/100</div>
+                          <div className="text-gray-400 text-xs">Health Score</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
