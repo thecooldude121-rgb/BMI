@@ -138,7 +138,7 @@ const CompanyDetailPageSimple = () => {
   // Fetch real-time company insights
   const { data: liveInsights, isLoading: insightsLoading, refetch: refetchInsights } = useQuery({
     queryKey: ['/api/lead-generation/company', params?.id, 'insights'],
-    enabled: !!params?.id && activeTab === 'insights',
+    enabled: !!params?.id,
     staleTime: 5 * 60 * 1000, // 5 minutes
     cacheTime: 10 * 60 * 1000 // 10 minutes
   });
@@ -424,16 +424,6 @@ const CompanyDetailPageSimple = () => {
                 Overview
               </button>
               <button
-                onClick={() => setActiveTab('insights')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
-                  activeTab === 'insights'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                Insights
-              </button>
-              <button
                 onClick={() => setActiveTab('employees')}
                 className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === 'employees'
@@ -685,265 +675,260 @@ const CompanyDetailPageSimple = () => {
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          )}
-
-          {/* Insights Tab */}
-          {activeTab === 'insights' && (
-            insightsLoading ? (
-              <div className="flex items-center justify-center py-12">
-                <div className="text-center">
-                  <RefreshCw className="h-8 w-8 text-blue-600 animate-spin mx-auto mb-4" />
-                  <p className="text-gray-600">Loading real-time insights...</p>
-                </div>
-              </div>
-            ) : liveInsights ? (
-            <div className="space-y-6">
-              {/* Header with Refresh Button */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900">Company Insights</h2>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Last updated: {new Date(liveInsights.lastUpdated).toLocaleString()}
-                  </p>
-                </div>
-                <button
-                  onClick={refreshInsights}
-                  disabled={refreshingInsights}
-                  className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400 transition-colors"
-                >
-                  <RefreshCw className={`h-4 w-4 mr-2 ${refreshingInsights ? 'animate-spin' : ''}`} />
-                  {refreshingInsights ? 'Refreshing...' : 'Refresh Data'}
-                </button>
-              </div>
-
-              {/* Grid Layout */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Latest News Section */}
-                <div className="lg:col-span-2">
-                  <div className="bg-white rounded-lg shadow border border-gray-200">
-                    <div className="px-6 py-4 border-b border-gray-200">
-                      <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                        <Newspaper className="h-5 w-5 mr-2" />
-                        Latest News Mentions
-                        <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          {liveInsights.news.length} articles
-                        </span>
-                      </h3>
+                {/* Company Insights Section */}
+                {insightsLoading ? (
+                  <div className="flex items-center justify-center py-8 mt-8">
+                    <div className="text-center">
+                      <RefreshCw className="h-8 w-8 text-blue-600 animate-spin mx-auto mb-4" />
+                      <p className="text-gray-600">Loading real-time company insights...</p>
+                      <p className="text-sm text-gray-500 mt-2">Fetching data from LinkedIn, Crunchbase, and other sources</p>
                     </div>
-                    <div className="px-6 py-4">
-                      <div className="space-y-4">
-                        {liveInsights.news.map((article) => (
-                          <div key={article.id} className="border-l-4 border-blue-500 pl-4 py-3 bg-gray-50 rounded-r-lg">
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <h4 className="font-medium text-sm text-gray-900 mb-2">{article.title}</h4>
-                                <p className="text-sm text-gray-600 mb-3">{article.summary}</p>
-                                <div className="flex items-center space-x-3 text-xs">
-                                  <span className="text-gray-500">{article.source}</span>
-                                  <span className="text-gray-500">•</span>
-                                  <span className="text-gray-500">{new Date(article.publishedAt).toLocaleDateString()}</span>
-                                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getSentimentColor(article.sentiment)}`}>
-                                    {article.sentiment}
-                                  </span>
+                  </div>
+                ) : liveInsights && (
+                  <div className="space-y-6 mt-8">
+                    {/* Header with Refresh Button */}
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h2 className="text-2xl font-bold text-gray-900">Company Insights</h2>
+                        <p className="text-sm text-gray-500 mt-1">
+                          Last updated: {new Date(liveInsights.lastUpdated).toLocaleString()}
+                        </p>
+                      </div>
+                      <button
+                        onClick={refreshInsights}
+                        disabled={refreshingInsights}
+                        className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400 transition-colors"
+                      >
+                        <RefreshCw className={`h-4 w-4 mr-2 ${refreshingInsights ? 'animate-spin' : ''}`} />
+                        {refreshingInsights ? 'Refreshing...' : 'Refresh Data'}
+                      </button>
+                    </div>
+
+                    {/* Grid Layout */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      {/* Latest News Section */}
+                      <div className="lg:col-span-2">
+                        <div className="bg-white rounded-lg shadow border border-gray-200">
+                          <div className="px-6 py-4 border-b border-gray-200">
+                            <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                              <Newspaper className="h-5 w-5 mr-2" />
+                              Latest News Mentions
+                              <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                {liveInsights.news?.length || 0} articles
+                              </span>
+                            </h3>
+                          </div>
+                          <div className="px-6 py-4">
+                            <div className="space-y-4">
+                              {liveInsights.news?.map((article) => (
+                                <div key={article.id} className="border-l-4 border-blue-500 pl-4 py-3 bg-gray-50 rounded-r-lg">
+                                  <div className="flex items-start justify-between">
+                                    <div className="flex-1">
+                                      <h4 className="font-medium text-sm text-gray-900 mb-2">{article.title}</h4>
+                                      <p className="text-sm text-gray-600 mb-3">{article.summary}</p>
+                                      <div className="flex items-center space-x-3 text-xs">
+                                        <span className="text-gray-500">{article.source}</span>
+                                        <span className="text-gray-500">•</span>
+                                        <span className="text-gray-500">{new Date(article.publishedAt).toLocaleDateString()}</span>
+                                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getSentimentColor(article.sentiment)}`}>
+                                          {article.sentiment}
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <a href={article.url} target="_blank" rel="noopener noreferrer" className="ml-3 flex-shrink-0">
+                                      <ExternalLink className="h-4 w-4 text-blue-600 hover:text-blue-800" />
+                                    </a>
+                                  </div>
                                 </div>
-                              </div>
-                              <a href={article.url} target="_blank" rel="noopener noreferrer" className="ml-3 flex-shrink-0">
-                                <ExternalLink className="h-4 w-4 text-blue-600 hover:text-blue-800" />
-                              </a>
+                              )) || <p className="text-gray-500 text-sm">No recent news available</p>}
                             </div>
                           </div>
-                        ))}
+                        </div>
+                      </div>
+
+                      {/* Technologies Adopted */}
+                      <div className="bg-white rounded-lg shadow border border-gray-200">
+                        <div className="px-6 py-4 border-b border-gray-200">
+                          <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                            <Cpu className="h-5 w-5 mr-2" />
+                            Technologies Adopted
+                            <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              {liveInsights.technologies?.length || 0} technologies
+                            </span>
+                          </h3>
+                        </div>
+                        <div className="px-6 py-4">
+                          <div className="space-y-3">
+                            {liveInsights.technologies?.map((tech, index) => (
+                              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div className="flex items-center space-x-3">
+                                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getTechCategoryColor(tech.category)}`}>
+                                    {tech.name}
+                                  </span>
+                                  <div className="text-xs text-gray-500">
+                                    {tech.category}
+                                  </div>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <div className="text-xs text-gray-500">
+                                    {tech.confidence}% confidence
+                                  </div>
+                                  <div className="w-16 bg-gray-200 rounded-full h-2">
+                                    <div 
+                                      className="bg-blue-600 h-2 rounded-full" 
+                                      style={{ width: `${tech.confidence}%` }}
+                                    ></div>
+                                  </div>
+                                </div>
+                              </div>
+                            )) || <p className="text-gray-500 text-sm">No technology data available</p>}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Funding History */}
+                      <div className="bg-white rounded-lg shadow border border-gray-200">
+                        <div className="px-6 py-4 border-b border-gray-200">
+                          <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                            <Funding className="h-5 w-5 mr-2" />
+                            Funding History
+                            <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                              {liveInsights.fundingHistory?.reduce((sum, round) => sum + parseFloat(round.amount.replace(/[$M]/g, '')), 0) || 0}M total
+                            </span>
+                          </h3>
+                        </div>
+                        <div className="px-6 py-4">
+                          <div className="space-y-4">
+                            {liveInsights.fundingHistory?.map((round) => (
+                              <div key={round.id} className="border-l-4 border-purple-500 pl-4 py-3 bg-gray-50 rounded-r-lg">
+                                <div className="flex items-start justify-between">
+                                  <div className="flex-1">
+                                    <div className="flex items-center space-x-2 mb-2">
+                                      <span className="font-medium text-sm text-gray-900">{round.type}</span>
+                                      <span className="text-lg font-bold text-purple-600">{round.amount}</span>
+                                    </div>
+                                    <div className="text-xs text-gray-500 mb-2">
+                                      {new Date(round.date).toLocaleDateString()} • Valuation: {round.valuation}
+                                    </div>
+                                    <div className="flex flex-wrap gap-1">
+                                      {round.investors.map((investor, index) => (
+                                        <span key={index} className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-800">
+                                          {investor}
+                                        </span>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )) || <p className="text-gray-500 text-sm">No funding data available</p>}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Employee Trends Chart */}
+                      <div className="bg-white rounded-lg shadow border border-gray-200">
+                        <div className="px-6 py-4 border-b border-gray-200">
+                          <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                            <BarChart3 className="h-5 w-5 mr-2" />
+                            Employee Trends
+                            <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              +{liveInsights.employeeTrends?.[0]?.growth || 0}% growth
+                            </span>
+                          </h3>
+                        </div>
+                        <div className="px-6 py-4">
+                          <div className="space-y-3">
+                            {liveInsights.employeeTrends?.map((trend, index) => (
+                              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div className="flex items-center space-x-3">
+                                  <div className="text-sm font-medium text-gray-900">
+                                    {new Date(trend.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+                                  </div>
+                                  <div className="text-lg font-bold text-blue-600">
+                                    {trend.count}
+                                  </div>
+                                </div>
+                                <div className={`flex items-center px-2 py-1 rounded text-xs font-medium ${
+                                  trend.growth > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                }`}>
+                                  {trend.growth > 0 ? '+' : ''}{trend.growth}%
+                                </div>
+                              </div>
+                            )) || <p className="text-gray-500 text-sm">No employee trend data available</p>}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Current Job Postings */}
+                      <div className="bg-white rounded-lg shadow border border-gray-200">
+                        <div className="px-6 py-4 border-b border-gray-200">
+                          <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                            <JobIcon className="h-5 w-5 mr-2" />
+                            Active Job Postings
+                            <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                              {liveInsights.jobPostings?.length || 0} open positions
+                            </span>
+                          </h3>
+                        </div>
+                        <div className="px-6 py-4">
+                          <div className="space-y-3">
+                            {liveInsights.jobPostings?.map((job) => (
+                              <div key={job.id} className="border-l-4 border-orange-500 pl-4 py-3 bg-gray-50 rounded-r-lg">
+                                <div className="flex items-start justify-between">
+                                  <div className="flex-1">
+                                    <div className="flex items-start justify-between mb-2">
+                                      <h4 className="font-medium text-sm text-gray-900">{job.title}</h4>
+                                      <a href={job.url} target="_blank" rel="noopener noreferrer" className="ml-2 flex-shrink-0">
+                                        <ExternalLink className="h-4 w-4 text-blue-600 hover:text-blue-800" />
+                                      </a>
+                                    </div>
+                                    <div className="flex items-center space-x-2 mb-2">
+                                      <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-200 text-gray-800">
+                                        {job.department}
+                                      </span>
+                                      <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                        {job.type}
+                                      </span>
+                                      {job.remote && (
+                                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                                          Remote
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div className="flex items-center space-x-2 text-xs text-gray-500">
+                                      <MapPin className="h-3 w-3" />
+                                      <span>{job.location}</span>
+                                      <span>•</span>
+                                      <Clock className="h-3 w-3" />
+                                      <span>Posted {new Date(job.postedAt).toLocaleDateString()}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )) || <p className="text-gray-500 text-sm">No job postings available</p>}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Data Sources Notice */}
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                      <div className="flex items-start">
+                        <Zap className="h-5 w-5 text-blue-600 mr-3 mt-0.5" />
+                        <div>
+                          <h4 className="text-sm font-medium text-blue-900 mb-1">Real-time Data Sources</h4>
+                          <p className="text-sm text-blue-700">
+                            This data is automatically updated from multiple sources including LinkedIn Sales Navigator, 
+                            Crunchbase, NewsAPI, BuiltWith, Wappalyzer, Indeed, Glassdoor, Clearbit, ZoomInfo, Pitchbook, 
+                            Twitter API, and GitHub. Data refreshes every 24 hours or on-demand.
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-
-                {/* Technologies Adopted */}
-                <div className="bg-white rounded-lg shadow border border-gray-200">
-                  <div className="px-6 py-4 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                      <Cpu className="h-5 w-5 mr-2" />
-                      Technologies Adopted
-                      <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        {liveInsights.technologies.length} technologies
-                      </span>
-                    </h3>
-                  </div>
-                  <div className="px-6 py-4">
-                    <div className="space-y-3">
-                      {liveInsights.technologies.map((tech, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                          <div className="flex items-center space-x-3">
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getTechCategoryColor(tech.category)}`}>
-                              {tech.name}
-                            </span>
-                            <div className="text-xs text-gray-500">
-                              {tech.category}
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <div className="text-xs text-gray-500">
-                              {tech.confidence}% confidence
-                            </div>
-                            <div className="w-16 bg-gray-200 rounded-full h-2">
-                              <div 
-                                className="bg-blue-600 h-2 rounded-full" 
-                                style={{ width: `${tech.confidence}%` }}
-                              ></div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Funding History */}
-                <div className="bg-white rounded-lg shadow border border-gray-200">
-                  <div className="px-6 py-4 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                      <Funding className="h-5 w-5 mr-2" />
-                      Funding History
-                      <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                        {liveInsights.fundingHistory.reduce((sum, round) => sum + parseFloat(round.amount.replace(/[$M]/g, '')), 0)}M total
-                      </span>
-                    </h3>
-                  </div>
-                  <div className="px-6 py-4">
-                    <div className="space-y-4">
-                      {liveInsights.fundingHistory.map((round) => (
-                        <div key={round.id} className="border-l-4 border-purple-500 pl-4 py-3 bg-gray-50 rounded-r-lg">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-center space-x-2 mb-2">
-                                <span className="font-medium text-sm text-gray-900">{round.type}</span>
-                                <span className="text-lg font-bold text-purple-600">{round.amount}</span>
-                              </div>
-                              <div className="text-xs text-gray-500 mb-2">
-                                {new Date(round.date).toLocaleDateString()} • Valuation: {round.valuation}
-                              </div>
-                              <div className="flex flex-wrap gap-1">
-                                {round.investors.map((investor, index) => (
-                                  <span key={index} className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-800">
-                                    {investor}
-                                  </span>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Employee Trends Chart */}
-                <div className="bg-white rounded-lg shadow border border-gray-200">
-                  <div className="px-6 py-4 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                      <BarChart3 className="h-5 w-5 mr-2" />
-                      Employee Trends
-                      <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        +{liveInsights.employeeTrends[0]?.growth || 0}% growth
-                      </span>
-                    </h3>
-                  </div>
-                  <div className="px-6 py-4">
-                    <div className="space-y-3">
-                      {liveInsights.employeeTrends.map((trend, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                          <div className="flex items-center space-x-3">
-                            <div className="text-sm font-medium text-gray-900">
-                              {new Date(trend.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
-                            </div>
-                            <div className="text-lg font-bold text-blue-600">
-                              {trend.count}
-                            </div>
-                          </div>
-                          <div className={`flex items-center px-2 py-1 rounded text-xs font-medium ${
-                            trend.growth > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                          }`}>
-                            {trend.growth > 0 ? '+' : ''}{trend.growth}%
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Current Job Postings */}
-                <div className="bg-white rounded-lg shadow border border-gray-200">
-                  <div className="px-6 py-4 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                      <JobIcon className="h-5 w-5 mr-2" />
-                      Active Job Postings
-                      <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                        {liveInsights.jobPostings.length} open positions
-                      </span>
-                    </h3>
-                  </div>
-                  <div className="px-6 py-4">
-                    <div className="space-y-3">
-                      {liveInsights.jobPostings.map((job) => (
-                        <div key={job.id} className="border-l-4 border-orange-500 pl-4 py-3 bg-gray-50 rounded-r-lg">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-start justify-between mb-2">
-                                <h4 className="font-medium text-sm text-gray-900">{job.title}</h4>
-                                <a href={job.url} target="_blank" rel="noopener noreferrer" className="ml-2 flex-shrink-0">
-                                  <ExternalLink className="h-4 w-4 text-blue-600 hover:text-blue-800" />
-                                </a>
-                              </div>
-                              <div className="flex items-center space-x-2 mb-2">
-                                <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-200 text-gray-800">
-                                  {job.department}
-                                </span>
-                                <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                                  {job.type}
-                                </span>
-                                {job.remote && (
-                                  <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
-                                    Remote
-                                  </span>
-                                )}
-                              </div>
-                              <div className="flex items-center space-x-2 text-xs text-gray-500">
-                                <MapPin className="h-3 w-3" />
-                                <span>{job.location}</span>
-                                <span>•</span>
-                                <Clock className="h-3 w-3" />
-                                <span>Posted {new Date(job.postedAt).toLocaleDateString()}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Data Sources Notice */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div className="flex items-start">
-                  <Zap className="h-5 w-5 text-blue-600 mr-3 mt-0.5" />
-                  <div>
-                    <h4 className="text-sm font-medium text-blue-900 mb-1">Real-time Data Sources</h4>
-                    <p className="text-sm text-blue-700">
-                      This data is automatically updated from multiple sources including LinkedIn, company websites, 
-                      job boards, news APIs, and tech stack detection tools. Data refreshes every 24 hours or on-demand.
-                    </p>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-gray-600">No insights data available</p>
-              </div>
-            )
           )}
 
           {/* Employees Tab */}

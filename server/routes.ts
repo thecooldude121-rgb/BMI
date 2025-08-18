@@ -3443,11 +3443,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { id } = req.params;
       
       // In production, this would fetch from multiple APIs:
-      // - News API for latest mentions
+      // - NewsAPI, Google News API for latest mentions
       // - LinkedIn Sales Navigator API for employee data
       // - Crunchbase API for funding information
-      // - BuiltWith API for technology stack
-      // - Job board APIs for current openings
+      // - BuiltWith, Wappalyzer API for technology stack
+      // - Indeed, LinkedIn Jobs, Glassdoor APIs for job postings
+      // - Clearbit, ZoomInfo for company enrichment
+      // - Pitchbook for detailed funding data
+      // - Twitter API for social mentions
+      // - GitHub API for open source activity
       
       const insights = {
         news: [
@@ -3475,7 +3479,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           { name: 'Python', category: 'Backend Language', adoptedAt: '2018-06', confidence: 98 },
           { name: 'AWS', category: 'Cloud Platform', adoptedAt: '2019-03', confidence: 92 },
           { name: 'Docker', category: 'Containerization', adoptedAt: '2019-09', confidence: 88 },
-          { name: 'TensorFlow', category: 'Machine Learning', adoptedAt: '2021-01', confidence: 85 }
+          { name: 'TensorFlow', category: 'Machine Learning', adoptedAt: '2021-01', confidence: 85 },
+          { name: 'PostgreSQL', category: 'Database', adoptedAt: '2018-06', confidence: 90 },
+          { name: 'Kubernetes', category: 'Orchestration', adoptedAt: '2021-06', confidence: 82 },
+          { name: 'Redis', category: 'Caching', adoptedAt: '2020-03', confidence: 87 },
+          { name: 'Salesforce', category: 'CRM Platform', adoptedAt: '2019-01', confidence: 93 },
+          { name: 'Stripe', category: 'Payment Processing', adoptedAt: '2019-08', confidence: 89 }
         ],
         fundingHistory: [
           {
@@ -3521,6 +3530,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
             type: 'Full-time',
             remote: false,
             url: `https://company-${id}.com/careers/product-manager-ai`
+          },
+          {
+            id: 'job-3',
+            title: 'Data Scientist',
+            department: 'Data Science',
+            location: 'New York, NY',
+            postedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
+            type: 'Full-time',
+            remote: true,
+            url: `https://company-${id}.com/careers/data-scientist`
+          },
+          {
+            id: 'job-4',
+            title: 'Sales Development Representative',
+            department: 'Sales',
+            location: 'Remote',
+            postedAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
+            type: 'Full-time',
+            remote: true,
+            url: `https://company-${id}.com/careers/sdr`
+          },
+          {
+            id: 'job-5',
+            title: 'DevOps Engineer',
+            department: 'Engineering',
+            location: 'Austin, TX',
+            postedAt: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(),
+            type: 'Full-time',
+            remote: true,
+            url: `https://company-${id}.com/careers/devops-engineer`
           }
         ],
         lastUpdated: new Date().toISOString()
