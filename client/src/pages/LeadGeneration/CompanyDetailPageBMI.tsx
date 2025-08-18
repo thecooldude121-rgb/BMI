@@ -1173,58 +1173,7 @@ const CompanyDetailPageBMI: React.FC = () => {
             </div>
           </div>
 
-          {/* New Prospects */}
-          <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
-            <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
-              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold text-white">Key prospects</h2>
-                  <div className="flex items-center space-x-2">
-                    <Settings className="h-4 w-4 text-gray-400" />
-                    <ChevronUp className="h-4 w-4 text-gray-400" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl p-4">
-                <div className="grid grid-cols-4 gap-4 text-xs text-gray-400 font-medium mb-4">
-                  <div>PERSON</div>
-                  <div>LOCATION</div>
-                  <div>REASONING</div>
-                  <div>ACTIONS</div>
-                </div>
-                {prospects.map((prospect) => (
-                  <div key={prospect.id} className="grid grid-cols-4 gap-4 py-2 border-b border-gray-700">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center text-xs">
-                        {prospect.name.split(' ').map(n => n[0]).join('')}
-                      </div>
-                      <div>
-                        <div className="text-white font-medium">{prospect.name}</div>
-                        <div className="text-gray-400 text-sm">{prospect.title}</div>
-                      </div>
-                    </div>
-                    <div className="text-gray-300">{prospect.location}</div>
-                    <div className="space-y-1">
-                      <div className="text-white">{prospect.department}</div>
-                      <div className="flex items-center space-x-1">
-                        <Star className="h-3 w-3 text-blue-400" />
-                        <span className="text-blue-400 text-xs">{prospect.reason}</span>
-                      </div>
-                      <div className="bg-green-900 text-green-300 text-xs px-2 py-1 rounded w-fit">
-                        Tenured
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <button className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors" data-testid="button-access-email">
-                        ✓ Access email
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          
 
           {/* Lookalike Companies */}
           <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
