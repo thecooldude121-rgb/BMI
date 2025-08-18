@@ -1292,48 +1292,101 @@ const CompanyDetailPageBMI: React.FC = () => {
                 {/* Prospects List */}
                 <div className="space-y-2">
                   {getCurrentPageContacts().map((contact, index) => (
-                    <div key={index} className="relative group">
-                      <div className="grid grid-cols-5 gap-4 py-3 px-2 rounded-lg hover:bg-gray-700/30 transition-colors border-b border-gray-700/50 cursor-pointer">
-                        {/* Name with Avatar */}
-                        <div className="flex items-center space-x-3 min-w-0">
-                          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white font-medium text-xs flex-shrink-0">
-                            {contact.name.split(' ').map(n => n[0]).join('')}
+                    <div key={index} className="relative">
+                      <div className="grid grid-cols-5 gap-4 py-3 px-2 rounded-lg hover:bg-gray-700/30 transition-colors border-b border-gray-700/50">
+                        <div className="group col-span-4 grid grid-cols-4 gap-4 cursor-pointer">
+                          {/* Name with Avatar */}
+                          <div className="flex items-center space-x-3 min-w-0">
+                            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white font-medium text-xs flex-shrink-0">
+                              {contact.name.split(' ').map(n => n[0]).join('')}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="text-white font-medium text-sm flex items-center space-x-1">
+                                <span className="truncate">
+                                  {contact.name}
+                                </span>
+                                {contact.verified && (
+                                  <CheckCircle className="h-3 w-3 text-green-400 flex-shrink-0" />
+                                )}
+                              </div>
+                            </div>
                           </div>
-                          <div className="min-w-0 flex-1">
-                            <div className="text-white font-medium text-sm flex items-center space-x-1">
-                              <span className="truncate">
-                                {contact.name}
-                              </span>
-                              {contact.verified && (
-                                <CheckCircle className="h-3 w-3 text-green-400 flex-shrink-0" />
-                              )}
+                          
+                          {/* Title */}
+                          <div className="flex flex-col justify-center min-w-0">
+                            <div className="text-gray-300 text-sm truncate">
+                              {contact.title}
+                            </div>
+                          </div>
+                          
+                          {/* Department */}
+                          <div className="flex flex-col justify-center min-w-0">
+                            <div className="text-gray-300 text-sm truncate">
+                              {contact.department}
+                            </div>
+                          </div>
+                          
+                          {/* Location */}
+                          <div className="flex flex-col justify-center min-w-0">
+                            <div className="text-gray-300 text-sm truncate">
+                              {contact.location}
+                            </div>
+                          </div>
+
+                          {/* Hover Card for first 4 columns only */}
+                          <div className="absolute left-0 top-full mt-2 w-96 bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg border border-gray-600 shadow-2xl p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                            <div className="flex items-start space-x-4">
+                              {/* Avatar */}
+                              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white font-medium flex-shrink-0">
+                                {contact.name.split(' ').map(n => n[0]).join('')}
+                              </div>
+                              
+                              <div className="flex-1 space-y-3">
+                                {/* Header */}
+                                <div>
+                                  <div className="flex items-center space-x-2 mb-1">
+                                    <h3 className="text-white font-semibold text-base">{contact.name}</h3>
+                                    {contact.verified && (
+                                      <CheckCircle className="h-4 w-4 text-green-400" />
+                                    )}
+                                  </div>
+                                  <div className="text-gray-300 font-medium">{contact.title}</div>
+                                  <div className="text-gray-400 text-sm">{contact.department}</div>
+                                </div>
+
+                                {/* Location Details */}
+                                <div className="space-y-2 border-t border-gray-600 pt-3">
+                                  <div className="flex items-center space-x-2">
+                                    <MapPin className="h-4 w-4 text-purple-400" />
+                                    <span className="text-gray-300 text-sm">{contact.location}</span>
+                                  </div>
+                                </div>
+
+                                {/* Status & Source */}
+                                <div className="flex items-center justify-between border-t border-gray-600 pt-3">
+                                  <div>
+                                    <div className="text-gray-400 text-xs">Connection</div>
+                                    <div className="text-gray-300 text-sm">{contact.connection}</div>
+                                  </div>
+                                  <div>
+                                    <div className="text-gray-400 text-xs">Last Activity</div>
+                                    <div className="text-gray-300 text-sm">{contact.lastActivity}</div>
+                                  </div>
+                                  <span className={`text-xs px-2 py-1 rounded-full ${
+                                    contact.source.includes('LinkedIn') 
+                                      ? 'bg-blue-600/20 text-blue-300 border border-blue-600/30' 
+                                      : 'bg-green-600/20 text-green-300 border border-green-600/30'
+                                  }`}>
+                                    {contact.source}
+                                  </span>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
                         
-                        {/* Title */}
-                        <div className="flex flex-col justify-center min-w-0">
-                          <div className="text-gray-300 text-sm truncate">
-                            {contact.title}
-                          </div>
-                        </div>
-                        
-                        {/* Department */}
-                        <div className="flex flex-col justify-center min-w-0">
-                          <div className="text-gray-300 text-sm truncate">
-                            {contact.department}
-                          </div>
-                        </div>
-                        
-                        {/* Location */}
-                        <div className="flex flex-col justify-center min-w-0">
-                          <div className="text-gray-300 text-sm truncate">
-                            {contact.location}
-                          </div>
-                        </div>
-                        
-                        {/* Actions */}
-                        <div className="flex flex-col items-center space-y-2 pointer-events-none">
+                        {/* Actions Column - Outside hover group */}
+                        <div className="flex flex-col items-center space-y-2">
                           {/* Email Access */}
                           {!accessedEmails.has((currentPage - 1) * contactsPerPage + index) ? (
                             <button 
@@ -1376,56 +1429,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Detailed Hover Card */}
-                      <div className="absolute left-0 top-full mt-2 w-96 bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg border border-gray-600 shadow-2xl p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                        <div className="flex items-start space-x-4">
-                          {/* Avatar */}
-                          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white font-medium flex-shrink-0">
-                            {contact.name.split(' ').map(n => n[0]).join('')}
-                          </div>
-                          
-                          <div className="flex-1 space-y-3">
-                            {/* Header */}
-                            <div>
-                              <div className="flex items-center space-x-2 mb-1">
-                                <h3 className="text-white font-semibold text-base">{contact.name}</h3>
-                                {contact.verified && (
-                                  <CheckCircle className="h-4 w-4 text-green-400" />
-                                )}
-                              </div>
-                              <div className="text-gray-300 font-medium">{contact.title}</div>
-                              <div className="text-gray-400 text-sm">{contact.department}</div>
-                            </div>
 
-                            {/* Location Details */}
-                            <div className="space-y-2 border-t border-gray-600 pt-3">
-                              <div className="flex items-center space-x-2">
-                                <MapPin className="h-4 w-4 text-purple-400" />
-                                <span className="text-gray-300 text-sm">{contact.location}</span>
-                              </div>
-                            </div>
-
-                            {/* Status & Source */}
-                            <div className="flex items-center justify-between border-t border-gray-600 pt-3">
-                              <div>
-                                <div className="text-gray-400 text-xs">Connection</div>
-                                <div className="text-gray-300 text-sm">{contact.connection}</div>
-                              </div>
-                              <div>
-                                <div className="text-gray-400 text-xs">Last Activity</div>
-                                <div className="text-gray-300 text-sm">{contact.lastActivity}</div>
-                              </div>
-                              <span className={`text-xs px-2 py-1 rounded-full ${
-                                contact.source.includes('LinkedIn') 
-                                  ? 'bg-blue-600/20 text-blue-300 border border-blue-600/30' 
-                                  : 'bg-green-600/20 text-green-300 border border-green-600/30'
-                              }`}>
-                                {contact.source}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
                     </div>
                   ))}
                 </div>
