@@ -575,19 +575,25 @@ const CompanyDetailPageBMI: React.FC = () => {
           </div>
         </div>
 
-        {/* Main Content Area */}
-        <div className="flex-1 p-3">
+        {/* Main Content Area - Company Insights */}
+        <div className="flex-1 p-6">
+          <div className="text-white text-2xl font-bold mb-6 flex items-center space-x-3">
+            <TrendingUp className="h-8 w-8 text-cyan-400" />
+            <span>AI-Powered Company Intelligence Dashboard</span>
+          </div>
           {/* Company Insights Widget */}
-          <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
+          <div className="mb-6 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
             <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
               {/* Widget Header */}
-              <div className="p-6 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+              <div className="p-6 border-b border-gray-600 bg-gradient-to-r from-cyan-800 via-gray-800 to-cyan-800 rounded-t-xl">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <TrendingUp className="h-5 w-5 text-cyan-400" />
-                    <h2 className="text-lg font-semibold text-white">Company Insights</h2>
-                    <span className="bg-cyan-600 text-white text-xs px-2 py-1 rounded-full">AI Powered</span>
-                    <span className="bg-green-600 text-white text-xs px-2 py-1 rounded-full">Live Data</span>
+                    <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-cyan-700 rounded-lg flex items-center justify-center shadow-lg">
+                      <TrendingUp className="h-6 w-6 text-white" />
+                    </div>
+                    <h2 className="text-xl font-bold text-white">Real-Time Intelligence Dashboard</h2>
+                    <span className="bg-gradient-to-r from-cyan-500 to-cyan-600 text-white text-sm px-3 py-1 rounded-full font-medium shadow-lg">AI Powered</span>
+                    <span className="bg-gradient-to-r from-green-500 to-green-600 text-white text-sm px-3 py-1 rounded-full font-medium shadow-lg">Live Data</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <span className="text-xs text-gray-400">Last updated: 2 min ago</span>
