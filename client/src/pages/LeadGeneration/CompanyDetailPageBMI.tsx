@@ -100,73 +100,82 @@ const CompanyDetailPageBMI: React.FC = () => {
   // Sample company data
   const companyData: CompanyData = {
     id: '1',
-    name: 'VGI Public Company Limited',
-    logo: 'VGI',
-    domain: 'vgi.co.th',
-    description: 'VGI Public Company Limited is a Thailand-based conglomerate specializing in advertising, digital services, and distribution. Founded in 1995 and headquartered in Bangkok, Thailand.',
-    industry: 'Marketing & Advertising',
-    location: 'Bangkok, Thailand',
-    founded: '1998',
-    employees: '90 employees',
-    revenue: '$144.3M revenue',
-    phone: '+66227338884',
-    tradingSymbol: 'SET: VGI-R.BK',
-    subsidiaries: 1,
-    score: 30,
+    name: 'Sample Company Inc.',
+    logo: 'SC',
+    domain: 'samplecompany.com',
+    description: 'Sample Company Inc. is a technology-focused organization specializing in software development, digital solutions, and business automation services.',
+    industry: 'Technology',
+    location: 'San Francisco, CA',
+    founded: '2015',
+    employees: '150 employees',
+    revenue: '$25.5M revenue',
+    phone: '+1-555-0123',
+    tradingSymbol: 'NASDAQ: SMPL',
+    subsidiaries: 2,
+    score: 85,
     rating: 'Excellent'
   };
 
   const contacts: Contact[] = [
     {
       id: '1',
-      name: 'Chama Savetbodi',
-      title: 'Head of Marketing & Communications',
-      department: 'Marketing',
-      location: 'Bangkok, Thailand',
-      initials: 'CS'
+      name: 'Jane Smith',
+      title: 'VP of Sales',
+      department: 'Sales',
+      location: 'San Francisco, CA',
+      initials: 'JS'
     },
     {
       id: '2',
-      name: 'Lerpong Nilkhiew',
-      title: 'IT Manager',
-      department: 'IT',
-      location: 'Bangkok, Thailand',
-      initials: 'LN'
+      name: 'Michael Chen',
+      title: 'Engineering Manager',
+      department: 'Engineering',
+      location: 'San Francisco, CA',
+      initials: 'MC'
     },
     {
       id: '3',
-      name: 'Kridsanakorn Rungjit',
-      title: 'Brand and Marketing communications manager',
+      name: 'Sarah Johnson',
+      title: 'Marketing Director',
       department: 'Marketing',
-      location: 'Bangkok, Thailand',
-      initials: 'KR'
+      location: 'San Francisco, CA',
+      initials: 'SJ'
     },
     {
       id: '4',
-      name: 'Nelson Leung',
-      title: 'Chief Executive Officer',
+      name: 'David Rodriguez',
+      title: 'Chief Technology Officer',
       department: 'Executive',
-      location: 'Bangkok, Thailand',
-      initials: 'NL'
+      location: 'San Francisco, CA',
+      initials: 'DR'
     },
     {
       id: '5',
-      name: 'Wanlop Ismairikulmitr',
-      title: 'Senior Marketing Manager',
-      department: 'Marketing',
-      location: 'Bangkok, Thailand',
-      initials: 'WI'
+      name: 'Emily Davis',
+      title: 'Business Development Manager',
+      department: 'Business Development',
+      location: 'San Francisco, CA',
+      initials: 'ED'
     }
   ];
 
   const prospects: ProspectData[] = [
     {
       id: '1',
-      name: 'Rattayagorn Petch...',
-      title: 'Sales Manager',
-      location: 'Thailand',
+      name: 'Alex Thompson',
+      title: 'Sales Director',
+      location: 'California, USA',
       department: 'Sales',
-      reason: 'Similar to past prospects',
+      reason: 'High-value prospect match',
+      actions: ['Access email']
+    },
+    {
+      id: '2',
+      name: 'Maria Garcia',
+      title: 'IT Manager',
+      location: 'Texas, USA',
+      department: 'IT',
+      reason: 'Technology decision maker',
       actions: ['Access email']
     }
   ];
@@ -174,42 +183,42 @@ const CompanyDetailPageBMI: React.FC = () => {
   const lookalikeCompanies: LookalikeCompany[] = [
     {
       id: '1',
-      name: 'MAER GROUP',
-      logo: 'MG',
-      location: 'Russia',
-      employees: 28,
+      name: 'TechFlow Solutions',
+      logo: 'TF',
+      location: 'Austin, Texas',
+      employees: 145,
       actions: ['Save']
     },
     {
       id: '2',
-      name: 'Cemark',
-      logo: 'CM',
-      location: 'Loures, Portugal',
-      employees: 20,
+      name: 'Digital Dynamics',
+      logo: 'DD',
+      location: 'Seattle, Washington',
+      employees: 132,
       actions: ['Save']
     },
     {
       id: '3',
-      name: 'SYNERGIC Sp. z o.o.',
-      logo: 'SY',
-      location: 'Warszawa, Poland',
-      employees: 21,
+      name: 'Innovation Labs Inc.',
+      logo: 'IL',
+      location: 'Boston, Massachusetts',
+      employees: 167,
       actions: ['Save']
     },
     {
       id: '4',
-      name: 'R2OOH - Mídia OO...',
-      logo: 'R2',
-      location: 'Rio de Janeiro, Brazil',
-      employees: 7,
+      name: 'Smart Systems Corp',
+      logo: 'SS',
+      location: 'Denver, Colorado',
+      employees: 198,
       actions: ['Save']
     },
     {
       id: '5',
-      name: 'dePoste',
-      logo: 'DP',
-      location: 'Paracuellos de Jarama, Spain',
-      employees: 6,
+      name: 'Future Tech Group',
+      logo: 'FT',
+      location: 'Portland, Oregon',
+      employees: 124,
       actions: ['Save']
     }
   ];
@@ -218,27 +227,36 @@ const CompanyDetailPageBMI: React.FC = () => {
     {
       id: '1',
       type: 'email',
-      title: 'Email opened by Lerpong Nilkhiew',
-      description: 'VGI Public Company Limited x Movingwalls - Advertising Collaboration',
-      timestamp: 'Jun 11, 2025, 2:45 pm',
+      title: 'Email opened by Michael Chen',
+      description: 'Product demo request and technical requirements discussion',
+      timestamp: 'Aug 15, 2025, 3:22 pm',
       status: 'Opened',
-      person: 'Lerpong Nilkhiew'
+      person: 'Michael Chen'
     },
     {
       id: '2',
       type: 'email',
-      title: 'chatit.sen@movingwalls.com to Lerpong Nilkhiew',
-      description: 'Step 1 of LMX: Media owners_APAC\nVGI Public Company Limited x Movingwalls - Advertising Collaboration\nDear Lerpong, If VGI Public Company Limited is looking to improve revenue generation and reduce costs, our OOH management platform might be worth a look. LMX gives you full control...',
-      timestamp: 'Jun 11, 2025, 2:44 pm',
-      person: 'Lerpong Nilkhiew'
+      title: 'sales@samplecompany.com to Jane Smith',
+      description: 'Follow-up on enterprise solution proposal\nDear Jane, Thank you for your interest in our enterprise software solutions. As discussed, our platform can help streamline your business processes and improve operational efficiency...',
+      timestamp: 'Aug 15, 2025, 2:18 pm',
+      person: 'Jane Smith'
     },
     {
       id: '3',
       type: 'task',
-      title: 'chatit.sen@movingwalls.com skipped a task to send linkedin connection request Kridsanakorn Rungjit',
-      description: '',
-      timestamp: 'Jun 05, 2025, 6:32 am',
-      person: 'Kridsanakorn Rungjit'
+      title: 'Scheduled LinkedIn connection request to Sarah Johnson',
+      description: 'Connect to discuss marketing automation opportunities',
+      timestamp: 'Aug 12, 2025, 9:15 am',
+      person: 'Sarah Johnson'
+    },
+    {
+      id: '4',
+      type: 'email',
+      title: 'Meeting confirmation from David Rodriguez',
+      description: 'Technical architecture review meeting scheduled for next week',
+      timestamp: 'Aug 10, 2025, 4:30 pm',
+      status: 'Confirmed',
+      person: 'David Rodriguez'
     }
   ];
 
@@ -363,17 +381,17 @@ const CompanyDetailPageBMI: React.FC = () => {
                 <h4 className="text-gray-400 font-medium mb-2">KEYWORDS</h4>
                 <div className="space-y-1">
                   <span className="bg-gray-700 px-2 py-1 rounded text-xs block w-fit">
-                    offline+online solutions
+                    software development
                   </span>
                   <span className="bg-gray-700 px-2 py-1 rounded text-xs block w-fit">
-                    automotive media
+                    business automation
                   </span>
                   <span className="bg-gray-700 px-2 py-1 rounded text-xs block w-fit">
-                    transit advertising
+                    digital solutions
                   </span>
                 </div>
                 <button className="text-blue-400 text-xs mt-2 hover:text-blue-300">
-                  Show all 49
+                  Show all 12
                 </button>
               </div>
               <div className="mt-4">
@@ -475,23 +493,23 @@ const CompanyDetailPageBMI: React.FC = () => {
                       <div className="flex flex-wrap gap-2">
                         <span className="bg-gray-700 px-2 py-1 rounded text-xs flex items-center">
                           <Building2 className="h-3 w-3 mr-1" />
-                          Companies located in Thailand
+                          Companies located in California
                         </span>
                         <span className="bg-gray-700 px-2 py-1 rounded text-xs flex items-center">
                           <Target className="h-3 w-3 mr-1" />
-                          Marketing Advertising industry
+                          Technology industry
                         </span>
                         <span className="bg-gray-700 px-2 py-1 rounded text-xs flex items-center">
                           <TrendingUp className="h-3 w-3 mr-1" />
-                          Marketing Advertising
+                          Software Development
                         </span>
                         <span className="bg-gray-700 px-2 py-1 rounded text-xs flex items-center">
                           <Target className="h-3 w-3 mr-1" />
-                          Advertising Services
+                          Business Automation
                         </span>
                         <span className="bg-gray-700 px-2 py-1 rounded text-xs flex items-center">
                           <Users className="h-3 w-3 mr-1" />
-                          Between 51 and 100 employees
+                          Between 101 and 200 employees
                         </span>
                       </div>
                     </div>
@@ -744,7 +762,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                     </div>
                     <div className="flex-1">
                       <div className="text-white text-sm font-medium">{contact.name}</div>
-                      <div className="text-gray-400 text-xs">{contact.title} at {companyData.name}</div>
+                      <div className="text-gray-400 text-xs">{contact.title} at Sample Company Inc.</div>
                     </div>
                   </div>
                 ))}
@@ -838,10 +856,10 @@ const CompanyDetailPageBMI: React.FC = () => {
                     </div>
                     <div className="flex-1">
                       <div className="text-white text-sm">
-                        chatit.sen@movingwalls.com skipped a task to send linkedin connection request <span className="text-blue-400">Lerpong Nilkhiew</span>
+                        Follow-up email sent to <span className="text-blue-400">Michael Chen</span>
                       </div>
                       <div className="text-gray-400 text-xs mt-1">
-                        Skipped at Jun 12, 1:06 AM
+                        Completed on Aug 15, 4:30 PM
                       </div>
                       <div className="bg-gray-700 text-gray-300 text-xs px-2 py-1 rounded w-fit mt-1">
                         Completed
@@ -854,10 +872,10 @@ const CompanyDetailPageBMI: React.FC = () => {
                     </div>
                     <div className="flex-1">
                       <div className="text-white text-sm">
-                        chatit.sen@movingwalls.com skipped a task to send linkedin connection request <span className="text-blue-400">Lerpong Nilkhiew</span>
+                        LinkedIn connection request to <span className="text-blue-400">Sarah Johnson</span>
                       </div>
                       <div className="text-gray-400 text-xs mt-1">
-                        Skipped at Jun 12, 1:06 AM
+                        Completed on Aug 12, 9:15 AM
                       </div>
                     </div>
                   </div>
