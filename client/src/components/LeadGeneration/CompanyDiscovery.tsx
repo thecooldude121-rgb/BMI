@@ -465,31 +465,59 @@ const CompanyDiscovery: React.FC = () => {
               <div className="relative" ref={columnManagerRef}>
                 <button 
                   onClick={() => setShowColumnManager(!showColumnManager)}
-                  className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg"
+                  className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg border border-gray-300"
+                  title="Manage Columns"
                 >
-                  <Columns className="h-4 w-4" />
+                  <Columns className="h-4 w-4 mr-2" />
+                  Columns ({visibleColumns.length})
                 </button>
                 
                 {/* Column Manager Dropdown */}
                 {showColumnManager && (
-                  <div className="absolute right-0 top-12 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                    <div className="p-3 border-b border-gray-200">
-                      <h3 className="text-sm font-medium text-gray-900">Manage Columns</h3>
+                  <div className="absolute right-0 top-12 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50">
+                    <div className="p-4 border-b border-gray-200">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-sm font-medium text-gray-900">Manage Table Columns</h3>
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => setColumns(prev => prev.map(col => ({ ...col, visible: true })))}
+                            className="text-xs text-blue-600 hover:text-blue-700"
+                          >
+                            Show All
+                          </button>
+                          <button
+                            onClick={() => setColumns(prev => prev.map(col => ({ ...col, visible: ['name', 'links', 'employees', 'actions'].includes(col.key) })))}
+                            className="text-xs text-gray-600 hover:text-gray-700"
+                          >
+                            Default
+                          </button>
+                        </div>
+                      </div>
                     </div>
                     <div className="p-2 max-h-64 overflow-y-auto">
                       {columns.map((column) => (
-                        <div key={column.key} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
-                          <div className="flex items-center">
-                            <span className="text-sm text-gray-700">{column.label}</span>
+                        <div key={column.key} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
+                          <div className="flex items-center space-x-3">
+                            <input
+                              type="checkbox"
+                              checked={column.visible}
+                              onChange={() => toggleColumnVisibility(column.key)}
+                              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            />
+                            <span className="text-sm text-gray-700 font-medium">{column.label}</span>
                           </div>
-                          <button
-                            onClick={() => toggleColumnVisibility(column.key)}
-                            className="text-sm text-blue-600 hover:text-blue-700"
-                          >
-                            {column.visible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                          </button>
+                          <div className="flex items-center space-x-1">
+                            {column.visible ? (
+                              <Eye className="h-4 w-4 text-green-500" />
+                            ) : (
+                              <EyeOff className="h-4 w-4 text-gray-400" />
+                            )}
+                          </div>
                         </div>
                       ))}
+                    </div>
+                    <div className="p-3 border-t border-gray-200 bg-gray-50 text-xs text-gray-600">
+                      {visibleColumns.length} of {columns.length} columns visible
                     </div>
                   </div>
                 )}
@@ -498,20 +526,25 @@ const CompanyDiscovery: React.FC = () => {
           </div>
         </div>
 
-        {/* Table Header - Horizontally Scrollable */}
-        <div className="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
-          <div className="flex items-center px-6 py-3">
-            <input
-              type="checkbox"
-              checked={selectedCompanies.length === paginatedCompanies.length && paginatedCompanies.length > 0}
-              onChange={selectAllCompanies}
-              className="mr-4 rounded border-gray-300 flex-shrink-0"
-            />
-            <div className="flex-1 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-              <div className="flex items-center gap-4 text-xs font-medium text-gray-600 uppercase tracking-wider" style={{ minWidth: 'max-content' }}>
+        {/* Table Container with Horizontal Scroll */}
+        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden relative">
+          {/* Scroll Indicator */}
+          <div className="absolute top-0 right-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none z-20"></div>
+          
+          {/* Table Header - Fixed */}
+          <div className="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
+            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+              <div className="flex items-center px-6 py-3" style={{ minWidth: `${visibleColumns.length * 150 + 100}px` }}>
+                <input
+                  type="checkbox"
+                  checked={selectedCompanies.length === paginatedCompanies.length && paginatedCompanies.length > 0}
+                  onChange={selectAllCompanies}
+                  className="mr-4 rounded border-gray-300 flex-shrink-0"
+                  style={{ width: '40px' }}
+                />
                 {visibleColumns.map((column) => (
-                  <div key={column.key} className="flex-shrink-0" style={{ minWidth: column.minWidth || '120px' }}>
-                    <div className="flex items-center space-x-1">
+                  <div key={column.key} className="flex-shrink-0 px-2" style={{ minWidth: column.minWidth || '150px' }}>
+                    <div className="flex items-center space-x-1 text-xs font-medium text-gray-600 uppercase tracking-wider">
                       <span>{column.label}</span>
                       {column.sortable && (
                         <button className="text-gray-400 hover:text-gray-600">
@@ -524,44 +557,43 @@ const CompanyDiscovery: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Table Content - Horizontally and Vertically Scrollable */}
-        <div className="flex-1 overflow-y-auto bg-white" style={{ maxHeight: 'calc(100vh - 300px)' }}>
-          <div className="divide-y divide-gray-200">
-            {paginatedCompanies.map((company) => (
-              <div key={company.id} className="hover:bg-gray-50 transition-colors">
-                <div className="flex items-center px-6 py-4">
-                  <input
-                    type="checkbox"
-                    checked={selectedCompanies.includes(company.id)}
-                    onChange={() => toggleCompanySelection(company.id)}
-                    className="mr-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 flex-shrink-0"
-                  />
-                  <div className="flex-1 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                    <div className="flex items-center gap-4" style={{ minWidth: 'max-content' }}>
+          {/* Table Content - Scrollable with Fixed Layout */}
+          <div className="flex-1 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
+            <div className="divide-y divide-gray-200">
+              {paginatedCompanies.map((company) => (
+                <div key={company.id} className="hover:bg-gray-50 transition-colors">
+                  <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                    <div className="flex items-center px-6 py-4" style={{ minWidth: `${visibleColumns.length * 150 + 100}px` }}>
+                      <input
+                        type="checkbox"
+                        checked={selectedCompanies.includes(company.id)}
+                        onChange={() => toggleCompanySelection(company.id)}
+                        className="mr-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 flex-shrink-0"
+                        style={{ width: '40px' }}
+                      />
                       {visibleColumns.map((column) => (
-                        <div key={column.key} className="flex-shrink-0" style={{ minWidth: column.minWidth || '120px' }}>
+                        <div key={column.key} className="flex-shrink-0 px-2" style={{ minWidth: column.minWidth || '150px' }}>
                           {renderColumnContent(column, company)}
                         </div>
                       ))}
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-          
-          {/* Loading State for Large Tables */}
-          {filteredCompanies.length === 0 && searchQuery && (
-            <div className="flex items-center justify-center py-12">
-              <div className="text-center">
-                <Search className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No companies found</h3>
-                <p className="text-gray-600">Try adjusting your search terms or filters</p>
-              </div>
+              ))}
             </div>
-          )}
+            
+            {/* Loading State for Large Tables */}
+            {filteredCompanies.length === 0 && searchQuery && (
+              <div className="flex items-center justify-center py-12">
+                <div className="text-center">
+                  <Search className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No companies found</h3>
+                  <p className="text-gray-600">Try adjusting your search terms or filters</p>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Enhanced Bottom Bar with Pagination */}
