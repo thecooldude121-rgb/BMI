@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
+import { companies as sharedCompanies } from '../../data/companies';
 import { motion } from 'framer-motion';
 import { 
   Search, Filter, Building2, Globe, Users, MapPin, DollarSign,
@@ -82,44 +83,9 @@ const CompanyDiscovery: React.FC = () => {
     { key: 'actions', label: 'Actions', width: 'col-span-1', minWidth: '100px', visible: true, sortable: false }
   ]);
 
-  // Mock company data with comprehensive information
+  // Use shared company data plus additional generated companies for pagination demo
   const companies: CompanyData[] = [
-    {
-      id: 'comp-1',
-      name: 'Acme Corporation',
-      logo: '🏢',
-      domain: 'acme.com',
-      website: 'https://acme.com',
-      linkedinUrl: 'https://linkedin.com/company/acme-corp',
-      industry: 'Enterprise Software',
-      location: 'San Francisco, CA',
-      employeeCount: '1,001-5,000',
-      revenue: '$50M-$100M',
-      founded: 2010,
-      description: 'Leading provider of enterprise software solutions',
-      technologies: ['Salesforce', 'AWS', 'React', 'Node.js'],
-      keywords: ['Enterprise', 'SaaS', 'Cloud Computing', 'B2B', 'Software'],
-      funding: 'Series C - $25M',
-      saved: false
-    },
-    {
-      id: 'comp-2',
-      name: 'Global Tech Solutions',
-      logo: '💻',
-      domain: 'globaltech.io',
-      website: 'https://globaltech.io',
-      linkedinUrl: 'https://linkedin.com/company/global-tech-solutions',
-      industry: 'Artificial Intelligence',
-      location: 'New York, NY',
-      employeeCount: '501-1,000',
-      revenue: '$25M-$50M',
-      founded: 2015,
-      description: 'Innovative cloud computing and AI solutions',
-      technologies: ['Google Cloud', 'Python', 'TensorFlow'],
-      keywords: ['AI', 'Machine Learning', 'Cloud', 'Analytics', 'Innovation'],
-      funding: 'Series B - $15M',
-      saved: true
-    },
+    ...sharedCompanies,
     {
       id: 'comp-3',
       name: 'DataFlow Systems',
