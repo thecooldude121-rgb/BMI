@@ -338,45 +338,47 @@ const CompanyDetailPageBMI: React.FC = () => {
       {/* Main Content */}
       <div className="flex">
         {/* Company Information Sidebar */}
-        <div className="w-80 bg-gray-800 border-r border-gray-700 h-screen overflow-y-auto p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold text-white">Company information</h3>
-            <ChevronUp className="h-4 w-4 text-gray-400" />
-          </div>
-          <div className="text-sm text-gray-300 space-y-2">
-            <p>{companyData.description}</p>
-            <div className="mt-4">
-              <h4 className="text-gray-400 font-medium mb-2">INDUSTRIES</h4>
-              <span className="bg-gray-700 px-2 py-1 rounded text-xs">
-                {companyData.industry}
-              </span>
+        <div className="w-80 bg-gray-800 border-r border-gray-700 h-screen overflow-y-auto">
+          <div className="p-4 h-full">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold text-white">Company information</h3>
+              <ChevronUp className="h-4 w-4 text-gray-400" />
             </div>
-            <div className="mt-4">
-              <h4 className="text-gray-400 font-medium mb-2">KEYWORDS</h4>
-              <div className="space-y-1">
-                {selectedCompany.keywords.slice(0, 3).map((keyword, index) => (
-                  <span key={index} className="bg-gray-700 px-2 py-1 rounded text-xs block w-fit">
-                    {keyword}
-                  </span>
-                ))}
+            <div className="text-sm text-gray-300 space-y-4">
+              <p>{companyData.description}</p>
+              <div>
+                <h4 className="text-gray-400 font-medium mb-2">INDUSTRIES</h4>
+                <span className="bg-gray-700 px-2 py-1 rounded text-xs">
+                  {companyData.industry}
+                </span>
               </div>
-              <button className="text-blue-400 text-xs mt-2 hover:text-blue-300">
-                Show all {selectedCompany.keywords.length}
-              </button>
-            </div>
-            <div className="mt-4">
-              <h4 className="text-gray-400 font-medium mb-2">PHONE NUMBER</h4>
-              <p className="text-gray-300">{companyData.phone}</p>
-            </div>
-            <div className="mt-4">
-              <h4 className="text-gray-400 font-medium mb-2">FOUNDING YEAR</h4>
-              <p className="text-gray-300">{companyData.founded}</p>
-            </div>
-            <div className="mt-4">
-              <h4 className="text-gray-400 font-medium mb-2">SUBSIDIARIES</h4>
-              <p className="text-gray-300">
-                {companyData.name} has {companyData.subsidiaries} subsidiary
-              </p>
+              <div>
+                <h4 className="text-gray-400 font-medium mb-2">KEYWORDS</h4>
+                <div className="space-y-1">
+                  {selectedCompany.keywords.slice(0, 3).map((keyword, index) => (
+                    <span key={index} className="bg-gray-700 px-2 py-1 rounded text-xs block w-fit">
+                      {keyword}
+                    </span>
+                  ))}
+                </div>
+                <button className="text-blue-400 text-xs mt-2 hover:text-blue-300">
+                  Show all {selectedCompany.keywords.length}
+                </button>
+              </div>
+              <div>
+                <h4 className="text-gray-400 font-medium mb-2">PHONE NUMBER</h4>
+                <p className="text-gray-300">{companyData.phone}</p>
+              </div>
+              <div>
+                <h4 className="text-gray-400 font-medium mb-2">FOUNDING YEAR</h4>
+                <p className="text-gray-300">{companyData.founded}</p>
+              </div>
+              <div>
+                <h4 className="text-gray-400 font-medium mb-2">SUBSIDIARIES</h4>
+                <p className="text-gray-300">
+                  {companyData.name} has {companyData.subsidiaries} subsidiary
+                </p>
+              </div>
             </div>
           </div>
         </div>
