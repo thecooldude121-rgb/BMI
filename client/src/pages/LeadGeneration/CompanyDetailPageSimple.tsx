@@ -439,245 +439,69 @@ const CompanyDetailPageSimple = () => {
           {/* Overview Tab */}
           {activeTab === 'overview' && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Left Column */}
+              {/* Left Column - Main Content */}
               <div className="lg:col-span-2 space-y-6">
-                {/* Company Information */}
-                <div className="bg-white rounded-lg shadow border border-gray-200">
-                  <div className="px-6 py-4 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                      <Building2 className="h-5 w-5 mr-2" />
-                      Company Information
-                    </h3>
+                {/* Company Information Card */}
+                <div className="bg-gray-800 text-white rounded-lg shadow border border-gray-700">
+                  <div className="px-6 py-4 border-b border-gray-700 flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">Company Information</h3>
+                    <button className="text-gray-400 hover:text-white">
+                      <MoreVertical className="h-4 w-4" />
+                    </button>
                   </div>
                   <div className="px-6 py-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-3">
-                        <div className="flex items-center space-x-2">
-                          <Tag className="h-4 w-4 text-gray-400" />
-                          <span className="text-sm font-medium">Industry:</span>
-                          <span className="text-sm text-gray-600">{companyData.industry}</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Phone className="h-4 w-4 text-gray-400" />
-                          <span className="text-sm font-medium">Phone:</span>
-                          <span className="text-sm text-gray-600">{companyData.phone}</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Globe className="h-4 w-4 text-gray-400" />
-                          <span className="text-sm font-medium">Website:</span>
-                          <a href={companyData.website} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
-                            {companyData.website}
-                          </a>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Calendar className="h-4 w-4 text-gray-400" />
-                          <span className="text-sm font-medium">Founded:</span>
-                          <span className="text-sm text-gray-600">{companyData.founded}</span>
-                        </div>
-                      </div>
-                      <div className="space-y-3">
-                        <div className="flex items-center space-x-2">
-                          <MapPin className="h-4 w-4 text-gray-400" />
-                          <span className="text-sm font-medium">HQ:</span>
-                          <span className="text-sm text-gray-600">{companyData.headquarters}</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Users className="h-4 w-4 text-gray-400" />
-                          <span className="text-sm font-medium">Employees:</span>
-                          <span className="text-sm text-gray-600">{companyData.employeeCount}</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <DollarSign className="h-4 w-4 text-gray-400" />
-                          <span className="text-sm font-medium">Revenue:</span>
-                          <span className="text-sm text-gray-600">{companyData.revenue}</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Briefcase className="h-4 w-4 text-gray-400" />
-                          <span className="text-sm font-medium">Type:</span>
-                          <span className="text-sm text-gray-600">{companyData.ownershipType}</span>
-                        </div>
-                      </div>
-                    </div>
+                    <p className="text-gray-300 text-sm mb-4">{companyData.description}</p>
+                    <button className="text-blue-400 text-sm hover:text-blue-300">Show More</button>
                     
-                    {/* Keywords */}
-                    <div className="mt-4">
-                      <span className="text-sm font-medium mb-2 block">Keywords:</span>
-                      <div className="flex flex-wrap gap-2">
-                        {companyData.keywords.map((keyword, index) => (
-                          <span key={index} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                            {keyword}
-                          </span>
-                        ))}
+                    <div className="mt-6 space-y-4">
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-400 mb-2">INDUSTRIES</h4>
+                        <span className="inline-block px-3 py-1 bg-gray-700 text-gray-300 rounded-full text-sm">
+                          {companyData.industry}
+                        </span>
                       </div>
-                    </div>
-
-                    {/* Executives */}
-                    <div className="mt-4">
-                      <span className="text-sm font-medium mb-2 block">Key Executives:</span>
-                      <div className="space-y-2">
-                        {companyData.executives.map((exec, index) => (
-                          <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                            <div>
-                              <div className="font-medium text-sm">{exec.name}</div>
-                              <div className="text-xs text-gray-500">{exec.title}</div>
-                            </div>
-                            {exec.linkedinUrl && (
-                              <a href={exec.linkedinUrl} target="_blank" rel="noopener noreferrer">
-                                <Linkedin className="h-4 w-4 text-blue-600 hover:text-blue-800" />
-                              </a>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Key Prospects */}
-                <div className="bg-white rounded-lg shadow border border-gray-200">
-                  <div className="px-6 py-4 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                      <Users className="h-5 w-5 mr-2" />
-                      Key Prospects
-                    </h3>
-                  </div>
-                  <div className="px-6 py-4">
-                    <div className="space-y-3">
-                      {companyData.employees.slice(0, 3).map((employee) => (
-                        <div key={employee.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-sm font-medium text-blue-700">
-                              {employee.name.split(' ').map(n => n[0]).join('')}
-                            </div>
-                            <div>
-                              <div className="font-medium text-sm">{employee.name}</div>
-                              <div className="text-xs text-gray-500">{employee.title} • {employee.department}</div>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            {employee.email && (
-                              <button className="flex items-center px-2 py-1 text-xs bg-blue-50 text-blue-700 rounded hover:bg-blue-100 transition-colors">
-                                <Mail className="h-3 w-3 mr-1" />
-                                Email
-                              </button>
-                            )}
-                            {employee.phone && (
-                              <button className="flex items-center px-2 py-1 text-xs bg-green-50 text-green-700 rounded hover:bg-green-100 transition-colors">
-                                <Phone className="h-3 w-3 mr-1" />
-                                Call
-                              </button>
-                            )}
-                          </div>
+                      
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-400 mb-2">KEYWORDS</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {companyData.keywords.map((keyword, index) => (
+                            <span key={index} className="inline-block px-3 py-1 bg-gray-700 text-gray-300 rounded-full text-sm">
+                              {keyword}
+                            </span>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column */}
-              <div className="space-y-6">
-                {/* Company Stats */}
-                <div className="bg-white rounded-lg shadow border border-gray-200">
-                  <div className="px-6 py-4 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                      <TrendingUp className="h-5 w-5 mr-2" />
-                      Company Stats
-                    </h3>
-                  </div>
-                  <div className="px-6 py-4 space-y-4">
-                    <div className="text-center p-4 bg-blue-50 rounded-lg">
-                      <div className="text-2xl font-bold text-blue-600">78%</div>
-                      <div className="text-sm text-gray-600">Lead Score</div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="text-center p-3 bg-gray-50 rounded">
-                        <div className="text-lg font-semibold text-gray-900">15</div>
-                        <div className="text-xs text-gray-600">Open Deals</div>
                       </div>
-                      <div className="text-center p-3 bg-gray-50 rounded">
-                        <div className="text-lg font-semibold text-gray-900">32</div>
-                        <div className="text-xs text-gray-600">Activities</div>
+                      
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-400 mb-2">SUBSIDIARIES</h4>
+                        <p className="text-gray-300 text-sm">{companyData.name} has 1 subsidiary</p>
                       </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Quick Actions */}
-                <div className="bg-white rounded-lg shadow border border-gray-200">
-                  <div className="px-6 py-4 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                      <Target className="h-5 w-5 mr-2" />
-                      Quick Actions
-                    </h3>
-                  </div>
-                  <div className="px-6 py-4 space-y-3">
-                    <button className="w-full flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
-                      <Mail className="h-4 w-4 mr-2" />
-                      Send Email Campaign
-                    </button>
-                    <button className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
-                      <CheckSquare className="h-4 w-4 mr-2" />
-                      Create Task
-                    </button>
-                    <button className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
-                      <FileText className="h-4 w-4 mr-2" />
-                      Add Note
-                    </button>
-                  </div>
-                </div>
-
-                {/* Notes */}
-                <div className="bg-white rounded-lg shadow border border-gray-200">
-                  <div className="px-6 py-4 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                      <FileText className="h-5 w-5 mr-2" />
-                      Notes
-                    </h3>
-                  </div>
-                  <div className="px-6 py-4 space-y-4">
-                    {/* Add Note */}
-                    <div className="space-y-2">
-                      <textarea
-                        placeholder="Add a note..."
-                        value={newNote}
-                        onChange={(e) => setNewNote(e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                        rows={3}
-                      />
-                      <button 
-                        onClick={handleAddNote}
-                        disabled={!newNote.trim()}
-                        className="w-full flex items-center justify-center px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-                      >
-                        <Send className="h-4 w-4 mr-2" />
-                        Add Note
-                      </button>
-                    </div>
-
-                    {/* Sample Notes */}
-                    <div className="space-y-3">
-                      <div className="p-3 bg-gray-50 rounded-lg">
-                        <p className="text-sm mb-2">Very interested in our AI capabilities. Decision maker is the CTO.</p>
-                        <div className="flex items-center justify-between text-xs text-gray-500">
-                          <span>Sales Rep</span>
-                          <span>2024-01-20</span>
+                      
+                      <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-700">
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-400">PHONE NUMBER</h4>
+                          <p className="text-gray-300 text-sm">{companyData.phone || 'Not available'}</p>
                         </div>
-                        <div className="flex space-x-1 mt-2">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                            qualified
-                          </span>
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
-                            hot-lead
-                          </span>
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-400">TRADING SYMBOL</h4>
+                          <p className="text-gray-300 text-sm">Not public</p>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-400">FOUNDING YEAR</h4>
+                          <p className="text-gray-300 text-sm">{companyData.founded}</p>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-400">EMPLOYEES</h4>
+                          <p className="text-gray-300 text-sm">{companyData.employeeCount}</p>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
+
                 {/* Company Insights Section */}
                 {insightsLoading ? (
-                  <div className="flex items-center justify-center py-8 mt-8">
+                  <div className="flex items-center justify-center py-8">
                     <div className="text-center">
                       <RefreshCw className="h-8 w-8 text-blue-600 animate-spin mx-auto mb-4" />
                       <p className="text-gray-600">Loading real-time company insights...</p>
@@ -685,254 +509,250 @@ const CompanyDetailPageSimple = () => {
                     </div>
                   </div>
                 ) : liveInsights && (
-                  <div className="space-y-6 mt-8">
-                    {/* Header with Refresh Button */}
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h2 className="text-2xl font-bold text-gray-900">Company Insights</h2>
-                        <p className="text-sm text-gray-500 mt-1">
-                          Last updated: {new Date(liveInsights.lastUpdated).toLocaleString()}
-                        </p>
-                      </div>
-                      <button
-                        onClick={refreshInsights}
-                        disabled={refreshingInsights}
-                        className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400 transition-colors"
-                      >
-                        <RefreshCw className={`h-4 w-4 mr-2 ${refreshingInsights ? 'animate-spin' : ''}`} />
-                        {refreshingInsights ? 'Refreshing...' : 'Refresh Data'}
-                      </button>
-                    </div>
-
-                    {/* Grid Layout */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      {/* Latest News Section */}
-                      <div className="lg:col-span-2">
-                        <div className="bg-white rounded-lg shadow border border-gray-200">
-                          <div className="px-6 py-4 border-b border-gray-200">
-                            <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                              <Newspaper className="h-5 w-5 mr-2" />
-                              Latest News Mentions
-                              <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                {liveInsights.news?.length || 0} articles
-                              </span>
-                            </h3>
-                          </div>
-                          <div className="px-6 py-4">
-                            <div className="space-y-4">
-                              {liveInsights.news?.map((article) => (
-                                <div key={article.id} className="border-l-4 border-blue-500 pl-4 py-3 bg-gray-50 rounded-r-lg">
-                                  <div className="flex items-start justify-between">
-                                    <div className="flex-1">
-                                      <h4 className="font-medium text-sm text-gray-900 mb-2">{article.title}</h4>
-                                      <p className="text-sm text-gray-600 mb-3">{article.summary}</p>
-                                      <div className="flex items-center space-x-3 text-xs">
-                                        <span className="text-gray-500">{article.source}</span>
-                                        <span className="text-gray-500">•</span>
-                                        <span className="text-gray-500">{new Date(article.publishedAt).toLocaleDateString()}</span>
-                                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getSentimentColor(article.sentiment)}`}>
-                                          {article.sentiment}
-                                        </span>
-                                      </div>
-                                    </div>
-                                    <a href={article.url} target="_blank" rel="noopener noreferrer" className="ml-3 flex-shrink-0">
-                                      <ExternalLink className="h-4 w-4 text-blue-600 hover:text-blue-800" />
-                                    </a>
-                                  </div>
-                                </div>
-                              )) || <p className="text-gray-500 text-sm">No recent news available</p>}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Technologies Adopted */}
-                      <div className="bg-white rounded-lg shadow border border-gray-200">
-                        <div className="px-6 py-4 border-b border-gray-200">
-                          <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                            <Cpu className="h-5 w-5 mr-2" />
-                            Technologies Adopted
-                            <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                              {liveInsights.technologies?.length || 0} technologies
-                            </span>
-                          </h3>
-                        </div>
-                        <div className="px-6 py-4">
-                          <div className="space-y-3">
-                            {liveInsights.technologies?.map((tech, index) => (
-                              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                <div className="flex items-center space-x-3">
-                                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getTechCategoryColor(tech.category)}`}>
-                                    {tech.name}
-                                  </span>
-                                  <div className="text-xs text-gray-500">
-                                    {tech.category}
-                                  </div>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                  <div className="text-xs text-gray-500">
-                                    {tech.confidence}% confidence
-                                  </div>
-                                  <div className="w-16 bg-gray-200 rounded-full h-2">
-                                    <div 
-                                      className="bg-blue-600 h-2 rounded-full" 
-                                      style={{ width: `${tech.confidence}%` }}
-                                    ></div>
-                                  </div>
-                                </div>
-                              </div>
-                            )) || <p className="text-gray-500 text-sm">No technology data available</p>}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Funding History */}
-                      <div className="bg-white rounded-lg shadow border border-gray-200">
-                        <div className="px-6 py-4 border-b border-gray-200">
-                          <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                            <Funding className="h-5 w-5 mr-2" />
-                            Funding History
-                            <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                              {liveInsights.fundingHistory?.reduce((sum, round) => sum + parseFloat(round.amount.replace(/[$M]/g, '')), 0) || 0}M total
-                            </span>
-                          </h3>
-                        </div>
-                        <div className="px-6 py-4">
-                          <div className="space-y-4">
-                            {liveInsights.fundingHistory?.map((round) => (
-                              <div key={round.id} className="border-l-4 border-purple-500 pl-4 py-3 bg-gray-50 rounded-r-lg">
-                                <div className="flex items-start justify-between">
-                                  <div className="flex-1">
-                                    <div className="flex items-center space-x-2 mb-2">
-                                      <span className="font-medium text-sm text-gray-900">{round.type}</span>
-                                      <span className="text-lg font-bold text-purple-600">{round.amount}</span>
-                                    </div>
-                                    <div className="text-xs text-gray-500 mb-2">
-                                      {new Date(round.date).toLocaleDateString()} • Valuation: {round.valuation}
-                                    </div>
-                                    <div className="flex flex-wrap gap-1">
-                                      {round.investors.map((investor, index) => (
-                                        <span key={index} className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-800">
-                                          {investor}
-                                        </span>
-                                      ))}
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            )) || <p className="text-gray-500 text-sm">No funding data available</p>}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Employee Trends Chart */}
-                      <div className="bg-white rounded-lg shadow border border-gray-200">
-                        <div className="px-6 py-4 border-b border-gray-200">
-                          <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                            <BarChart3 className="h-5 w-5 mr-2" />
-                            Employee Trends
-                            <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                              +{liveInsights.employeeTrends?.[0]?.growth || 0}% growth
-                            </span>
-                          </h3>
-                        </div>
-                        <div className="px-6 py-4">
-                          <div className="space-y-3">
-                            {liveInsights.employeeTrends?.map((trend, index) => (
-                              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                <div className="flex items-center space-x-3">
-                                  <div className="text-sm font-medium text-gray-900">
-                                    {new Date(trend.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
-                                  </div>
-                                  <div className="text-lg font-bold text-blue-600">
-                                    {trend.count}
-                                  </div>
-                                </div>
-                                <div className={`flex items-center px-2 py-1 rounded text-xs font-medium ${
-                                  trend.growth > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                                }`}>
-                                  {trend.growth > 0 ? '+' : ''}{trend.growth}%
-                                </div>
-                              </div>
-                            )) || <p className="text-gray-500 text-sm">No employee trend data available</p>}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Current Job Postings */}
-                      <div className="bg-white rounded-lg shadow border border-gray-200">
-                        <div className="px-6 py-4 border-b border-gray-200">
-                          <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                            <JobIcon className="h-5 w-5 mr-2" />
-                            Active Job Postings
-                            <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                              {liveInsights.jobPostings?.length || 0} open positions
-                            </span>
-                          </h3>
-                        </div>
-                        <div className="px-6 py-4">
-                          <div className="space-y-3">
-                            {liveInsights.jobPostings?.map((job) => (
-                              <div key={job.id} className="border-l-4 border-orange-500 pl-4 py-3 bg-gray-50 rounded-r-lg">
-                                <div className="flex items-start justify-between">
-                                  <div className="flex-1">
-                                    <div className="flex items-start justify-between mb-2">
-                                      <h4 className="font-medium text-sm text-gray-900">{job.title}</h4>
-                                      <a href={job.url} target="_blank" rel="noopener noreferrer" className="ml-2 flex-shrink-0">
-                                        <ExternalLink className="h-4 w-4 text-blue-600 hover:text-blue-800" />
-                                      </a>
-                                    </div>
-                                    <div className="flex items-center space-x-2 mb-2">
-                                      <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-200 text-gray-800">
-                                        {job.department}
-                                      </span>
-                                      <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                                        {job.type}
-                                      </span>
-                                      {job.remote && (
-                                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
-                                          Remote
-                                        </span>
-                                      )}
-                                    </div>
-                                    <div className="flex items-center space-x-2 text-xs text-gray-500">
-                                      <MapPin className="h-3 w-3" />
-                                      <span>{job.location}</span>
-                                      <span>•</span>
-                                      <Clock className="h-3 w-3" />
-                                      <span>Posted {new Date(job.postedAt).toLocaleDateString()}</span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            )) || <p className="text-gray-500 text-sm">No job postings available</p>}
-                          </div>
-                        </div>
+                  <div className="bg-gray-800 text-white rounded-lg shadow border border-gray-700">
+                    <div className="px-6 py-4 border-b border-gray-700 flex items-center justify-between">
+                      <h3 className="text-lg font-semibold">Company Insights</h3>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={refreshInsights}
+                          disabled={refreshingInsights}
+                          className="text-gray-400 hover:text-white"
+                        >
+                          <RefreshCw className={`h-4 w-4 ${refreshingInsights ? 'animate-spin' : ''}`} />
+                        </button>
+                        <button className="text-gray-400 hover:text-white">
+                          <MoreVertical className="h-4 w-4" />
+                        </button>
                       </div>
                     </div>
-
-                    {/* Data Sources Notice */}
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                      <div className="flex items-start">
-                        <Zap className="h-5 w-5 text-blue-600 mr-3 mt-0.5" />
-                        <div>
-                          <h4 className="text-sm font-medium text-blue-900 mb-1">Real-time Data Sources</h4>
-                          <p className="text-sm text-blue-700">
-                            This data is automatically updated from multiple sources including LinkedIn Sales Navigator, 
-                            Crunchbase, NewsAPI, BuiltWith, Wappalyzer, Indeed, Glassdoor, Clearbit, ZoomInfo, Pitchbook, 
-                            Twitter API, and GitHub. Data refreshes every 24 hours or on-demand.
-                          </p>
+                    <div className="px-6 py-4">
+                      {/* Score Section */}
+                      <div className="mb-6">
+                        <div className="flex items-center space-x-4 mb-4">
+                          <div className="text-3xl font-bold">30</div>
+                          <div className="text-lg text-gray-400">/ 100</div>
+                          <span className="px-2 py-1 bg-green-600 text-white text-xs rounded">Excellent</span>
+                        </div>
+                        
+                        {/* Tabs */}
+                        <div className="flex space-x-6 border-b border-gray-700">
+                          <button className="pb-2 text-white border-b-2 border-white text-sm">Score</button>
+                          <button className="pb-2 text-gray-400 hover:text-white text-sm">News</button>
+                          <button className="pb-2 text-gray-400 hover:text-white text-sm flex items-center">
+                            Technologies <span className="ml-1 text-xs bg-gray-600 px-1 rounded">{liveInsights.technologies?.length || 0}</span>
+                          </button>
+                          <button className="pb-2 text-gray-400 hover:text-white text-sm">Funding rounds</button>
+                          <button className="pb-2 text-gray-400 hover:text-white text-sm">Job postings</button>
+                          <button className="pb-2 text-gray-400 hover:text-white text-sm flex items-center">
+                            Employee trends <span className="ml-1 text-xs bg-gray-600 px-1 rounded">24</span>
+                          </button>
+                          <button className="pb-2 text-gray-400 hover:text-white text-sm">Website visitors</button>
+                        </div>
+                      </div>
+                      
+                      {/* Company Profile Tags */}
+                      <div className="mb-6">
+                        <h4 className="text-sm text-gray-400 mb-3">Company profile</h4>
+                        <div className="flex flex-wrap gap-2">
+                          <span className="px-3 py-1 bg-gray-700 text-gray-300 rounded text-sm flex items-center">
+                            <Building2 className="h-3 w-3 mr-1" />
+                            Companies located in {companyData.headquarters.split(',')[1]?.trim() || 'United States'}
+                          </span>
+                          <span className="px-3 py-1 bg-gray-700 text-gray-300 rounded text-sm flex items-center">
+                            <Tag className="h-3 w-3 mr-1" />
+                            {companyData.industry} industry
+                          </span>
+                          <span className="px-3 py-1 bg-gray-700 text-gray-300 rounded text-sm flex items-center">
+                            <Tag className="h-3 w-3 mr-1" />
+                            {companyData.industry}
+                          </span>
+                          <span className="px-3 py-1 bg-gray-700 text-gray-300 rounded text-sm flex items-center">
+                            <Users className="h-3 w-3 mr-1" />
+                            Between 51 and 100 employees
+                          </span>
                         </div>
                       </div>
                     </div>
                   </div>
                 )}
+
+                {/* New Prospects Section */}
+                <div className="bg-gray-800 text-white rounded-lg shadow border border-gray-700">
+                  <div className="px-6 py-4 border-b border-gray-700 flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">New prospects</h3>
+                    <div className="flex items-center space-x-2">
+                      <button className="text-gray-400 hover:text-white">
+                        <MoreVertical className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="px-6 py-4">
+                    {/* Filter Tabs */}
+                    <div className="flex space-x-6 border-b border-gray-700 mb-4">
+                      <button className="pb-2 text-white border-b-2 border-white text-sm">All</button>
+                      <button className="pb-2 text-gray-400 hover:text-white text-sm flex items-center">
+                        Sales Department <span className="ml-1 text-xs bg-gray-600 px-1 rounded">1</span>
+                      </button>
+                      <button className="pb-2 text-gray-400 hover:text-white text-sm flex items-center">
+                        IT <span className="ml-1 text-xs bg-gray-600 px-1 rounded">1</span>
+                      </button>
+                      <button className="pb-2 text-gray-400 hover:text-white text-sm flex items-center">
+                        marketing head <span className="ml-1 text-xs bg-gray-600 px-1 rounded">1</span>
+                      </button>
+                      <button className="pb-2 text-gray-400 hover:text-white text-sm flex items-center">
+                        Business Development <span className="ml-1 text-xs bg-gray-600 px-1 rounded">1</span>
+                      </button>
+                    </div>
+                    
+                    {/* Prospect List */}
+                    <div className="space-y-3">
+                      {companyData.executives.slice(0, 3).map((exec, index) => (
+                        <div key={index} className="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
+                              <User className="h-4 w-4 text-gray-400" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-white">{exec.name}</p>
+                              <p className="text-xs text-gray-400">{exec.title}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-xs text-gray-400">{companyData.headquarters.split(',')[0]}</span>
+                            <span className="text-xs text-gray-400">{exec.title.includes('Sales') ? 'Sales' : 'Management'}</span>
+                            <div className="flex items-center space-x-1">
+                              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                              <span className="text-xs text-blue-400">Similar to past prospects</span>
+                            </div>
+                            <button className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700">
+                              Access email
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <div className="mt-4 text-center">
+                      <span className="text-sm text-gray-400">1 - 5 of 38</span>
+                      <button className="ml-4 text-sm text-blue-400 hover:text-blue-300">View All</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column - Sidebar */}
+              <div className="space-y-6">
+                {/* Contacts Card */}
+                <div className="bg-gray-800 text-white rounded-lg shadow border border-gray-700">
+                  <div className="px-6 py-4 border-b border-gray-700 flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">Contacts</h3>
+                    <div className="flex items-center space-x-2">
+                      <button className="text-gray-400 hover:text-white">
+                        <Plus className="h-4 w-4" />
+                      </button>
+                      <button className="text-gray-400 hover:text-white">
+                        <MoreVertical className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="px-6 py-4 space-y-4">
+                    {companyData.executives.slice(0, 4).map((exec, index) => (
+                      <div key={index} className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                          {exec.name.split(' ').map(n => n[0]).join('')}
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-white">{exec.name}</p>
+                          <p className="text-xs text-gray-400">{exec.title}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Deals Card */}
+                <div className="bg-gray-800 text-white rounded-lg shadow border border-gray-700">
+                  <div className="px-6 py-4 border-b border-gray-700 flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">Deals</h3>
+                    <div className="flex items-center space-x-2">
+                      <button className="text-gray-400 hover:text-white">
+                        <Plus className="h-4 w-4" />
+                      </button>
+                      <button className="text-gray-400 hover:text-white">
+                        <MoreVertical className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="px-6 py-8 text-center">
+                    <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <DollarSign className="h-8 w-8 text-gray-500" />
+                    </div>
+                    <h4 className="text-sm font-medium text-white mb-2">Add deals to associate with this account</h4>
+                    <p className="text-xs text-gray-400 mb-4">to track all sales activities</p>
+                    <button className="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
+                      Add deal
+                    </button>
+                  </div>
+                </div>
+
+                {/* Notes Card */}
+                <div className="bg-gray-800 text-white rounded-lg shadow border border-gray-700">
+                  <div className="px-6 py-4 border-b border-gray-700 flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <h3 className="text-lg font-semibold">Notes</h3>
+                      <span className="px-2 py-1 bg-blue-600 text-white text-xs rounded">New</span>
+                    </div>
+                    <button className="text-gray-400 hover:text-white">
+                      <MoreVertical className="h-4 w-4" />
+                    </button>
+                  </div>
+                  <div className="px-6 py-8 text-center">
+                    <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Search className="h-8 w-8 text-gray-500" />
+                    </div>
+                    <h4 className="text-sm font-medium text-white mb-2">No notes found</h4>
+                    <p className="text-xs text-gray-400 mb-4">Try adding a note, or adjusting your filters. Learn more.</p>
+                    <button className="px-4 py-2 bg-yellow-500 text-black text-sm rounded hover:bg-yellow-400">
+                      Add note
+                    </button>
+                  </div>
+                </div>
+
+                {/* Tasks Card */}
+                <div className="bg-gray-800 text-white rounded-lg shadow border border-gray-700">
+                  <div className="px-6 py-4 border-b border-gray-700 flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">Tasks</h3>
+                    <div className="flex items-center space-x-2">
+                      <button className="text-gray-400 hover:text-white">
+                        <Plus className="h-4 w-4" />
+                      </button>
+                      <button className="text-gray-400 hover:text-white">
+                        <MoreVertical className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="px-6 py-4">
+                    <h4 className="text-sm text-gray-400 mb-3">Completed tasks</h4>
+                    <div className="space-y-3">
+                      <div className="flex items-start space-x-3 p-3 bg-gray-700 rounded-lg">
+                        <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Mail className="h-3 w-3 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm text-white">Email sent to movingwalls.com skipped a task to send linkedin connection request</p>
+                          <p className="text-xs text-gray-400 mt-1">Skipped at Jun 12, 1:06 AM</p>
+                          <span className="inline-block px-2 py-1 bg-green-600 text-white text-xs rounded mt-2">Completed</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
               </div>
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Employees Tab */}
-          {activeTab === 'employees' && (
+        {/* Employees Tab */}
+        {activeTab === 'employees' && (
             <div className="bg-white rounded-lg shadow border border-gray-200">
               <div className="px-6 py-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
@@ -1054,7 +874,7 @@ const CompanyDetailPageSimple = () => {
                 </div>
               </div>
             </div>
-          )}
+        )}
         </div>
       </div>
     </div>
