@@ -26,7 +26,8 @@ import {
   CheckSquare,
   Search,
   Download,
-  Share
+  Share,
+  Shield
 } from 'lucide-react';
 import { Link } from 'wouter';
 import { companies, CompanyData as SharedCompanyData } from '../../data/companies';
@@ -473,6 +474,106 @@ const CompanyDetailPageBMI: React.FC = () => {
 
         {/* Main Content Area - Full Width */}
         <div className="flex-1 p-3">
+          {/* Compact Dashboard Widget */}
+          <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
+            <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
+              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Star className="h-5 w-5 text-yellow-400" />
+                    <h2 className="text-lg font-semibold text-white">Company Dashboard</h2>
+                    <span className="bg-yellow-600 text-white text-xs px-2 py-1 rounded-full">Live</span>
+                  </div>
+                  <div className="text-xs text-gray-400">Updated 2 min ago</div>
+                </div>
+              </div>
+              
+              <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl p-4">
+                <div className="grid grid-cols-4 gap-4">
+                  {/* AI Score */}
+                  <div className="bg-gradient-to-br from-yellow-600 to-orange-700 p-4 rounded-lg text-center shadow-lg">
+                    <div className="text-2xl font-bold text-white mb-1">85</div>
+                    <div className="text-xs text-yellow-100">AI Score</div>
+                    <div className="text-xs text-yellow-200 mt-1">Excellent</div>
+                  </div>
+
+                  {/* Financial Health */}
+                  <div className="bg-gradient-to-br from-green-600 to-green-800 p-4 rounded-lg text-center shadow-lg">
+                    <div className="text-2xl font-bold text-white mb-1">92</div>
+                    <div className="text-xs text-green-100">Financial</div>
+                    <div className="text-xs text-green-200 mt-1">+34% YoY</div>
+                  </div>
+
+                  {/* News Sentiment */}
+                  <div className="bg-gradient-to-br from-blue-600 to-blue-800 p-4 rounded-lg text-center shadow-lg">
+                    <div className="text-2xl font-bold text-white mb-1">8</div>
+                    <div className="text-xs text-blue-100">News Items</div>
+                    <div className="text-xs text-blue-200 mt-1">75% Positive</div>
+                  </div>
+
+                  {/* Active Jobs */}
+                  <div className="bg-gradient-to-br from-purple-600 to-purple-800 p-4 rounded-lg text-center shadow-lg">
+                    <div className="text-2xl font-bold text-white mb-1">12</div>
+                    <div className="text-xs text-purple-100">Job Posts</div>
+                    <div className="text-xs text-purple-200 mt-1">Hiring</div>
+                  </div>
+                </div>
+
+                {/* Quick Insights */}
+                <div className="mt-4 grid grid-cols-2 gap-4">
+                  <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <TrendingUp className="h-4 w-4 text-green-400" />
+                      <span className="text-white text-sm font-medium">Growth Trends</span>
+                    </div>
+                    <ul className="space-y-1 text-xs text-gray-300">
+                      <li>• Revenue +34% YoY</li>
+                      <li>• AUM $2.1B (+18%)</li>
+                      <li>• Market share expanding</li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <Target className="h-4 w-4 text-blue-400" />
+                      <span className="text-white text-sm font-medium">Key Alerts</span>
+                    </div>
+                    <ul className="space-y-1 text-xs text-gray-300">
+                      <li>• ESG strategy launch</li>
+                      <li>• 8 urgent job openings</li>
+                      <li>• New tech adoptions</li>
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Risk Indicators */}
+                <div className="mt-4 bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center space-x-2">
+                      <Shield className="h-4 w-4 text-cyan-400" />
+                      <span className="text-white text-sm font-medium">Risk Assessment</span>
+                    </div>
+                    <span className="bg-green-600 text-white text-xs px-2 py-1 rounded">Low Risk</span>
+                  </div>
+                  <div className="flex items-center space-x-4 text-xs">
+                    <div className="flex items-center space-x-1">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span className="text-gray-300">Market Stable</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span className="text-gray-300">Strong Liquidity</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                      <span className="text-gray-300">Market Competition</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Company Insights Widget */}
           <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
             <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
