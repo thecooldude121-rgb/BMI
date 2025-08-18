@@ -4,7 +4,7 @@ import {
   Search, Filter, Building2, Globe, Users, MapPin, DollarSign,
   TrendingUp, Calendar, BarChart3, Star, Bookmark, MoreVertical,
   ExternalLink, Download, Settings, Layers, Database, RefreshCw,
-  Tag, BookmarkCheck, X, Zap, Eye, EyeOff, Columns, ChevronLeft, ChevronRight
+  Tag, BookmarkCheck, X, Zap, Eye, EyeOff, Columns, ChevronLeft, ChevronRight, ChevronUp
 } from 'lucide-react';
 import { SiLinkedin } from 'react-icons/si';
 
@@ -32,6 +32,7 @@ interface TableColumn {
   key: string;
   label: string;
   width: string;
+  minWidth?: string;
   visible: boolean;
   sortable: boolean;
 }
@@ -59,18 +60,18 @@ const CompanyDiscovery: React.FC = () => {
     };
   }, []);
   
-  // Define table columns
+  // Define table columns with horizontal scroll support
   const [columns, setColumns] = useState<TableColumn[]>([
-    { key: 'name', label: 'Company Name', width: 'col-span-3', visible: true, sortable: true },
-    { key: 'links', label: 'Links', width: 'col-span-2', visible: true, sortable: false },
-    { key: 'employees', label: 'Employees', width: 'col-span-1', visible: true, sortable: true },
-    { key: 'industry', label: 'Industry', width: 'col-span-2', visible: true, sortable: true },
-    { key: 'keywords', label: 'Keywords', width: 'col-span-2', visible: true, sortable: false },
-    { key: 'revenue', label: 'Revenue', width: 'col-span-1', visible: true, sortable: true },
-    { key: 'location', label: 'Location', width: 'col-span-2', visible: false, sortable: true },
-    { key: 'founded', label: 'Founded', width: 'col-span-1', visible: false, sortable: true },
-    { key: 'funding', label: 'Funding', width: 'col-span-2', visible: false, sortable: true },
-    { key: 'actions', label: 'Actions', width: 'col-span-1', visible: true, sortable: false }
+    { key: 'name', label: 'Company Name', width: 'col-span-3', minWidth: '250px', visible: true, sortable: true },
+    { key: 'links', label: 'Links', width: 'col-span-2', minWidth: '180px', visible: true, sortable: false },
+    { key: 'employees', label: 'Employees', width: 'col-span-1', minWidth: '120px', visible: true, sortable: true },
+    { key: 'industry', label: 'Industry', width: 'col-span-2', minWidth: '150px', visible: true, sortable: true },
+    { key: 'keywords', label: 'Keywords', width: 'col-span-2', minWidth: '180px', visible: true, sortable: false },
+    { key: 'revenue', label: 'Revenue', width: 'col-span-1', minWidth: '120px', visible: true, sortable: true },
+    { key: 'location', label: 'Location', width: 'col-span-2', minWidth: '140px', visible: false, sortable: true },
+    { key: 'founded', label: 'Founded', width: 'col-span-1', minWidth: '100px', visible: false, sortable: true },
+    { key: 'funding', label: 'Funding', width: 'col-span-2', minWidth: '120px', visible: false, sortable: true },
+    { key: 'actions', label: 'Actions', width: 'col-span-1', minWidth: '100px', visible: true, sortable: false }
   ]);
 
   // Mock company data with comprehensive information
@@ -497,43 +498,54 @@ const CompanyDiscovery: React.FC = () => {
           </div>
         </div>
 
-        {/* Table Header */}
-        <div className="bg-gray-50 px-6 py-3 border-b border-gray-200 sticky top-0 z-10">
-          <div className="flex items-center">
+        {/* Table Header - Horizontally Scrollable */}
+        <div className="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
+          <div className="flex items-center px-6 py-3">
             <input
               type="checkbox"
               checked={selectedCompanies.length === paginatedCompanies.length && paginatedCompanies.length > 0}
               onChange={selectAllCompanies}
-              className="mr-4 rounded border-gray-300"
+              className="mr-4 rounded border-gray-300 flex-shrink-0"
             />
-            <div className="grid grid-cols-12 gap-4 flex-1 text-xs font-medium text-gray-600 uppercase tracking-wider">
-              {visibleColumns.map((column) => (
-                <div key={column.key} className={column.width}>
-                  {column.label}
-                </div>
-              ))}
+            <div className="flex-1 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+              <div className="flex items-center gap-4 text-xs font-medium text-gray-600 uppercase tracking-wider" style={{ minWidth: 'max-content' }}>
+                {visibleColumns.map((column) => (
+                  <div key={column.key} className="flex-shrink-0" style={{ minWidth: column.minWidth || '120px' }}>
+                    <div className="flex items-center space-x-1">
+                      <span>{column.label}</span>
+                      {column.sortable && (
+                        <button className="text-gray-400 hover:text-gray-600">
+                          <ChevronUp className="h-3 w-3" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Table Content - Dynamic and Scrollable */}
+        {/* Table Content - Horizontally and Vertically Scrollable */}
         <div className="flex-1 overflow-y-auto bg-white" style={{ maxHeight: 'calc(100vh - 300px)' }}>
           <div className="divide-y divide-gray-200">
             {paginatedCompanies.map((company) => (
-              <div key={company.id} className="px-6 py-4 hover:bg-gray-50 transition-colors">
-                <div className="flex items-center">
+              <div key={company.id} className="hover:bg-gray-50 transition-colors">
+                <div className="flex items-center px-6 py-4">
                   <input
                     type="checkbox"
                     checked={selectedCompanies.includes(company.id)}
                     onChange={() => toggleCompanySelection(company.id)}
-                    className="mr-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    className="mr-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 flex-shrink-0"
                   />
-                  <div className="grid grid-cols-12 gap-4 flex-1 items-center">
-                    {visibleColumns.map((column) => (
-                      <div key={column.key} className={column.width}>
-                        {renderColumnContent(column, company)}
-                      </div>
-                    ))}
+                  <div className="flex-1 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                    <div className="flex items-center gap-4" style={{ minWidth: 'max-content' }}>
+                      {visibleColumns.map((column) => (
+                        <div key={column.key} className="flex-shrink-0" style={{ minWidth: column.minWidth || '120px' }}>
+                          {renderColumnContent(column, company)}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
