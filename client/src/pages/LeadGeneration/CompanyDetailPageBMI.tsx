@@ -245,90 +245,94 @@ const CompanyDetailPageBMI: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Header */}
-      <div className="bg-gray-800 border-b border-gray-700">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Link href="/lead-generation">
-                <button 
-                  className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
-                  data-testid="button-back"
-                >
-                  <ArrowLeft className="h-5 w-5" />
-                </button>
-              </Link>
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-sm font-semibold">
-                  VGI
+      <div className="bg-gray-900 border-b border-gray-700 p-3">
+        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
+          <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
+            <div className="px-6 py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <Link href="/lead-generation">
+                    <button 
+                      className="p-2 hover:bg-gray-600 rounded-lg transition-colors shadow-lg"
+                      data-testid="button-back"
+                    >
+                      <ArrowLeft className="h-5 w-5" />
+                    </button>
+                  </Link>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center text-sm font-semibold shadow-lg">
+                      VGI
+                    </div>
+                    <div>
+                      <h1 className="text-xl font-semibold text-white" data-testid="text-company-name">
+                        {companyData.name}
+                      </h1>
+                      <div className="flex items-center space-x-4 text-sm text-gray-400">
+                        <span>{companyData.industry}</span>
+                        <span>•</span>
+                        <span>{companyData.location}</span>
+                        <span>•</span>
+                        <span>{companyData.employees}</span>
+                        <span>•</span>
+                        <span>{companyData.revenue}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h1 className="text-xl font-semibold text-white" data-testid="text-company-name">
-                    {companyData.name}
-                  </h1>
-                  <div className="flex items-center space-x-4 text-sm text-gray-400">
-                    <span>{companyData.industry}</span>
-                    <span>•</span>
-                    <span>{companyData.location}</span>
-                    <span>•</span>
-                    <span>{companyData.employees}</span>
-                    <span>•</span>
-                    <span>{companyData.revenue}</span>
+                <div className="flex items-center space-x-3">
+                  <button className="p-2 hover:bg-gray-600 rounded-lg transition-colors shadow-lg" data-testid="button-phone">
+                    <Phone className="h-5 w-5" />
+                  </button>
+                  <button className="p-2 hover:bg-gray-600 rounded-lg transition-colors shadow-lg" data-testid="button-email">
+                    <Mail className="h-5 w-5" />
+                  </button>
+                  <button className="p-2 hover:bg-gray-600 rounded-lg transition-colors shadow-lg" data-testid="button-external">
+                    <ExternalLink className="h-5 w-5" />
+                  </button>
+                  <button className="p-2 hover:bg-gray-600 rounded-lg transition-colors shadow-lg" data-testid="button-list">
+                    <MoreHorizontal className="h-5 w-5" />
+                  </button>
+                  <div className="px-3 py-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg text-sm font-medium shadow-lg">
+                    Actions
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <button className="p-2 hover:bg-gray-700 rounded-lg transition-colors" data-testid="button-phone">
-                <Phone className="h-5 w-5" />
-              </button>
-              <button className="p-2 hover:bg-gray-700 rounded-lg transition-colors" data-testid="button-email">
-                <Mail className="h-5 w-5" />
-              </button>
-              <button className="p-2 hover:bg-gray-700 rounded-lg transition-colors" data-testid="button-external">
-                <ExternalLink className="h-5 w-5" />
-              </button>
-              <button className="p-2 hover:bg-gray-700 rounded-lg transition-colors" data-testid="button-list">
-                <MoreHorizontal className="h-5 w-5" />
-              </button>
-              <div className="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm font-medium">
-                Actions
+
+              {/* Navigation Tabs */}
+              <div className="flex space-x-6 mt-4">
+                {[
+                  { key: 'overview', label: 'Overview' },
+                  { key: 'employees', label: 'Employees' },
+                  { key: 'recommendations', label: 'Recommendations' },
+                  { key: 'existing-contacts', label: 'Existing contacts' },
+                  { key: 'sequences', label: 'Sequences', badge: '0' },
+                  { key: 'meetings', label: 'Meetings' },
+                  { key: 'deals', label: 'Deals' },
+                  { key: 'conversations', label: 'Conversations' },
+                  { key: 'locations', label: 'Locations' }
+                ].map((tab) => (
+                  <button
+                    key={tab.key}
+                    onClick={() => setActiveTab(tab.key as any)}
+                    className={`pb-2 border-b-2 transition-colors ${
+                      activeTab === tab.key
+                        ? 'border-blue-500 text-white'
+                        : 'border-transparent text-gray-400 hover:text-white'
+                    }`}
+                    data-testid={`tab-${tab.key}`}
+                  >
+                    <span className="flex items-center space-x-1">
+                      <span>{tab.label}</span>
+                      {tab.badge && (
+                        <span className="bg-gray-600 text-xs px-1.5 py-0.5 rounded">
+                          {tab.badge}
+                        </span>
+                      )}
+                    </span>
+                  </button>
+                ))}
               </div>
             </div>
-          </div>
-
-          {/* Navigation Tabs */}
-          <div className="flex space-x-6 mt-4">
-            {[
-              { key: 'overview', label: 'Overview' },
-              { key: 'employees', label: 'Employees' },
-              { key: 'recommendations', label: 'Recommendations' },
-              { key: 'existing-contacts', label: 'Existing contacts' },
-              { key: 'sequences', label: 'Sequences', badge: '0' },
-              { key: 'meetings', label: 'Meetings' },
-              { key: 'deals', label: 'Deals' },
-              { key: 'conversations', label: 'Conversations' },
-              { key: 'locations', label: 'Locations' }
-            ].map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key as any)}
-                className={`pb-2 border-b-2 transition-colors ${
-                  activeTab === tab.key
-                    ? 'border-blue-500 text-white'
-                    : 'border-transparent text-gray-400 hover:text-white'
-                }`}
-                data-testid={`tab-${tab.key}`}
-              >
-                <span className="flex items-center space-x-1">
-                  <span>{tab.label}</span>
-                  {tab.badge && (
-                    <span className="bg-gray-600 text-xs px-1.5 py-0.5 rounded">
-                      {tab.badge}
-                    </span>
-                  )}
-                </span>
-              </button>
-            ))}
           </div>
         </div>
       </div>
@@ -953,16 +957,19 @@ const CompanyDetailPageBMI: React.FC = () => {
           </div>
 
           {/* New Prospects */}
-          <div className="mb-3">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-white">New prospects</h2>
-              <div className="flex items-center space-x-2">
-                <Settings className="h-4 w-4 text-gray-400" />
-                <ChevronUp className="h-4 w-4 text-gray-400" />
+          <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
+            <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
+              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-semibold text-white">New prospects</h2>
+                  <div className="flex items-center space-x-2">
+                    <Settings className="h-4 w-4 text-gray-400" />
+                    <ChevronUp className="h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
               </div>
-            </div>
 
-            <div className="bg-gray-800 rounded-lg p-4">
+              <div className="p-4 bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl">
               {/* Prospect Tabs */}
               <div className="flex space-x-4 mb-4">
                 {[
@@ -1035,25 +1042,29 @@ const CompanyDetailPageBMI: React.FC = () => {
                     </div>
                   </div>
                 ))}
+                </div>
               </div>
             </div>
           </div>
 
           {/* Lookalike Companies */}
-          <div className="mb-3">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-2">
-                <h2 className="text-lg font-semibold text-white">Lookalike companies</h2>
-                <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded">Beta</span>
-                <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded flex items-center">
-                  <Target className="h-3 w-3 mr-1" />
-                  Apollo AI
-                </span>
+          <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
+            <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
+              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <h2 className="text-lg font-semibold text-white">Lookalike companies</h2>
+                    <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded">Beta</span>
+                    <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded flex items-center">
+                      <Target className="h-3 w-3 mr-1" />
+                      Apollo AI
+                    </span>
+                  </div>
+                  <ChevronUp className="h-4 w-4 text-gray-400" />
+                </div>
               </div>
-              <ChevronUp className="h-4 w-4 text-gray-400" />
-            </div>
 
-            <div className="bg-gray-800 rounded-lg p-4">
+              <div className="p-4 bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl">
               <div className="grid grid-cols-4 gap-4 text-xs text-gray-400 font-medium mb-4">
                 <div>NAME</div>
                 <div>LOCATION</div>
@@ -1080,25 +1091,29 @@ const CompanyDetailPageBMI: React.FC = () => {
                   </div>
                 ))}
               </div>
-              <div className="flex items-center justify-between mt-4 text-sm text-gray-400">
-                <span>1 - 5 of 100</span>
+                <div className="flex items-center justify-between mt-4 text-sm text-gray-400">
+                  <span>1 - 5 of 100</span>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Activities */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-white">Activities</h2>
-              <div className="flex items-center space-x-2">
-                <select className="bg-gray-700 text-white text-sm px-2 py-1 rounded border border-gray-600">
-                  <option>Log activity</option>
-                </select>
-                <ChevronUp className="h-4 w-4 text-gray-400" />
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
+            <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
+              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-semibold text-white">Activities</h2>
+                  <div className="flex items-center space-x-2">
+                    <select className="bg-gray-600 text-white text-sm px-2 py-1 rounded border border-gray-500">
+                      <option>Log activity</option>
+                    </select>
+                    <ChevronUp className="h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
               </div>
-            </div>
 
-            <div className="bg-gray-800 rounded-lg p-4">
+              <div className="p-4 bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl">
               {/* Activity Tabs */}
               <div className="flex space-x-4 mb-4 border-b border-gray-700">
                 {[
@@ -1165,6 +1180,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                     </div>
                   </div>
                 ))}
+                </div>
               </div>
             </div>
           </div>
