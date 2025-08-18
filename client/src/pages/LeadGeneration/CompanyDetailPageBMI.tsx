@@ -566,11 +566,7 @@ const CompanyDetailPageBMI: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Sidebar - Company Insights */}
-        <div className="flex-1 bg-gray-900 min-h-screen overflow-y-auto p-4 space-y-4">
-
-          
-        </div>
+        
 
         {/* Main Content Area - Now Full Width */}
         <div className="flex-1 p-3">
