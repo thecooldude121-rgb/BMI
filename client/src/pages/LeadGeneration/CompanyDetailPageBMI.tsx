@@ -575,14 +575,30 @@ const CompanyDetailPageBMI: React.FC = () => {
           </div>
         </div>
 
-        {/* Main Content Area - Company Insights */}
-        <div className="flex-1 p-6">
-          <div className="text-white text-2xl font-bold mb-6 flex items-center space-x-3">
-            <TrendingUp className="h-8 w-8 text-cyan-400" />
-            <span>AI-Powered Company Intelligence Dashboard</span>
+        {/* Main Content Area - Full Company Insights Dashboard */}
+        <div className="flex-1 bg-gray-900">
+          {/* Dashboard Header */}
+          <div className="p-6 border-b border-gray-700 bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-cyan-700 rounded-xl flex items-center justify-center shadow-lg">
+                  <TrendingUp className="h-7 w-7 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold text-white">Company Intelligence Dashboard</h1>
+                  <p className="text-gray-400 mt-1">Real-time insights and analytics for {companyData.name}</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <span className="bg-gradient-to-r from-cyan-500 to-cyan-600 text-white text-sm px-4 py-2 rounded-full font-medium shadow-lg">AI Powered</span>
+                <span className="bg-gradient-to-r from-green-500 to-green-600 text-white text-sm px-4 py-2 rounded-full font-medium shadow-lg">Live Data</span>
+              </div>
+            </div>
           </div>
-          {/* Company Insights Widget */}
-          <div className="mb-6 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
+
+          {/* Company Insights Content */}
+          <div className="p-6">
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
             <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
               {/* Widget Header */}
               <div className="p-6 border-b border-gray-600 bg-gradient-to-r from-cyan-800 via-gray-800 to-cyan-800 rounded-t-xl">
@@ -1191,6 +1207,7 @@ const CompanyDetailPageBMI: React.FC = () => {
           </div>
         </div>
       </div>
+    </div>
     </div>
     </div>
   );
