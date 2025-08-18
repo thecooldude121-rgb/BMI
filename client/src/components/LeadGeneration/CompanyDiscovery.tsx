@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { useLocation } from 'wouter';
 import { motion } from 'framer-motion';
 import { 
   Search, Filter, Building2, Globe, Users, MapPin, DollarSign,
@@ -38,6 +39,7 @@ interface TableColumn {
 }
 
 const CompanyDiscovery: React.FC = () => {
+  const [, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'relevance' | 'recent' | 'employees' | 'revenue'>('relevance');
   const [showFilters, setShowFilters] = useState(true);
@@ -279,6 +281,10 @@ const CompanyDiscovery: React.FC = () => {
     setColumns(prev => prev.map(col => 
       col.key === columnKey ? { ...col, visible: !col.visible } : col
     ));
+  };
+
+  const handleCompanyClick = (company: CompanyData) => {
+    setLocation(`/lead-generation/company/${company.id}`);
   };
 
   const renderColumnContent = (column: TableColumn, company: CompanyData) => {
@@ -593,8 +599,11 @@ const CompanyDiscovery: React.FC = () => {
                           <div className="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center text-sm flex-shrink-0 hover-scale">
                             {company.logo}
                           </div>
-                          <div className="min-w-0 flex-1 overflow-hidden">
-                            <div className={`text-sm font-medium text-gray-900 truncate-cell ${index < 2 ? 'tooltip-below' : ''}`} data-tooltip={company.name}>{company.name}</div>
+                          <div className="min-w-0 flex-1 overflow-hidden" onClick={(e) => {
+                            e.stopPropagation();
+                            handleCompanyClick(company);
+                          }}>
+                            <div className={`text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer truncate-cell ${index < 2 ? 'tooltip-below' : ''}`} data-tooltip={company.name}>{company.name}</div>
                             <div className={`text-xs text-gray-500 truncate-cell ${index < 2 ? 'tooltip-below' : ''}`} data-tooltip={company.domain}>{company.domain}</div>
                           </div>
                         </div>

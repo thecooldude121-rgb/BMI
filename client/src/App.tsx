@@ -27,6 +27,7 @@ import MeetingDashboard from './pages/MeetingDashboard';
 import SimpleRealAccountDetail from './pages/CRM/SimpleRealAccountDetail';
 import ContactDetailPage from './pages/CRM/ContactDetailPage';
 import GamificationModule from './pages/CRM/GamificationModuleNextGen';
+import CompanyDetailPageSimple from './pages/LeadGeneration/CompanyDetailPageSimple';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
@@ -50,6 +51,7 @@ const App = () => {
               <Route path="/crm/deals/:id" component={DealDetailWrapper} />
               <Route path="/crm/accounts/:id" component={SimpleRealAccountDetail} />
               <Route path="/crm/contacts/:id" component={ContactDetailPage} />
+              <Route path="/lead-generation/company/:id" component={CompanyDetailPageSimple} />
               <Route path="/crm" component={() => (
                 <div className="min-h-screen w-full">
                   <GamificationModule />

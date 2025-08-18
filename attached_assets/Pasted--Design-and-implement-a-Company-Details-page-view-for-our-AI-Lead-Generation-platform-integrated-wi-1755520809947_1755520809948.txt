@@ -1,0 +1,36 @@
+
+Design and implement a Company Details page view for our AI Lead Generation platform, integrated with the BMI CRM module.  
+The page must be organized with the following tabs and features:
+
+### 1. Overview Tab
+- **Company Information Section**
+  - Display: Company name, Industry, Keywords, Phone number, Website, Founding year, HQ address, Employee count, Annual revenue, Ownership type, key executive team members.
+- **Company Insights Section**
+  - Display: Latest news mentions, technologies adopted, funding rounds/history, employee trends & charts, current/active job postings.
+- **Prospects Section**
+  - List view: Employees at the company, with columns for Name, Job Title, Location, Department.
+  - **Actions Column:** Two buttons for each employee—"Email" (shows validated email, clickable for direct email), "Contact Number" (shows validated phone, clickable for direct call/SMS).
+- **Similar Companies Section**
+  - Show a curated list of similar companies (by industry, size, tech stack, region) with quick access and mini-overviews.
+- **Activities Timeline Section**
+  - Chronological feed of all CRM-related activities: Email correspondence, meetings, tasks, notes, calls—with filters and search.
+- **Tasks Section**
+  - List all open and closed tasks tied to the company account; allow task creation, assignment, status update.
+- **Deals Section**
+  - Display all deals associated with the company, status/tracking integrated natively with BMI CRM flows.
+- **Notes Section**
+  - Editable, filterable notes for this company account.
+
+### 2. Employees Tab
+- **Employee List View**
+  - Table with all employees for the selected company; columns for Name, Job Title, Department, Location, Email, Phone, LinkedIn.
+  - **Column Management:** User can show/hide or reorder columns as needed.
+  - **Bulk Actions:** Select multiple employees for outreach/actions.
+  - **Employee Profile Access:** Click any row to view deeper insight about that employee.
+
+### General Requirements 
+- All data points should be sourced and validated according to our lead gen database standards.
+- Page layout should be responsive and designed for productivity: prioritize easy navigation between tabs/sections.
+- Each section should have editable, actionable components (where needed) and easy export/print options.
+- Prepare code stubs, UI wireframes, and database models for each major section.
+- Integrate all new UI/UX features with the BMI platform’s core design language and CRM module endpoints.
