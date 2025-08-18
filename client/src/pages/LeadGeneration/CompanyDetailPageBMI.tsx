@@ -81,7 +81,7 @@ const CompanyDetailPageBMI: React.FC = () => {
   const [match, params] = useRoute('/lead-generation/company/:id');
   const companyId = params?.id || '1';
   const [insightsExpanded, setInsightsExpanded] = useState(true);
-  const [activeInsightTab, setActiveInsightTab] = useState('score');
+  const [activeInsightTab, setActiveInsightTab] = useState('ai-score');
   const [activeActivityTab, setActiveActivityTab] = useState('all');
 
   // Company data
@@ -505,14 +505,395 @@ const CompanyDetailPageBMI: React.FC = () => {
 
               {insightsExpanded && (
                 <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl p-4">
-                  <div className="text-center py-8">
-                    <div className="w-16 h-16 bg-gradient-to-br from-cyan-600 to-cyan-800 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                      <TrendingUp className="h-8 w-8 text-white" />
-                    </div>
-                    <div className="text-gray-300 text-lg mb-3 font-medium">Insights Loading</div>
-                    <div className="text-gray-400 text-sm mb-6 max-w-md mx-auto">
-                      AI-powered company insights will be displayed here
-                    </div>
+                  {/* Enhanced Insight Tabs */}
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {[
+                      { key: 'ai-score', label: 'AI Score', icon: Star, color: 'text-yellow-400', bg: 'bg-yellow-600' },
+                      { key: 'news', label: 'News', icon: FileText, badge: '8', color: 'text-red-400', bg: 'bg-red-600' },
+                      { key: 'technologies', label: 'Technologies', icon: Target, badge: '15', color: 'text-blue-400', bg: 'bg-blue-600' },
+                      { key: 'funding', label: 'Funding', icon: DollarSign, badge: '3', color: 'text-green-400', bg: 'bg-green-600' },
+                      { key: 'job-postings', label: 'Jobs', icon: Building2, badge: '12', color: 'text-purple-400', bg: 'bg-purple-600' }
+                    ].map((tab) => {
+                      const IconComponent = tab.icon;
+                      return (
+                        <button
+                          key={tab.key}
+                          onClick={() => setActiveInsightTab(tab.key)}
+                          className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 ${
+                            activeInsightTab === tab.key
+                              ? `${tab.bg} text-white shadow-lg`
+                              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                          }`}
+                          data-testid={`insight-tab-${tab.key}`}
+                        >
+                          <IconComponent className={`h-4 w-4 ${activeInsightTab === tab.key ? 'text-white' : tab.color}`} />
+                          <span className="text-sm font-medium">{tab.label}</span>
+                          {tab.badge && (
+                            <span className={`text-xs px-2 py-0.5 rounded-full ${
+                              activeInsightTab === tab.key ? 'bg-white bg-opacity-20' : 'bg-gray-600'
+                            }`}>
+                              {tab.badge}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Tab Content */}
+                  <div className="min-h-96">
+                    {/* AI Score Tab */}
+                    {activeInsightTab === 'ai-score' && (
+                      <div className="space-y-6">
+                        <div className="text-center mb-6">
+                          <div className="w-24 h-24 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-2xl">
+                            <span className="text-3xl font-bold text-white">85</span>
+                          </div>
+                          <h3 className="text-xl font-semibold text-white mb-2">Company AI Score</h3>
+                          <p className="text-gray-300 text-sm">Based on comprehensive AI analysis of 247 data points</p>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-gray-400 text-sm">Financial Health</span>
+                              <span className="text-green-400 font-medium">92/100</span>
+                            </div>
+                            <div className="w-full bg-gray-600 rounded-full h-2">
+                              <div className="bg-green-500 h-2 rounded-full" style={{width: '92%'}}></div>
+                            </div>
+                          </div>
+                          
+                          <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-gray-400 text-sm">Market Position</span>
+                              <span className="text-blue-400 font-medium">78/100</span>
+                            </div>
+                            <div className="w-full bg-gray-600 rounded-full h-2">
+                              <div className="bg-blue-500 h-2 rounded-full" style={{width: '78%'}}></div>
+                            </div>
+                          </div>
+                          
+                          <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-gray-400 text-sm">Growth Potential</span>
+                              <span className="text-purple-400 font-medium">89/100</span>
+                            </div>
+                            <div className="w-full bg-gray-600 rounded-full h-2">
+                              <div className="bg-purple-500 h-2 rounded-full" style={{width: '89%'}}></div>
+                            </div>
+                          </div>
+                          
+                          <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-gray-400 text-sm">Tech Innovation</span>
+                              <span className="text-cyan-400 font-medium">81/100</span>
+                            </div>
+                            <div className="w-full bg-gray-600 rounded-full h-2">
+                              <div className="bg-cyan-500 h-2 rounded-full" style={{width: '81%'}}></div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600">
+                          <h4 className="text-white font-medium mb-3">Key AI Insights</h4>
+                          <ul className="space-y-2 text-sm text-gray-300">
+                            <li className="flex items-start space-x-2">
+                              <div className="w-2 h-2 bg-green-500 rounded-full mt-1.5"></div>
+                              <span>Strong revenue growth trajectory with 34% YoY increase</span>
+                            </li>
+                            <li className="flex items-start space-x-2">
+                              <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5"></div>
+                              <span>Leading market position in Australian investment management</span>
+                            </li>
+                            <li className="flex items-start space-x-2">
+                              <div className="w-2 h-2 bg-purple-500 rounded-full mt-1.5"></div>
+                              <span>Expanding digital transformation initiatives</span>
+                            </li>
+                            <li className="flex items-start space-x-2">
+                              <div className="w-2 h-2 bg-orange-500 rounded-full mt-1.5"></div>
+                              <span>High employee retention and satisfaction rates</span>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* News Tab */}
+                    {activeInsightTab === 'news' && (
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-lg font-semibold text-white">Latest News & Mentions</h3>
+                          <span className="text-xs text-gray-400">Updated 2 hours ago</span>
+                        </div>
+                        
+                        {[
+                          {
+                            title: "VGI Partners Reports Strong Q3 Performance",
+                            source: "Australian Financial Review",
+                            sentiment: "positive",
+                            date: "2 hours ago",
+                            summary: "Investment management firm shows continued growth in assets under management"
+                          },
+                          {
+                            title: "VGI Partners Expands ESG Investment Strategy",
+                            source: "LinkedIn Company Update",
+                            sentiment: "positive", 
+                            date: "1 day ago",
+                            summary: "New sustainable investment initiatives launched targeting $500M AUM"
+                          },
+                          {
+                            title: "Market Analysis: Australian Investment Firms Outlook",
+                            source: "Bloomberg",
+                            sentiment: "neutral",
+                            date: "3 days ago",
+                            summary: "Industry report mentions VGI Partners among top performing funds"
+                          },
+                          {
+                            title: "VGI Partners Leadership Changes",
+                            source: "Google News",
+                            sentiment: "neutral",
+                            date: "1 week ago",
+                            summary: "Senior portfolio manager appointment strengthens investment team"
+                          }
+                        ].map((article, index) => (
+                          <div key={index} className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600 hover:border-gray-500 transition-colors">
+                            <div className="flex items-start justify-between mb-2">
+                              <h4 className="text-white font-medium text-sm leading-tight pr-4">{article.title}</h4>
+                              <div className={`px-2 py-1 rounded text-xs font-medium ${
+                                article.sentiment === 'positive' ? 'bg-green-900 text-green-300' :
+                                article.sentiment === 'negative' ? 'bg-red-900 text-red-300' :
+                                'bg-gray-600 text-gray-300'
+                              }`}>
+                                {article.sentiment}
+                              </div>
+                            </div>
+                            <p className="text-gray-300 text-sm mb-3">{article.summary}</p>
+                            <div className="flex items-center justify-between text-xs text-gray-400">
+                              <span>{article.source}</span>
+                              <span>{article.date}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Technologies Tab */}
+                    {activeInsightTab === 'technologies' && (
+                      <div className="space-y-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-lg font-semibold text-white">Technology Stack & Platforms</h3>
+                          <span className="text-xs text-gray-400">Last scanned: 4 hours ago</span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-6">
+                          <div>
+                            <h4 className="text-white font-medium mb-3">Core Infrastructure</h4>
+                            <div className="space-y-2">
+                              {[
+                                { name: "Microsoft Azure", confidence: "95%", category: "Cloud" },
+                                { name: "Office 365", confidence: "98%", category: "Productivity" },
+                                { name: "Bloomberg Terminal", confidence: "92%", category: "Financial Data" },
+                                { name: "Salesforce", confidence: "87%", category: "CRM" }
+                              ].map((tech, index) => (
+                                <div key={index} className="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-white text-sm font-medium">{tech.name}</span>
+                                    <span className="text-blue-400 text-xs">{tech.confidence}</span>
+                                  </div>
+                                  <span className="text-gray-400 text-xs">{tech.category}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div>
+                            <h4 className="text-white font-medium mb-3">Investment & Analytics</h4>
+                            <div className="space-y-2">
+                              {[
+                                { name: "FactSet", confidence: "89%", category: "Research Platform" },
+                                { name: "Refinitiv Eikon", confidence: "91%", category: "Market Data" },
+                                { name: "Python/R", confidence: "85%", category: "Analytics" },
+                                { name: "Tableau", confidence: "78%", category: "Visualization" }
+                              ].map((tech, index) => (
+                                <div key={index} className="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-white text-sm font-medium">{tech.name}</span>
+                                    <span className="text-green-400 text-xs">{tech.confidence}</span>
+                                  </div>
+                                  <span className="text-gray-400 text-xs">{tech.category}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600">
+                          <h4 className="text-white font-medium mb-3">Recent Technology Adoptions</h4>
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-gray-300 text-sm">AI/ML Analytics Platform</span>
+                              <span className="text-cyan-400 text-xs">Added 2 weeks ago</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-gray-300 text-sm">Enhanced Cybersecurity Suite</span>
+                              <span className="text-purple-400 text-xs">Added 1 month ago</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Funding Tab */}
+                    {activeInsightTab === 'funding' && (
+                      <div className="space-y-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-lg font-semibold text-white">Funding History & Financial Data</h3>
+                          <span className="text-xs text-gray-400">Source: Crunchbase, Public Records</span>
+                        </div>
+
+                        <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-6 rounded-lg border border-gray-600">
+                          <div className="text-center mb-4">
+                            <div className="text-3xl font-bold text-green-400 mb-2">$2.1B</div>
+                            <div className="text-gray-300">Total Assets Under Management</div>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600">
+                            <div className="text-lg font-semibold text-blue-400 mb-1">IPO (2017)</div>
+                            <div className="text-sm text-gray-300 mb-2">Listed on ASX</div>
+                            <div className="text-xs text-gray-400">Market Cap: $450M</div>
+                          </div>
+                          
+                          <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600">
+                            <div className="text-lg font-semibold text-green-400 mb-1">Revenue</div>
+                            <div className="text-sm text-gray-300 mb-2">$45M (2023)</div>
+                            <div className="text-xs text-gray-400">+34% YoY Growth</div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          <h4 className="text-white font-medium">Key Financial Metrics</h4>
+                          {[
+                            { metric: "Price-to-Earnings Ratio", value: "18.5", trend: "stable" },
+                            { metric: "Return on Equity", value: "22.4%", trend: "up" },
+                            { metric: "Dividend Yield", value: "4.2%", trend: "up" },
+                            { metric: "Net Profit Margin", value: "31.8%", trend: "up" }
+                          ].map((item, index) => (
+                            <div key={index} className="flex items-center justify-between bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
+                              <span className="text-gray-300 text-sm">{item.metric}</span>
+                              <div className="flex items-center space-x-2">
+                                <span className="text-white font-medium">{item.value}</span>
+                                <div className={`w-2 h-2 rounded-full ${
+                                  item.trend === 'up' ? 'bg-green-500' :
+                                  item.trend === 'down' ? 'bg-red-500' : 'bg-gray-500'
+                                }`}></div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Job Postings Tab */}
+                    {activeInsightTab === 'job-postings' && (
+                      <div className="space-y-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-lg font-semibold text-white">Active Job Postings</h3>
+                          <span className="text-xs text-gray-400">12 active positions</span>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-4 mb-6">
+                          <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600 text-center">
+                            <div className="text-2xl font-bold text-blue-400 mb-1">8</div>
+                            <div className="text-xs text-gray-400">Investment Roles</div>
+                          </div>
+                          <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600 text-center">
+                            <div className="text-2xl font-bold text-green-400 mb-1">3</div>
+                            <div className="text-xs text-gray-400">Tech Positions</div>
+                          </div>
+                          <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600 text-center">
+                            <div className="text-2xl font-bold text-purple-400 mb-1">1</div>
+                            <div className="text-xs text-gray-400">Operations</div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          {[
+                            {
+                              title: "Senior Portfolio Manager",
+                              department: "Investment Management",
+                              location: "Sydney, NSW",
+                              source: "LinkedIn",
+                              posted: "3 days ago",
+                              urgent: true
+                            },
+                            {
+                              title: "Quantitative Research Analyst",
+                              department: "Research & Analytics",
+                              location: "Sydney, NSW", 
+                              source: "Indeed",
+                              posted: "1 week ago",
+                              urgent: false
+                            },
+                            {
+                              title: "ESG Investment Specialist",
+                              department: "Sustainable Investing",
+                              location: "Sydney, NSW",
+                              source: "Glassdoor",
+                              posted: "5 days ago",
+                              urgent: true
+                            },
+                            {
+                              title: "Senior Data Engineer",
+                              department: "Technology",
+                              location: "Sydney, NSW",
+                              source: "LinkedIn",
+                              posted: "2 days ago",
+                              urgent: false
+                            }
+                          ].map((job, index) => (
+                            <div key={index} className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600 hover:border-gray-500 transition-colors">
+                              <div className="flex items-start justify-between mb-2">
+                                <div className="flex-1">
+                                  <div className="flex items-center space-x-2 mb-1">
+                                    <h4 className="text-white font-medium text-sm">{job.title}</h4>
+                                    {job.urgent && (
+                                      <span className="bg-red-600 text-white text-xs px-2 py-0.5 rounded">Urgent</span>
+                                    )}
+                                  </div>
+                                  <div className="text-gray-300 text-sm">{job.department}</div>
+                                  <div className="text-gray-400 text-xs">{job.location}</div>
+                                </div>
+                              </div>
+                              <div className="flex items-center justify-between text-xs text-gray-400">
+                                <span>Source: {job.source}</span>
+                                <span>{job.posted}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600">
+                          <h4 className="text-white font-medium mb-3">Hiring Trends Analysis</h4>
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-gray-300 text-sm">Average time to fill</span>
+                              <span className="text-blue-400 text-sm font-medium">45 days</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-gray-300 text-sm">Most in-demand skills</span>
+                              <span className="text-green-400 text-sm font-medium">Portfolio Analysis, ESG</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-gray-300 text-sm">Salary range trend</span>
+                              <span className="text-purple-400 text-sm font-medium">+12% vs last year</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
