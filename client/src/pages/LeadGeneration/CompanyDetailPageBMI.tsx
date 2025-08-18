@@ -333,13 +333,7 @@ const CompanyDetailPageBMI: React.FC = () => {
         </div>
       </div>
 
-      {/* Account Overview Button */}
-      <div className="px-6 py-3 bg-gray-800 border-b border-gray-700">
-        <button className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors text-sm" data-testid="button-account-overview">
-          <Building2 className="h-4 w-4" />
-          <span>Account overview</span>
-        </button>
-      </div>
+
 
       {/* Main Content */}
       <div className="flex">
@@ -715,87 +709,46 @@ const CompanyDetailPageBMI: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Sidebar */}
-        <div className="w-80 bg-gray-800 border-l border-gray-700 h-screen overflow-y-auto">
-          {/* Contacts */}
-          <div className="p-4 border-b border-gray-700">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-white">Contacts</h3>
-              <div className="flex items-center space-x-2">
-                <Plus className="h-4 w-4 text-gray-400" />
-                {contactsExpanded ? (
-                  <ChevronUp className="h-4 w-4 text-gray-400" />
-                ) : (
-                  <ChevronDown className="h-4 w-4 text-gray-400" />
-                )}
+        {/* Right Sidebar - Individual Scrollable Widgets */}
+        <div className="w-80 bg-gray-800 border-l border-gray-700 h-screen flex flex-col">
+          {/* Contacts Widget */}
+          <div className="flex-1 bg-gray-800 border-b border-gray-700">
+            <div className="p-4 border-b border-gray-700 bg-gray-900">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-semibold text-white">Contacts</h3>
+                <div className="flex items-center space-x-2">
+                  <Plus className="h-4 w-4 text-gray-400 cursor-pointer hover:text-white" />
+                </div>
               </div>
             </div>
-
-            {contactsExpanded && (
+            <div className="p-4 overflow-y-auto h-full">
               <div className="space-y-3">
                 {contacts.map((contact) => (
-                  <div key={contact.id} className="flex items-center space-x-3">
+                  <div key={contact.id} className="flex items-center space-x-3 p-2 rounded hover:bg-gray-700 transition-colors">
                     <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center text-sm font-medium">
                       {contact.initials}
                     </div>
                     <div className="flex-1">
                       <div className="text-white text-sm font-medium">{contact.name}</div>
-                      <div className="text-gray-400 text-xs">{contact.title} at Sample Company Inc.</div>
+                      <div className="text-gray-400 text-xs">{contact.title} at {selectedCompany.name}</div>
                     </div>
                   </div>
                 ))}
               </div>
-            )}
+            </div>
           </div>
 
-          {/* Notes */}
-          <div className="p-4 border-b border-gray-700">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center space-x-2">
-                <h3 className="font-semibold text-white">Notes</h3>
-                <span className="bg-green-600 text-white text-xs px-1.5 py-0.5 rounded">New</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <MoreHorizontal className="h-4 w-4 text-gray-400" />
-                {notesExpanded ? (
-                  <ChevronUp className="h-4 w-4 text-gray-400" />
-                ) : (
-                  <ChevronDown className="h-4 w-4 text-gray-400" />
-                )}
+          {/* Deals Widget */}
+          <div className="flex-1 bg-gray-800 border-b border-gray-700">
+            <div className="p-4 border-b border-gray-700 bg-gray-900">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-semibold text-white">Deals</h3>
+                <div className="flex items-center space-x-2">
+                  <Plus className="h-4 w-4 text-gray-400 cursor-pointer hover:text-white" />
+                </div>
               </div>
             </div>
-
-            {notesExpanded && (
-              <div className="text-center py-8">
-                <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Search className="h-6 w-6 text-gray-400" />
-                </div>
-                <div className="text-gray-300 text-sm mb-2">No notes found</div>
-                <div className="text-gray-400 text-xs mb-4">
-                  Try adding a note, or adjusting your filters. <span className="text-blue-400">Learn more.</span>
-                </div>
-                <button className="bg-yellow-500 text-black px-3 py-1 rounded text-sm font-medium hover:bg-yellow-400 transition-colors" data-testid="button-add-note">
-                  + Add note
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Deals */}
-          <div className="p-4 border-b border-gray-700">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-white">Deals</h3>
-              <div className="flex items-center space-x-2">
-                <Plus className="h-4 w-4 text-gray-400" />
-                {dealsExpanded ? (
-                  <ChevronUp className="h-4 w-4 text-gray-400" />
-                ) : (
-                  <ChevronDown className="h-4 w-4 text-gray-400" />
-                )}
-              </div>
-            </div>
-
-            {dealsExpanded && (
+            <div className="p-4 overflow-y-auto h-full">
               <div className="text-center py-6">
                 <div className="w-12 h-12 bg-gray-700 rounded flex items-center justify-center mx-auto mb-3">
                   <DollarSign className="h-6 w-6 text-gray-400" />
@@ -807,59 +760,74 @@ const CompanyDetailPageBMI: React.FC = () => {
                   Add deal
                 </button>
               </div>
-            )}
+            </div>
           </div>
 
-          {/* Tasks */}
-          <div className="p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-white">Tasks</h3>
-              <div className="flex items-center space-x-2">
-                <Plus className="h-4 w-4 text-gray-400" />
-                {tasksExpanded ? (
-                  <ChevronUp className="h-4 w-4 text-gray-400" />
-                ) : (
-                  <ChevronDown className="h-4 w-4 text-gray-400" />
-                )}
-              </div>
-            </div>
-
-            {tasksExpanded && (
-              <div>
-                <div className="text-gray-300 text-sm mb-3">Completed tasks</div>
-                <div className="space-y-3">
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center mt-1">
-                      <CheckSquare className="h-3 w-3 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-white text-sm">
-                        Follow-up email sent to <span className="text-blue-400">Michael Chen</span>
-                      </div>
-                      <div className="text-gray-400 text-xs mt-1">
-                        Completed on Aug 15, 4:30 PM
-                      </div>
-                      <div className="bg-gray-700 text-gray-300 text-xs px-2 py-1 rounded w-fit mt-1">
-                        Completed
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center mt-1">
-                      <CheckSquare className="h-3 w-3 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-white text-sm">
-                        LinkedIn connection request to <span className="text-blue-400">Sarah Johnson</span>
-                      </div>
-                      <div className="text-gray-400 text-xs mt-1">
-                        Completed on Aug 12, 9:15 AM
-                      </div>
-                    </div>
-                  </div>
+          {/* Tasks Widget */}
+          <div className="flex-1 bg-gray-800 border-b border-gray-700">
+            <div className="p-4 border-b border-gray-700 bg-gray-900">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-semibold text-white">Tasks</h3>
+                <div className="flex items-center space-x-2">
+                  <Plus className="h-4 w-4 text-gray-400 cursor-pointer hover:text-white" />
                 </div>
               </div>
-            )}
+            </div>
+            <div className="p-4 overflow-y-auto h-full">
+              <div className="text-gray-300 text-sm mb-3">Recent tasks</div>
+              <div className="space-y-3">
+                {[
+                  { id: 1, title: 'Follow up on proposal', status: 'pending', dueDate: 'Today' },
+                  { id: 2, title: 'Send product demo', status: 'completed', dueDate: 'Yesterday' },
+                  { id: 3, title: 'Schedule meeting', status: 'pending', dueDate: 'Tomorrow' }
+                ].map((task) => (
+                  <div key={task.id} className="p-3 bg-gray-700 rounded">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="text-white text-sm font-medium">{task.title}</div>
+                        <div className="text-gray-400 text-xs mt-1">{task.dueDate}</div>
+                      </div>
+                      <div className={`px-2 py-1 rounded text-xs ${
+                        task.status === 'completed' 
+                          ? 'bg-green-900 text-green-300' 
+                          : 'bg-yellow-900 text-yellow-300'
+                      }`}>
+                        {task.status}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Notes Widget */}
+          <div className="flex-1 bg-gray-800">
+            <div className="p-4 border-b border-gray-700 bg-gray-900">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center space-x-2">
+                  <h3 className="font-semibold text-white">Notes</h3>
+                  <span className="bg-green-600 text-white text-xs px-1.5 py-0.5 rounded">New</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <MoreHorizontal className="h-4 w-4 text-gray-400 cursor-pointer hover:text-white" />
+                </div>
+              </div>
+            </div>
+            <div className="p-4 overflow-y-auto h-full">
+              <div className="text-center py-6">
+                <div className="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Search className="h-6 w-6 text-gray-400" />
+                </div>
+                <div className="text-gray-300 text-sm mb-2">No notes found</div>
+                <div className="text-gray-400 text-xs mb-4">
+                  Try adding a note, or adjusting your filters. <span className="text-blue-400">Learn more.</span>
+                </div>
+                <button className="bg-yellow-500 text-black px-3 py-1 rounded text-sm font-medium hover:bg-yellow-400 transition-colors" data-testid="button-add-note">
+                  + Add note
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
