@@ -245,94 +245,90 @@ const CompanyDetailPageBMI: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Header */}
-      <div className="bg-gray-900 border-b border-gray-700 p-3">
-        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
-          <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
-            <div className="px-6 py-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <Link href="/lead-generation">
-                    <button 
-                      className="p-2 hover:bg-gray-600 rounded-lg transition-colors shadow-lg"
-                      data-testid="button-back"
-                    >
-                      <ArrowLeft className="h-5 w-5" />
-                    </button>
-                  </Link>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center text-sm font-semibold shadow-lg">
-                      VGI
-                    </div>
-                    <div>
-                      <h1 className="text-xl font-semibold text-white" data-testid="text-company-name">
-                        {companyData.name}
-                      </h1>
-                      <div className="flex items-center space-x-4 text-sm text-gray-400">
-                        <span>{companyData.industry}</span>
-                        <span>•</span>
-                        <span>{companyData.location}</span>
-                        <span>•</span>
-                        <span>{companyData.employees}</span>
-                        <span>•</span>
-                        <span>{companyData.revenue}</span>
-                      </div>
-                    </div>
+      <div className="bg-gray-800 border-b border-gray-700">
+        <div className="px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <Link href="/lead-generation">
+                <button 
+                  className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+                  data-testid="button-back"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </button>
+              </Link>
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-sm font-semibold">
+                  VGI
+                </div>
+                <div>
+                  <h1 className="text-xl font-semibold text-white" data-testid="text-company-name">
+                    {companyData.name}
+                  </h1>
+                  <div className="flex items-center space-x-4 text-sm text-gray-400">
+                    <span>{companyData.industry}</span>
+                    <span>•</span>
+                    <span>{companyData.location}</span>
+                    <span>•</span>
+                    <span>{companyData.employees}</span>
+                    <span>•</span>
+                    <span>{companyData.revenue}</span>
                   </div>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <button className="p-2 hover:bg-gray-600 rounded-lg transition-colors shadow-lg" data-testid="button-phone">
-                    <Phone className="h-5 w-5" />
-                  </button>
-                  <button className="p-2 hover:bg-gray-600 rounded-lg transition-colors shadow-lg" data-testid="button-email">
-                    <Mail className="h-5 w-5" />
-                  </button>
-                  <button className="p-2 hover:bg-gray-600 rounded-lg transition-colors shadow-lg" data-testid="button-external">
-                    <ExternalLink className="h-5 w-5" />
-                  </button>
-                  <button className="p-2 hover:bg-gray-600 rounded-lg transition-colors shadow-lg" data-testid="button-list">
-                    <MoreHorizontal className="h-5 w-5" />
-                  </button>
-                  <div className="px-3 py-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg text-sm font-medium shadow-lg">
-                    Actions
-                  </div>
-                </div>
-              </div>
-
-              {/* Navigation Tabs */}
-              <div className="flex space-x-6 mt-4">
-                {[
-                  { key: 'overview', label: 'Overview' },
-                  { key: 'employees', label: 'Employees' },
-                  { key: 'recommendations', label: 'Recommendations' },
-                  { key: 'existing-contacts', label: 'Existing contacts' },
-                  { key: 'sequences', label: 'Sequences', badge: '0' },
-                  { key: 'meetings', label: 'Meetings' },
-                  { key: 'deals', label: 'Deals' },
-                  { key: 'conversations', label: 'Conversations' },
-                  { key: 'locations', label: 'Locations' }
-                ].map((tab) => (
-                  <button
-                    key={tab.key}
-                    onClick={() => setActiveTab(tab.key as any)}
-                    className={`pb-2 border-b-2 transition-colors ${
-                      activeTab === tab.key
-                        ? 'border-blue-500 text-white'
-                        : 'border-transparent text-gray-400 hover:text-white'
-                    }`}
-                    data-testid={`tab-${tab.key}`}
-                  >
-                    <span className="flex items-center space-x-1">
-                      <span>{tab.label}</span>
-                      {tab.badge && (
-                        <span className="bg-gray-600 text-xs px-1.5 py-0.5 rounded">
-                          {tab.badge}
-                        </span>
-                      )}
-                    </span>
-                  </button>
-                ))}
               </div>
             </div>
+            <div className="flex items-center space-x-3">
+              <button className="p-2 hover:bg-gray-700 rounded-lg transition-colors" data-testid="button-phone">
+                <Phone className="h-5 w-5" />
+              </button>
+              <button className="p-2 hover:bg-gray-700 rounded-lg transition-colors" data-testid="button-email">
+                <Mail className="h-5 w-5" />
+              </button>
+              <button className="p-2 hover:bg-gray-700 rounded-lg transition-colors" data-testid="button-external">
+                <ExternalLink className="h-5 w-5" />
+              </button>
+              <button className="p-2 hover:bg-gray-700 rounded-lg transition-colors" data-testid="button-list">
+                <MoreHorizontal className="h-5 w-5" />
+              </button>
+              <div className="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm font-medium">
+                Actions
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation Tabs */}
+          <div className="flex space-x-6 mt-4">
+            {[
+              { key: 'overview', label: 'Overview' },
+              { key: 'employees', label: 'Employees' },
+              { key: 'recommendations', label: 'Recommendations' },
+              { key: 'existing-contacts', label: 'Existing contacts' },
+              { key: 'sequences', label: 'Sequences', badge: '0' },
+              { key: 'meetings', label: 'Meetings' },
+              { key: 'deals', label: 'Deals' },
+              { key: 'conversations', label: 'Conversations' },
+              { key: 'locations', label: 'Locations' }
+            ].map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key as any)}
+                className={`pb-2 border-b-2 transition-colors ${
+                  activeTab === tab.key
+                    ? 'border-blue-500 text-white'
+                    : 'border-transparent text-gray-400 hover:text-white'
+                }`}
+                data-testid={`tab-${tab.key}`}
+              >
+                <span className="flex items-center space-x-1">
+                  <span>{tab.label}</span>
+                  {tab.badge && (
+                    <span className="bg-gray-600 text-xs px-1.5 py-0.5 rounded">
+                      {tab.badge}
+                    </span>
+                  )}
+                </span>
+              </button>
+            ))}
           </div>
         </div>
       </div>
@@ -389,9 +385,14 @@ const CompanyDetailPageBMI: React.FC = () => {
                       </p>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-                  {/* Contact Sections Below Company Information */}
-                  <div className="space-y-4 pt-6 border-t border-gray-700">
+        {/* Widgets Sidebar - Independent Section */}
+        <div className="w-96 bg-gray-900 border-r border-gray-700 h-screen overflow-y-auto p-4 space-y-4">
           {/* Contacts Widget - Full Size with Internal Scroll */}
           <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
             <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
@@ -564,52 +565,26 @@ const CompanyDetailPageBMI: React.FC = () => {
                     <button className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-500 hover:to-orange-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl" data-testid="button-add-note">
                       + Add First Note
                     </button>
-                    </div>
                   </div>
-                </div>
-              </div>
-            </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Main Content Area - Full Company Insights Dashboard */}
-        <div className="flex-1 bg-gray-900">
-          {/* Dashboard Header */}
-          <div className="p-6 border-b border-gray-700 bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-cyan-700 rounded-xl flex items-center justify-center shadow-lg">
-                  <TrendingUp className="h-7 w-7 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-3xl font-bold text-white">Company Intelligence Dashboard</h1>
-                  <p className="text-gray-400 mt-1">Real-time insights and analytics for {companyData.name}</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-3">
-                <span className="bg-gradient-to-r from-cyan-500 to-cyan-600 text-white text-sm px-4 py-2 rounded-full font-medium shadow-lg">AI Powered</span>
-                <span className="bg-gradient-to-r from-green-500 to-green-600 text-white text-sm px-4 py-2 rounded-full font-medium shadow-lg">Live Data</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Company Insights Content */}
-          <div className="p-6">
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
+        {/* Main Content Area */}
+        <div className="flex-1 p-3">
+          {/* Company Insights Widget */}
+          <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
             <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
               {/* Widget Header */}
-              <div className="p-6 border-b border-gray-600 bg-gradient-to-r from-cyan-800 via-gray-800 to-cyan-800 rounded-t-xl">
+              <div className="p-6 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-cyan-700 rounded-lg flex items-center justify-center shadow-lg">
-                      <TrendingUp className="h-6 w-6 text-white" />
-                    </div>
-                    <h2 className="text-xl font-bold text-white">Real-Time Intelligence Dashboard</h2>
-                    <span className="bg-gradient-to-r from-cyan-500 to-cyan-600 text-white text-sm px-3 py-1 rounded-full font-medium shadow-lg">AI Powered</span>
-                    <span className="bg-gradient-to-r from-green-500 to-green-600 text-white text-sm px-3 py-1 rounded-full font-medium shadow-lg">Live Data</span>
+                    <TrendingUp className="h-5 w-5 text-cyan-400" />
+                    <h2 className="text-lg font-semibold text-white">Company Insights</h2>
+                    <span className="bg-cyan-600 text-white text-xs px-2 py-1 rounded-full">AI Powered</span>
+                    <span className="bg-green-600 text-white text-xs px-2 py-1 rounded-full">Live Data</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <span className="text-xs text-gray-400">Last updated: 2 min ago</span>
@@ -978,19 +953,16 @@ const CompanyDetailPageBMI: React.FC = () => {
           </div>
 
           {/* New Prospects */}
-          <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
-            <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
-              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold text-white">New prospects</h2>
-                  <div className="flex items-center space-x-2">
-                    <Settings className="h-4 w-4 text-gray-400" />
-                    <ChevronUp className="h-4 w-4 text-gray-400" />
-                  </div>
-                </div>
+          <div className="mb-3">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-white">New prospects</h2>
+              <div className="flex items-center space-x-2">
+                <Settings className="h-4 w-4 text-gray-400" />
+                <ChevronUp className="h-4 w-4 text-gray-400" />
               </div>
+            </div>
 
-              <div className="p-4 bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl">
+            <div className="bg-gray-800 rounded-lg p-4">
               {/* Prospect Tabs */}
               <div className="flex space-x-4 mb-4">
                 {[
@@ -1063,29 +1035,25 @@ const CompanyDetailPageBMI: React.FC = () => {
                     </div>
                   </div>
                 ))}
-                </div>
               </div>
             </div>
           </div>
 
           {/* Lookalike Companies */}
-          <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
-            <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
-              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <h2 className="text-lg font-semibold text-white">Lookalike companies</h2>
-                    <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded">Beta</span>
-                    <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded flex items-center">
-                      <Target className="h-3 w-3 mr-1" />
-                      Apollo AI
-                    </span>
-                  </div>
-                  <ChevronUp className="h-4 w-4 text-gray-400" />
-                </div>
+          <div className="mb-3">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-2">
+                <h2 className="text-lg font-semibold text-white">Lookalike companies</h2>
+                <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded">Beta</span>
+                <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded flex items-center">
+                  <Target className="h-3 w-3 mr-1" />
+                  Apollo AI
+                </span>
               </div>
+              <ChevronUp className="h-4 w-4 text-gray-400" />
+            </div>
 
-              <div className="p-4 bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl">
+            <div className="bg-gray-800 rounded-lg p-4">
               <div className="grid grid-cols-4 gap-4 text-xs text-gray-400 font-medium mb-4">
                 <div>NAME</div>
                 <div>LOCATION</div>
@@ -1112,29 +1080,25 @@ const CompanyDetailPageBMI: React.FC = () => {
                   </div>
                 ))}
               </div>
-                <div className="flex items-center justify-between mt-4 text-sm text-gray-400">
-                  <span>1 - 5 of 100</span>
-                </div>
+              <div className="flex items-center justify-between mt-4 text-sm text-gray-400">
+                <span>1 - 5 of 100</span>
               </div>
             </div>
           </div>
 
           {/* Activities */}
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
-            <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
-              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold text-white">Activities</h2>
-                  <div className="flex items-center space-x-2">
-                    <select className="bg-gray-600 text-white text-sm px-2 py-1 rounded border border-gray-500">
-                      <option>Log activity</option>
-                    </select>
-                    <ChevronUp className="h-4 w-4 text-gray-400" />
-                  </div>
-                </div>
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-white">Activities</h2>
+              <div className="flex items-center space-x-2">
+                <select className="bg-gray-700 text-white text-sm px-2 py-1 rounded border border-gray-600">
+                  <option>Log activity</option>
+                </select>
+                <ChevronUp className="h-4 w-4 text-gray-400" />
               </div>
+            </div>
 
-              <div className="p-4 bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl">
+            <div className="bg-gray-800 rounded-lg p-4">
               {/* Activity Tabs */}
               <div className="flex space-x-4 mb-4 border-b border-gray-700">
                 {[
@@ -1201,14 +1165,13 @@ const CompanyDetailPageBMI: React.FC = () => {
                     </div>
                   </div>
                 ))}
-                </div>
               </div>
             </div>
           </div>
         </div>
+
+
       </div>
-    </div>
-    </div>
     </div>
   );
 };
