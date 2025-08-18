@@ -95,7 +95,8 @@ const CompanyDetailPageBMI: React.FC = () => {
     {
       name: "Sarah Mitchell",
       title: "Chief Investment Officer",
-      department: "Investment Management", 
+      department: "Investment Management",
+      location: "Sydney, NSW",
       source: "LinkedIn Premium",
       email: "s.mitchell@vgipartners.com",
       phone: "+61 2 8267 8000",
@@ -107,6 +108,7 @@ const CompanyDetailPageBMI: React.FC = () => {
       name: "David Chen",
       title: "Senior Portfolio Manager",
       department: "Equities Division",
+      location: "Melbourne, VIC",
       source: "Company Database",
       email: "d.chen@vgipartners.com", 
       phone: "+61 2 8267 8015",
@@ -118,6 +120,7 @@ const CompanyDetailPageBMI: React.FC = () => {
       name: "Emma Rodriguez",
       title: "ESG Investment Specialist",
       department: "Sustainable Investing",
+      location: "Sydney, NSW",
       source: "LinkedIn Sales Navigator",
       email: "e.rodriguez@vgipartners.com",
       phone: "+61 2 8267 8023",
@@ -129,6 +132,7 @@ const CompanyDetailPageBMI: React.FC = () => {
       name: "Michael Thompson",
       title: "Head of Research",
       department: "Investment Research",
+      location: "Sydney, NSW",
       source: "Company Database", 
       email: "m.thompson@vgipartners.com",
       phone: "+61 2 8267 8045",
@@ -140,6 +144,7 @@ const CompanyDetailPageBMI: React.FC = () => {
       name: "Jennifer Wong",
       title: "Quantitative Analyst", 
       department: "Research & Analytics",
+      location: "Brisbane, QLD",
       source: "LinkedIn Premium",
       email: "j.wong@vgipartners.com",
       phone: "+61 2 8267 8067",
@@ -152,6 +157,7 @@ const CompanyDetailPageBMI: React.FC = () => {
       name: "Robert Anderson",
       title: "Senior Fund Manager",
       department: "Investment Management",
+      location: "Perth, WA",
       source: "LinkedIn Sales Navigator",
       email: "r.anderson@vgipartners.com",
       phone: "+61 2 8267 8071",
@@ -162,7 +168,8 @@ const CompanyDetailPageBMI: React.FC = () => {
     {
       name: "Lisa Zhang",
       title: "Risk Management Director",
-      department: "Risk & Compliance", 
+      department: "Risk & Compliance",
+      location: "Sydney, NSW", 
       source: "Company Database",
       email: "l.zhang@vgipartners.com",
       phone: "+61 2 8267 8089",
@@ -174,6 +181,7 @@ const CompanyDetailPageBMI: React.FC = () => {
       name: "James Wilson",
       title: "Client Relationship Manager",
       department: "Client Services",
+      location: "Melbourne, VIC",
       source: "LinkedIn Premium",
       email: "j.wilson@vgipartners.com",
       phone: "+61 2 8267 8092",
@@ -185,6 +193,7 @@ const CompanyDetailPageBMI: React.FC = () => {
       name: "Maria Santos",
       title: "Investment Analyst",
       department: "Investment Research",
+      location: "Adelaide, SA",
       source: "LinkedIn Sales Navigator",
       email: "m.santos@vgipartners.com",
       phone: "+61 2 8267 8105",
@@ -196,6 +205,7 @@ const CompanyDetailPageBMI: React.FC = () => {
       name: "Thomas Lee",
       title: "Portfolio Operations Manager",
       department: "Operations",
+      location: "Sydney, NSW",
       source: "Company Database",
       email: "t.lee@vgipartners.com",
       phone: "+61 2 8267 8118",
@@ -208,6 +218,7 @@ const CompanyDetailPageBMI: React.FC = () => {
       name: "Alexandra Johnson",
       title: "Senior Investment Advisor",
       department: "Client Advisory",
+      location: "Canberra, ACT",
       source: "LinkedIn Premium",
       email: "a.johnson@vgipartners.com",
       phone: "+61 2 8267 8125",
@@ -219,6 +230,7 @@ const CompanyDetailPageBMI: React.FC = () => {
       name: "Kevin O'Connor",
       title: "Head of Trading",
       department: "Trading & Execution",
+      location: "Sydney, NSW",
       source: "Company Database",
       email: "k.oconnor@vgipartners.com",
       phone: "+61 2 8267 8139",
@@ -230,6 +242,7 @@ const CompanyDetailPageBMI: React.FC = () => {
       name: "Rachel Kim",
       title: "Compliance Officer",
       department: "Risk & Compliance",
+      location: "Melbourne, VIC",
       source: "LinkedIn Sales Navigator",
       email: "r.kim@vgipartners.com",
       phone: "+61 2 8267 8142",
@@ -241,6 +254,7 @@ const CompanyDetailPageBMI: React.FC = () => {
       name: "Daniel Martinez",
       title: "Technology Director",
       department: "Information Technology",
+      location: "Brisbane, QLD",
       source: "LinkedIn Premium",
       email: "d.martinez@vgipartners.com",
       phone: "+61 2 8267 8156",
@@ -252,6 +266,7 @@ const CompanyDetailPageBMI: React.FC = () => {
       name: "Sophie Turner",
       title: "Marketing Manager",
       department: "Marketing & Communications",
+      location: "Sydney, NSW",
       source: "Company Database",
       email: "s.turner@vgipartners.com",
       phone: "+61 2 8267 8163",
@@ -264,6 +279,7 @@ const CompanyDetailPageBMI: React.FC = () => {
       name: "Andrew Phillips",
       title: "Senior Research Analyst",
       department: "Investment Research",
+      location: "Darwin, NT",
       source: "LinkedIn Sales Navigator",
       email: "a.phillips@vgipartners.com",
       phone: "+61 2 8267 8177",
@@ -275,6 +291,7 @@ const CompanyDetailPageBMI: React.FC = () => {
       name: "Catherine Brown",
       title: "Human Resources Director",
       department: "Human Resources",
+      location: "Melbourne, VIC",
       source: "Company Database",
       email: "c.brown@vgipartners.com",
       phone: "+61 2 8267 8184",
@@ -286,6 +303,7 @@ const CompanyDetailPageBMI: React.FC = () => {
       name: "Nathan Davis",
       title: "Alternative Investments Manager",
       department: "Alternative Investments",
+      location: "Perth, WA",
       source: "LinkedIn Premium",
       email: "n.davis@vgipartners.com",
       phone: "+61 2 8267 8191",
@@ -297,6 +315,7 @@ const CompanyDetailPageBMI: React.FC = () => {
       name: "Victoria Garcia",
       title: "Financial Controller",
       department: "Finance & Accounting",
+      location: "Adelaide, SA",
       source: "LinkedIn Sales Navigator",
       email: "v.garcia@vgipartners.com",
       phone: "+61 2 8267 8205",
@@ -308,6 +327,7 @@ const CompanyDetailPageBMI: React.FC = () => {
       name: "Benjamin Clark",
       title: "Investment Operations Analyst",
       department: "Operations",
+      location: "Sydney, NSW",
       source: "Company Database",
       email: "b.clark@vgipartners.com",
       phone: "+61 2 8267 8212",
@@ -320,6 +340,7 @@ const CompanyDetailPageBMI: React.FC = () => {
       name: "Isabella Rodriguez",
       title: "Client Services Manager",
       department: "Client Services",
+      location: "Brisbane, QLD",
       source: "LinkedIn Premium",
       email: "i.rodriguez@vgipartners.com",
       phone: "+61 2 8267 8229",
@@ -331,6 +352,7 @@ const CompanyDetailPageBMI: React.FC = () => {
       name: "Christopher Moore",
       title: "Legal Counsel",
       department: "Legal & Compliance",
+      location: "Sydney, NSW",
       source: "Company Database",
       email: "c.moore@vgipartners.com",
       phone: "+61 2 8267 8236",
@@ -342,6 +364,7 @@ const CompanyDetailPageBMI: React.FC = () => {
       name: "Olivia White",
       title: "Data Analyst",
       department: "Research & Analytics",
+      location: "Melbourne, VIC",
       source: "LinkedIn Sales Navigator",
       email: "o.white@vgipartners.com",
       phone: "+61 2 8267 8243",
@@ -1245,19 +1268,18 @@ const CompanyDetailPageBMI: React.FC = () => {
               
               <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl p-4">
                 {/* List Header */}
-                <div className="grid grid-cols-6 gap-4 text-xs text-gray-400 font-medium mb-4 pb-2 border-b border-gray-700">
+                <div className="grid grid-cols-5 gap-4 text-xs text-gray-400 font-medium mb-4 pb-2 border-b border-gray-700">
                   <div>NAME</div>
                   <div>TITLE</div>
                   <div>DEPARTMENT</div>
-                  <div>SOURCE</div>
-                  <div>CONNECTION</div>
+                  <div>LOCATION</div>
                   <div>ACTIONS</div>
                 </div>
                 
                 {/* Prospects List */}
                 <div className="space-y-2">
                   {getCurrentPageContacts().map((contact, index) => (
-                    <div key={index} className="grid grid-cols-6 gap-4 py-3 px-2 rounded-lg hover:bg-gray-700/30 transition-colors border-b border-gray-700/50">
+                    <div key={index} className="grid grid-cols-5 gap-4 py-3 px-2 rounded-lg hover:bg-gray-700/30 transition-colors border-b border-gray-700/50">
                       {/* Name with Avatar */}
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white font-medium text-xs">
@@ -1289,10 +1311,12 @@ const CompanyDetailPageBMI: React.FC = () => {
                       {/* Department */}
                       <div className="flex flex-col justify-center">
                         <div className="text-gray-300 text-sm">{contact.department}</div>
+                        <div className="text-gray-400 text-xs">{contact.connection} • Active {contact.lastActivity}</div>
                       </div>
                       
-                      {/* Source */}
+                      {/* Location */}
                       <div className="flex flex-col justify-center">
+                        <div className="text-gray-300 text-sm">{contact.location}</div>
                         <span className={`text-xs px-2 py-1 rounded-full w-fit ${
                           contact.source.includes('LinkedIn') 
                             ? 'bg-blue-600/20 text-blue-300 border border-blue-600/30' 
@@ -1300,12 +1324,6 @@ const CompanyDetailPageBMI: React.FC = () => {
                         }`}>
                           {contact.source}
                         </span>
-                      </div>
-                      
-                      {/* Connection */}
-                      <div className="flex flex-col justify-center">
-                        <div className="text-gray-300 text-sm">{contact.connection}</div>
-                        <div className="text-gray-400 text-xs">Active {contact.lastActivity}</div>
                       </div>
                       
                       {/* Actions */}
