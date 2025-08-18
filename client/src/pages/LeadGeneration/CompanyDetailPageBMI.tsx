@@ -336,19 +336,19 @@ const CompanyDetailPageBMI: React.FC = () => {
 
 
       {/* Main Content */}
-      <div className="flex">
-        {/* Company Information Sidebar */}
-        <div className="w-80 border-r border-gray-700 h-screen bg-gray-900">
-          <div className="p-4">
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
-              <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
-                <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+      <div className="flex h-screen">
+        {/* Company Information Sidebar - Full Height */}
+        <div className="w-80 border-r border-gray-700 bg-gray-900 flex flex-col">
+          <div className="flex-1 p-4">
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700 h-full">
+              <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600 h-full flex flex-col">
+                <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl flex-shrink-0">
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold text-white text-lg">Company information</h3>
                     <ChevronUp className="h-4 w-4 text-gray-400" />
                   </div>
                 </div>
-                <div className="p-4 bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl">
+                <div className="flex-1 p-4 bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl overflow-y-auto">
                   <div className="text-sm text-gray-300 space-y-4">
                     <p>{companyData.description}</p>
                     <div>
