@@ -194,8 +194,8 @@ const ProspectDiscovery: React.FC = () => {
     }
   });
 
-  const prospects = prospectsData?.prospects || generateMockProspects();
-  const totalCount = prospectsData?.total || 924;
+  const prospects: ProspectData[] = [];
+  const totalCount = 0;
 
   const toggleSection = (section: string) => {
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -242,183 +242,14 @@ const ProspectDiscovery: React.FC = () => {
               </button>
             </div>
 
-            {/* Opted out checkbox */}
-            <label className="flex items-center space-x-2 text-sm">
-              <input
-                type="checkbox"
-                checked={filters.optedOutCalls}
-                onChange={(e) => setFilters(prev => ({ ...prev, optedOutCalls: e.target.checked }))}
-                className="rounded border-gray-300"
-              />
-              <span>Opted out of calls</span>
-            </label>
           </div>
 
-          {/* Filter Sections */}
-          <div className="p-4 space-y-4">
-            {/* Lists */}
-            <div>
-              <button
-                onClick={() => toggleSection('lists')}
-                className="flex items-center justify-between w-full text-left"
-              >
-                <span className="font-medium text-gray-900">Lists</span>
-                {expandedSections.lists ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-              </button>
-              {expandedSections.lists && (
-                <div className="mt-2 space-y-2">
-                  <label className="flex items-center space-x-2 text-sm">
-                    <input type="checkbox" className="rounded border-gray-300" />
-                    <span>Tech Leaders</span>
-                    <span className="text-gray-500">(145)</span>
-                  </label>
-                  <label className="flex items-center space-x-2 text-sm">
-                    <input type="checkbox" className="rounded border-gray-300" />
-                    <span>Enterprise Accounts</span>
-                    <span className="text-gray-500">(89)</span>
-                  </label>
-                </div>
-              )}
-            </div>
-
-            {/* Persona */}
-            <div>
-              <button
-                onClick={() => toggleSection('persona')}
-                className="flex items-center justify-between w-full text-left"
-              >
-                <span className="font-medium text-gray-900">Persona</span>
-                {expandedSections.persona ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-              </button>
-              {expandedSections.persona && (
-                <div className="mt-2 space-y-2">
-                  <label className="flex items-center space-x-2 text-sm">
-                    <input type="checkbox" className="rounded border-gray-300" />
-                    <span>Decision Maker</span>
-                  </label>
-                  <label className="flex items-center space-x-2 text-sm">
-                    <input type="checkbox" className="rounded border-gray-300" />
-                    <span>Influencer</span>
-                  </label>
-                  <label className="flex items-center space-x-2 text-sm">
-                    <input type="checkbox" className="rounded border-gray-300" />
-                    <span>Champion</span>
-                  </label>
-                </div>
-              )}
-            </div>
-
-            {/* Email Status */}
-            <div>
-              <button
-                onClick={() => toggleSection('emailStatus')}
-                className="flex items-center justify-between w-full text-left"
-              >
-                <span className="font-medium text-gray-900">Email Status</span>
-                {expandedSections.emailStatus ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-              </button>
-              {expandedSections.emailStatus && (
-                <div className="mt-2 space-y-2">
-                  <label className="flex items-center space-x-2 text-sm">
-                    <input type="checkbox" className="rounded border-gray-300" />
-                    <span>Verified</span>
-                  </label>
-                  <label className="flex items-center space-x-2 text-sm">
-                    <input type="checkbox" className="rounded border-gray-300" />
-                    <span>Unverified</span>
-                  </label>
-                  <label className="flex items-center space-x-2 text-sm">
-                    <input type="checkbox" className="rounded border-gray-300" />
-                    <span>Catch-all</span>
-                  </label>
-                </div>
-              )}
-            </div>
-
-            {/* Job Titles */}
-            <div>
-              <button
-                onClick={() => toggleSection('jobTitles')}
-                className="flex items-center justify-between w-full text-left"
-              >
-                <span className="font-medium text-gray-900">Job Titles</span>
-                <span className="text-sm text-gray-500">2</span>
-                {expandedSections.jobTitles ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-              </button>
-              {expandedSections.jobTitles && (
-                <div className="mt-2 space-y-2">
-                  <span className="inline-flex items-center px-2 py-1 text-xs bg-gray-100 rounded-md mr-2">
-                    cto <X className="h-3 w-3 ml-1 cursor-pointer" />
-                  </span>
-                  <span className="inline-flex items-center px-2 py-1 text-xs bg-gray-100 rounded-md">
-                    ceo <X className="h-3 w-3 ml-1 cursor-pointer" />
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* Company */}
-            <div>
-              <button
-                onClick={() => toggleSection('company')}
-                className="flex items-center justify-between w-full text-left"
-              >
-                <span className="font-medium text-gray-900">Company</span>
-                {expandedSections.company ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-              </button>
-            </div>
-
-            {/* Company Lookalikes */}
-            <div>
-              <button className="flex items-center justify-between w-full text-left">
-                <span className="font-medium text-gray-900">Company Lookalikes</span>
-                <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded">Beta</span>
-              </button>
-            </div>
-
-            {/* Location */}
-            <div>
-              <button
-                onClick={() => toggleSection('location')}
-                className="flex items-center justify-between w-full text-left"
-              >
-                <span className="font-medium text-gray-900">Location</span>
-                {expandedSections.location ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-              </button>
-            </div>
-
-            {/* # Employees */}
-            <div>
-              <button
-                onClick={() => toggleSection('employees')}
-                className="flex items-center justify-between w-full text-left"
-              >
-                <span className="font-medium text-gray-900"># Employees</span>
-                <span className="text-sm text-gray-500">3</span>
-                {expandedSections.employees ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-              </button>
-              {expandedSections.employees && (
-                <div className="mt-2 space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <input type="number" placeholder="01:00" className="w-20 px-2 py-1 border rounded" />
-                    <span className="mx-2">-</span>
-                    <input type="number" placeholder="21:50" className="w-20 px-2 py-1 border rounded" />
-                    <input type="number" placeholder="11:20" className="w-20 px-2 py-1 border rounded ml-2" />
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Industry & Keywords */}
-            <div>
-              <button
-                onClick={() => toggleSection('industry')}
-                className="flex items-center justify-between w-full text-left"
-              >
-                <span className="font-medium text-gray-900">Industry & Keywords</span>
-                <span className="text-sm text-gray-500">5</span>
-                {expandedSections.industry ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-              </button>
+          {/* Empty Filter State */}
+          <div className="flex-1 flex items-center justify-center py-8">
+            <div className="text-center">
+              <Filter className="h-8 w-8 text-gray-300 mx-auto mb-3" />
+              <p className="text-sm text-gray-500">No filters applied</p>
+              <p className="text-xs text-gray-400 mt-1">Add filters to refine your search</p>
             </div>
           </div>
         </div>
@@ -513,6 +344,17 @@ const ProspectDiscovery: React.FC = () => {
           {isLoading ? (
             <div className="flex items-center justify-center h-64">
               <RefreshCw className="h-8 w-8 animate-spin text-gray-400" />
+            </div>
+          ) : prospects.length === 0 ? (
+            <div className="flex items-center justify-center h-64">
+              <div className="text-center">
+                <User className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No people found</h3>
+                <p className="text-sm text-gray-500 mb-4">Try adjusting your search criteria or filters</p>
+                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
+                  Clear all filters
+                </button>
+              </div>
             </div>
           ) : (
             <div className="divide-y divide-gray-200">
