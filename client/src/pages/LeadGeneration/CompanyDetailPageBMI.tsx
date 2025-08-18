@@ -1397,16 +1397,8 @@ const CompanyDetailPageBMI: React.FC = () => {
                               <div className="text-gray-400 text-sm">{contact.department}</div>
                             </div>
 
-                            {/* Contact Details */}
+                            {/* Location Details */}
                             <div className="space-y-2 border-t border-gray-600 pt-3">
-                              <div className="flex items-center space-x-2">
-                                <Mail className="h-4 w-4 text-blue-400" />
-                                <span className="text-gray-300 text-sm">{contact.email}</span>
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                <Phone className="h-4 w-4 text-green-400" />
-                                <span className="text-gray-300 text-sm">{contact.phone}</span>
-                              </div>
                               <div className="flex items-center space-x-2">
                                 <MapPin className="h-4 w-4 text-purple-400" />
                                 <span className="text-gray-300 text-sm">{contact.location}</span>
