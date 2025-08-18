@@ -438,10 +438,10 @@ const CompanyDetailPageSimple = () => {
 
           {/* Overview Tab */}
           {activeTab === 'overview' && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Left Column - Main Content */}
-              <div className="lg:col-span-2 space-y-6">
-                {/* Company Information Card */}
+            <div className="space-y-6">
+              {/* Top Row - Company Information and Company Insights */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Company Information Card - 50% width */}
                 <div className="bg-white rounded-lg shadow border border-gray-200">
                   <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-gray-900">Company Information</h3>
@@ -477,7 +477,7 @@ const CompanyDetailPageSimple = () => {
                         <p className="text-gray-600 text-sm">{companyData.name} has 1 subsidiary</p>
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+                      <div className="grid grid-cols-1 gap-3 pt-4 border-t border-gray-200">
                         <div>
                           <h4 className="text-sm font-medium text-gray-500">PHONE NUMBER</h4>
                           <p className="text-gray-900 text-sm">{companyData.phone || 'Not available'}</p>
@@ -499,9 +499,9 @@ const CompanyDetailPageSimple = () => {
                   </div>
                 </div>
 
-                {/* Company Insights Section */}
+                {/* Company Insights Section - 50% width */}
                 {insightsLoading ? (
-                  <div className="flex items-center justify-center py-8">
+                  <div className="bg-white rounded-lg shadow border border-gray-200 flex items-center justify-center py-8">
                     <div className="text-center">
                       <RefreshCw className="h-8 w-8 text-blue-600 animate-spin mx-auto mb-4" />
                       <p className="text-gray-600">Loading real-time company insights...</p>
@@ -535,18 +535,18 @@ const CompanyDetailPageSimple = () => {
                         </div>
                         
                         {/* Tabs */}
-                        <div className="flex space-x-6 border-b border-gray-200">
-                          <button className="pb-2 text-gray-900 border-b-2 border-blue-600 text-sm">Score</button>
-                          <button className="pb-2 text-gray-500 hover:text-gray-700 text-sm">News</button>
-                          <button className="pb-2 text-gray-500 hover:text-gray-700 text-sm flex items-center">
-                            Technologies <span className="ml-1 text-xs bg-gray-100 text-gray-700 px-1 rounded">{liveInsights?.technologies?.length || 0}</span>
+                        <div className="flex flex-wrap gap-2 border-b border-gray-200 pb-2">
+                          <button className="pb-1 text-gray-900 border-b-2 border-blue-600 text-xs">Score</button>
+                          <button className="pb-1 text-gray-500 hover:text-gray-700 text-xs">News</button>
+                          <button className="pb-1 text-gray-500 hover:text-gray-700 text-xs flex items-center">
+                            Tech <span className="ml-1 bg-gray-100 text-gray-700 px-1 rounded text-xs">{liveInsights?.technologies?.length || 0}</span>
                           </button>
-                          <button className="pb-2 text-gray-500 hover:text-gray-700 text-sm">Funding rounds</button>
-                          <button className="pb-2 text-gray-500 hover:text-gray-700 text-sm">Job postings</button>
-                          <button className="pb-2 text-gray-500 hover:text-gray-700 text-sm flex items-center">
-                            Employee trends <span className="ml-1 text-xs bg-gray-100 text-gray-700 px-1 rounded">24</span>
+                          <button className="pb-1 text-gray-500 hover:text-gray-700 text-xs">Funding</button>
+                          <button className="pb-1 text-gray-500 hover:text-gray-700 text-xs">Jobs</button>
+                          <button className="pb-1 text-gray-500 hover:text-gray-700 text-xs flex items-center">
+                            Trends <span className="ml-1 bg-gray-100 text-gray-700 px-1 rounded text-xs">24</span>
                           </button>
-                          <button className="pb-2 text-gray-500 hover:text-gray-700 text-sm">Website visitors</button>
+                          <button className="pb-1 text-gray-500 hover:text-gray-700 text-xs">Visitors</button>
                         </div>
                       </div>
                       
@@ -554,29 +554,30 @@ const CompanyDetailPageSimple = () => {
                       <div className="mb-6">
                         <h4 className="text-sm text-gray-500 mb-3">Company profile</h4>
                         <div className="flex flex-wrap gap-2">
-                          <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm flex items-center">
+                          <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs flex items-center">
                             <Building2 className="h-3 w-3 mr-1" />
-                            Companies located in {companyData.headquarters.split(',')[1]?.trim() || 'United States'}
+                            {companyData.headquarters.split(',')[1]?.trim() || 'US'}
                           </span>
-                          <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm flex items-center">
-                            <Tag className="h-3 w-3 mr-1" />
-                            {companyData.industry} industry
-                          </span>
-                          <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm flex items-center">
+                          <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs flex items-center">
                             <Tag className="h-3 w-3 mr-1" />
                             {companyData.industry}
                           </span>
-                          <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm flex items-center">
+                          <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs flex items-center">
                             <Users className="h-3 w-3 mr-1" />
-                            Between 51 and 100 employees
+                            51-100 employees
                           </span>
                         </div>
                       </div>
                     </div>
                   </div>
                 )}
+              </div>
 
-                {/* New Prospects Section */}
+              {/* Main Content Area */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Left Column - New Prospects */}
+                <div className="lg:col-span-2">
+                  {/* New Prospects Section */}
                 <div className="bg-white rounded-lg shadow border border-gray-200">
                   <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-gray-900">New prospects</h3>
@@ -638,9 +639,9 @@ const CompanyDetailPageSimple = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+                </div>
 
-              {/* Right Column - Sidebar */}
+                {/* Right Column - Sidebar */}
               <div className="space-y-6">
                 {/* Contacts Card */}
                 <div className="bg-white rounded-lg shadow border border-gray-200">
@@ -746,10 +747,10 @@ const CompanyDetailPageSimple = () => {
                       </div>
                     </div>
                   </div>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Employees Tab */}
         {activeTab === 'employees' && (
