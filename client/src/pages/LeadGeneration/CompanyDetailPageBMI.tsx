@@ -338,13 +338,13 @@ const CompanyDetailPageBMI: React.FC = () => {
       {/* Main Content */}
       <div className="flex">
         {/* Company Information Sidebar */}
-        <div className="w-80 bg-gray-800 border-r border-gray-700 h-screen">
-          <div className="p-4">
+        <div className="w-80 bg-gray-800 border-r border-gray-700 h-screen overflow-hidden">
+          <div className="p-4 pb-0">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold text-white">Company information</h3>
               <ChevronUp className="h-4 w-4 text-gray-400" />
             </div>
-            <div className="text-sm text-gray-300 space-y-4">
+            <div className="text-sm text-gray-300 space-y-4 pb-4">
               <p>{companyData.description}</p>
               <div>
                 <h4 className="text-gray-400 font-medium mb-2">INDUSTRIES</h4>
