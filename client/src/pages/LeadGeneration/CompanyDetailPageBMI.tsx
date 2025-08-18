@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import { useRoute } from 'wouter';
 import { 
   ArrowLeft, 
   Phone, 
@@ -28,6 +29,7 @@ import {
   Share
 } from 'lucide-react';
 import { Link } from 'wouter';
+import { companies, CompanyData as SharedCompanyData } from '../../data/companies';
 
 interface Contact {
   id: string;
@@ -87,6 +89,7 @@ interface Activity {
 }
 
 const CompanyDetailPageBMI: React.FC = () => {
+  const [match, params] = useRoute('/lead-generation/company/:id');
   const [activeTab, setActiveTab] = useState<'overview' | 'employees' | 'recommendations' | 'existing-contacts' | 'sequences' | 'meetings' | 'deals' | 'conversations' | 'locations'>('overview');
   const [insightsExpanded, setInsightsExpanded] = useState(true);
   const [contactsExpanded, setContactsExpanded] = useState(true);
@@ -97,67 +100,46 @@ const CompanyDetailPageBMI: React.FC = () => {
   const [activeInsightTab, setActiveInsightTab] = useState<'score' | 'news' | 'technologies' | 'funding' | 'job-postings' | 'employee-trends' | 'website-visitors'>('score');
   const [activeActivityTab, setActiveActivityTab] = useState<'all' | 'emails' | 'calls' | 'conversations' | 'meetings' | 'notes' | 'tasks' | 'activity-log'>('all');
 
-  // Sample company data
-  const companyData: CompanyData = {
-    id: '1',
-    name: 'Sample Company Inc.',
-    logo: 'SC',
-    domain: 'samplecompany.com',
-    description: 'Sample Company Inc. is a technology-focused organization specializing in software development, digital solutions, and business automation services.',
-    industry: 'Technology',
-    location: 'San Francisco, CA',
-    founded: '2015',
-    employees: '150 employees',
-    revenue: '$25.5M revenue',
-    phone: '+1-555-0123',
-    tradingSymbol: 'NASDAQ: SMPL',
-    subsidiaries: 2,
-    score: 85,
-    rating: 'Excellent'
-  };
+  // Get the selected company data based on URL parameter
+  const selectedCompany = useMemo(() => {
+    return companies.find(company => company.id === params?.id) || companies[0];
+  }, [params?.id]);
 
-  const contacts: Contact[] = [
-    {
-      id: '1',
-      name: 'Jane Smith',
-      title: 'VP of Sales',
-      department: 'Sales',
-      location: 'San Francisco, CA',
-      initials: 'JS'
-    },
-    {
-      id: '2',
-      name: 'Michael Chen',
-      title: 'Engineering Manager',
-      department: 'Engineering',
-      location: 'San Francisco, CA',
-      initials: 'MC'
-    },
-    {
-      id: '3',
-      name: 'Sarah Johnson',
-      title: 'Marketing Director',
-      department: 'Marketing',
-      location: 'San Francisco, CA',
-      initials: 'SJ'
-    },
-    {
-      id: '4',
-      name: 'David Rodriguez',
-      title: 'Chief Technology Officer',
-      department: 'Executive',
-      location: 'San Francisco, CA',
-      initials: 'DR'
-    },
-    {
-      id: '5',
-      name: 'Emily Davis',
-      title: 'Business Development Manager',
-      department: 'Business Development',
-      location: 'San Francisco, CA',
-      initials: 'ED'
-    }
-  ];
+  // Transform to CompanyData format for the detail page
+  const companyData: CompanyData = useMemo(() => ({
+    id: selectedCompany.id,
+    name: selectedCompany.name,
+    logo: selectedCompany.logo,
+    domain: selectedCompany.domain,
+    description: selectedCompany.description,
+    industry: selectedCompany.industry,
+    location: selectedCompany.location,
+    founded: selectedCompany.founded.toString(),
+    employees: selectedCompany.employeeCount,
+    revenue: selectedCompany.revenue,
+    phone: `+1-555-${Math.floor(Math.random() * 9000) + 1000}`,
+    tradingSymbol: selectedCompany.funding.includes('Public') ? `NASDAQ: ${selectedCompany.name.substring(0, 4).toUpperCase()}` : 'Private Company',
+    subsidiaries: Math.floor(Math.random() * 5) + 1,
+    score: Math.floor(Math.random() * 30) + 70, // Random score between 70-100
+    rating: 'Good'
+  }), [selectedCompany]);
+
+  // Generate contacts based on selected company
+  const contacts: Contact[] = useMemo(() => {
+    const contactList = [
+      { name: 'Jane Smith', title: 'VP of Sales', department: 'Sales', initials: 'JS' },
+      { name: 'Michael Chen', title: 'Engineering Manager', department: 'Engineering', initials: 'MC' },
+      { name: 'Sarah Johnson', title: 'Marketing Director', department: 'Marketing', initials: 'SJ' },
+      { name: 'David Rodriguez', title: 'Chief Technology Officer', department: 'Executive', initials: 'DR' },
+      { name: 'Emily Davis', title: 'Business Development Manager', department: 'Business Development', initials: 'ED' }
+    ];
+    
+    return contactList.map((contact, index) => ({
+      id: (index + 1).toString(),
+      ...contact,
+      location: selectedCompany.location
+    }));
+  }, [selectedCompany.location]);
 
   const prospects: ProspectData[] = [
     {
@@ -380,18 +362,14 @@ const CompanyDetailPageBMI: React.FC = () => {
               <div className="mt-4">
                 <h4 className="text-gray-400 font-medium mb-2">KEYWORDS</h4>
                 <div className="space-y-1">
-                  <span className="bg-gray-700 px-2 py-1 rounded text-xs block w-fit">
-                    software development
-                  </span>
-                  <span className="bg-gray-700 px-2 py-1 rounded text-xs block w-fit">
-                    business automation
-                  </span>
-                  <span className="bg-gray-700 px-2 py-1 rounded text-xs block w-fit">
-                    digital solutions
-                  </span>
+                  {selectedCompany.keywords.slice(0, 3).map((keyword, index) => (
+                    <span key={index} className="bg-gray-700 px-2 py-1 rounded text-xs block w-fit">
+                      {keyword}
+                    </span>
+                  ))}
                 </div>
                 <button className="text-blue-400 text-xs mt-2 hover:text-blue-300">
-                  Show all 12
+                  Show all {selectedCompany.keywords.length}
                 </button>
               </div>
               <div className="mt-4">
