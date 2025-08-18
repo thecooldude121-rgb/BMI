@@ -337,54 +337,54 @@ const CompanyDetailPageBMI: React.FC = () => {
 
       {/* Main Content */}
       <div className="flex">
-        {/* Left Sidebar */}
-        <div className="w-80 bg-gray-800 border-r border-gray-700 h-screen overflow-y-auto">
-          {/* Company Information */}
-          <div className="p-4 border-b border-gray-700">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-white">Company information</h3>
-              <ChevronUp className="h-4 w-4 text-gray-400" />
+        {/* Company Information Sidebar */}
+        <div className="w-80 bg-gray-800 border-r border-gray-700 h-screen overflow-y-auto p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-semibold text-white">Company information</h3>
+            <ChevronUp className="h-4 w-4 text-gray-400" />
+          </div>
+          <div className="text-sm text-gray-300 space-y-2">
+            <p>{companyData.description}</p>
+            <div className="mt-4">
+              <h4 className="text-gray-400 font-medium mb-2">INDUSTRIES</h4>
+              <span className="bg-gray-700 px-2 py-1 rounded text-xs">
+                {companyData.industry}
+              </span>
             </div>
-            <div className="text-sm text-gray-300 space-y-2">
-              <p>{companyData.description}</p>
-              <div className="mt-4">
-                <h4 className="text-gray-400 font-medium mb-2">INDUSTRIES</h4>
-                <span className="bg-gray-700 px-2 py-1 rounded text-xs">
-                  {companyData.industry}
-                </span>
+            <div className="mt-4">
+              <h4 className="text-gray-400 font-medium mb-2">KEYWORDS</h4>
+              <div className="space-y-1">
+                {selectedCompany.keywords.slice(0, 3).map((keyword, index) => (
+                  <span key={index} className="bg-gray-700 px-2 py-1 rounded text-xs block w-fit">
+                    {keyword}
+                  </span>
+                ))}
               </div>
-              <div className="mt-4">
-                <h4 className="text-gray-400 font-medium mb-2">KEYWORDS</h4>
-                <div className="space-y-1">
-                  {selectedCompany.keywords.slice(0, 3).map((keyword, index) => (
-                    <span key={index} className="bg-gray-700 px-2 py-1 rounded text-xs block w-fit">
-                      {keyword}
-                    </span>
-                  ))}
-                </div>
-                <button className="text-blue-400 text-xs mt-2 hover:text-blue-300">
-                  Show all {selectedCompany.keywords.length}
-                </button>
-              </div>
-              <div className="mt-4">
-                <h4 className="text-gray-400 font-medium mb-2">PHONE NUMBER</h4>
-                <p className="text-gray-300">{companyData.phone}</p>
-              </div>
-              <div className="mt-4">
-                <h4 className="text-gray-400 font-medium mb-2">FOUNDING YEAR</h4>
-                <p className="text-gray-300">{companyData.founded}</p>
-              </div>
-              <div className="mt-4">
-                <h4 className="text-gray-400 font-medium mb-2">SUBSIDIARIES</h4>
-                <p className="text-gray-300">
-                  {companyData.name} has {companyData.subsidiaries} subsidiary
-                </p>
-              </div>
+              <button className="text-blue-400 text-xs mt-2 hover:text-blue-300">
+                Show all {selectedCompany.keywords.length}
+              </button>
+            </div>
+            <div className="mt-4">
+              <h4 className="text-gray-400 font-medium mb-2">PHONE NUMBER</h4>
+              <p className="text-gray-300">{companyData.phone}</p>
+            </div>
+            <div className="mt-4">
+              <h4 className="text-gray-400 font-medium mb-2">FOUNDING YEAR</h4>
+              <p className="text-gray-300">{companyData.founded}</p>
+            </div>
+            <div className="mt-4">
+              <h4 className="text-gray-400 font-medium mb-2">SUBSIDIARIES</h4>
+              <p className="text-gray-300">
+                {companyData.name} has {companyData.subsidiaries} subsidiary
+              </p>
             </div>
           </div>
+        </div>
 
-          {/* Contacts Widget - Full Size */}
-          <div className="mb-6 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
+        {/* Widgets Sidebar - Independent Section */}
+        <div className="w-96 bg-gray-900 border-r border-gray-700 h-screen overflow-y-auto p-4 space-y-4">
+          {/* Contacts Widget - Full Size with Internal Scroll */}
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
             <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
               <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
                 <div className="flex items-center justify-between">
@@ -399,8 +399,8 @@ const CompanyDetailPageBMI: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="p-4 bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl">
-                <div className="grid grid-cols-1 gap-3">
+              <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl max-h-80 overflow-y-auto">
+                <div className="p-4 space-y-3">
                   {contacts.map((contact) => (
                     <div key={contact.id} className="bg-gradient-to-r from-gray-700 to-gray-800 p-4 rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-200 shadow-lg border border-gray-600 hover:shadow-xl hover:border-blue-500/30">
                       <div className="flex items-center space-x-4">
@@ -431,8 +431,8 @@ const CompanyDetailPageBMI: React.FC = () => {
             </div>
           </div>
 
-          {/* Deals Widget - Full Size */}
-          <div className="mb-6 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
+          {/* Deals Widget - Full Size with Internal Scroll */}
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
             <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
               <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
                 <div className="flex items-center justify-between">
@@ -447,27 +447,29 @@ const CompanyDetailPageBMI: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="p-6 bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl min-h-[200px] flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-gradient-to-br from-green-600 to-green-800 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                    <DollarSign className="h-8 w-8 text-white" />
+              <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl h-60 overflow-y-auto">
+                <div className="p-6 h-full flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-gradient-to-br from-green-600 to-green-800 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                      <DollarSign className="h-8 w-8 text-white" />
+                    </div>
+                    <div className="text-gray-300 text-lg mb-3 font-medium">
+                      No deals yet
+                    </div>
+                    <div className="text-gray-400 text-sm mb-6 max-w-md">
+                      Create your first deal to start tracking sales opportunities
+                    </div>
+                    <button className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl" data-testid="button-add-deal">
+                      + Create New Deal
+                    </button>
                   </div>
-                  <div className="text-gray-300 text-lg mb-3 font-medium">
-                    No deals yet
-                  </div>
-                  <div className="text-gray-400 text-sm mb-6 max-w-md">
-                    Create your first deal to start tracking sales opportunities and build stronger relationships with this company
-                  </div>
-                  <button className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl" data-testid="button-add-deal">
-                    + Create New Deal
-                  </button>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Tasks Widget - Full Size */}
-          <div className="mb-6 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
+          {/* Tasks Widget - Full Size with Internal Scroll */}
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
             <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
               <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
                 <div className="flex items-center justify-between">
@@ -482,8 +484,8 @@ const CompanyDetailPageBMI: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="p-4 bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl">
-                <div className="space-y-3">
+              <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl max-h-80 overflow-y-auto">
+                <div className="p-4 space-y-3">
                   {[
                     { id: 1, title: 'Follow up on proposal', description: 'Send detailed follow-up email about the product proposal discussed in last meeting', status: 'pending', dueDate: 'Today', priority: 'high' },
                     { id: 2, title: 'Send product demo', description: 'Prepare and send comprehensive product demonstration video', status: 'completed', dueDate: 'Yesterday', priority: 'medium' },
@@ -523,8 +525,8 @@ const CompanyDetailPageBMI: React.FC = () => {
             </div>
           </div>
 
-          {/* Notes Widget - Full Size */}
-          <div className="mb-6 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
+          {/* Notes Widget - Full Size with Internal Scroll */}
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
             <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
               <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
                 <div className="flex items-center justify-between">
@@ -540,18 +542,20 @@ const CompanyDetailPageBMI: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="p-6 bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl min-h-[200px] flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-gradient-to-br from-orange-600 to-orange-800 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                    <FileText className="h-8 w-8 text-white" />
+              <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl h-60 overflow-y-auto">
+                <div className="p-6 h-full flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-gradient-to-br from-orange-600 to-orange-800 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                      <FileText className="h-8 w-8 text-white" />
+                    </div>
+                    <div className="text-gray-300 text-lg mb-3 font-medium">No notes yet</div>
+                    <div className="text-gray-400 text-sm mb-6 max-w-md">
+                      Start documenting important information and insights
+                    </div>
+                    <button className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-500 hover:to-orange-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl" data-testid="button-add-note">
+                      + Add First Note
+                    </button>
                   </div>
-                  <div className="text-gray-300 text-lg mb-3 font-medium">No notes yet</div>
-                  <div className="text-gray-400 text-sm mb-6 max-w-md">
-                    Start documenting important information, meeting notes, and insights about this company to build better relationships
-                  </div>
-                  <button className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-500 hover:to-orange-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl" data-testid="button-add-note">
-                    + Add First Note
-                  </button>
                 </div>
               </div>
             </div>
