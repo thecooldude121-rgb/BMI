@@ -563,7 +563,7 @@ const CompanyDiscovery: React.FC = () => {
             {/* Frozen Left Column (Checkbox + Company Name) */}
             <div className="flex-shrink-0 bg-white border-r border-gray-200" style={{ width: '320px' }}>
               {/* Frozen Header */}
-              <div className="bg-gray-50 border-b border-gray-200 sticky top-0 z-20 px-4 py-3">
+              <div className="bg-gray-50 border-b border-gray-200 sticky top-0 z-20 px-4 py-2.5 h-12 flex items-center">
                 <div className="flex items-center">
                   <input
                     type="checkbox"
@@ -581,8 +581,8 @@ const CompanyDiscovery: React.FC = () => {
               <div ref={frozenScrollRef} className="overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
                 <div className="divide-y divide-gray-200">
                   {paginatedCompanies.map((company) => (
-                    <div key={`frozen-${company.id}`} className="px-4 py-2.5 hover:bg-gray-50 transition-colors hover-lift cursor-pointer">
-                      <div className="flex items-center">
+                    <div key={`frozen-${company.id}`} className="px-4 py-2.5 h-12 hover:bg-gray-50 transition-colors hover-lift cursor-pointer flex items-center">
+                      <div className="flex items-center w-full">
                         <input
                           type="checkbox"
                           checked={selectedCompanies.includes(company.id)}
@@ -611,7 +611,7 @@ const CompanyDiscovery: React.FC = () => {
               <div className="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
                 <div className="flex" style={{ minWidth: `${(visibleColumns.length - 1) * 150}px` }}>
                   {visibleColumns.filter(col => col.key !== 'name').map((column) => (
-                    <div key={column.key} className="flex-shrink-0 px-4 py-3 border-r border-gray-200 last:border-r-0" style={{ width: column.minWidth || '150px', minWidth: column.minWidth || '150px' }}>
+                    <div key={column.key} className="flex-shrink-0 px-4 py-2.5 h-12 border-r border-gray-200 last:border-r-0 flex items-center" style={{ width: column.minWidth || '150px', minWidth: column.minWidth || '150px' }}>
                       <div className="flex items-center space-x-1 text-xs font-medium text-gray-600 uppercase tracking-wider">
                         <span>{column.label}</span>
                         {column.sortable && (
@@ -629,10 +629,10 @@ const CompanyDiscovery: React.FC = () => {
               <div ref={scrollableScrollRef} className="overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
                 <div className="divide-y divide-gray-200">
                   {paginatedCompanies.map((company) => (
-                    <div key={`scrollable-${company.id}`} className="hover:bg-gray-50 transition-colors hover-lift cursor-pointer">
-                      <div className="flex" style={{ minWidth: `${(visibleColumns.length - 1) * 150}px` }}>
+                    <div key={`scrollable-${company.id}`} className="h-12 hover:bg-gray-50 transition-colors hover-lift cursor-pointer flex items-center">
+                      <div className="flex h-full" style={{ minWidth: `${(visibleColumns.length - 1) * 150}px` }}>
                         {visibleColumns.filter(col => col.key !== 'name').map((column) => (
-                          <div key={column.key} className="flex-shrink-0 px-4 py-2.5 border-r border-gray-200 last:border-r-0" style={{ width: column.minWidth || '150px', minWidth: column.minWidth || '150px' }}>
+                          <div key={column.key} className="flex-shrink-0 px-4 py-2.5 border-r border-gray-200 last:border-r-0 flex items-center h-full" style={{ width: column.minWidth || '150px', minWidth: column.minWidth || '150px' }}>
                             {renderColumnContent(column, company)}
                           </div>
                         ))}
