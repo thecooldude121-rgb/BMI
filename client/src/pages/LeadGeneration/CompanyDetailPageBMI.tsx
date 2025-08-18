@@ -88,6 +88,19 @@ const CompanyDetailPageBMI: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 5;
   const contactsPerPage = 5;
+  
+  // Track accessed contact info
+  const [accessedEmails, setAccessedEmails] = useState<Set<number>>(new Set());
+  const [accessedNumbers, setAccessedNumbers] = useState<Set<number>>(new Set());
+  
+  // Handler functions for accessing contact info
+  const handleAccessEmail = (contactIndex: number) => {
+    setAccessedEmails(prev => new Set([...prev, contactIndex]));
+  };
+  
+  const handleAccessNumber = (contactIndex: number) => {
+    setAccessedNumbers(prev => new Set([...prev, contactIndex]));
+  };
 
   // All contacts data (expanded to show data from both LinkedIn and local database)
   const allContacts = [
@@ -1320,13 +1333,40 @@ const CompanyDetailPageBMI: React.FC = () => {
                         </div>
                         
                         {/* Actions */}
-                        <div className="flex items-center space-x-2">
-                          <button className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded transition-colors">
-                            Contact
-                          </button>
-                          <button className="bg-gray-600 hover:bg-gray-700 text-white text-xs px-2 py-1 rounded transition-colors">
-                            View
-                          </button>
+                        <div className="flex flex-col items-center space-y-2">
+                          {/* Email Access */}
+                          {!accessedEmails.has((currentPage - 1) * contactsPerPage + index) ? (
+                            <button 
+                              onClick={() => handleAccessEmail((currentPage - 1) * contactsPerPage + index)}
+                              className="bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-xs px-4 py-1.5 rounded-full shadow-lg shadow-blue-600/30 border border-blue-500/50 transition-all duration-200 hover:shadow-xl hover:shadow-blue-600/40"
+                            >
+                              Access Email
+                            </button>
+                          ) : (
+                            <div className="relative cursor-pointer group">
+                              <Mail className="h-6 w-6 text-blue-400 hover:text-blue-300 transition-colors" />
+                              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full flex items-center justify-center">
+                                <CheckCircle className="h-2 w-2 text-white" />
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Phone Access */}
+                          {!accessedNumbers.has((currentPage - 1) * contactsPerPage + index) ? (
+                            <button 
+                              onClick={() => handleAccessNumber((currentPage - 1) * contactsPerPage + index)}
+                              className="bg-gradient-to-br from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white text-xs px-4 py-1.5 rounded-full shadow-lg shadow-green-600/30 border border-green-500/50 transition-all duration-200 hover:shadow-xl hover:shadow-green-600/40"
+                            >
+                              Access Number
+                            </button>
+                          ) : (
+                            <div className="relative cursor-pointer group">
+                              <Phone className="h-6 w-6 text-green-400 hover:text-green-300 transition-colors" />
+                              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full flex items-center justify-center">
+                                <CheckCircle className="h-2 w-2 text-white" />
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
 
