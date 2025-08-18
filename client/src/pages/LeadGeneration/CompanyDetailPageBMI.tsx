@@ -345,9 +345,9 @@ const CompanyDetailPageBMI: React.FC = () => {
 
 
       {/* Main Content */}
-      <div className="flex h-screen">
+      <div className="flex h-[calc(100vh-140px)]">
         {/* Company Information Sidebar */}
-        <div className="w-80 border-r border-gray-700 h-screen bg-gray-900">
+        <div className="w-72 border-r border-gray-700 h-full bg-gray-900 flex-shrink-0">
           <div className="p-4">
             <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
               <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
@@ -448,7 +448,7 @@ const CompanyDetailPageBMI: React.FC = () => {
         </div>
 
         {/* Widgets Sidebar - Independent Section */}
-        <div className="w-96 bg-gray-900 border-r border-gray-700 h-screen overflow-y-auto p-4 space-y-4">
+        <div className="w-80 bg-gray-900 border-r border-gray-700 h-full overflow-y-auto p-3 space-y-3 flex-shrink-0">
           {/* Deals Widget - Full Size with Internal Scroll */}
           <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
             <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
@@ -682,9 +682,9 @@ const CompanyDetailPageBMI: React.FC = () => {
         </div>
 
         {/* Main Content Area - Activities Section (matches attachment structure) */}
-        <div className="flex-1 bg-gray-900">
+        <div className="flex-1 bg-gray-900 h-full overflow-hidden">
           {/* Activities Header */}
-          <div className="bg-gray-800 border-b border-gray-700 p-4">
+          <div className="bg-gray-800 border-b border-gray-700 p-3">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-white">Activities</h2>
               <div className="flex items-center space-x-2">
@@ -699,8 +699,8 @@ const CompanyDetailPageBMI: React.FC = () => {
           </div>
 
           {/* Activity Tabs */}
-          <div className="bg-gray-800 border-b border-gray-700 px-4">
-            <div className="flex space-x-8">
+          <div className="bg-gray-800 border-b border-gray-700 px-3">
+            <div className="flex space-x-6 overflow-x-auto">
               {[
                 { key: 'all', label: 'All' },
                 { key: 'emails', label: 'Emails' },
@@ -728,10 +728,10 @@ const CompanyDetailPageBMI: React.FC = () => {
           </div>
 
           {/* Filter Bar */}
-          <div className="bg-gray-800 border-b border-gray-700 px-4 py-3">
+          <div className="bg-gray-800 border-b border-gray-700 px-3 py-2">
             <div className="flex items-center justify-between">
-              <div className="text-white font-medium">Upcoming</div>
-              <button className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors text-sm bg-gray-700 px-3 py-2 rounded" data-testid="button-filter">
+              <div className="text-white font-medium text-sm">Upcoming</div>
+              <button className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors text-sm bg-gray-700 px-3 py-1 rounded" data-testid="button-filter">
                 <span>Filter</span>
                 <span className="bg-gray-600 text-xs px-2 py-1 rounded">6/6</span>
               </button>
@@ -739,8 +739,8 @@ const CompanyDetailPageBMI: React.FC = () => {
           </div>
 
           {/* Activities List */}
-          <div className="p-4 overflow-y-auto">
-            <div className="space-y-4">
+          <div className="flex-1 p-3 overflow-y-auto h-full">
+            <div className="space-y-3">
               {activities.map((activity) => (
                 <div key={activity.id} className="bg-gray-800 rounded-lg p-4 border border-gray-700 hover:border-gray-600 transition-colors">
                   <div className="flex items-start space-x-4">
