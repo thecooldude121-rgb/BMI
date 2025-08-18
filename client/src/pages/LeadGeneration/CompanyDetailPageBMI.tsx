@@ -338,46 +338,54 @@ const CompanyDetailPageBMI: React.FC = () => {
       {/* Main Content */}
       <div className="flex">
         {/* Company Information Sidebar */}
-        <div className="w-80 border-r border-gray-700 h-screen bg-gray-800">
+        <div className="w-80 border-r border-gray-700 h-screen bg-gray-900">
           <div className="p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-white">Company information</h3>
-              <ChevronUp className="h-4 w-4 text-gray-400" />
-            </div>
-            <div className="text-sm text-gray-300 space-y-4">
-              <p>{companyData.description}</p>
-              <div>
-                <h4 className="text-gray-400 font-medium mb-2">INDUSTRIES</h4>
-                <span className="bg-gray-700 px-2 py-1 rounded text-xs">
-                  {companyData.industry}
-                </span>
-              </div>
-              <div>
-                <h4 className="text-gray-400 font-medium mb-2">KEYWORDS</h4>
-                <div className="space-y-1">
-                  {selectedCompany.keywords.slice(0, 3).map((keyword, index) => (
-                    <span key={index} className="bg-gray-700 px-2 py-1 rounded text-xs block w-fit">
-                      {keyword}
-                    </span>
-                  ))}
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
+              <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
+                <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-white text-lg">Company information</h3>
+                    <ChevronUp className="h-4 w-4 text-gray-400" />
+                  </div>
                 </div>
-                <button className="text-blue-400 text-xs mt-2 hover:text-blue-300">
-                  Show all {selectedCompany.keywords.length}
-                </button>
-              </div>
-              <div>
-                <h4 className="text-gray-400 font-medium mb-2">PHONE NUMBER</h4>
-                <p className="text-gray-300">{companyData.phone}</p>
-              </div>
-              <div>
-                <h4 className="text-gray-400 font-medium mb-2">FOUNDING YEAR</h4>
-                <p className="text-gray-300">{companyData.founded}</p>
-              </div>
-              <div>
-                <h4 className="text-gray-400 font-medium mb-2">SUBSIDIARIES</h4>
-                <p className="text-gray-300">
-                  {companyData.name} has {companyData.subsidiaries} subsidiary
-                </p>
+                <div className="p-4 bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl">
+                  <div className="text-sm text-gray-300 space-y-4">
+                    <p>{companyData.description}</p>
+                    <div>
+                      <h4 className="text-gray-400 font-medium mb-2">INDUSTRIES</h4>
+                      <span className="bg-gray-700 px-2 py-1 rounded text-xs">
+                        {companyData.industry}
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="text-gray-400 font-medium mb-2">KEYWORDS</h4>
+                      <div className="space-y-1">
+                        {selectedCompany.keywords.slice(0, 3).map((keyword, index) => (
+                          <span key={index} className="bg-gray-700 px-2 py-1 rounded text-xs block w-fit">
+                            {keyword}
+                          </span>
+                        ))}
+                      </div>
+                      <button className="text-blue-400 text-xs mt-2 hover:text-blue-300">
+                        Show all {selectedCompany.keywords.length}
+                      </button>
+                    </div>
+                    <div>
+                      <h4 className="text-gray-400 font-medium mb-2">PHONE NUMBER</h4>
+                      <p className="text-gray-300">{companyData.phone}</p>
+                    </div>
+                    <div>
+                      <h4 className="text-gray-400 font-medium mb-2">FOUNDING YEAR</h4>
+                      <p className="text-gray-300">{companyData.founded}</p>
+                    </div>
+                    <div>
+                      <h4 className="text-gray-400 font-medium mb-2">SUBSIDIARIES</h4>
+                      <p className="text-gray-300">
+                        {companyData.name} has {companyData.subsidiaries} subsidiary
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
