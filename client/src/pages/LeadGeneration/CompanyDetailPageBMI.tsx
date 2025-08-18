@@ -335,16 +335,16 @@ const CompanyDetailPageBMI: React.FC = () => {
 
 
 
-      {/* Main Content */}
-      <div className="flex">
-        {/* Company Information Sidebar */}
-        <div className="w-80 bg-gray-800 border-r border-gray-700 h-screen flex flex-col">
-          <div className="p-4 flex-1 flex flex-col">
+      {/* Main Content - 2x2 Grid Layout */}
+      <div className="grid grid-cols-2 grid-rows-2 h-screen">
+        {/* Top Left: Company Information */}
+        <div className="bg-gray-800 border-r border-b border-gray-700 overflow-y-auto">
+          <div className="p-4 h-full">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold text-white">Company information</h3>
               <ChevronUp className="h-4 w-4 text-gray-400" />
             </div>
-            <div className="flex-1 text-sm text-gray-300 space-y-4">
+            <div className="text-sm text-gray-300 space-y-3">
               <p>{companyData.description}</p>
               <div>
                 <h4 className="text-gray-400 font-medium mb-2">INDUSTRIES</h4>
@@ -383,8 +383,154 @@ const CompanyDetailPageBMI: React.FC = () => {
           </div>
         </div>
 
-        {/* Widgets Sidebar - Independent Section */}
-        <div className="w-96 bg-gray-900 border-r border-gray-700 h-screen overflow-y-auto p-4 space-y-4">
+        {/* Top Right: Deals Widget */}
+        <div className="bg-gray-900 border-b border-gray-700 overflow-y-auto p-4">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700 h-full">
+            <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600 h-full flex flex-col">
+              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <DollarSign className="h-5 w-5 text-green-400" />
+                    <h3 className="font-semibold text-white text-lg">Deals</h3>
+                    <span className="bg-green-600 text-white text-sm px-3 py-1 rounded-full">0</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Plus className="h-5 w-5 text-gray-400 cursor-pointer hover:text-green-400 transition-colors" />
+                    <Settings className="h-4 w-4 text-gray-400 cursor-pointer hover:text-green-400 transition-colors" />
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl flex-1 overflow-y-auto">
+                <div className="p-6 h-full flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-gradient-to-br from-green-600 to-green-800 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                      <DollarSign className="h-8 w-8 text-white" />
+                    </div>
+                    <div className="text-gray-300 text-lg mb-3 font-medium">
+                      No deals yet
+                    </div>
+                    <div className="text-gray-400 text-sm mb-6 max-w-md">
+                      Create your first deal to start tracking sales opportunities
+                    </div>
+                    <button className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl" data-testid="button-add-deal">
+                      + Create New Deal
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Left: Contacts Widget */}
+        <div className="bg-gray-800 border-r border-gray-700 overflow-y-auto p-4">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700 h-full">
+            <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600 h-full flex flex-col">
+              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Users className="h-5 w-5 text-blue-400" />
+                    <h3 className="font-semibold text-white text-lg">Contacts</h3>
+                    <span className="bg-blue-600 text-white text-sm px-3 py-1 rounded-full">{contacts.length}</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Plus className="h-5 w-5 text-gray-400 cursor-pointer hover:text-blue-400 transition-colors" />
+                    <Settings className="h-4 w-4 text-gray-400 cursor-pointer hover:text-blue-400 transition-colors" />
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl flex-1 overflow-y-auto">
+                <div className="p-4 space-y-3">
+                  {contacts.map((contact) => (
+                    <div key={contact.id} className="bg-gradient-to-r from-gray-700 to-gray-800 p-4 rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-200 shadow-lg border border-gray-600 hover:shadow-xl hover:border-blue-500/30">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-lg font-bold text-white shadow-lg">
+                          {contact.initials}
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-white text-lg font-medium">{contact.name}</div>
+                          <div className="text-gray-300 text-sm">{contact.title}</div>
+                          <div className="text-blue-400 text-sm">{selectedCompany.name}</div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <button className="p-2 text-gray-400 hover:text-blue-400 transition-colors rounded-lg hover:bg-gray-600">
+                            <Mail className="h-4 w-4" />
+                          </button>
+                          <button className="p-2 text-gray-400 hover:text-green-400 transition-colors rounded-lg hover:bg-gray-600">
+                            <Phone className="h-4 w-4" />
+                          </button>
+                          <button className="p-2 text-gray-400 hover:text-purple-400 transition-colors rounded-lg hover:bg-gray-600">
+                            <MessageSquare className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Right: Tasks Widget */}
+        <div className="bg-gray-900 overflow-y-auto p-4">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700 h-full">
+            <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600 h-full flex flex-col">
+              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <CheckSquare className="h-5 w-5 text-purple-400" />
+                    <h3 className="font-semibold text-white text-lg">Tasks</h3>
+                    <span className="bg-purple-600 text-white text-sm px-3 py-1 rounded-full">3</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Plus className="h-5 w-5 text-gray-400 cursor-pointer hover:text-purple-400 transition-colors" />
+                    <Settings className="h-4 w-4 text-gray-400 cursor-pointer hover:text-purple-400 transition-colors" />
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl flex-1 overflow-y-auto">
+                <div className="p-4 space-y-3">
+                  {[
+                    { id: 1, title: 'Follow up on proposal', description: 'Send detailed follow-up email about the product proposal discussed in last meeting', status: 'pending', dueDate: 'Today', priority: 'high' },
+                    { id: 2, title: 'Send product demo', description: 'Prepare and send comprehensive product demonstration video', status: 'completed', dueDate: 'Yesterday', priority: 'medium' },
+                    { id: 3, title: 'Schedule meeting', description: 'Set up quarterly business review meeting with stakeholders', status: 'pending', dueDate: 'Tomorrow', priority: 'low' }
+                  ].map((task) => (
+                    <div key={task.id} className="bg-gradient-to-r from-gray-700 to-gray-800 p-4 rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-200 shadow-lg border border-gray-600 hover:shadow-xl hover:border-purple-500/30">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start space-x-4 flex-1">
+                          <div className={`w-4 h-4 rounded-full mt-1 ${task.status === 'completed' ? 'bg-green-500' : 'bg-yellow-500'} shadow-lg`}></div>
+                          <div className="flex-1">
+                            <div className="text-white text-lg font-medium mb-1">{task.title}</div>
+                            <div className="text-gray-300 text-sm mb-3">{task.description}</div>
+                            <div className="flex items-center space-x-3">
+                              <div className="text-gray-400 text-sm">{task.dueDate}</div>
+                              <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                                task.priority === 'high' ? 'bg-red-900/50 text-red-300 border border-red-700' :
+                                task.priority === 'medium' ? 'bg-yellow-900/50 text-yellow-300 border border-yellow-700' :
+                                'bg-blue-900/50 text-blue-300 border border-blue-700'
+                              }`}>
+                                {task.priority} priority
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className={`px-4 py-2 rounded-lg text-sm font-medium ${
+                          task.status === 'completed' 
+                            ? 'bg-gradient-to-r from-green-600 to-green-700 text-white shadow-lg' 
+                            : 'bg-gradient-to-r from-yellow-600 to-yellow-700 text-white shadow-lg'
+                        }`}>
+                          {task.status}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
           {/* Contacts Widget - Full Size with Internal Scroll */}
           <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
             <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
