@@ -95,6 +95,8 @@ const CompanyDetailPageBMI: React.FC = () => {
   const [notesExpanded, setNotesExpanded] = useState(true);
   const [dealsExpanded, setDealsExpanded] = useState(true);
   const [tasksExpanded, setTasksExpanded] = useState(true);
+  const [insightsExpanded, setInsightsExpanded] = useState(true);
+  const [activeInsightTab, setActiveInsightTab] = useState<'score' | 'news' | 'technologies' | 'funding' | 'job-postings' | 'employee-trends' | 'website-visitors'>('score');
   const [activeProspectTab, setActiveProspectTab] = useState<'all' | 'sales-dept' | 'it' | 'marketing' | 'business-dev'>('all');
   const [activeActivityTab, setActiveActivityTab] = useState<'all' | 'emails' | 'calls' | 'conversations' | 'meetings' | 'notes' | 'tasks' | 'activity-log'>('all');
 
