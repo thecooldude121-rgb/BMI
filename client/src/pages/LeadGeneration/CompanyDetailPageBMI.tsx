@@ -67,8 +67,6 @@ interface ProspectData {
   department: string;
   reason: string;
   actions: string[];
-  initials: string;
-  company: string;
 }
 
 interface LookalikeCompany {
@@ -399,58 +397,54 @@ const CompanyDetailPageBMI: React.FC = () => {
 
                   {/* Contact Sections Below Company Information */}
                   <div className="space-y-4 pt-6 border-t border-gray-700">
-                    {/* Contacts Widget - Full Size with Internal Scroll */}
-                    <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
-                      <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
-                        <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-3">
-                              <Users className="h-5 w-5 text-blue-400" />
-                              <h3 className="font-semibold text-white text-lg">Contacts</h3>
-                              <span className="bg-blue-600 text-white text-sm px-3 py-1 rounded-full">{contacts.length}</span>
-                            </div>
-                            <div className="flex items-center space-x-3">
-                              <Plus className="h-5 w-5 text-gray-400 cursor-pointer hover:text-blue-400 transition-colors" />
-                              <Settings className="h-4 w-4 text-gray-400 cursor-pointer hover:text-blue-400 transition-colors" />
-                            </div>
-                          </div>
+          {/* Contacts Widget - Full Size with Internal Scroll */}
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
+            <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
+              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Users className="h-5 w-5 text-blue-400" />
+                    <h3 className="font-semibold text-white text-lg">Contacts</h3>
+                    <span className="bg-blue-600 text-white text-sm px-3 py-1 rounded-full">{contacts.length}</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Plus className="h-5 w-5 text-gray-400 cursor-pointer hover:text-blue-400 transition-colors" />
+                    <Settings className="h-4 w-4 text-gray-400 cursor-pointer hover:text-blue-400 transition-colors" />
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl max-h-80 overflow-y-auto">
+                <div className="p-4 space-y-3">
+                  {contacts.map((contact) => (
+                    <div key={contact.id} className="bg-gradient-to-r from-gray-700 to-gray-800 p-4 rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-200 shadow-lg border border-gray-600 hover:shadow-xl hover:border-blue-500/30">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-lg font-bold text-white shadow-lg">
+                          {contact.initials}
                         </div>
-                        <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl max-h-80 overflow-y-auto">
-                          <div className="p-4 space-y-3">
-                            {contacts.map((contact) => (
-                              <div key={contact.id} className="bg-gradient-to-r from-gray-700 to-gray-800 p-4 rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-200 shadow-lg border border-gray-600 hover:shadow-xl hover:border-blue-500/30">
-                                <div className="flex items-center space-x-4">
-                                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-lg font-bold text-white shadow-lg">
-                                    {contact.initials}
-                                  </div>
-                                  <div className="flex-1">
-                                    <div className="text-white text-lg font-medium">{contact.name}</div>
-                                    <div className="text-gray-300 text-sm">{contact.title}</div>
-                                    <div className="text-blue-400 text-sm">{selectedCompany.name}</div>
-                                  </div>
-                                  <div className="flex items-center space-x-2">
-                                    <button className="p-2 text-gray-400 hover:text-blue-400 transition-colors rounded-lg hover:bg-gray-600">
-                                      <Mail className="h-4 w-4" />
-                                    </button>
-                                    <button className="p-2 text-gray-400 hover:text-green-400 transition-colors rounded-lg hover:bg-gray-600">
-                                      <Phone className="h-4 w-4" />
-                                    </button>
-                                    <button className="p-2 text-gray-400 hover:text-purple-400 transition-colors rounded-lg hover:bg-gray-600">
-                                      <MessageSquare className="h-4 w-4" />
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
+                        <div className="flex-1">
+                          <div className="text-white text-lg font-medium">{contact.name}</div>
+                          <div className="text-gray-300 text-sm">{contact.title}</div>
+                          <div className="text-blue-400 text-sm">{selectedCompany.name}</div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <button className="p-2 text-gray-400 hover:text-blue-400 transition-colors rounded-lg hover:bg-gray-600">
+                            <Mail className="h-4 w-4" />
+                          </button>
+                          <button className="p-2 text-gray-400 hover:text-green-400 transition-colors rounded-lg hover:bg-gray-600">
+                            <Phone className="h-4 w-4" />
+                          </button>
+                          <button className="p-2 text-gray-400 hover:text-purple-400 transition-colors rounded-lg hover:bg-gray-600">
+                            <MessageSquare className="h-4 w-4" />
+                          </button>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
+        </div>
         </div>
 
         {/* Widgets Sidebar - Independent Section */}
