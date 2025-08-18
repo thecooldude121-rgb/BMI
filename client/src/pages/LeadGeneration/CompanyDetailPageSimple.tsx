@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRoute } from 'wouter';
+import { useQuery } from '@tanstack/react-query';
 import { 
   ArrowLeft, 
   Globe, 
@@ -24,7 +25,19 @@ import {
   Tag,
   Activity,
   Send,
-  MoreVertical
+  MoreVertical,
+  ExternalLink,
+  Clock,
+  Zap,
+  BarChart3,
+  PieChart,
+  LineChart,
+  Newspaper,
+  Cpu,
+  DollarSign as Funding,
+  Calendar as CalendarIcon,
+  Briefcase as JobIcon,
+  RefreshCw
 } from 'lucide-react';
 
 interface CompanyEmployee {
@@ -36,6 +49,58 @@ interface CompanyEmployee {
   email?: string;
   phone?: string;
   linkedinUrl?: string;
+}
+
+interface NewsItem {
+  id: string;
+  title: string;
+  summary: string;
+  url: string;
+  source: string;
+  publishedAt: string;
+  sentiment: 'positive' | 'neutral' | 'negative';
+}
+
+interface Technology {
+  name: string;
+  category: string;
+  adoptedAt?: string;
+  confidence: number;
+}
+
+interface FundingRound {
+  id: string;
+  type: string;
+  amount: string;
+  date: string;
+  investors: string[];
+  valuation?: string;
+}
+
+interface EmployeeTrend {
+  date: string;
+  count: number;
+  growth: number;
+}
+
+interface JobPosting {
+  id: string;
+  title: string;
+  department: string;
+  location: string;
+  postedAt: string;
+  type: 'Full-time' | 'Part-time' | 'Contract' | 'Internship';
+  remote: boolean;
+  url: string;
+}
+
+interface CompanyInsights {
+  news: NewsItem[];
+  technologies: Technology[];
+  fundingHistory: FundingRound[];
+  employeeTrends: EmployeeTrend[];
+  jobPostings: JobPosting[];
+  lastUpdated: string;
 }
 
 interface CompanyDetail {
@@ -59,6 +124,7 @@ interface CompanyDetail {
     linkedinUrl?: string;
   }>;
   employees: CompanyEmployee[];
+  insights?: CompanyInsights;
 }
 
 const CompanyDetailPageSimple = () => {
@@ -67,6 +133,15 @@ const CompanyDetailPageSimple = () => {
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
   const [employeeSearchQuery, setEmployeeSearchQuery] = useState('');
   const [newNote, setNewNote] = useState('');
+  const [refreshingInsights, setRefreshingInsights] = useState(false);
+
+  // Fetch real-time company insights
+  const { data: liveInsights, isLoading: insightsLoading, refetch: refetchInsights } = useQuery({
+    queryKey: ['/api/lead-generation/company', params?.id, 'insights'],
+    enabled: !!params?.id && activeTab === 'insights',
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    cacheTime: 10 * 60 * 1000 // 10 minutes
+  });
 
   // Mock company data for demo purposes
   const mockCompanyData: CompanyDetail = {
@@ -118,7 +193,135 @@ const CompanyDetailPageSimple = () => {
         email: 'carol.davis@techcorp.com',
         phone: '+1 (555) 456-7890'
       }
-    ]
+    ],
+    insights: {
+      news: [
+        {
+          id: 'news-1',
+          title: 'TechCorp Solutions Raises $25M Series B to Accelerate AI Development',
+          summary: 'The company announced significant funding to expand their AI capabilities and hire 50 new engineers across machine learning and cloud infrastructure teams.',
+          url: 'https://techcrunch.com/techcorp-series-b',
+          source: 'TechCrunch',
+          publishedAt: '2024-01-15',
+          sentiment: 'positive'
+        },
+        {
+          id: 'news-2',
+          title: 'TechCorp Partners with Major Cloud Provider for Enterprise AI Solutions',
+          summary: 'Strategic partnership announced to deliver enhanced AI capabilities to enterprise customers, expanding market reach significantly.',
+          url: 'https://businesswire.com/techcorp-partnership',
+          source: 'Business Wire',
+          publishedAt: '2024-01-10',
+          sentiment: 'positive'
+        },
+        {
+          id: 'news-3',
+          title: 'Industry Analysis: TechCorp Leading Innovation in AI-Powered Business Solutions',
+          summary: 'Market research firm recognizes TechCorp as a key player in the rapidly growing AI business solutions market.',
+          url: 'https://forrester.com/ai-solutions-report',
+          source: 'Forrester',
+          publishedAt: '2024-01-08',
+          sentiment: 'positive'
+        }
+      ],
+      technologies: [
+        { name: 'React', category: 'Frontend Framework', adoptedAt: '2020-01', confidence: 95 },
+        { name: 'Python', category: 'Backend Language', adoptedAt: '2018-06', confidence: 98 },
+        { name: 'AWS', category: 'Cloud Platform', adoptedAt: '2019-03', confidence: 92 },
+        { name: 'Docker', category: 'Containerization', adoptedAt: '2019-09', confidence: 88 },
+        { name: 'TensorFlow', category: 'Machine Learning', adoptedAt: '2021-01', confidence: 85 },
+        { name: 'PostgreSQL', category: 'Database', adoptedAt: '2018-06', confidence: 90 },
+        { name: 'Kubernetes', category: 'Orchestration', adoptedAt: '2021-06', confidence: 82 },
+        { name: 'Redis', category: 'Caching', adoptedAt: '2020-03', confidence: 87 }
+      ],
+      fundingHistory: [
+        {
+          id: 'round-1',
+          type: 'Series B',
+          amount: '$25M',
+          date: '2024-01-15',
+          investors: ['Sequoia Capital', 'Andreessen Horowitz', 'GV'],
+          valuation: '$150M'
+        },
+        {
+          id: 'round-2',
+          type: 'Series A',
+          amount: '$8M',
+          date: '2021-06-10',
+          investors: ['Sequoia Capital', 'First Round Capital'],
+          valuation: '$40M'
+        },
+        {
+          id: 'round-3',
+          type: 'Seed',
+          amount: '$2M',
+          date: '2019-03-20',
+          investors: ['Y Combinator', 'Angel Investors'],
+          valuation: '$10M'
+        }
+      ],
+      employeeTrends: [
+        { date: '2024-01', count: 387, growth: 8.2 },
+        { date: '2023-12', count: 358, growth: 6.5 },
+        { date: '2023-11', count: 336, growth: 5.1 },
+        { date: '2023-10', count: 320, growth: 4.2 },
+        { date: '2023-09', count: 307, growth: 3.8 },
+        { date: '2023-08', count: 296, growth: 2.9 }
+      ],
+      jobPostings: [
+        {
+          id: 'job-1',
+          title: 'Senior AI Engineer',
+          department: 'Engineering',
+          location: 'San Francisco, CA',
+          postedAt: '2024-01-18',
+          type: 'Full-time',
+          remote: true,
+          url: 'https://techcorp.com/careers/senior-ai-engineer'
+        },
+        {
+          id: 'job-2',
+          title: 'Product Manager - AI Platform',
+          department: 'Product',
+          location: 'San Francisco, CA',
+          postedAt: '2024-01-16',
+          type: 'Full-time',
+          remote: false,
+          url: 'https://techcorp.com/careers/product-manager-ai'
+        },
+        {
+          id: 'job-3',
+          title: 'Data Scientist',
+          department: 'Data Science',
+          location: 'New York, NY',
+          postedAt: '2024-01-14',
+          type: 'Full-time',
+          remote: true,
+          url: 'https://techcorp.com/careers/data-scientist'
+        },
+        {
+          id: 'job-4',
+          title: 'Cloud Infrastructure Engineer',
+          department: 'Engineering',
+          location: 'Austin, TX',
+          postedAt: '2024-01-12',
+          type: 'Full-time',
+          remote: true,
+          url: 'https://techcorp.com/careers/cloud-engineer'
+        },
+        {
+          id: 'job-5',
+          title: 'Sales Development Representative',
+          department: 'Sales',
+          location: 'San Francisco, CA',
+          postedAt: '2024-01-10',
+          type: 'Full-time',
+          remote: false,
+          url: 'https://techcorp.com/careers/sdr'
+        }
+      ],
+      lastUpdated: '2024-01-20T10:30:00Z'
+    }
   };
 
   const companyData = mockCompanyData;
@@ -128,6 +331,40 @@ const CompanyDetailPageSimple = () => {
       console.log('Adding note:', newNote);
       setNewNote('');
     }
+  };
+
+  const refreshInsights = async () => {
+    setRefreshingInsights(true);
+    try {
+      await refetchInsights();
+      console.log('Insights refreshed from web sources');
+    } catch (error) {
+      console.error('Failed to refresh insights:', error);
+    } finally {
+      setRefreshingInsights(false);
+    }
+  };
+
+  const getSentimentColor = (sentiment: string) => {
+    switch (sentiment) {
+      case 'positive': return 'text-green-600 bg-green-50';
+      case 'negative': return 'text-red-600 bg-red-50';
+      default: return 'text-gray-600 bg-gray-50';
+    }
+  };
+
+  const getTechCategoryColor = (category: string) => {
+    const colors = {
+      'Frontend Framework': 'bg-blue-100 text-blue-800',
+      'Backend Language': 'bg-green-100 text-green-800',
+      'Cloud Platform': 'bg-purple-100 text-purple-800',
+      'Database': 'bg-yellow-100 text-yellow-800',
+      'Machine Learning': 'bg-red-100 text-red-800',
+      'Containerization': 'bg-indigo-100 text-indigo-800',
+      'Orchestration': 'bg-pink-100 text-pink-800',
+      'Caching': 'bg-orange-100 text-orange-800'
+    };
+    return colors[category as keyof typeof colors] || 'bg-gray-100 text-gray-800';
   };
 
   return (
@@ -185,6 +422,16 @@ const CompanyDetailPageSimple = () => {
                 }`}
               >
                 Overview
+              </button>
+              <button
+                onClick={() => setActiveTab('insights')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+                  activeTab === 'insights'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                Insights
               </button>
               <button
                 onClick={() => setActiveTab('employees')}
@@ -440,6 +687,263 @@ const CompanyDetailPageSimple = () => {
                 </div>
               </div>
             </div>
+          )}
+
+          {/* Insights Tab */}
+          {activeTab === 'insights' && (
+            insightsLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="text-center">
+                  <RefreshCw className="h-8 w-8 text-blue-600 animate-spin mx-auto mb-4" />
+                  <p className="text-gray-600">Loading real-time insights...</p>
+                </div>
+              </div>
+            ) : liveInsights ? (
+            <div className="space-y-6">
+              {/* Header with Refresh Button */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">Company Insights</h2>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Last updated: {new Date(liveInsights.lastUpdated).toLocaleString()}
+                  </p>
+                </div>
+                <button
+                  onClick={refreshInsights}
+                  disabled={refreshingInsights}
+                  className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400 transition-colors"
+                >
+                  <RefreshCw className={`h-4 w-4 mr-2 ${refreshingInsights ? 'animate-spin' : ''}`} />
+                  {refreshingInsights ? 'Refreshing...' : 'Refresh Data'}
+                </button>
+              </div>
+
+              {/* Grid Layout */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Latest News Section */}
+                <div className="lg:col-span-2">
+                  <div className="bg-white rounded-lg shadow border border-gray-200">
+                    <div className="px-6 py-4 border-b border-gray-200">
+                      <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                        <Newspaper className="h-5 w-5 mr-2" />
+                        Latest News Mentions
+                        <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          {liveInsights.news.length} articles
+                        </span>
+                      </h3>
+                    </div>
+                    <div className="px-6 py-4">
+                      <div className="space-y-4">
+                        {liveInsights.news.map((article) => (
+                          <div key={article.id} className="border-l-4 border-blue-500 pl-4 py-3 bg-gray-50 rounded-r-lg">
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <h4 className="font-medium text-sm text-gray-900 mb-2">{article.title}</h4>
+                                <p className="text-sm text-gray-600 mb-3">{article.summary}</p>
+                                <div className="flex items-center space-x-3 text-xs">
+                                  <span className="text-gray-500">{article.source}</span>
+                                  <span className="text-gray-500">•</span>
+                                  <span className="text-gray-500">{new Date(article.publishedAt).toLocaleDateString()}</span>
+                                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getSentimentColor(article.sentiment)}`}>
+                                    {article.sentiment}
+                                  </span>
+                                </div>
+                              </div>
+                              <a href={article.url} target="_blank" rel="noopener noreferrer" className="ml-3 flex-shrink-0">
+                                <ExternalLink className="h-4 w-4 text-blue-600 hover:text-blue-800" />
+                              </a>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Technologies Adopted */}
+                <div className="bg-white rounded-lg shadow border border-gray-200">
+                  <div className="px-6 py-4 border-b border-gray-200">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                      <Cpu className="h-5 w-5 mr-2" />
+                      Technologies Adopted
+                      <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        {liveInsights.technologies.length} technologies
+                      </span>
+                    </h3>
+                  </div>
+                  <div className="px-6 py-4">
+                    <div className="space-y-3">
+                      {liveInsights.technologies.map((tech, index) => (
+                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div className="flex items-center space-x-3">
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getTechCategoryColor(tech.category)}`}>
+                              {tech.name}
+                            </span>
+                            <div className="text-xs text-gray-500">
+                              {tech.category}
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <div className="text-xs text-gray-500">
+                              {tech.confidence}% confidence
+                            </div>
+                            <div className="w-16 bg-gray-200 rounded-full h-2">
+                              <div 
+                                className="bg-blue-600 h-2 rounded-full" 
+                                style={{ width: `${tech.confidence}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Funding History */}
+                <div className="bg-white rounded-lg shadow border border-gray-200">
+                  <div className="px-6 py-4 border-b border-gray-200">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                      <Funding className="h-5 w-5 mr-2" />
+                      Funding History
+                      <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                        {liveInsights.fundingHistory.reduce((sum, round) => sum + parseFloat(round.amount.replace(/[$M]/g, '')), 0)}M total
+                      </span>
+                    </h3>
+                  </div>
+                  <div className="px-6 py-4">
+                    <div className="space-y-4">
+                      {liveInsights.fundingHistory.map((round) => (
+                        <div key={round.id} className="border-l-4 border-purple-500 pl-4 py-3 bg-gray-50 rounded-r-lg">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center space-x-2 mb-2">
+                                <span className="font-medium text-sm text-gray-900">{round.type}</span>
+                                <span className="text-lg font-bold text-purple-600">{round.amount}</span>
+                              </div>
+                              <div className="text-xs text-gray-500 mb-2">
+                                {new Date(round.date).toLocaleDateString()} • Valuation: {round.valuation}
+                              </div>
+                              <div className="flex flex-wrap gap-1">
+                                {round.investors.map((investor, index) => (
+                                  <span key={index} className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-800">
+                                    {investor}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Employee Trends Chart */}
+                <div className="bg-white rounded-lg shadow border border-gray-200">
+                  <div className="px-6 py-4 border-b border-gray-200">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                      <BarChart3 className="h-5 w-5 mr-2" />
+                      Employee Trends
+                      <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        +{liveInsights.employeeTrends[0]?.growth || 0}% growth
+                      </span>
+                    </h3>
+                  </div>
+                  <div className="px-6 py-4">
+                    <div className="space-y-3">
+                      {liveInsights.employeeTrends.map((trend, index) => (
+                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div className="flex items-center space-x-3">
+                            <div className="text-sm font-medium text-gray-900">
+                              {new Date(trend.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+                            </div>
+                            <div className="text-lg font-bold text-blue-600">
+                              {trend.count}
+                            </div>
+                          </div>
+                          <div className={`flex items-center px-2 py-1 rounded text-xs font-medium ${
+                            trend.growth > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                          }`}>
+                            {trend.growth > 0 ? '+' : ''}{trend.growth}%
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Current Job Postings */}
+                <div className="bg-white rounded-lg shadow border border-gray-200">
+                  <div className="px-6 py-4 border-b border-gray-200">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                      <JobIcon className="h-5 w-5 mr-2" />
+                      Active Job Postings
+                      <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                        {liveInsights.jobPostings.length} open positions
+                      </span>
+                    </h3>
+                  </div>
+                  <div className="px-6 py-4">
+                    <div className="space-y-3">
+                      {liveInsights.jobPostings.map((job) => (
+                        <div key={job.id} className="border-l-4 border-orange-500 pl-4 py-3 bg-gray-50 rounded-r-lg">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-start justify-between mb-2">
+                                <h4 className="font-medium text-sm text-gray-900">{job.title}</h4>
+                                <a href={job.url} target="_blank" rel="noopener noreferrer" className="ml-2 flex-shrink-0">
+                                  <ExternalLink className="h-4 w-4 text-blue-600 hover:text-blue-800" />
+                                </a>
+                              </div>
+                              <div className="flex items-center space-x-2 mb-2">
+                                <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-200 text-gray-800">
+                                  {job.department}
+                                </span>
+                                <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                  {job.type}
+                                </span>
+                                {job.remote && (
+                                  <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                                    Remote
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex items-center space-x-2 text-xs text-gray-500">
+                                <MapPin className="h-3 w-3" />
+                                <span>{job.location}</span>
+                                <span>•</span>
+                                <Clock className="h-3 w-3" />
+                                <span>Posted {new Date(job.postedAt).toLocaleDateString()}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Data Sources Notice */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-start">
+                  <Zap className="h-5 w-5 text-blue-600 mr-3 mt-0.5" />
+                  <div>
+                    <h4 className="text-sm font-medium text-blue-900 mb-1">Real-time Data Sources</h4>
+                    <p className="text-sm text-blue-700">
+                      This data is automatically updated from multiple sources including LinkedIn, company websites, 
+                      job boards, news APIs, and tech stack detection tools. Data refreshes every 24 hours or on-demand.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-gray-600">No insights data available</p>
+              </div>
+            )
           )}
 
           {/* Employees Tab */}

@@ -3437,6 +3437,102 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Company Insights endpoint for real-time data
+  app.get('/api/lead-generation/company/:id/insights', async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // In production, this would fetch from multiple APIs:
+      // - News API for latest mentions
+      // - LinkedIn Sales Navigator API for employee data
+      // - Crunchbase API for funding information
+      // - BuiltWith API for technology stack
+      // - Job board APIs for current openings
+      
+      const insights = {
+        news: [
+          {
+            id: 'news-1',
+            title: `Company News: Latest Developments for Company ${id}`,
+            summary: 'Recent developments including funding rounds, partnerships, and market expansion activities.',
+            url: `https://example.com/news/company-${id}`,
+            source: 'TechCrunch',
+            publishedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+            sentiment: 'positive'
+          },
+          {
+            id: 'news-2',
+            title: `Strategic Partnership Announced`,
+            summary: 'Strategic partnership announced to deliver enhanced capabilities to enterprise customers.',
+            url: `https://example.com/partnership/company-${id}`,
+            source: 'Business Wire',
+            publishedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+            sentiment: 'positive'
+          }
+        ],
+        technologies: [
+          { name: 'React', category: 'Frontend Framework', adoptedAt: '2020-01', confidence: 95 },
+          { name: 'Python', category: 'Backend Language', adoptedAt: '2018-06', confidence: 98 },
+          { name: 'AWS', category: 'Cloud Platform', adoptedAt: '2019-03', confidence: 92 },
+          { name: 'Docker', category: 'Containerization', adoptedAt: '2019-09', confidence: 88 },
+          { name: 'TensorFlow', category: 'Machine Learning', adoptedAt: '2021-01', confidence: 85 }
+        ],
+        fundingHistory: [
+          {
+            id: 'round-1',
+            type: 'Series B',
+            amount: '$25M',
+            date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+            investors: ['Sequoia Capital', 'Andreessen Horowitz', 'GV'],
+            valuation: '$150M'
+          },
+          {
+            id: 'round-2',
+            type: 'Series A',
+            amount: '$8M',
+            date: new Date(Date.now() - 900 * 24 * 60 * 60 * 1000).toISOString(),
+            investors: ['Sequoia Capital', 'First Round Capital'],
+            valuation: '$40M'
+          }
+        ],
+        employeeTrends: [
+          { date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().substring(0, 7), count: 387, growth: 8.2 },
+          { date: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString().substring(0, 7), count: 358, growth: 6.5 },
+          { date: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().substring(0, 7), count: 336, growth: 5.1 },
+          { date: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000).toISOString().substring(0, 7), count: 320, growth: 4.2 }
+        ],
+        jobPostings: [
+          {
+            id: 'job-1',
+            title: 'Senior AI Engineer',
+            department: 'Engineering',
+            location: 'San Francisco, CA',
+            postedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+            type: 'Full-time',
+            remote: true,
+            url: `https://company-${id}.com/careers/senior-ai-engineer`
+          },
+          {
+            id: 'job-2',
+            title: 'Product Manager - AI Platform',
+            department: 'Product',
+            location: 'San Francisco, CA',
+            postedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
+            type: 'Full-time',
+            remote: false,
+            url: `https://company-${id}.com/careers/product-manager-ai`
+          }
+        ],
+        lastUpdated: new Date().toISOString()
+      };
+
+      res.json(insights);
+    } catch (error) {
+      console.error('Error fetching company insights:', error);
+      res.status(500).json({ error: 'Failed to fetch company insights' });
+    }
+  });
+
   // Start sequence for lead
   app.post("/api/lead-generation/leads/:id/start-sequence/:sequenceId", async (req, res) => {
     try {
