@@ -566,9 +566,7 @@ const CompanyDetailPageBMI: React.FC = () => {
           </div>
         </div>
 
-        
-
-        {/* Main Content Area - Now Full Width */}
+        {/* Main Content Area - Full Width */}
         <div className="flex-1 p-3">
           {/* Company Insights Widget */}
           <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
