@@ -375,27 +375,7 @@ const CompanyDetailPageBMI: React.FC = () => {
             </div>
           </div>
 
-          {/* Record Details */}
-          <div className="p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-white">Record details</h3>
-              <ChevronUp className="h-4 w-4 text-gray-400" />
-            </div>
-            <div className="space-y-3 text-sm">
-              <div>
-                <span className="text-gray-400">PHONE NUMBER</span>
-                <p className="text-gray-300">{companyData.phone}</p>
-              </div>
-              <div>
-                <span className="text-gray-400">TRADING SYMBOL</span>
-                <p className="text-gray-300">{companyData.tradingSymbol}</p>
-              </div>
-              <div>
-                <span className="text-gray-400">FOUNDING YEAR</span>
-                <p className="text-gray-300">{companyData.founded}</p>
-              </div>
-            </div>
-          </div>
+          
         </div>
 
         {/* Main Content Area */}
