@@ -140,8 +140,8 @@ const CompanyDetailPageSimple = () => {
     queryKey: ['/api/lead-generation/company', params?.id, 'insights'],
     enabled: !!params?.id,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 10 * 60 * 1000 // 10 minutes
-  });
+    gcTime: 10 * 60 * 1000 // 10 minutes
+  }) as { data: CompanyInsights | undefined, isLoading: boolean, refetch: () => void };
 
   // Mock company data for demo purposes
   const mockCompanyData: CompanyDetail = {
@@ -442,30 +442,30 @@ const CompanyDetailPageSimple = () => {
               {/* Left Column - Main Content */}
               <div className="lg:col-span-2 space-y-6">
                 {/* Company Information Card */}
-                <div className="bg-gray-800 text-white rounded-lg shadow border border-gray-700">
-                  <div className="px-6 py-4 border-b border-gray-700 flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">Company Information</h3>
-                    <button className="text-gray-400 hover:text-white">
+                <div className="bg-white rounded-lg shadow border border-gray-200">
+                  <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-gray-900">Company Information</h3>
+                    <button className="text-gray-400 hover:text-gray-600">
                       <MoreVertical className="h-4 w-4" />
                     </button>
                   </div>
                   <div className="px-6 py-4">
-                    <p className="text-gray-300 text-sm mb-4">{companyData.description}</p>
-                    <button className="text-blue-400 text-sm hover:text-blue-300">Show More</button>
+                    <p className="text-gray-600 text-sm mb-4">{companyData.description}</p>
+                    <button className="text-blue-600 text-sm hover:text-blue-700">Show More</button>
                     
                     <div className="mt-6 space-y-4">
                       <div>
-                        <h4 className="text-sm font-medium text-gray-400 mb-2">INDUSTRIES</h4>
-                        <span className="inline-block px-3 py-1 bg-gray-700 text-gray-300 rounded-full text-sm">
+                        <h4 className="text-sm font-medium text-gray-500 mb-2">INDUSTRIES</h4>
+                        <span className="inline-block px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
                           {companyData.industry}
                         </span>
                       </div>
                       
                       <div>
-                        <h4 className="text-sm font-medium text-gray-400 mb-2">KEYWORDS</h4>
+                        <h4 className="text-sm font-medium text-gray-500 mb-2">KEYWORDS</h4>
                         <div className="flex flex-wrap gap-2">
                           {companyData.keywords.map((keyword, index) => (
-                            <span key={index} className="inline-block px-3 py-1 bg-gray-700 text-gray-300 rounded-full text-sm">
+                            <span key={index} className="inline-block px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
                               {keyword}
                             </span>
                           ))}
@@ -473,26 +473,26 @@ const CompanyDetailPageSimple = () => {
                       </div>
                       
                       <div>
-                        <h4 className="text-sm font-medium text-gray-400 mb-2">SUBSIDIARIES</h4>
-                        <p className="text-gray-300 text-sm">{companyData.name} has 1 subsidiary</p>
+                        <h4 className="text-sm font-medium text-gray-500 mb-2">SUBSIDIARIES</h4>
+                        <p className="text-gray-600 text-sm">{companyData.name} has 1 subsidiary</p>
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-700">
+                      <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
                         <div>
-                          <h4 className="text-sm font-medium text-gray-400">PHONE NUMBER</h4>
-                          <p className="text-gray-300 text-sm">{companyData.phone || 'Not available'}</p>
+                          <h4 className="text-sm font-medium text-gray-500">PHONE NUMBER</h4>
+                          <p className="text-gray-900 text-sm">{companyData.phone || 'Not available'}</p>
                         </div>
                         <div>
-                          <h4 className="text-sm font-medium text-gray-400">TRADING SYMBOL</h4>
-                          <p className="text-gray-300 text-sm">Not public</p>
+                          <h4 className="text-sm font-medium text-gray-500">TRADING SYMBOL</h4>
+                          <p className="text-gray-900 text-sm">Not public</p>
                         </div>
                         <div>
-                          <h4 className="text-sm font-medium text-gray-400">FOUNDING YEAR</h4>
-                          <p className="text-gray-300 text-sm">{companyData.founded}</p>
+                          <h4 className="text-sm font-medium text-gray-500">FOUNDING YEAR</h4>
+                          <p className="text-gray-900 text-sm">{companyData.founded}</p>
                         </div>
                         <div>
-                          <h4 className="text-sm font-medium text-gray-400">EMPLOYEES</h4>
-                          <p className="text-gray-300 text-sm">{companyData.employeeCount}</p>
+                          <h4 className="text-sm font-medium text-gray-500">EMPLOYEES</h4>
+                          <p className="text-gray-900 text-sm">{companyData.employeeCount}</p>
                         </div>
                       </div>
                     </div>
@@ -509,18 +509,18 @@ const CompanyDetailPageSimple = () => {
                     </div>
                   </div>
                 ) : liveInsights && (
-                  <div className="bg-gray-800 text-white rounded-lg shadow border border-gray-700">
-                    <div className="px-6 py-4 border-b border-gray-700 flex items-center justify-between">
-                      <h3 className="text-lg font-semibold">Company Insights</h3>
+                  <div className="bg-white rounded-lg shadow border border-gray-200">
+                    <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                      <h3 className="text-lg font-semibold text-gray-900">Company Insights</h3>
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={refreshInsights}
                           disabled={refreshingInsights}
-                          className="text-gray-400 hover:text-white"
+                          className="text-gray-400 hover:text-gray-600"
                         >
                           <RefreshCw className={`h-4 w-4 ${refreshingInsights ? 'animate-spin' : ''}`} />
                         </button>
-                        <button className="text-gray-400 hover:text-white">
+                        <button className="text-gray-400 hover:text-gray-600">
                           <MoreVertical className="h-4 w-4" />
                         </button>
                       </div>
@@ -529,44 +529,44 @@ const CompanyDetailPageSimple = () => {
                       {/* Score Section */}
                       <div className="mb-6">
                         <div className="flex items-center space-x-4 mb-4">
-                          <div className="text-3xl font-bold">30</div>
-                          <div className="text-lg text-gray-400">/ 100</div>
+                          <div className="text-3xl font-bold text-gray-900">30</div>
+                          <div className="text-lg text-gray-500">/ 100</div>
                           <span className="px-2 py-1 bg-green-600 text-white text-xs rounded">Excellent</span>
                         </div>
                         
                         {/* Tabs */}
-                        <div className="flex space-x-6 border-b border-gray-700">
-                          <button className="pb-2 text-white border-b-2 border-white text-sm">Score</button>
-                          <button className="pb-2 text-gray-400 hover:text-white text-sm">News</button>
-                          <button className="pb-2 text-gray-400 hover:text-white text-sm flex items-center">
-                            Technologies <span className="ml-1 text-xs bg-gray-600 px-1 rounded">{liveInsights.technologies?.length || 0}</span>
+                        <div className="flex space-x-6 border-b border-gray-200">
+                          <button className="pb-2 text-gray-900 border-b-2 border-blue-600 text-sm">Score</button>
+                          <button className="pb-2 text-gray-500 hover:text-gray-700 text-sm">News</button>
+                          <button className="pb-2 text-gray-500 hover:text-gray-700 text-sm flex items-center">
+                            Technologies <span className="ml-1 text-xs bg-gray-100 text-gray-700 px-1 rounded">{liveInsights?.technologies?.length || 0}</span>
                           </button>
-                          <button className="pb-2 text-gray-400 hover:text-white text-sm">Funding rounds</button>
-                          <button className="pb-2 text-gray-400 hover:text-white text-sm">Job postings</button>
-                          <button className="pb-2 text-gray-400 hover:text-white text-sm flex items-center">
-                            Employee trends <span className="ml-1 text-xs bg-gray-600 px-1 rounded">24</span>
+                          <button className="pb-2 text-gray-500 hover:text-gray-700 text-sm">Funding rounds</button>
+                          <button className="pb-2 text-gray-500 hover:text-gray-700 text-sm">Job postings</button>
+                          <button className="pb-2 text-gray-500 hover:text-gray-700 text-sm flex items-center">
+                            Employee trends <span className="ml-1 text-xs bg-gray-100 text-gray-700 px-1 rounded">24</span>
                           </button>
-                          <button className="pb-2 text-gray-400 hover:text-white text-sm">Website visitors</button>
+                          <button className="pb-2 text-gray-500 hover:text-gray-700 text-sm">Website visitors</button>
                         </div>
                       </div>
                       
                       {/* Company Profile Tags */}
                       <div className="mb-6">
-                        <h4 className="text-sm text-gray-400 mb-3">Company profile</h4>
+                        <h4 className="text-sm text-gray-500 mb-3">Company profile</h4>
                         <div className="flex flex-wrap gap-2">
-                          <span className="px-3 py-1 bg-gray-700 text-gray-300 rounded text-sm flex items-center">
+                          <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm flex items-center">
                             <Building2 className="h-3 w-3 mr-1" />
                             Companies located in {companyData.headquarters.split(',')[1]?.trim() || 'United States'}
                           </span>
-                          <span className="px-3 py-1 bg-gray-700 text-gray-300 rounded text-sm flex items-center">
+                          <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm flex items-center">
                             <Tag className="h-3 w-3 mr-1" />
                             {companyData.industry} industry
                           </span>
-                          <span className="px-3 py-1 bg-gray-700 text-gray-300 rounded text-sm flex items-center">
+                          <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm flex items-center">
                             <Tag className="h-3 w-3 mr-1" />
                             {companyData.industry}
                           </span>
-                          <span className="px-3 py-1 bg-gray-700 text-gray-300 rounded text-sm flex items-center">
+                          <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm flex items-center">
                             <Users className="h-3 w-3 mr-1" />
                             Between 51 and 100 employees
                           </span>
@@ -577,52 +577,52 @@ const CompanyDetailPageSimple = () => {
                 )}
 
                 {/* New Prospects Section */}
-                <div className="bg-gray-800 text-white rounded-lg shadow border border-gray-700">
-                  <div className="px-6 py-4 border-b border-gray-700 flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">New prospects</h3>
+                <div className="bg-white rounded-lg shadow border border-gray-200">
+                  <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-gray-900">New prospects</h3>
                     <div className="flex items-center space-x-2">
-                      <button className="text-gray-400 hover:text-white">
+                      <button className="text-gray-400 hover:text-gray-600">
                         <MoreVertical className="h-4 w-4" />
                       </button>
                     </div>
                   </div>
                   <div className="px-6 py-4">
                     {/* Filter Tabs */}
-                    <div className="flex space-x-6 border-b border-gray-700 mb-4">
-                      <button className="pb-2 text-white border-b-2 border-white text-sm">All</button>
-                      <button className="pb-2 text-gray-400 hover:text-white text-sm flex items-center">
-                        Sales Department <span className="ml-1 text-xs bg-gray-600 px-1 rounded">1</span>
+                    <div className="flex space-x-6 border-b border-gray-200 mb-4">
+                      <button className="pb-2 text-gray-900 border-b-2 border-blue-600 text-sm">All</button>
+                      <button className="pb-2 text-gray-500 hover:text-gray-700 text-sm flex items-center">
+                        Sales Department <span className="ml-1 text-xs bg-gray-100 text-gray-700 px-1 rounded">1</span>
                       </button>
-                      <button className="pb-2 text-gray-400 hover:text-white text-sm flex items-center">
-                        IT <span className="ml-1 text-xs bg-gray-600 px-1 rounded">1</span>
+                      <button className="pb-2 text-gray-500 hover:text-gray-700 text-sm flex items-center">
+                        IT <span className="ml-1 text-xs bg-gray-100 text-gray-700 px-1 rounded">1</span>
                       </button>
-                      <button className="pb-2 text-gray-400 hover:text-white text-sm flex items-center">
-                        marketing head <span className="ml-1 text-xs bg-gray-600 px-1 rounded">1</span>
+                      <button className="pb-2 text-gray-500 hover:text-gray-700 text-sm flex items-center">
+                        marketing head <span className="ml-1 text-xs bg-gray-100 text-gray-700 px-1 rounded">1</span>
                       </button>
-                      <button className="pb-2 text-gray-400 hover:text-white text-sm flex items-center">
-                        Business Development <span className="ml-1 text-xs bg-gray-600 px-1 rounded">1</span>
+                      <button className="pb-2 text-gray-500 hover:text-gray-700 text-sm flex items-center">
+                        Business Development <span className="ml-1 text-xs bg-gray-100 text-gray-700 px-1 rounded">1</span>
                       </button>
                     </div>
                     
                     {/* Prospect List */}
                     <div className="space-y-3">
                       {companyData.executives.slice(0, 3).map((exec, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
+                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
                           <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-                              <User className="h-4 w-4 text-gray-400" />
+                            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                              <User className="h-4 w-4 text-gray-600" />
                             </div>
                             <div>
-                              <p className="text-sm font-medium text-white">{exec.name}</p>
-                              <p className="text-xs text-gray-400">{exec.title}</p>
+                              <p className="text-sm font-medium text-gray-900">{exec.name}</p>
+                              <p className="text-xs text-gray-500">{exec.title}</p>
                             </div>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <span className="text-xs text-gray-400">{companyData.headquarters.split(',')[0]}</span>
-                            <span className="text-xs text-gray-400">{exec.title.includes('Sales') ? 'Sales' : 'Management'}</span>
+                            <span className="text-xs text-gray-500">{companyData.headquarters.split(',')[0]}</span>
+                            <span className="text-xs text-gray-500">{exec.title.includes('Sales') ? 'Sales' : 'Management'}</span>
                             <div className="flex items-center space-x-1">
                               <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                              <span className="text-xs text-blue-400">Similar to past prospects</span>
+                              <span className="text-xs text-blue-600">Similar to past prospects</span>
                             </div>
                             <button className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700">
                               Access email
@@ -633,8 +633,8 @@ const CompanyDetailPageSimple = () => {
                     </div>
                     
                     <div className="mt-4 text-center">
-                      <span className="text-sm text-gray-400">1 - 5 of 38</span>
-                      <button className="ml-4 text-sm text-blue-400 hover:text-blue-300">View All</button>
+                      <span className="text-sm text-gray-500">1 - 5 of 38</span>
+                      <button className="ml-4 text-sm text-blue-600 hover:text-blue-700">View All</button>
                     </div>
                   </div>
                 </div>
@@ -643,14 +643,14 @@ const CompanyDetailPageSimple = () => {
               {/* Right Column - Sidebar */}
               <div className="space-y-6">
                 {/* Contacts Card */}
-                <div className="bg-gray-800 text-white rounded-lg shadow border border-gray-700">
-                  <div className="px-6 py-4 border-b border-gray-700 flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">Contacts</h3>
+                <div className="bg-white rounded-lg shadow border border-gray-200">
+                  <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-gray-900">Contacts</h3>
                     <div className="flex items-center space-x-2">
-                      <button className="text-gray-400 hover:text-white">
+                      <button className="text-gray-400 hover:text-gray-600">
                         <Plus className="h-4 w-4" />
                       </button>
-                      <button className="text-gray-400 hover:text-white">
+                      <button className="text-gray-400 hover:text-gray-600">
                         <MoreVertical className="h-4 w-4" />
                       </button>
                     </div>
@@ -658,12 +658,12 @@ const CompanyDetailPageSimple = () => {
                   <div className="px-6 py-4 space-y-4">
                     {companyData.executives.slice(0, 4).map((exec, index) => (
                       <div key={index} className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 text-sm font-medium">
                           {exec.name.split(' ').map(n => n[0]).join('')}
                         </div>
                         <div className="flex-1">
-                          <p className="text-sm font-medium text-white">{exec.name}</p>
-                          <p className="text-xs text-gray-400">{exec.title}</p>
+                          <p className="text-sm font-medium text-gray-900">{exec.name}</p>
+                          <p className="text-xs text-gray-500">{exec.title}</p>
                         </div>
                       </div>
                     ))}
@@ -671,24 +671,24 @@ const CompanyDetailPageSimple = () => {
                 </div>
 
                 {/* Deals Card */}
-                <div className="bg-gray-800 text-white rounded-lg shadow border border-gray-700">
-                  <div className="px-6 py-4 border-b border-gray-700 flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">Deals</h3>
+                <div className="bg-white rounded-lg shadow border border-gray-200">
+                  <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-gray-900">Deals</h3>
                     <div className="flex items-center space-x-2">
-                      <button className="text-gray-400 hover:text-white">
+                      <button className="text-gray-400 hover:text-gray-600">
                         <Plus className="h-4 w-4" />
                       </button>
-                      <button className="text-gray-400 hover:text-white">
+                      <button className="text-gray-400 hover:text-gray-600">
                         <MoreVertical className="h-4 w-4" />
                       </button>
                     </div>
                   </div>
                   <div className="px-6 py-8 text-center">
-                    <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <DollarSign className="h-8 w-8 text-gray-500" />
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <DollarSign className="h-8 w-8 text-gray-400" />
                     </div>
-                    <h4 className="text-sm font-medium text-white mb-2">Add deals to associate with this account</h4>
-                    <p className="text-xs text-gray-400 mb-4">to track all sales activities</p>
+                    <h4 className="text-sm font-medium text-gray-900 mb-2">Add deals to associate with this account</h4>
+                    <p className="text-xs text-gray-500 mb-4">to track all sales activities</p>
                     <button className="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
                       Add deal
                     </button>
@@ -696,22 +696,22 @@ const CompanyDetailPageSimple = () => {
                 </div>
 
                 {/* Notes Card */}
-                <div className="bg-gray-800 text-white rounded-lg shadow border border-gray-700">
-                  <div className="px-6 py-4 border-b border-gray-700 flex items-center justify-between">
+                <div className="bg-white rounded-lg shadow border border-gray-200">
+                  <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <h3 className="text-lg font-semibold">Notes</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">Notes</h3>
                       <span className="px-2 py-1 bg-blue-600 text-white text-xs rounded">New</span>
                     </div>
-                    <button className="text-gray-400 hover:text-white">
+                    <button className="text-gray-400 hover:text-gray-600">
                       <MoreVertical className="h-4 w-4" />
                     </button>
                   </div>
                   <div className="px-6 py-8 text-center">
-                    <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Search className="h-8 w-8 text-gray-500" />
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Search className="h-8 w-8 text-gray-400" />
                     </div>
-                    <h4 className="text-sm font-medium text-white mb-2">No notes found</h4>
-                    <p className="text-xs text-gray-400 mb-4">Try adding a note, or adjusting your filters. Learn more.</p>
+                    <h4 className="text-sm font-medium text-gray-900 mb-2">No notes found</h4>
+                    <p className="text-xs text-gray-500 mb-4">Try adding a note, or adjusting your filters. Learn more.</p>
                     <button className="px-4 py-2 bg-yellow-500 text-black text-sm rounded hover:bg-yellow-400">
                       Add note
                     </button>
@@ -719,28 +719,28 @@ const CompanyDetailPageSimple = () => {
                 </div>
 
                 {/* Tasks Card */}
-                <div className="bg-gray-800 text-white rounded-lg shadow border border-gray-700">
-                  <div className="px-6 py-4 border-b border-gray-700 flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">Tasks</h3>
+                <div className="bg-white rounded-lg shadow border border-gray-200">
+                  <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-gray-900">Tasks</h3>
                     <div className="flex items-center space-x-2">
-                      <button className="text-gray-400 hover:text-white">
+                      <button className="text-gray-400 hover:text-gray-600">
                         <Plus className="h-4 w-4" />
                       </button>
-                      <button className="text-gray-400 hover:text-white">
+                      <button className="text-gray-400 hover:text-gray-600">
                         <MoreVertical className="h-4 w-4" />
                       </button>
                     </div>
                   </div>
                   <div className="px-6 py-4">
-                    <h4 className="text-sm text-gray-400 mb-3">Completed tasks</h4>
+                    <h4 className="text-sm text-gray-500 mb-3">Completed tasks</h4>
                     <div className="space-y-3">
-                      <div className="flex items-start space-x-3 p-3 bg-gray-700 rounded-lg">
+                      <div className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
                         <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                           <Mail className="h-3 w-3 text-white" />
                         </div>
                         <div className="flex-1">
-                          <p className="text-sm text-white">Email sent to movingwalls.com skipped a task to send linkedin connection request</p>
-                          <p className="text-xs text-gray-400 mt-1">Skipped at Jun 12, 1:06 AM</p>
+                          <p className="text-sm text-gray-900">Email sent to movingwalls.com skipped a task to send linkedin connection request</p>
+                          <p className="text-xs text-gray-500 mt-1">Skipped at Jun 12, 1:06 AM</p>
                           <span className="inline-block px-2 py-1 bg-green-600 text-white text-xs rounded mt-2">Completed</span>
                         </div>
                       </div>
