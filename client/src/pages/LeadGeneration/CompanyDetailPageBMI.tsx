@@ -1281,47 +1281,67 @@ const CompanyDetailPageBMI: React.FC = () => {
                   {getCurrentPageContacts().map((contact, index) => (
                     <div key={index} className="grid grid-cols-5 gap-4 py-3 px-2 rounded-lg hover:bg-gray-700/30 transition-colors border-b border-gray-700/50">
                       {/* Name with Avatar */}
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white font-medium text-xs">
+                      <div className="flex items-center space-x-3 min-w-0">
+                        <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white font-medium text-xs flex-shrink-0">
                           {contact.name.split(' ').map(n => n[0]).join('')}
                         </div>
-                        <div>
+                        <div className="min-w-0 flex-1">
                           <div className="text-white font-medium text-sm flex items-center space-x-1">
-                            <span>{contact.name}</span>
+                            <span 
+                              className="truncate cursor-pointer" 
+                              title={contact.name}
+                            >
+                              {contact.name}
+                            </span>
                             {contact.verified && (
-                              <CheckCircle className="h-3 w-3 text-green-400" />
+                              <CheckCircle className="h-3 w-3 text-green-400 flex-shrink-0" />
                             )}
-                          </div>
-                          <div className="text-gray-400 text-xs flex items-center space-x-2">
-                            <Mail className="h-3 w-3" />
-                            <span>{contact.email}</span>
                           </div>
                         </div>
                       </div>
                       
                       {/* Title */}
-                      <div className="flex flex-col justify-center">
-                        <div className="text-gray-300 text-sm">{contact.title}</div>
-                        <div className="text-gray-400 text-xs flex items-center space-x-1">
-                          <Phone className="h-3 w-3" />
-                          <span>{contact.phone}</span>
+                      <div className="flex flex-col justify-center min-w-0">
+                        <div 
+                          className="text-gray-300 text-sm truncate cursor-pointer" 
+                          title={contact.title}
+                        >
+                          {contact.title}
                         </div>
                       </div>
                       
                       {/* Department */}
-                      <div className="flex flex-col justify-center">
-                        <div className="text-gray-300 text-sm">{contact.department}</div>
-                        <div className="text-gray-400 text-xs">{contact.connection} • Active {contact.lastActivity}</div>
+                      <div className="flex flex-col justify-center min-w-0">
+                        <div 
+                          className="text-gray-300 text-sm truncate cursor-pointer mb-1" 
+                          title={contact.department}
+                        >
+                          {contact.department}
+                        </div>
+                        <div 
+                          className="text-gray-400 text-xs truncate cursor-pointer" 
+                          title={`${contact.connection} • Active ${contact.lastActivity}`}
+                        >
+                          {contact.connection} • Active {contact.lastActivity}
+                        </div>
                       </div>
                       
                       {/* Location */}
-                      <div className="flex flex-col justify-center">
-                        <div className="text-gray-300 text-sm">{contact.location}</div>
-                        <span className={`text-xs px-2 py-1 rounded-full w-fit ${
-                          contact.source.includes('LinkedIn') 
-                            ? 'bg-blue-600/20 text-blue-300 border border-blue-600/30' 
-                            : 'bg-green-600/20 text-green-300 border border-green-600/30'
-                        }`}>
+                      <div className="flex flex-col justify-center min-w-0">
+                        <div 
+                          className="text-gray-300 text-sm truncate cursor-pointer mb-1" 
+                          title={contact.location}
+                        >
+                          {contact.location}
+                        </div>
+                        <span 
+                          className={`text-xs px-2 py-1 rounded-full w-fit truncate cursor-pointer ${
+                            contact.source.includes('LinkedIn') 
+                              ? 'bg-blue-600/20 text-blue-300 border border-blue-600/30' 
+                              : 'bg-green-600/20 text-green-300 border border-green-600/30'
+                          }`}
+                          title={contact.source}
+                        >
                           {contact.source}
                         </span>
                       </div>
