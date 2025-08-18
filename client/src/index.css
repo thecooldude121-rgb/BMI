@@ -211,37 +211,37 @@
 [data-tooltip]:before {
   content: attr(data-tooltip);
   position: absolute;
-  top: -45px;
+  bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
   background: rgba(0, 0, 0, 0.9);
   color: white;
-  padding: 6px 10px;
-  border-radius: 4px;
-  font-size: 11px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
   white-space: nowrap;
-  max-width: 250px;
+  max-width: 300px;
   overflow: hidden;
   text-overflow: ellipsis;
   opacity: 0;
   visibility: hidden;
-  transition: all 0.15s ease-in-out;
-  z-index: 9999;
+  transition: all 0.2s ease-in-out;
+  z-index: 99999;
   pointer-events: none;
 }
 
 [data-tooltip]:after {
   content: '';
   position: absolute;
-  top: -8px;
+  bottom: calc(100% + 2px);
   left: 50%;
   transform: translateX(-50%);
-  border: 4px solid transparent;
+  border: 6px solid transparent;
   border-top-color: rgba(0, 0, 0, 0.9);
   opacity: 0;
   visibility: hidden;
-  transition: all 0.15s ease-in-out;
-  z-index: 9999;
+  transition: all 0.2s ease-in-out;
+  z-index: 99999;
   pointer-events: none;
 }
 
@@ -271,4 +271,27 @@
 
 .cell-content > * {
   min-width: 0; /* Allow flex children to shrink below content size */
+}
+
+/* Special handling for tooltips in table rows */
+.table-row-with-tooltip {
+  position: relative;
+  z-index: 1;
+}
+
+.table-row-with-tooltip:hover {
+  z-index: 1000;
+}
+
+/* Alternative tooltip positioning for first few rows */
+[data-tooltip].tooltip-below:before {
+  bottom: auto;
+  top: calc(100% + 8px);
+}
+
+[data-tooltip].tooltip-below:after {
+  bottom: auto;
+  top: calc(100% + 2px);
+  border-top-color: transparent;
+  border-bottom-color: rgba(0, 0, 0, 0.9);
 }
