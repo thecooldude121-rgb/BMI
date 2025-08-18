@@ -46,6 +46,10 @@ const CompanyDiscovery: React.FC = () => {
   const [showColumnManager, setShowColumnManager] = useState(false);
   const columnManagerRef = useRef<HTMLDivElement>(null);
 
+  // References for synchronized scrolling
+  const frozenScrollRef = useRef<HTMLDivElement>(null);
+  const scrollableScrollRef = useRef<HTMLDivElement>(null);
+
   // Close column manager when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -59,6 +63,8 @@ const CompanyDiscovery: React.FC = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+
   
   // Define table columns with horizontal scroll support
   const [columns, setColumns] = useState<TableColumn[]>([
@@ -226,6 +232,30 @@ const CompanyDiscovery: React.FC = () => {
   const totalPages = Math.ceil(filteredCompanies.length / itemsPerPage);
 
   const visibleColumns = useMemo(() => columns.filter(col => col.visible), [columns]);
+
+  // Synchronized scrolling between frozen and scrollable sections
+  useEffect(() => {
+    const frozenEl = frozenScrollRef.current;
+    const scrollableEl = scrollableScrollRef.current;
+
+    if (!frozenEl || !scrollableEl) return;
+
+    const syncScrollFromFrozen = () => {
+      scrollableEl.scrollTop = frozenEl.scrollTop;
+    };
+
+    const syncScrollFromScrollable = () => {
+      frozenEl.scrollTop = scrollableEl.scrollTop;
+    };
+
+    frozenEl.addEventListener('scroll', syncScrollFromFrozen);
+    scrollableEl.addEventListener('scroll', syncScrollFromScrollable);
+
+    return () => {
+      frozenEl.removeEventListener('scroll', syncScrollFromFrozen);
+      scrollableEl.removeEventListener('scroll', syncScrollFromScrollable);
+    };
+  }, [paginatedCompanies]);
 
   const toggleCompanySelection = (id: string) => {
     setSelectedCompanies(prev => 
@@ -526,74 +556,103 @@ const CompanyDiscovery: React.FC = () => {
           </div>
         </div>
 
-        {/* Table Container with Horizontal Scroll */}
-        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden relative">
-          {/* Scroll Indicator */}
-          <div className="absolute top-0 right-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none z-20"></div>
-          
-          {/* Table Header - Fixed */}
-          <div className="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
-            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-              <div className="flex items-center px-6 py-3" style={{ minWidth: `${visibleColumns.length * 150 + 100}px` }}>
-                <input
-                  type="checkbox"
-                  checked={selectedCompanies.length === paginatedCompanies.length && paginatedCompanies.length > 0}
-                  onChange={selectAllCompanies}
-                  className="mr-4 rounded border-gray-300 flex-shrink-0"
-                  style={{ width: '40px' }}
-                />
-                {visibleColumns.map((column) => (
-                  <div key={column.key} className="flex-shrink-0 px-2" style={{ minWidth: column.minWidth || '150px' }}>
-                    <div className="flex items-center space-x-1 text-xs font-medium text-gray-600 uppercase tracking-wider">
-                      <span>{column.label}</span>
-                      {column.sortable && (
-                        <button className="text-gray-400 hover:text-gray-600">
-                          <ChevronUp className="h-3 w-3" />
-                        </button>
-                      )}
-                    </div>
+        {/* Table Container with Frozen First Column */}
+        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <div className="flex">
+            {/* Frozen Left Column (Checkbox + Company Name) */}
+            <div className="flex-shrink-0 bg-white border-r border-gray-200" style={{ width: '320px' }}>
+              {/* Frozen Header */}
+              <div className="bg-gray-50 border-b border-gray-200 sticky top-0 z-20 px-4 py-3">
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={selectedCompanies.length === paginatedCompanies.length && paginatedCompanies.length > 0}
+                    onChange={selectAllCompanies}
+                    className="mr-4 rounded border-gray-300 flex-shrink-0"
+                  />
+                  <div className="text-xs font-medium text-gray-600 uppercase tracking-wider">
+                    Company Name
                   </div>
-                ))}
+                </div>
               </div>
-            </div>
-          </div>
-
-          {/* Table Content - Scrollable with Fixed Layout */}
-          <div className="flex-1 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
-            <div className="divide-y divide-gray-200">
-              {paginatedCompanies.map((company) => (
-                <div key={company.id} className="hover:bg-gray-50 transition-colors">
-                  <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                    <div className="flex items-center px-6 py-4" style={{ minWidth: `${visibleColumns.length * 150 + 100}px` }}>
-                      <input
-                        type="checkbox"
-                        checked={selectedCompanies.includes(company.id)}
-                        onChange={() => toggleCompanySelection(company.id)}
-                        className="mr-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 flex-shrink-0"
-                        style={{ width: '40px' }}
-                      />
-                      {visibleColumns.map((column) => (
-                        <div key={column.key} className="flex-shrink-0 px-2" style={{ minWidth: column.minWidth || '150px' }}>
-                          {renderColumnContent(column, company)}
+              
+              {/* Frozen Content */}
+              <div ref={frozenScrollRef} className="overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
+                <div className="divide-y divide-gray-200">
+                  {paginatedCompanies.map((company) => (
+                    <div key={`frozen-${company.id}`} className="px-4 py-4 hover:bg-gray-50 transition-colors">
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={selectedCompanies.includes(company.id)}
+                          onChange={() => toggleCompanySelection(company.id)}
+                          className="mr-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 flex-shrink-0"
+                        />
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center text-lg flex-shrink-0">
+                            {company.logo}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="text-sm font-medium text-gray-900 truncate">{company.name}</div>
+                            <div className="text-xs text-gray-500 truncate">{company.domain}</div>
+                          </div>
                         </div>
-                      ))}
+                      </div>
                     </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            
-            {/* Loading State for Large Tables */}
-            {filteredCompanies.length === 0 && searchQuery && (
-              <div className="flex items-center justify-center py-12">
-                <div className="text-center">
-                  <Search className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No companies found</h3>
-                  <p className="text-gray-600">Try adjusting your search terms or filters</p>
+                  ))}
                 </div>
               </div>
-            )}
+            </div>
+
+            {/* Scrollable Right Columns */}
+            <div className="flex-1 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+              {/* Scrollable Header */}
+              <div className="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
+                <div className="flex" style={{ minWidth: `${(visibleColumns.length - 1) * 150}px` }}>
+                  {visibleColumns.filter(col => col.key !== 'name').map((column) => (
+                    <div key={column.key} className="flex-shrink-0 px-4 py-3 border-r border-gray-200 last:border-r-0" style={{ minWidth: column.minWidth || '150px' }}>
+                      <div className="flex items-center space-x-1 text-xs font-medium text-gray-600 uppercase tracking-wider">
+                        <span>{column.label}</span>
+                        {column.sortable && (
+                          <button className="text-gray-400 hover:text-gray-600">
+                            <ChevronUp className="h-3 w-3" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Scrollable Content */}
+              <div ref={scrollableScrollRef} className="overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
+                <div className="divide-y divide-gray-200">
+                  {paginatedCompanies.map((company) => (
+                    <div key={`scrollable-${company.id}`} className="hover:bg-gray-50 transition-colors">
+                      <div className="flex" style={{ minWidth: `${(visibleColumns.length - 1) * 150}px` }}>
+                        {visibleColumns.filter(col => col.key !== 'name').map((column) => (
+                          <div key={column.key} className="flex-shrink-0 px-4 py-4 border-r border-gray-200 last:border-r-0" style={{ minWidth: column.minWidth || '150px' }}>
+                            {renderColumnContent(column, company)}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
+          
+          {/* Loading State for Large Tables */}
+          {filteredCompanies.length === 0 && searchQuery && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90">
+              <div className="text-center">
+                <Search className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No companies found</h3>
+                <p className="text-gray-600">Try adjusting your search terms or filters</p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Enhanced Bottom Bar with Pagination */}
