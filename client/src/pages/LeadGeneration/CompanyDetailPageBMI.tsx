@@ -367,6 +367,14 @@ const CompanyDetailPageBMI: React.FC = () => {
                 </button>
               </div>
               <div className="mt-4">
+                <h4 className="text-gray-400 font-medium mb-2">PHONE NUMBER</h4>
+                <p className="text-gray-300">{companyData.phone}</p>
+              </div>
+              <div className="mt-4">
+                <h4 className="text-gray-400 font-medium mb-2">FOUNDING YEAR</h4>
+                <p className="text-gray-300">{companyData.founded}</p>
+              </div>
+              <div className="mt-4">
                 <h4 className="text-gray-400 font-medium mb-2">SUBSIDIARIES</h4>
                 <p className="text-gray-300">
                   {companyData.name} has {companyData.subsidiaries} subsidiary
@@ -374,14 +382,12 @@ const CompanyDetailPageBMI: React.FC = () => {
               </div>
             </div>
           </div>
-
-          
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 p-6">
+        <div className="flex-1 p-3">
           {/* Company Insights Widget */}
-          <div className="mb-6 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
+          <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
             <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
               {/* Widget Header */}
               <div className="p-6 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
@@ -759,7 +765,7 @@ const CompanyDetailPageBMI: React.FC = () => {
           </div>
 
           {/* New Prospects */}
-          <div className="mb-6">
+          <div className="mb-3">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-white">New prospects</h2>
               <div className="flex items-center space-x-2">
@@ -846,7 +852,7 @@ const CompanyDetailPageBMI: React.FC = () => {
           </div>
 
           {/* Lookalike Companies */}
-          <div className="mb-6">
+          <div className="mb-3">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
                 <h2 className="text-lg font-semibold text-white">Lookalike companies</h2>
@@ -977,12 +983,12 @@ const CompanyDetailPageBMI: React.FC = () => {
         </div>
 
         {/* Right Sidebar - Enhanced Scrollable Widgets with Emboss Effect */}
-        <div className="w-80 h-screen flex flex-col bg-gray-900 p-2 space-y-2">
+        <div className="w-80 h-screen flex flex-col bg-gray-900 p-1 space-y-1">
           {/* Contacts Widget */}
           <div className="flex-1 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
             {/* Embossed widget container */}
             <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600 h-full flex flex-col">
-              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+              <div className="p-2 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <Users className="h-4 w-4 text-blue-400" />
@@ -1006,7 +1012,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                 </div>
               </div>
               {contactsExpanded && (
-                <div className="flex-1 p-3 overflow-y-auto bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl">
+                <div className="flex-1 p-2 overflow-y-auto bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl">
                   <div className="space-y-2">
                     {contacts.map((contact) => (
                       <div key={contact.id} className="bg-gradient-to-r from-gray-700 to-gray-800 p-3 rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-200 shadow-lg border border-gray-600 hover:shadow-xl hover:border-blue-500/30">
@@ -1031,7 +1037,7 @@ const CompanyDetailPageBMI: React.FC = () => {
           {/* Deals Widget */}
           <div className="flex-1 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
             <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600 h-full flex flex-col">
-              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+              <div className="p-2 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <DollarSign className="h-4 w-4 text-green-400" />
@@ -1055,7 +1061,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                 </div>
               </div>
               {dealsExpanded && (
-                <div className="flex-1 p-4 overflow-y-auto bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl">
+                <div className="flex-1 p-2 overflow-y-auto bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl">
                   <div className="text-center py-8">
                     <div className="w-16 h-16 bg-gradient-to-br from-green-600 to-green-800 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                       <DollarSign className="h-8 w-8 text-white" />
@@ -1078,7 +1084,7 @@ const CompanyDetailPageBMI: React.FC = () => {
           {/* Tasks Widget */}
           <div className="flex-1 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
             <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600 h-full flex flex-col">
-              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+              <div className="p-2 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <CheckSquare className="h-4 w-4 text-purple-400" />
@@ -1102,7 +1108,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                 </div>
               </div>
               {tasksExpanded && (
-                <div className="flex-1 p-3 overflow-y-auto bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl">
+                <div className="flex-1 p-2 overflow-y-auto bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl">
                   <div className="space-y-2">
                     {[
                       { id: 1, title: 'Follow up on proposal', status: 'pending', dueDate: 'Today', priority: 'high' },
@@ -1144,7 +1150,7 @@ const CompanyDetailPageBMI: React.FC = () => {
           {/* Notes Widget */}
           <div className="flex-1 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
             <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600 h-full flex flex-col">
-              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+              <div className="p-2 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <FileText className="h-4 w-4 text-orange-400" />
@@ -1169,7 +1175,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                 </div>
               </div>
               {notesExpanded && (
-                <div className="flex-1 p-4 overflow-y-auto bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl">
+                <div className="flex-1 p-2 overflow-y-auto bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl">
                   <div className="text-center py-8">
                     <div className="w-16 h-16 bg-gradient-to-br from-orange-600 to-orange-800 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                       <FileText className="h-8 w-8 text-white" />
