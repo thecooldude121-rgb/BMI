@@ -322,7 +322,7 @@ const CompanyDiscovery: React.FC = () => {
       
       case 'employees':
         return (
-          <div className="flex items-center" data-tooltip={company.employeeCount}>
+          <div className="cell-content" data-tooltip={company.employeeCount}>
             <Users className="h-3 w-3 mr-1 text-gray-400 flex-shrink-0" />
             <span className="text-sm text-gray-900 truncate-cell">{company.employeeCount}</span>
           </div>
@@ -330,7 +330,7 @@ const CompanyDiscovery: React.FC = () => {
       
       case 'industry':
         return (
-          <div className="flex items-center" data-tooltip={company.industry}>
+          <div className="cell-content" data-tooltip={company.industry}>
             <Building2 className="h-3 w-3 mr-1 text-gray-400 flex-shrink-0" />
             <span className="text-sm text-gray-900 truncate-cell">{company.industry}</span>
           </div>
@@ -359,7 +359,7 @@ const CompanyDiscovery: React.FC = () => {
       
       case 'revenue':
         return (
-          <div className="flex items-center" data-tooltip={company.revenue}>
+          <div className="cell-content" data-tooltip={company.revenue}>
             <DollarSign className="h-3 w-3 mr-1 text-gray-400 flex-shrink-0" />
             <span className="text-sm text-gray-900 truncate-cell">{company.revenue}</span>
           </div>
@@ -367,7 +367,7 @@ const CompanyDiscovery: React.FC = () => {
       
       case 'location':
         return (
-          <div className="flex items-center" data-tooltip={company.location}>
+          <div className="cell-content" data-tooltip={company.location}>
             <MapPin className="h-3 w-3 mr-1 text-gray-400 flex-shrink-0" />
             <span className="text-sm text-gray-900 truncate-cell">{company.location}</span>
           </div>
@@ -375,7 +375,7 @@ const CompanyDiscovery: React.FC = () => {
       
       case 'founded':
         return (
-          <div className="flex items-center" data-tooltip={company.founded?.toString()}>
+          <div className="cell-content" data-tooltip={company.founded?.toString()}>
             <Calendar className="h-3 w-3 mr-1 text-gray-400 flex-shrink-0" />
             <span className="text-sm text-gray-900 truncate-cell">{company.founded}</span>
           </div>
@@ -383,7 +383,7 @@ const CompanyDiscovery: React.FC = () => {
       
       case 'funding':
         return (
-          <div className="flex items-center" data-tooltip={company.funding}>
+          <div className="cell-content" data-tooltip={company.funding}>
             <TrendingUp className="h-3 w-3 mr-1 text-gray-400 flex-shrink-0" />
             <span className="text-sm text-gray-900 truncate-cell">{company.funding}</span>
           </div>
@@ -593,7 +593,7 @@ const CompanyDiscovery: React.FC = () => {
                           <div className="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center text-sm flex-shrink-0 hover-scale">
                             {company.logo}
                           </div>
-                          <div className="min-w-0 flex-1">
+                          <div className="min-w-0 flex-1 overflow-hidden">
                             <div className="text-sm font-medium text-gray-900 truncate-cell" data-tooltip={company.name}>{company.name}</div>
                             <div className="text-xs text-gray-500 truncate-cell" data-tooltip={company.domain}>{company.domain}</div>
                           </div>
@@ -632,7 +632,7 @@ const CompanyDiscovery: React.FC = () => {
                     <div key={`scrollable-${company.id}`} className="h-12 hover:bg-gray-50 transition-colors hover-lift cursor-pointer flex items-center">
                       <div className="flex h-full" style={{ minWidth: `${(visibleColumns.length - 1) * 150}px` }}>
                         {visibleColumns.filter(col => col.key !== 'name').map((column) => (
-                          <div key={column.key} className="flex-shrink-0 px-4 py-2.5 border-r border-gray-200 last:border-r-0 flex items-center h-full" style={{ width: column.minWidth || '150px', minWidth: column.minWidth || '150px' }}>
+                          <div key={column.key} className="flex-shrink-0 px-4 py-2.5 border-r border-gray-200 last:border-r-0 flex items-center h-full overflow-hidden" style={{ width: column.minWidth || '150px', minWidth: column.minWidth || '150px' }}>
                             {renderColumnContent(column, company)}
                           </div>
                         ))}
