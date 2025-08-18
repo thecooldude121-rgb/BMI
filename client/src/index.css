@@ -257,4 +257,18 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
+  display: block;
+}
+
+/* Cell content wrapper for proper truncation */
+.cell-content {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0; /* This is critical for flex truncation */
+}
+
+.cell-content > * {
+  min-width: 0; /* Allow flex children to shrink below content size */
 }
