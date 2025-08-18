@@ -439,7 +439,10 @@ const CompanyDetailPageBMI: React.FC = () => {
               </div>
             </div>
           </div>
+        </div>
 
+        {/* Widgets Sidebar - Independent Section */}
+        <div className="w-96 bg-gray-900 border-r border-gray-700 h-screen overflow-y-auto p-4 space-y-4">
           {/* Deals Widget - Full Size with Internal Scroll */}
           <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
             <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
@@ -564,11 +567,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                     <button className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-500 hover:to-orange-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl" data-testid="button-add-note">
                       + Add First Note
                     </button>
-                    </div>
                   </div>
-                </div>
-              </div>
-            </div>
                 </div>
               </div>
             </div>
@@ -1185,6 +1184,10 @@ const CompanyDetailPageBMI: React.FC = () => {
           </div>
         </div>
       </div>
+    </div>
+    </div>
+    </div>
+    </div>
     </div>
     </div>
   );
