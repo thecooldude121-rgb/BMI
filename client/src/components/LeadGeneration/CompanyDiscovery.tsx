@@ -322,34 +322,35 @@ const CompanyDiscovery: React.FC = () => {
       
       case 'employees':
         return (
-          <div className="flex items-center">
-            <Users className="h-3 w-3 mr-1 text-gray-400" />
-            <span className="text-sm text-gray-900">{company.employeeCount}</span>
+          <div className="flex items-center" data-tooltip={company.employeeCount}>
+            <Users className="h-3 w-3 mr-1 text-gray-400 flex-shrink-0" />
+            <span className="text-sm text-gray-900 truncate-cell">{company.employeeCount}</span>
           </div>
         );
       
       case 'industry':
         return (
-          <div className="flex items-center">
-            <Building2 className="h-3 w-3 mr-1 text-gray-400" />
-            <span className="text-sm text-gray-900">{company.industry}</span>
+          <div className="flex items-center" data-tooltip={company.industry}>
+            <Building2 className="h-3 w-3 mr-1 text-gray-400 flex-shrink-0" />
+            <span className="text-sm text-gray-900 truncate-cell">{company.industry}</span>
           </div>
         );
       
       case 'keywords':
         return (
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-1" data-tooltip={company.keywords.join(', ')}>
             {company.keywords.slice(0, 2).map((keyword, index) => (
               <span
                 key={index}
-                className="inline-flex items-center px-2 py-0.5 text-xs bg-gray-100 text-gray-800 rounded"
+                className="inline-flex items-center px-2 py-0.5 text-xs bg-gray-100 text-gray-800 rounded max-w-full"
+                data-tooltip={keyword}
               >
-                <Tag className="h-2 w-2 mr-1" />
-                {keyword}
+                <Tag className="h-2 w-2 mr-1 flex-shrink-0" />
+                <span className="truncate-cell">{keyword}</span>
               </span>
             ))}
             {company.keywords.length > 2 && (
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-gray-500" data-tooltip={company.keywords.slice(2).join(', ')}>
                 +{company.keywords.length - 2} more
               </span>
             )}
@@ -358,33 +359,33 @@ const CompanyDiscovery: React.FC = () => {
       
       case 'revenue':
         return (
-          <div className="flex items-center">
-            <DollarSign className="h-3 w-3 mr-1 text-gray-400" />
-            <span className="text-sm text-gray-900">{company.revenue}</span>
+          <div className="flex items-center" data-tooltip={company.revenue}>
+            <DollarSign className="h-3 w-3 mr-1 text-gray-400 flex-shrink-0" />
+            <span className="text-sm text-gray-900 truncate-cell">{company.revenue}</span>
           </div>
         );
       
       case 'location':
         return (
-          <div className="flex items-center">
-            <MapPin className="h-3 w-3 mr-1 text-gray-400" />
-            <span className="text-sm text-gray-900">{company.location}</span>
+          <div className="flex items-center" data-tooltip={company.location}>
+            <MapPin className="h-3 w-3 mr-1 text-gray-400 flex-shrink-0" />
+            <span className="text-sm text-gray-900 truncate-cell">{company.location}</span>
           </div>
         );
       
       case 'founded':
         return (
-          <div className="flex items-center">
-            <Calendar className="h-3 w-3 mr-1 text-gray-400" />
-            <span className="text-sm text-gray-900">{company.founded}</span>
+          <div className="flex items-center" data-tooltip={company.founded?.toString()}>
+            <Calendar className="h-3 w-3 mr-1 text-gray-400 flex-shrink-0" />
+            <span className="text-sm text-gray-900 truncate-cell">{company.founded}</span>
           </div>
         );
       
       case 'funding':
         return (
-          <div className="flex items-center">
-            <TrendingUp className="h-3 w-3 mr-1 text-gray-400" />
-            <span className="text-sm text-gray-900">{company.funding}</span>
+          <div className="flex items-center" data-tooltip={company.funding}>
+            <TrendingUp className="h-3 w-3 mr-1 text-gray-400 flex-shrink-0" />
+            <span className="text-sm text-gray-900 truncate-cell">{company.funding}</span>
           </div>
         );
       
@@ -580,7 +581,7 @@ const CompanyDiscovery: React.FC = () => {
               <div ref={frozenScrollRef} className="overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
                 <div className="divide-y divide-gray-200">
                   {paginatedCompanies.map((company) => (
-                    <div key={`frozen-${company.id}`} className="px-4 py-4 hover:bg-gray-50 transition-colors hover-lift cursor-pointer">
+                    <div key={`frozen-${company.id}`} className="px-4 py-2.5 hover:bg-gray-50 transition-colors hover-lift cursor-pointer">
                       <div className="flex items-center">
                         <input
                           type="checkbox"
@@ -589,12 +590,12 @@ const CompanyDiscovery: React.FC = () => {
                           className="mr-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 flex-shrink-0 hover-scale"
                         />
                         <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center text-lg flex-shrink-0 hover-scale">
+                          <div className="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center text-sm flex-shrink-0 hover-scale">
                             {company.logo}
                           </div>
                           <div className="min-w-0 flex-1">
-                            <div className="text-sm font-medium text-gray-900 truncate">{company.name}</div>
-                            <div className="text-xs text-gray-500 truncate">{company.domain}</div>
+                            <div className="text-sm font-medium text-gray-900 truncate-cell" data-tooltip={company.name}>{company.name}</div>
+                            <div className="text-xs text-gray-500 truncate-cell" data-tooltip={company.domain}>{company.domain}</div>
                           </div>
                         </div>
                       </div>
@@ -631,7 +632,7 @@ const CompanyDiscovery: React.FC = () => {
                     <div key={`scrollable-${company.id}`} className="hover:bg-gray-50 transition-colors hover-lift cursor-pointer">
                       <div className="flex" style={{ minWidth: `${(visibleColumns.length - 1) * 150}px` }}>
                         {visibleColumns.filter(col => col.key !== 'name').map((column) => (
-                          <div key={column.key} className="flex-shrink-0 px-4 py-4 border-r border-gray-200 last:border-r-0" style={{ width: column.minWidth || '150px', minWidth: column.minWidth || '150px' }}>
+                          <div key={column.key} className="flex-shrink-0 px-4 py-2.5 border-r border-gray-200 last:border-r-0" style={{ width: column.minWidth || '150px', minWidth: column.minWidth || '150px' }}>
                             {renderColumnContent(column, company)}
                           </div>
                         ))}
