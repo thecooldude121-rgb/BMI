@@ -464,7 +464,7 @@ const CompanyDetailPageSimple = () => {
                       <div>
                         <h4 className="text-sm font-medium text-gray-500 mb-2">KEYWORDS</h4>
                         <div className="flex flex-wrap gap-2">
-                          {companyData.keywords.map((keyword, index) => (
+                          {companyData.keywords?.map((keyword, index) => (
                             <span key={index} className="inline-block px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
                               {keyword}
                             </span>
@@ -607,7 +607,7 @@ const CompanyDetailPageSimple = () => {
                     
                     {/* Prospect List */}
                     <div className="space-y-3">
-                      {companyData.executives.slice(0, 3).map((exec, index) => (
+                      {companyData.executives?.slice(0, 3).map((exec, index) => (
                         <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
                           <div className="flex items-center space-x-3">
                             <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
@@ -752,14 +752,14 @@ const CompanyDetailPageSimple = () => {
             </div>
           )}
 
-        {/* Employees Tab */}
-        {activeTab === 'employees' && (
+          {/* Employees Tab */}
+          {activeTab === 'employees' && (
             <div className="bg-white rounded-lg shadow border border-gray-200">
               <div className="px-6 py-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                     <Users className="h-5 w-5 mr-2" />
-                    Employees ({companyData.employees.length})
+                    Employees ({companyData.employees?.length || 0})
                   </h3>
                   <div className="flex items-center space-x-2">
                     <div className="relative">
@@ -809,7 +809,7 @@ const CompanyDetailPageSimple = () => {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {companyData.employees
+                      {(companyData.employees || [])
                         .filter(employee => 
                           employee.name.toLowerCase().includes(employeeSearchQuery.toLowerCase()) ||
                           employee.title.toLowerCase().includes(employeeSearchQuery.toLowerCase())
@@ -875,7 +875,7 @@ const CompanyDetailPageSimple = () => {
                 </div>
               </div>
             </div>
-        )}
+          )}
         </div>
       </div>
     </div>
