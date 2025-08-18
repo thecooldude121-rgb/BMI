@@ -1307,26 +1307,16 @@ const CompanyDetailPageBMI: React.FC = () => {
                         
                         {/* Department */}
                         <div className="flex flex-col justify-center min-w-0">
-                          <div className="text-gray-300 text-sm truncate mb-1">
+                          <div className="text-gray-300 text-sm truncate">
                             {contact.department}
-                          </div>
-                          <div className="text-gray-400 text-xs truncate">
-                            {contact.connection} • Active {contact.lastActivity}
                           </div>
                         </div>
                         
                         {/* Location */}
                         <div className="flex flex-col justify-center min-w-0">
-                          <div className="text-gray-300 text-sm truncate mb-1">
+                          <div className="text-gray-300 text-sm truncate">
                             {contact.location}
                           </div>
-                          <span className={`text-xs px-2 py-1 rounded-full w-fit truncate ${
-                            contact.source.includes('LinkedIn') 
-                              ? 'bg-blue-600/20 text-blue-300 border border-blue-600/30' 
-                              : 'bg-green-600/20 text-green-300 border border-green-600/30'
-                          }`}>
-                            {contact.source}
-                          </span>
                         </div>
                         
                         {/* Actions */}
