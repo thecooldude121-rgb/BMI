@@ -345,7 +345,7 @@ const CompanyDetailPageBMI: React.FC = () => {
 
 
       {/* Main Content */}
-      <div className="flex">
+      <div className="flex h-screen">
         {/* Company Information Sidebar */}
         <div className="w-80 border-r border-gray-700 h-screen bg-gray-900">
           <div className="p-4">
@@ -579,8 +579,109 @@ const CompanyDetailPageBMI: React.FC = () => {
           </div>
         </div>
 
-        {/* Main Content Area - Right Side */}
-        <div className="flex-1 p-3">
+        {/* Middle Area - Deals/Tasks/Notes Widgets */}
+        <div className="w-80 border-r border-gray-700 p-3">
+          {/* Deals Widget */}
+          <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
+            <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
+              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Target className="h-5 w-5 text-green-400" />
+                    <h3 className="font-semibold text-white text-lg">Deals</h3>
+                    <span className="bg-green-600 text-white text-sm px-3 py-1 rounded-full">3</span>
+                  </div>
+                  <button 
+                    onClick={() => setDealsExpanded(!dealsExpanded)}
+                    className="p-2 hover:bg-gray-600 rounded-lg transition-colors"
+                  >
+                    {dealsExpanded ? <ChevronDown className="h-4 w-4 text-gray-400" /> : <ChevronUp className="h-4 w-4 text-gray-400" />}
+                  </button>
+                </div>
+              </div>
+              {dealsExpanded && (
+                <div className="p-4 bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl">
+                  <div className="space-y-3">
+                    <div className="bg-gradient-to-r from-gray-700 to-gray-800 p-4 rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-200 shadow-lg border border-gray-600 hover:shadow-xl">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="text-white text-lg font-medium">Enterprise Solution</div>
+                          <div className="text-green-400 text-sm font-bold">$75,000</div>
+                        </div>
+                        <div className="text-gray-400 text-sm">Closing</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Tasks Widget */}
+          <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
+            <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
+              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <CheckSquare className="h-5 w-5 text-orange-400" />
+                    <h3 className="font-semibold text-white text-lg">Tasks</h3>
+                    <span className="bg-orange-600 text-white text-sm px-3 py-1 rounded-full">2</span>
+                  </div>
+                  <button 
+                    onClick={() => setTasksExpanded(!tasksExpanded)}
+                    className="p-2 hover:bg-gray-600 rounded-lg transition-colors"
+                  >
+                    {tasksExpanded ? <ChevronDown className="h-4 w-4 text-gray-400" /> : <ChevronUp className="h-4 w-4 text-gray-400" />}
+                  </button>
+                </div>
+              </div>
+              {tasksExpanded && (
+                <div className="p-4 bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl">
+                  <div className="space-y-3">
+                    <div className="bg-gradient-to-r from-gray-700 to-gray-800 p-4 rounded-lg">
+                      <div className="text-white text-sm">Follow up with Michael Chen</div>
+                      <div className="text-gray-400 text-xs">Due: Tomorrow</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Notes Widget */}
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
+            <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
+              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <FileText className="h-5 w-5 text-purple-400" />
+                    <h3 className="font-semibold text-white text-lg">Notes</h3>
+                    <span className="bg-purple-600 text-white text-sm px-3 py-1 rounded-full">4</span>
+                  </div>
+                  <button 
+                    onClick={() => setNotesExpanded(!notesExpanded)}
+                    className="p-2 hover:bg-gray-600 rounded-lg transition-colors"
+                  >
+                    {notesExpanded ? <ChevronDown className="h-4 w-4 text-gray-400" /> : <ChevronUp className="h-4 w-4 text-gray-400" />}
+                  </button>
+                </div>
+              </div>
+              {notesExpanded && (
+                <div className="p-4 bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl">
+                  <div className="space-y-3">
+                    <div className="bg-gradient-to-r from-gray-700 to-gray-800 p-4 rounded-lg">
+                      <div className="text-white text-sm">Key decision makers identified</div>
+                      <div className="text-gray-400 text-xs">Aug 15, 2025</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Side - Company Insights, New Prospects, Activities */}
+        <div className="flex-1 p-3 overflow-y-auto">
           {/* Company Insights */}
           <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
             <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
