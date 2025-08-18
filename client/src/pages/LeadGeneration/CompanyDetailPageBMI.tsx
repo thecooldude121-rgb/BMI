@@ -785,6 +785,10 @@ const CompanyDetailPageBMI: React.FC = () => {
         </div>
       </div>
     </div>
+    </div>
+    </div>
+    </div>
+    </div>
   );
 };
 
