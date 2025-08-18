@@ -709,38 +709,36 @@ const CompanyDetailPageBMI: React.FC = () => {
             </div>
           </div>
         </div>
-
-        {/* Main Content Area */}
-        <div className="flex-1 p-3">
-          {/* Company Insights Widget */}
-          <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
-            <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
-              {/* Widget Header */}
-              <div className="p-6 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <TrendingUp className="h-5 w-5 text-cyan-400" />
-                    <h2 className="text-lg font-semibold text-white">Company Insights</h2>
-                    <span className="bg-cyan-600 text-white text-xs px-2 py-1 rounded-full">AI Powered</span>
-                    <span className="bg-green-600 text-white text-xs px-2 py-1 rounded-full">Live Data</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <span className="text-xs text-gray-400">Last updated: 2 min ago</span>
-                    <Settings className="h-4 w-4 text-gray-400 cursor-pointer hover:text-cyan-400 transition-colors" />
-                    <button 
-                      onClick={() => setInsightsExpanded(!insightsExpanded)}
-                      className="p-1 rounded hover:bg-gray-600 transition-colors"
-                      data-testid="toggle-insights"
-                    >
-                      {insightsExpanded ? (
-                        <ChevronUp className="h-4 w-4 text-gray-400" />
-                      ) : (
-                        <ChevronDown className="h-4 w-4 text-gray-400" />
-                      )}
-                    </button>
+      </div>
+    </div>
+  );
+};
+                {/* Widget Header */}
+                <div className="p-6 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <TrendingUp className="h-5 w-5 text-cyan-400" />
+                      <h2 className="text-lg font-semibold text-white">Company Insights</h2>
+                      <span className="bg-cyan-600 text-white text-xs px-2 py-1 rounded-full">AI Powered</span>
+                      <span className="bg-green-600 text-white text-xs px-2 py-1 rounded-full">Live Data</span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <span className="text-xs text-gray-400">Last updated: 2 min ago</span>
+                      <Settings className="h-4 w-4 text-gray-400 cursor-pointer hover:text-cyan-400 transition-colors" />
+                      <button 
+                        onClick={() => setInsightsExpanded(!insightsExpanded)}
+                        className="p-1 rounded hover:bg-gray-600 transition-colors"
+                        data-testid="toggle-insights"
+                      >
+                        {insightsExpanded ? (
+                          <ChevronUp className="h-4 w-4 text-gray-400" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4 text-gray-400" />
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
 
               {insightsExpanded && (
                 <div className="p-6 bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl">
@@ -1307,8 +1305,6 @@ const CompanyDetailPageBMI: React.FC = () => {
             </div>
           </div>
         </div>
-
-
       </div>
     </div>
   );
