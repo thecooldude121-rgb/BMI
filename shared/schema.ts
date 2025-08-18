@@ -1753,7 +1753,7 @@ export const employees = pgTable("employees", {
   status: employeeStatusEnum("status").notNull().default('active'),
   
   // Reporting Structure
-  managerId: uuid("manager_id").references(() => employees.id),
+  managerId: uuid("manager_id").references((): any => employees.id),
   workLocation: text("work_location").notNull().default('office'), // office, remote, hybrid
   timeZone: text("time_zone").default('UTC'),
   
@@ -2375,6 +2375,12 @@ export const insertTrainingEnrollmentSchema = createInsertSchema(trainingEnrollm
   updatedAt: true,
 });
 
+export const insertEmployeeSchema = createInsertSchema(employees).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // AI-Powered HRMS Types
 export type Employee = typeof employees.$inferSelect;
 export type InsertEmployee = z.infer<typeof insertEmployeeSchema>;
@@ -2668,8 +2674,8 @@ export const complianceTracking = pgTable("compliance_tracking", {
   id: uuid("id").primaryKey().defaultRandom(),
   leadId: uuid("lead_id").notNull().references(() => enrichedLeads.id, { onDelete: 'cascade' }),
   complianceStatus: complianceStatusEnum("compliance_status").notNull().default('compliant'),
-  gdprConsent: boolean("gdpr_consent").default(null),
-  ccpaConsent: boolean("ccpa_consent").default(null),
+  gdprConsent: boolean("gdpr_consent"),
+  ccpaConsent: boolean("ccpa_consent"),
   optInDate: timestamp("opt_in_date"),
   optOutDate: timestamp("opt_out_date"),
   dataRetentionExpiry: timestamp("data_retention_expiry"),
