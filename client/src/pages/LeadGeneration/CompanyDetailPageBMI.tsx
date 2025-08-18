@@ -85,6 +85,278 @@ const CompanyDetailPageBMI: React.FC = () => {
   const [insightsExpanded, setInsightsExpanded] = useState(true);
   const [activeInsightTab, setActiveInsightTab] = useState('ai-score');
   const [activeActivityTab, setActiveActivityTab] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = 5;
+  const contactsPerPage = 5;
+
+  // All contacts data (expanded to show data from both LinkedIn and local database)
+  const allContacts = [
+    // Page 1 contacts
+    {
+      name: "Sarah Mitchell",
+      title: "Chief Investment Officer",
+      department: "Investment Management", 
+      source: "LinkedIn Premium",
+      email: "s.mitchell@vgipartners.com",
+      phone: "+61 2 8267 8000",
+      connection: "2nd degree",
+      lastActivity: "2 hours ago",
+      verified: true
+    },
+    {
+      name: "David Chen",
+      title: "Senior Portfolio Manager",
+      department: "Equities Division",
+      source: "Company Database",
+      email: "d.chen@vgipartners.com", 
+      phone: "+61 2 8267 8015",
+      connection: "Direct contact",
+      lastActivity: "1 day ago",
+      verified: true
+    },
+    {
+      name: "Emma Rodriguez",
+      title: "ESG Investment Specialist",
+      department: "Sustainable Investing",
+      source: "LinkedIn Sales Navigator",
+      email: "e.rodriguez@vgipartners.com",
+      phone: "+61 2 8267 8023",
+      connection: "3rd degree", 
+      lastActivity: "3 days ago",
+      verified: false
+    },
+    {
+      name: "Michael Thompson",
+      title: "Head of Research",
+      department: "Investment Research",
+      source: "Company Database", 
+      email: "m.thompson@vgipartners.com",
+      phone: "+61 2 8267 8045",
+      connection: "Direct contact",
+      lastActivity: "5 days ago",
+      verified: true
+    },
+    {
+      name: "Jennifer Wong",
+      title: "Quantitative Analyst", 
+      department: "Research & Analytics",
+      source: "LinkedIn Premium",
+      email: "j.wong@vgipartners.com",
+      phone: "+61 2 8267 8067",
+      connection: "2nd degree",
+      lastActivity: "1 week ago",
+      verified: true
+    },
+    // Page 2 contacts
+    {
+      name: "Robert Anderson",
+      title: "Senior Fund Manager",
+      department: "Investment Management",
+      source: "LinkedIn Sales Navigator",
+      email: "r.anderson@vgipartners.com",
+      phone: "+61 2 8267 8071",
+      connection: "1st degree",
+      lastActivity: "2 days ago",
+      verified: true
+    },
+    {
+      name: "Lisa Zhang",
+      title: "Risk Management Director",
+      department: "Risk & Compliance", 
+      source: "Company Database",
+      email: "l.zhang@vgipartners.com",
+      phone: "+61 2 8267 8089",
+      connection: "Direct contact",
+      lastActivity: "4 hours ago",
+      verified: true
+    },
+    {
+      name: "James Wilson",
+      title: "Client Relationship Manager",
+      department: "Client Services",
+      source: "LinkedIn Premium",
+      email: "j.wilson@vgipartners.com",
+      phone: "+61 2 8267 8092",
+      connection: "2nd degree",
+      lastActivity: "1 day ago",
+      verified: true
+    },
+    {
+      name: "Maria Santos",
+      title: "Investment Analyst",
+      department: "Investment Research",
+      source: "LinkedIn Sales Navigator",
+      email: "m.santos@vgipartners.com",
+      phone: "+61 2 8267 8105",
+      connection: "3rd degree",
+      lastActivity: "6 days ago",
+      verified: false
+    },
+    {
+      name: "Thomas Lee",
+      title: "Portfolio Operations Manager",
+      department: "Operations",
+      source: "Company Database",
+      email: "t.lee@vgipartners.com",
+      phone: "+61 2 8267 8118",
+      connection: "Direct contact",
+      lastActivity: "3 days ago",
+      verified: true
+    },
+    // Page 3 contacts
+    {
+      name: "Alexandra Johnson",
+      title: "Senior Investment Advisor",
+      department: "Client Advisory",
+      source: "LinkedIn Premium",
+      email: "a.johnson@vgipartners.com",
+      phone: "+61 2 8267 8125",
+      connection: "2nd degree",
+      lastActivity: "5 hours ago",
+      verified: true
+    },
+    {
+      name: "Kevin O'Connor",
+      title: "Head of Trading",
+      department: "Trading & Execution",
+      source: "Company Database",
+      email: "k.oconnor@vgipartners.com",
+      phone: "+61 2 8267 8139",
+      connection: "Direct contact",
+      lastActivity: "1 hour ago",
+      verified: true
+    },
+    {
+      name: "Rachel Kim",
+      title: "Compliance Officer",
+      department: "Risk & Compliance",
+      source: "LinkedIn Sales Navigator",
+      email: "r.kim@vgipartners.com",
+      phone: "+61 2 8267 8142",
+      connection: "3rd degree",
+      lastActivity: "2 weeks ago",
+      verified: false
+    },
+    {
+      name: "Daniel Martinez",
+      title: "Technology Director",
+      department: "Information Technology",
+      source: "LinkedIn Premium",
+      email: "d.martinez@vgipartners.com",
+      phone: "+61 2 8267 8156",
+      connection: "1st degree",
+      lastActivity: "4 days ago",
+      verified: true
+    },
+    {
+      name: "Sophie Turner",
+      title: "Marketing Manager",
+      department: "Marketing & Communications",
+      source: "Company Database",
+      email: "s.turner@vgipartners.com",
+      phone: "+61 2 8267 8163",
+      connection: "Direct contact",
+      lastActivity: "1 week ago",
+      verified: true
+    },
+    // Page 4 contacts
+    {
+      name: "Andrew Phillips",
+      title: "Senior Research Analyst",
+      department: "Investment Research",
+      source: "LinkedIn Sales Navigator",
+      email: "a.phillips@vgipartners.com",
+      phone: "+61 2 8267 8177",
+      connection: "2nd degree",
+      lastActivity: "3 hours ago",
+      verified: true
+    },
+    {
+      name: "Catherine Brown",
+      title: "Human Resources Director",
+      department: "Human Resources",
+      source: "Company Database",
+      email: "c.brown@vgipartners.com",
+      phone: "+61 2 8267 8184",
+      connection: "Direct contact",
+      lastActivity: "2 days ago",
+      verified: true
+    },
+    {
+      name: "Nathan Davis",
+      title: "Alternative Investments Manager",
+      department: "Alternative Investments",
+      source: "LinkedIn Premium",
+      email: "n.davis@vgipartners.com",
+      phone: "+61 2 8267 8191",
+      connection: "3rd degree",
+      lastActivity: "1 week ago",
+      verified: false
+    },
+    {
+      name: "Victoria Garcia",
+      title: "Financial Controller",
+      department: "Finance & Accounting",
+      source: "LinkedIn Sales Navigator",
+      email: "v.garcia@vgipartners.com",
+      phone: "+61 2 8267 8205",
+      connection: "2nd degree",
+      lastActivity: "5 days ago",
+      verified: true
+    },
+    {
+      name: "Benjamin Clark",
+      title: "Investment Operations Analyst",
+      department: "Operations",
+      source: "Company Database",
+      email: "b.clark@vgipartners.com",
+      phone: "+61 2 8267 8212",
+      connection: "Direct contact",
+      lastActivity: "8 hours ago",
+      verified: true
+    },
+    // Page 5 contacts
+    {
+      name: "Isabella Rodriguez",
+      title: "Client Services Manager",
+      department: "Client Services",
+      source: "LinkedIn Premium",
+      email: "i.rodriguez@vgipartners.com",
+      phone: "+61 2 8267 8229",
+      connection: "1st degree",
+      lastActivity: "6 hours ago",
+      verified: true
+    },
+    {
+      name: "Christopher Moore",
+      title: "Legal Counsel",
+      department: "Legal & Compliance",
+      source: "Company Database",
+      email: "c.moore@vgipartners.com",
+      phone: "+61 2 8267 8236",
+      connection: "Direct contact",
+      lastActivity: "3 days ago",
+      verified: true
+    },
+    {
+      name: "Olivia White",
+      title: "Data Analyst",
+      department: "Research & Analytics",
+      source: "LinkedIn Sales Navigator",
+      email: "o.white@vgipartners.com",
+      phone: "+61 2 8267 8243",
+      connection: "2nd degree",
+      lastActivity: "4 days ago",
+      verified: true
+    }
+  ];
+
+  // Get current page contacts
+  const getCurrentPageContacts = () => {
+    const startIndex = (currentPage - 1) * contactsPerPage;
+    const endIndex = startIndex + contactsPerPage;
+    return allContacts.slice(startIndex, endIndex);
+  };
 
   // Company data
   const companyData: CompanyData = {
@@ -1016,7 +1288,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                     <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">Live Data</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <span className="text-xs text-gray-400">23 contacts found</span>
+                    <span className="text-xs text-gray-400">{allContacts.length} contacts found</span>
                     <Settings className="h-4 w-4 text-gray-400 cursor-pointer hover:text-blue-400 transition-colors" />
                   </div>
                 </div>
@@ -1025,63 +1297,7 @@ const CompanyDetailPageBMI: React.FC = () => {
               <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl p-4">
                 {/* Prospects List */}
                 <div className="space-y-3">
-                  {[
-                    {
-                      name: "Sarah Mitchell",
-                      title: "Chief Investment Officer",
-                      department: "Investment Management",
-                      source: "LinkedIn Premium",
-                      email: "s.mitchell@vgipartners.com",
-                      phone: "+61 2 8267 8000",
-                      connection: "2nd degree",
-                      lastActivity: "2 hours ago",
-                      verified: true
-                    },
-                    {
-                      name: "David Chen",
-                      title: "Senior Portfolio Manager",
-                      department: "Equities Division",
-                      source: "Company Database",
-                      email: "d.chen@vgipartners.com",
-                      phone: "+61 2 8267 8015",
-                      connection: "Direct contact",
-                      lastActivity: "1 day ago",
-                      verified: true
-                    },
-                    {
-                      name: "Emma Rodriguez",
-                      title: "ESG Investment Specialist",
-                      department: "Sustainable Investing",
-                      source: "LinkedIn Sales Navigator",
-                      email: "e.rodriguez@vgipartners.com",
-                      phone: "+61 2 8267 8023",
-                      connection: "3rd degree",
-                      lastActivity: "3 days ago",
-                      verified: false
-                    },
-                    {
-                      name: "Michael Thompson",
-                      title: "Head of Research",
-                      department: "Investment Research",
-                      source: "Company Database",
-                      email: "m.thompson@vgipartners.com",
-                      phone: "+61 2 8267 8045",
-                      connection: "Direct contact",
-                      lastActivity: "5 days ago",
-                      verified: true
-                    },
-                    {
-                      name: "Jennifer Wong",
-                      title: "Quantitative Analyst",
-                      department: "Research & Analytics",
-                      source: "LinkedIn Premium",
-                      email: "j.wong@vgipartners.com",
-                      phone: "+61 2 8267 8067",
-                      connection: "2nd degree",
-                      lastActivity: "1 week ago",
-                      verified: true
-                    }
-                  ].map((contact, index) => (
+                  {getCurrentPageContacts().map((contact, index) => (
                     <div key={index} className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600 hover:border-gray-500 transition-colors">
                       <div className="flex items-start justify-between">
                         <div className="flex items-start space-x-3 flex-1">
@@ -1146,14 +1362,39 @@ const CompanyDetailPageBMI: React.FC = () => {
                 {/* Pagination */}
                 <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-600">
                   <div className="text-sm text-gray-400">
-                    Showing 1-5 of 23 contacts
+                    Showing {((currentPage - 1) * contactsPerPage) + 1}-{Math.min(currentPage * contactsPerPage, allContacts.length)} of {allContacts.length} contacts
                   </div>
                   <div className="flex items-center space-x-2">
-                    <button className="bg-gray-600 hover:bg-gray-700 text-white text-sm px-3 py-1 rounded transition-colors disabled:opacity-50" disabled>
+                    <button 
+                      className="bg-gray-600 hover:bg-gray-700 text-white text-sm px-3 py-1 rounded transition-colors disabled:opacity-50" 
+                      disabled={currentPage === 1}
+                      onClick={() => setCurrentPage(currentPage - 1)}
+                    >
                       Previous
                     </button>
-                    <span className="text-sm text-gray-300">Page 1 of 5</span>
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 rounded transition-colors">
+                    
+                    {/* Page Numbers */}
+                    <div className="flex items-center space-x-1">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                        <button
+                          key={pageNum}
+                          className={`w-8 h-8 text-sm rounded transition-colors ${
+                            currentPage === pageNum
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-gray-600 hover:bg-gray-700 text-gray-300'
+                          }`}
+                          onClick={() => setCurrentPage(pageNum)}
+                        >
+                          {pageNum}
+                        </button>
+                      ))}
+                    </div>
+                    
+                    <button 
+                      className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 rounded transition-colors disabled:opacity-50"
+                      disabled={currentPage === totalPages}
+                      onClick={() => setCurrentPage(currentPage + 1)}
+                    >
                       Next
                     </button>
                   </div>
