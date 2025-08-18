@@ -610,7 +610,7 @@ const CompanyDiscovery: React.FC = () => {
               <div className="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
                 <div className="flex" style={{ minWidth: `${(visibleColumns.length - 1) * 150}px` }}>
                   {visibleColumns.filter(col => col.key !== 'name').map((column) => (
-                    <div key={column.key} className="flex-shrink-0 px-4 py-3 border-r border-gray-200 last:border-r-0" style={{ minWidth: column.minWidth || '150px' }}>
+                    <div key={column.key} className="flex-shrink-0 px-4 py-3 border-r border-gray-200 last:border-r-0" style={{ width: column.minWidth || '150px', minWidth: column.minWidth || '150px' }}>
                       <div className="flex items-center space-x-1 text-xs font-medium text-gray-600 uppercase tracking-wider">
                         <span>{column.label}</span>
                         {column.sortable && (
@@ -631,7 +631,7 @@ const CompanyDiscovery: React.FC = () => {
                     <div key={`scrollable-${company.id}`} className="hover:bg-gray-50 transition-colors hover-lift cursor-pointer">
                       <div className="flex" style={{ minWidth: `${(visibleColumns.length - 1) * 150}px` }}>
                         {visibleColumns.filter(col => col.key !== 'name').map((column) => (
-                          <div key={column.key} className="flex-shrink-0 px-4 py-4 border-r border-gray-200 last:border-r-0" style={{ minWidth: column.minWidth || '150px' }}>
+                          <div key={column.key} className="flex-shrink-0 px-4 py-4 border-r border-gray-200 last:border-r-0" style={{ width: column.minWidth || '150px', minWidth: column.minWidth || '150px' }}>
                             {renderColumnContent(column, company)}
                           </div>
                         ))}
