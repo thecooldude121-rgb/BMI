@@ -336,9 +336,9 @@ const CompanyDetailPageBMI: React.FC = () => {
 
 
       {/* Main Content */}
-      <div className="flex">
+      <div className="flex min-h-screen">
         {/* Left Sidebar - Company Information, Contacts, and Deals */}
-        <div className="w-80 border-r border-gray-700 bg-gray-900 h-screen overflow-y-auto">
+        <div className="w-80 border-r border-gray-700 bg-gray-900 min-h-screen overflow-y-auto">
           <div className="p-4 space-y-4">
             {/* Company Information Section */}
             <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
@@ -406,9 +406,9 @@ const CompanyDetailPageBMI: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl max-h-60 overflow-y-auto">
+                <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl overflow-y-auto">
                   <div className="p-4 space-y-3">
-                    {contacts.slice(0, 3).map((contact) => (
+                    {contacts.map((contact) => (
                       <div key={contact.id} className="bg-gradient-to-r from-gray-700 to-gray-800 p-3 rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-200 shadow-lg border border-gray-600 hover:shadow-xl hover:border-blue-500/30">
                         <div className="flex items-center space-x-3">
                           <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-sm font-bold text-white shadow-lg">
@@ -450,7 +450,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl h-40 overflow-y-auto">
+                <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl overflow-y-auto">
                   <div className="p-4 h-full flex items-center justify-center">
                     <div className="text-center">
                       <div className="w-12 h-12 bg-gradient-to-br from-green-600 to-green-800 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
@@ -474,7 +474,7 @@ const CompanyDetailPageBMI: React.FC = () => {
         </div>
 
         {/* Right Sidebar - Tasks, Notes, and Company Insights */}
-        <div className="flex-1 bg-gray-900 h-screen overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 bg-gray-900 min-h-screen overflow-y-auto p-4 space-y-4">
 
           {/* Tasks Widget - Full Size with Internal Scroll */}
           <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
@@ -492,7 +492,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl max-h-80 overflow-y-auto">
+              <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl overflow-y-auto">
                 <div className="p-4 space-y-3">
                   {[
                     { id: 1, title: 'Follow up on proposal', description: 'Send detailed follow-up email about the product proposal discussed in last meeting', status: 'pending', dueDate: 'Today', priority: 'high' },
@@ -550,7 +550,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl h-60 overflow-y-auto">
+              <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl overflow-y-auto">
                 <div className="p-6 h-full flex items-center justify-center">
                   <div className="text-center">
                     <div className="w-16 h-16 bg-gradient-to-br from-orange-600 to-orange-800 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
@@ -680,7 +680,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                           <h4 className="text-white font-medium text-sm">Latest News</h4>
                           <span className="text-xs text-gray-400">Live Sources</span>
                         </div>
-                        <div className="space-y-2 max-h-40 overflow-y-auto">
+                        <div className="space-y-2 overflow-y-auto">
                           {[
                             { 
                               title: `${selectedCompany.name} Product Launch`, 
