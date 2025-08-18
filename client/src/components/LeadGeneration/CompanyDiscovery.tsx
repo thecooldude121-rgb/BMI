@@ -580,8 +580,8 @@ const CompanyDiscovery: React.FC = () => {
               {/* Frozen Content */}
               <div ref={frozenScrollRef} className="overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
                 <div className="divide-y divide-gray-200">
-                  {paginatedCompanies.map((company) => (
-                    <div key={`frozen-${company.id}`} className="px-4 py-2.5 h-12 hover:bg-gray-50 transition-colors hover-lift cursor-pointer flex items-center">
+                  {paginatedCompanies.map((company, index) => (
+                    <div key={`frozen-${company.id}`} className="px-4 py-2.5 h-12 hover:bg-gray-50 transition-colors hover-lift cursor-pointer flex items-center table-row-with-tooltip">
                       <div className="flex items-center w-full">
                         <input
                           type="checkbox"
@@ -594,8 +594,8 @@ const CompanyDiscovery: React.FC = () => {
                             {company.logo}
                           </div>
                           <div className="min-w-0 flex-1 overflow-hidden">
-                            <div className="text-sm font-medium text-gray-900 truncate-cell" data-tooltip={company.name}>{company.name}</div>
-                            <div className="text-xs text-gray-500 truncate-cell" data-tooltip={company.domain}>{company.domain}</div>
+                            <div className={`text-sm font-medium text-gray-900 truncate-cell ${index < 2 ? 'tooltip-below' : ''}`} data-tooltip={company.name}>{company.name}</div>
+                            <div className={`text-xs text-gray-500 truncate-cell ${index < 2 ? 'tooltip-below' : ''}`} data-tooltip={company.domain}>{company.domain}</div>
                           </div>
                         </div>
                       </div>
@@ -628,12 +628,14 @@ const CompanyDiscovery: React.FC = () => {
               {/* Scrollable Content */}
               <div ref={scrollableScrollRef} className="overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
                 <div className="divide-y divide-gray-200">
-                  {paginatedCompanies.map((company) => (
-                    <div key={`scrollable-${company.id}`} className="h-12 hover:bg-gray-50 transition-colors hover-lift cursor-pointer flex items-center">
+                  {paginatedCompanies.map((company, index) => (
+                    <div key={`scrollable-${company.id}`} className="h-12 hover:bg-gray-50 transition-colors hover-lift cursor-pointer flex items-center table-row-with-tooltip">
                       <div className="flex h-full" style={{ minWidth: `${(visibleColumns.length - 1) * 150}px` }}>
                         {visibleColumns.filter(col => col.key !== 'name').map((column) => (
                           <div key={column.key} className="flex-shrink-0 px-4 py-2.5 border-r border-gray-200 last:border-r-0 flex items-center h-full overflow-hidden" style={{ width: column.minWidth || '150px', minWidth: column.minWidth || '150px' }}>
-                            {renderColumnContent(column, company)}
+                            <div className={index < 2 ? 'tooltip-below' : ''}>
+                              {renderColumnContent(column, company)}
+                            </div>
                           </div>
                         ))}
                       </div>
