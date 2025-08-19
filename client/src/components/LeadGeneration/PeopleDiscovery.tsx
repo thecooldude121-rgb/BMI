@@ -74,7 +74,7 @@ const PeopleDiscovery: React.FC = () => {
     { key: 'actions', label: 'Actions', width: '120px', minWidth: '120px', visible: true, sortable: false },
     { key: 'links', label: 'Links', width: '80px', minWidth: '80px', visible: true, sortable: false },
     { key: 'companySize', label: 'Company/Number of Employees', width: '240px', minWidth: '240px', visible: false, sortable: true },
-    { key: 'keywords', label: 'Keywords', width: '200px', minWidth: '200px', visible: false, sortable: false }
+    { key: 'keywords', label: 'Keywords', width: '280px', minWidth: '280px', visible: true, sortable: false }
   ]);
 
   // Fetch CRM Accounts as primary data source
@@ -106,19 +106,120 @@ const PeopleDiscovery: React.FC = () => {
   const people: PersonData[] = useMemo(() => {
     const peopleFromCompanies: PersonData[] = [];
     
-    // Sample employee data structure (this would come from actual employee data)
+    // Industry-specific SEO keywords mapping
+    const industryKeywords: { [key: string]: string[] } = {
+      'digital advertising': [
+        'programmatic advertising', 'real-time bidding', 'demand side platform', 'supply side platform', 
+        'ad exchange', 'native advertising', 'display advertising', 'video advertising', 'mobile advertising',
+        'retargeting campaigns', 'audience targeting', 'brand awareness', 'performance marketing', 'attribution modeling',
+        'viewability optimization', 'ad fraud prevention', 'cross-device tracking', 'location-based advertising',
+        'digital out of home', 'DOOH advertising', 'connected TV advertising', 'streaming advertising'
+      ],
+      'technology': [
+        'software development', 'cloud computing', 'artificial intelligence', 'machine learning', 'data analytics',
+        'cybersecurity', 'blockchain technology', 'API development', 'mobile app development', 'web development',
+        'DevOps', 'agile methodology', 'microservices', 'containerization', 'database management',
+        'user experience design', 'digital transformation', 'enterprise software', 'SaaS solutions', 'IoT development'
+      ],
+      'marketing': [
+        'digital marketing', 'content marketing', 'social media marketing', 'email marketing', 'SEO optimization',
+        'PPC advertising', 'conversion optimization', 'marketing automation', 'lead generation', 'brand management',
+        'influencer marketing', 'affiliate marketing', 'growth hacking', 'customer acquisition', 'retention marketing',
+        'marketing analytics', 'customer journey mapping', 'omnichannel marketing', 'video marketing', 'viral marketing'
+      ],
+      'finance': [
+        'financial services', 'investment management', 'risk assessment', 'portfolio management', 'financial planning',
+        'accounting software', 'fintech solutions', 'payment processing', 'cryptocurrency', 'blockchain finance',
+        'regulatory compliance', 'audit services', 'tax optimization', 'wealth management', 'insurance technology',
+        'credit scoring', 'lending platforms', 'robo-advisors', 'financial analytics', 'banking solutions'
+      ],
+      'healthcare': [
+        'healthcare technology', 'telemedicine', 'electronic health records', 'medical devices', 'pharmaceutical',
+        'clinical research', 'patient care', 'health analytics', 'medical software', 'healthcare compliance',
+        'digital health', 'wellness platforms', 'medical imaging', 'laboratory services', 'healthcare data',
+        'patient engagement', 'medical AI', 'remote monitoring', 'healthcare cybersecurity', 'precision medicine'
+      ]
+    };
+
+    // Sample employee data with industry-matched keywords
     const sampleEmployees = [
-      { name: 'Abhishek Pathak', jobTitle: 'Sr. Manager of Sales', location: 'New Delhi, India', keywords: ['location based advertising solutions'] },
-      { name: 'Jose Oliveira', jobTitle: 'Sales Executive', location: 'Fortaleza, Brazil', keywords: ['digital out of home'] },
-      { name: 'Walter Lins', jobTitle: 'Director', location: 'Recife, Brazil', keywords: ['digital out of home'] },
-      { name: 'Jennifer Araújo', jobTitle: 'Financial Controller', location: 'Belo Horizonte, Brazil', keywords: ['digital out of home'] },
-      { name: 'Kalpna Kumari', jobTitle: 'HR/admin/operation', location: 'New Delhi, India', keywords: ['location based advertising solutions'] },
-      { name: 'Mohd Anwer', jobTitle: 'Full Stack Developer', location: 'New Delhi, India', keywords: ['location based advertising solutions'] },
-      { name: 'Rodrigo Rodrigues', jobTitle: 'Chief Marketing Officer', location: 'São Paulo, Brazil', keywords: ['digital out of home'] },
-      { name: 'Klaus Alpperspach', jobTitle: 'Salesperson', location: 'Recife, Brazil', keywords: ['digital out of home'] },
-      { name: 'Renan Oliveira', jobTitle: 'Administrative Assistant', location: 'São Paulo, Brazil', keywords: ['digital out of home'] },
-      { name: 'Manoj Sharma', jobTitle: 'Android Developer', location: 'New Delhi, India', keywords: ['location based advertising solutions'] },
-      { name: 'Ricardo Pinto', jobTitle: 'Gerente de Inteligência Comercial', location: 'São Paulo, Brazil', keywords: ['digital out of home'] }
+      { 
+        name: 'Abhishek Pathak', 
+        jobTitle: 'Sr. Manager of Sales', 
+        location: 'New Delhi, India', 
+        industry: 'digital advertising',
+        keywords: industryKeywords['digital advertising'].slice(0, 8)
+      },
+      { 
+        name: 'Jose Oliveira', 
+        jobTitle: 'Sales Executive', 
+        location: 'Fortaleza, Brazil', 
+        industry: 'digital advertising',
+        keywords: industryKeywords['digital advertising'].slice(8, 16)
+      },
+      { 
+        name: 'Walter Lins', 
+        jobTitle: 'Director', 
+        location: 'Recife, Brazil', 
+        industry: 'digital advertising',
+        keywords: industryKeywords['digital advertising'].slice(16, 22)
+      },
+      { 
+        name: 'Jennifer Araújo', 
+        jobTitle: 'Financial Controller', 
+        location: 'Belo Horizonte, Brazil', 
+        industry: 'finance',
+        keywords: industryKeywords['finance'].slice(0, 8)
+      },
+      { 
+        name: 'Kalpna Kumari', 
+        jobTitle: 'HR/admin/operation', 
+        location: 'New Delhi, India', 
+        industry: 'technology',
+        keywords: industryKeywords['technology'].slice(0, 6)
+      },
+      { 
+        name: 'Mohd Anwer', 
+        jobTitle: 'Full Stack Developer', 
+        location: 'New Delhi, India', 
+        industry: 'technology',
+        keywords: industryKeywords['technology'].slice(6, 12)
+      },
+      { 
+        name: 'Rodrigo Rodrigues', 
+        jobTitle: 'Chief Marketing Officer', 
+        location: 'São Paulo, Brazil', 
+        industry: 'marketing',
+        keywords: industryKeywords['marketing'].slice(0, 8)
+      },
+      { 
+        name: 'Klaus Alpperspach', 
+        jobTitle: 'Salesperson', 
+        location: 'Recife, Brazil', 
+        industry: 'marketing',
+        keywords: industryKeywords['marketing'].slice(8, 14)
+      },
+      { 
+        name: 'Renan Oliveira', 
+        jobTitle: 'Administrative Assistant', 
+        location: 'São Paulo, Brazil', 
+        industry: 'technology',
+        keywords: industryKeywords['technology'].slice(12, 18)
+      },
+      { 
+        name: 'Manoj Sharma', 
+        jobTitle: 'Android Developer', 
+        location: 'New Delhi, India', 
+        industry: 'technology',
+        keywords: industryKeywords['technology'].slice(18, 20).concat(industryKeywords['technology'].slice(0, 2))
+      },
+      { 
+        name: 'Ricardo Pinto', 
+        jobTitle: 'Gerente de Inteligência Comercial', 
+        location: 'São Paulo, Brazil', 
+        industry: 'marketing',
+        keywords: industryKeywords['marketing'].slice(14, 20)
+      }
     ];
 
     // Create people from companies and their employees
@@ -145,9 +246,30 @@ const PeopleDiscovery: React.FC = () => {
       });
     });
 
-    // Add CRM contacts
-    const crmPeople = crmContacts.map((contact: any) => {
+    // Add CRM contacts with industry-specific keywords
+    const crmPeople = crmContacts.map((contact: any, index: number) => {
       const company = crmAccounts.find((acc: any) => acc.id === contact.accountId);
+      
+      // Determine industry based on company type or job title
+      let industry = 'technology'; // default
+      const jobTitle = (contact.title || '').toLowerCase();
+      const companyName = (company?.name || '').toLowerCase();
+      
+      if (jobTitle.includes('marketing') || jobTitle.includes('sales') || companyName.includes('marketing')) {
+        industry = 'marketing';
+      } else if (jobTitle.includes('finance') || jobTitle.includes('accounting') || companyName.includes('finance')) {
+        industry = 'finance';
+      } else if (jobTitle.includes('health') || companyName.includes('health') || companyName.includes('medical')) {
+        industry = 'healthcare';
+      } else if (jobTitle.includes('advertising') || companyName.includes('advertising') || companyName.includes('media')) {
+        industry = 'digital advertising';
+      }
+      
+      // Get relevant keywords for the industry
+      const relevantKeywords = industryKeywords[industry] || industryKeywords['technology'];
+      const startIndex = (index * 6) % relevantKeywords.length;
+      const selectedKeywords = relevantKeywords.slice(startIndex, startIndex + 6);
+      
       return {
         id: contact.id,
         name: contact.name || 'Unknown Contact',
@@ -159,7 +281,7 @@ const PeopleDiscovery: React.FC = () => {
         phone: contact.phone || '+1 (555) 000-0000',
         linkedinUrl: contact.linkedinUrl || `https://linkedin.com/in/${contact.name?.toLowerCase().replace(/\s+/g, '-')}`,
         companyEmployeeCount: company?.employeeCount || '1-50',
-        keywords: company?.keywords || ['Business'],
+        keywords: selectedKeywords,
         accessibleEmail: true,
         accessiblePhone: true
       };
@@ -322,20 +444,28 @@ const PeopleDiscovery: React.FC = () => {
 
       case 'keywords':
         return (
-          <div className="flex flex-wrap gap-1 min-w-0">
-            {person.keywords.slice(0, 2).map((keyword, index) => (
-              <span 
-                key={index} 
-                className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full truncate max-w-20 flex-shrink-0"
-                title={keyword}
-              >
-                {keyword}
-              </span>
-            ))}
-            {person.keywords.length > 2 && (
-              <span className="bg-gray-100 text-gray-500 text-xs px-2 py-1 rounded-full flex-shrink-0">
-                +{person.keywords.length - 2}
-              </span>
+          <div className="min-w-0" title={person.keywords.join(', ')}>
+            <div className="flex flex-wrap gap-1">
+              {person.keywords.slice(0, 3).map((keyword, index) => (
+                <span 
+                  key={index} 
+                  className="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full truncate max-w-24 flex-shrink-0 border border-blue-200"
+                  title={keyword}
+                >
+                  {keyword}
+                </span>
+              ))}
+              {person.keywords.length > 3 && (
+                <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full flex-shrink-0 font-medium">
+                  +{person.keywords.length - 3}
+                </span>
+              )}
+            </div>
+            {person.keywords.length > 3 && (
+              <div className="text-xs text-gray-500 mt-1 truncate">
+                {person.keywords.slice(3, 6).join(', ')}
+                {person.keywords.length > 6 && '...'}
+              </div>
             )}
           </div>
         );
