@@ -65,18 +65,18 @@ const PeopleDiscovery: React.FC = () => {
     };
   }, []);
 
-  // Define table columns with horizontal scroll support
+  // Define table columns with fixed widths for proper alignment
   const [columns, setColumns] = useState<TableColumn[]>([
-    { key: 'name', label: 'Name', width: 'col-span-3', minWidth: '250px', visible: true, sortable: true },
-    { key: 'jobTitle', label: 'Job Title', width: 'col-span-2', minWidth: '180px', visible: true, sortable: true },
-    { key: 'company', label: 'Company', width: 'col-span-2', minWidth: '150px', visible: true, sortable: true },
-    { key: 'location', label: 'Location', width: 'col-span-2', minWidth: '140px', visible: true, sortable: true },
-    { key: 'emails', label: 'Emails', width: 'col-span-2', minWidth: '180px', visible: true, sortable: false },
-    { key: 'phoneNumbers', label: 'Phone Numbers', width: 'col-span-2', minWidth: '150px', visible: false, sortable: false },
-    { key: 'actions', label: 'Actions', width: 'col-span-2', minWidth: '120px', visible: true, sortable: false },
-    { key: 'links', label: 'Links', width: 'col-span-1', minWidth: '100px', visible: true, sortable: false },
-    { key: 'companySize', label: 'Company/Number of Employees', width: 'col-span-2', minWidth: '200px', visible: false, sortable: true },
-    { key: 'keywords', label: 'Keywords', width: 'col-span-2', minWidth: '180px', visible: false, sortable: false }
+    { key: 'name', label: 'Name', width: '300px', minWidth: '300px', visible: true, sortable: true },
+    { key: 'jobTitle', label: 'Job Title', width: '200px', minWidth: '200px', visible: true, sortable: true },
+    { key: 'company', label: 'Company', width: '180px', minWidth: '180px', visible: true, sortable: true },
+    { key: 'location', label: 'Location', width: '160px', minWidth: '160px', visible: true, sortable: true },
+    { key: 'emails', label: 'Emails', width: '220px', minWidth: '220px', visible: true, sortable: false },
+    { key: 'phoneNumbers', label: 'Phone Numbers', width: '180px', minWidth: '180px', visible: false, sortable: false },
+    { key: 'actions', label: 'Actions', width: '120px', minWidth: '120px', visible: true, sortable: false },
+    { key: 'links', label: 'Links', width: '80px', minWidth: '80px', visible: true, sortable: false },
+    { key: 'companySize', label: 'Company/Number of Employees', width: '240px', minWidth: '240px', visible: false, sortable: true },
+    { key: 'keywords', label: 'Keywords', width: '200px', minWidth: '200px', visible: false, sortable: false }
   ]);
 
   // Fetch CRM Accounts as primary data source
@@ -496,74 +496,68 @@ const PeopleDiscovery: React.FC = () => {
 
       {/* Table */}
       <div className="flex-1 overflow-hidden bg-white">
-        <div className="h-full flex">
-          {/* Frozen columns (Name) */}
-          <div className="flex-shrink-0" style={{ width: '300px' }}>
-            {/* Header */}
-            <div className="bg-gray-50 border-b border-gray-200 h-12 flex items-center px-4">
-              <div className="flex items-center space-x-3">
-                <input
-                  type="checkbox"
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setSelectedPeople(paginatedPeople.map(p => p.id));
-                    } else {
-                      setSelectedPeople([]);
-                    }
-                  }}
-                  checked={selectedPeople.length === paginatedPeople.length && paginatedPeople.length > 0}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                <span className="text-sm font-medium text-gray-700">Name</span>
-              </div>
-            </div>
-            {/* Rows */}
-            <div className="h-full overflow-y-auto" ref={frozenScrollRef}>
-              {paginatedPeople.map((person) => (
-                <div key={person.id} className="border-b border-gray-100 h-16 flex items-center px-4 hover:bg-gray-50">
-                  <div className="flex items-center space-x-3 w-full min-w-0">
+        <div className="h-full">
+          {/* Table Header */}
+          <div className="bg-gray-50 border-b border-gray-200 h-12 flex items-center">
+            {visibleColumns.map((column) => (
+              <div 
+                key={column.key} 
+                className="flex-shrink-0 px-4 flex items-center border-r border-gray-200 last:border-r-0"
+                style={{ width: column.width }}
+              >
+                {column.key === 'name' && (
+                  <div className="flex items-center space-x-3">
                     <input
                       type="checkbox"
-                      checked={selectedPeople.includes(person.id)}
-                      onChange={() => togglePersonSelection(person.id)}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 flex-shrink-0"
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedPeople(paginatedPeople.map(p => p.id));
+                        } else {
+                          setSelectedPeople([]);
+                        }
+                      }}
+                      checked={selectedPeople.length === paginatedPeople.length && paginatedPeople.length > 0}
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                     />
-                    <div className="min-w-0 flex-1">
-                      {renderTableCell(person, { key: 'name' } as TableColumn)}
-                    </div>
+                    <span className="text-sm font-medium text-gray-700">{column.label}</span>
                   </div>
-                </div>
-              ))}
-            </div>
+                )}
+                {column.key !== 'name' && (
+                  <span className="text-sm font-medium text-gray-700">{column.label}</span>
+                )}
+              </div>
+            ))}
           </div>
 
-          {/* Scrollable columns */}
-          <div className="flex-1 overflow-x-auto">
-            {/* Header */}
-            <div className="bg-gray-50 border-b border-gray-200 h-12 flex items-center">
-              {visibleColumns.filter(col => col.key !== 'name').map((column) => (
-                <div 
-                  key={column.key} 
-                  className="flex-shrink-0 px-4 flex items-center"
-                  style={{ minWidth: column.minWidth }}
-                >
-                  <span className="text-sm font-medium text-gray-700">{column.label}</span>
-                </div>
-              ))}
-            </div>
-            {/* Rows */}
-            <div className="h-full overflow-y-auto" ref={scrollableScrollRef}>
+          {/* Table Body */}
+          <div className="flex-1 overflow-auto">
+            <div className="h-full">
               {paginatedPeople.map((person) => (
                 <div key={person.id} className="border-b border-gray-100 h-16 flex items-center hover:bg-gray-50">
-                  {visibleColumns.filter(col => col.key !== 'name').map((column) => (
+                  {visibleColumns.map((column) => (
                     <div 
                       key={column.key} 
-                      className="flex-shrink-0 px-4 flex items-center min-w-0"
-                      style={{ minWidth: column.minWidth }}
+                      className="flex-shrink-0 px-4 flex items-center border-r border-gray-100 last:border-r-0 min-w-0"
+                      style={{ width: column.width }}
                     >
-                      <div className="w-full min-w-0">
-                        {renderTableCell(person, column)}
-                      </div>
+                      {column.key === 'name' && (
+                        <div className="flex items-center space-x-3 w-full min-w-0">
+                          <input
+                            type="checkbox"
+                            checked={selectedPeople.includes(person.id)}
+                            onChange={() => togglePersonSelection(person.id)}
+                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 flex-shrink-0"
+                          />
+                          <div className="min-w-0 flex-1">
+                            {renderTableCell(person, column)}
+                          </div>
+                        </div>
+                      )}
+                      {column.key !== 'name' && (
+                        <div className="w-full min-w-0">
+                          {renderTableCell(person, column)}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
