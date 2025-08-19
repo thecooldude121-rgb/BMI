@@ -871,8 +871,9 @@ const CompanyDetailPageBMI: React.FC = () => {
       </div>
       {/* Main Content - With padding for both headers */}
       <div className="flex h-full bg-gray-50 pt-[176px]">
-        {/* Left Sidebar - All Widgets */}
-        <div className="w-80 bg-white border-r border-gray-200 overflow-y-auto">
+        {/* Left Sidebar - All Widgets - Hidden when viewing employees */}
+        {activeMainTab !== 'employees' && (
+          <div className="w-80 bg-white border-r border-gray-200 overflow-y-auto">
           <div className="p-3 space-y-3">
 
             {/* Company Information Widget */}
@@ -1075,10 +1076,11 @@ const CompanyDetailPageBMI: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
+          </div>
+        )}
 
-        {/* Main Content Area - Full Width */}
-        <div className="flex-1 p-3 bg-gray-50">
+        {/* Main Content Area - Full Width when employees tab, otherwise flex-1 */}
+        <div className={activeMainTab === 'employees' ? 'w-full p-3 bg-gray-50' : 'flex-1 p-3 bg-gray-50'}>
           {/* Overview Tab Content */}
           {activeMainTab === 'overview' && (
             <React.Fragment>
@@ -1862,9 +1864,9 @@ const CompanyDetailPageBMI: React.FC = () => {
             </React.Fragment>
           )}
 
-          {/* Employees Tab Content */}
+          {/* Employees Tab Content - Full Width */}
           {activeMainTab === 'employees' && (
-            <div className="mb-3 bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
               <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
                 <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-t-xl">
                   <div className="flex items-center justify-between">
