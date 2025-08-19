@@ -18,20 +18,20 @@ import PerformancePage from './PerformancePage';
 // Placeholder components for missing routes
 const LeavePage: React.FC = () => (
   <div className="p-8 text-center">
-    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Leave Management</h2>
-    <p className="text-gray-600 dark:text-gray-400">Coming soon - comprehensive leave management system</p>
+    <h2 className="text-2xl font-bold text-gray-900 mb-4">Leave Management</h2>
+    <p className="text-gray-600">Coming soon - comprehensive leave management system</p>
   </div>
 );
 
 const SettingsPlaceholder: React.FC = () => (
   <div className="p-8 max-w-4xl mx-auto">
-    <div className="bg-gradient-to-r from-slate-50 to-gray-50 dark:from-slate-800/50 dark:to-gray-800/50 rounded-xl p-8 border border-slate-200 dark:border-slate-700">
+    <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-xl p-8 border border-slate-200 shadow-lg">
       <div className="text-center">
         <Settings className="w-16 h-16 text-slate-500 mx-auto mb-4" />
-        <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+        <h2 className="text-2xl font-bold text-slate-900 mb-2">
           Enterprise Configuration
         </h2>
-        <p className="text-slate-700 dark:text-slate-300 mb-4">
+        <p className="text-slate-700 mb-4">
           Comprehensive HRMS settings, integrations, and system configuration
         </p>
       </div>
@@ -64,16 +64,16 @@ const HRMSModule: React.FC = () => {
   const activeSection = getActiveSection();
 
   return (
-    <div className="h-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-white dark:from-slate-900 dark:via-blue-900/10 dark:to-slate-800 flex">
+    <div className="h-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-white flex">
       {/* Collapsible Sidebar */}
       <motion.div
         initial={false}
         animate={{ width: sidebarCollapsed ? 80 : 280 }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm border-r border-slate-200 dark:border-slate-700 shadow-lg flex flex-col relative"
+        className="bg-white/95 backdrop-blur-sm border-r border-slate-200 shadow-lg flex flex-col relative"
       >
         {/* Sidebar Header */}
-        <div className="p-4 border-b border-slate-200 dark:border-slate-700">
+        <div className="p-4 border-b border-slate-200">
           <div className="flex items-center justify-between">
             <AnimatePresence mode="wait">
               {!sidebarCollapsed && (
@@ -88,10 +88,10 @@ const HRMSModule: React.FC = () => {
                     <Users className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-lg font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+                    <h1 className="text-lg font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
                       HRMS Platform
                     </h1>
-                    <p className="text-xs text-slate-600 dark:text-slate-400">AI-Powered</p>
+                    <p className="text-xs text-slate-600">AI-Powered</p>
                   </div>
                 </motion.div>
               )}
@@ -99,14 +99,14 @@ const HRMSModule: React.FC = () => {
             
             <motion.button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+              className="p-2 rounded-lg hover:bg-slate-100 transition-colors"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
               {sidebarCollapsed ? (
-                <ChevronRight className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                <ChevronRight className="w-4 h-4 text-slate-600" />
               ) : (
-                <ChevronLeft className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                <ChevronLeft className="w-4 h-4 text-slate-600" />
               )}
             </motion.button>
           </div>
@@ -124,15 +124,15 @@ const HRMSModule: React.FC = () => {
                   className={`
                     mx-2 mb-1 rounded-lg cursor-pointer transition-all duration-200
                     ${isActive 
-                      ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 shadow-sm border border-blue-200 dark:border-blue-800' 
-                      : 'hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                      ? 'bg-blue-50 text-blue-600 shadow-sm border border-blue-200' 
+                      : 'hover:bg-slate-50 text-slate-600 hover:text-slate-900'
                     }
                   `}
                   whileHover={{ x: 2 }}
                   whileTap={{ scale: 0.98 }}
                 >
                   <div className={`flex items-center ${sidebarCollapsed ? 'justify-center py-3' : 'px-3 py-2.5'}`}>
-                    <Icon className={`${sidebarCollapsed ? 'w-5 h-5' : 'w-4 h-4'} ${isActive ? 'text-blue-600 dark:text-blue-400' : ''}`} />
+                    <Icon className={`${sidebarCollapsed ? 'w-5 h-5' : 'w-4 h-4'} ${isActive ? 'text-blue-600' : ''}`} />
                     
                     <AnimatePresence mode="wait">
                       {!sidebarCollapsed && (
@@ -156,7 +156,7 @@ const HRMSModule: React.FC = () => {
         </div>
 
         {/* Status Indicators in Sidebar */}
-        <div className="p-4 border-t border-slate-200 dark:border-slate-700">
+        <div className="p-4 border-t border-slate-200">
           <AnimatePresence mode="wait">
             {!sidebarCollapsed ? (
               <motion.div
@@ -166,13 +166,13 @@ const HRMSModule: React.FC = () => {
                 transition={{ duration: 0.2 }}
                 className="space-y-2"
               >
-                <div className="flex items-center space-x-2 px-2 py-1 bg-green-50 dark:bg-green-900/20 rounded-md">
+                <div className="flex items-center space-x-2 px-2 py-1 bg-green-50 rounded-md">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-xs font-medium text-green-700 dark:text-green-300">System Online</span>
+                  <span className="text-xs font-medium text-green-700">System Online</span>
                 </div>
-                <div className="flex items-center space-x-2 px-2 py-1 bg-blue-50 dark:bg-blue-900/20 rounded-md">
-                  <Brain className="w-3 h-3 text-blue-600 dark:text-blue-400" />
-                  <span className="text-xs font-medium text-blue-700 dark:text-blue-300">AI Analytics</span>
+                <div className="flex items-center space-x-2 px-2 py-1 bg-blue-50 rounded-md">
+                  <Brain className="w-3 h-3 text-blue-600" />
+                  <span className="text-xs font-medium text-blue-700">AI Analytics</span>
                 </div>
               </motion.div>
             ) : (
@@ -183,7 +183,7 @@ const HRMSModule: React.FC = () => {
                 className="flex flex-col items-center space-y-2"
               >
                 <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                <Brain className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                <Brain className="w-4 h-4 text-blue-600" />
               </motion.div>
             )}
           </AnimatePresence>
@@ -193,27 +193,27 @@ const HRMSModule: React.FC = () => {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Main Header */}
-        <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm border-b border-slate-200 dark:border-slate-700 shadow-sm">
+        <div className="bg-white/95 backdrop-blur-sm border-b border-slate-200 shadow-sm">
           <div className="px-6 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
                   {activeSection.name}
                 </h1>
-                <div className="flex items-center space-x-2 text-slate-600 dark:text-slate-400">
+                <div className="flex items-center space-x-2 text-slate-600">
                   <Zap className="w-4 h-4 text-yellow-500" />
                   <span className="text-sm">{activeSection.description}</span>
                 </div>
               </div>
               
               <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-700 rounded-full">
+                <div className="flex items-center space-x-2 px-3 py-1.5 bg-slate-100 rounded-full">
                   <Globe className="w-3 h-3 text-green-500" />
-                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Enterprise</span>
+                  <span className="text-xs font-medium text-slate-700">Enterprise</span>
                 </div>
-                <div className="flex items-center space-x-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-700 rounded-full">
+                <div className="flex items-center space-x-2 px-3 py-1.5 bg-slate-100 rounded-full">
                   <Shield className="w-3 h-3 text-blue-500" />
-                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300">SOC 2</span>
+                  <span className="text-xs font-medium text-slate-700">SOC 2</span>
                 </div>
               </div>
             </div>
