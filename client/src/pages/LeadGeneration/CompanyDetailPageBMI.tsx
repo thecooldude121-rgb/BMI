@@ -573,7 +573,7 @@ const CompanyDetailPageBMI: React.FC = () => {
         </div>
       </div>
       {/* Main Content - With padding for fixed header */}
-      <div className="flex h-full bg-gray-900 pt-28">
+      <div className="flex h-full bg-gray-900 pt-36">
         {/* Left Sidebar - All Widgets */}
         <div className="w-80 bg-gray-900 border-r border-gray-700 overflow-y-auto">
           <div className="p-3 space-y-3">
