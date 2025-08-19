@@ -173,6 +173,18 @@ const CompanyDetailPageBMI: React.FC = () => {
     includeContactInfo: true,
     includeVerifiedOnly: false
   });
+
+  // Activity logging state
+  const [showLogActivityModal, setShowLogActivityModal] = useState(false);
+  const [activityType, setActivityType] = useState<'email' | 'call' | 'meeting' | 'task' | 'note'>('email');
+  const [activityForm, setActivityForm] = useState({
+    title: '',
+    description: '',
+    contact: '',
+    date: new Date().toISOString().split('T')[0],
+    time: new Date().toTimeString().split(' ')[0].substring(0, 5),
+    status: 'completed' as 'completed' | 'scheduled' | 'pending'
+  });
   
   // Deal management state - only list view available
   const [dealViewMode, setDealViewMode] = useState<'list'>('list');
@@ -2880,8 +2892,13 @@ const CompanyDetailPageBMI: React.FC = () => {
                     </div>
                     <div className="flex items-center space-x-3">
                       <span className="text-xs text-gray-500">Last activity: 2 hours ago</span>
-                      <button className="p-1 text-gray-400 hover:text-purple-600 hover:scale-110 transition-all duration-200">
+                      <button 
+                        onClick={() => setShowLogActivityModal(true)}
+                        className="flex items-center space-x-2 px-3 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 hover:scale-105 transition-all duration-200 active:scale-95"
+                        data-testid="log-activity-button"
+                      >
                         <Plus className="h-4 w-4" />
+                        <span>Log Activity</span>
                       </button>
                     </div>
                   </div>
@@ -3213,6 +3230,227 @@ const CompanyDetailPageBMI: React.FC = () => {
                   data-testid="confirm-export"
                 >
                   Export Data
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Log Activity Modal */}
+      {showLogActivityModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" data-testid="log-activity-modal">
+          <div className="bg-white rounded-xl shadow-2xl border border-gray-200 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900">Log New Activity</h3>
+                <button
+                  onClick={() => setShowLogActivityModal(false)}
+                  className="p-2 text-gray-400 hover:text-gray-600 hover:scale-110 transition-all duration-200 rounded-lg hover:bg-gray-100 active:scale-95"
+                  data-testid="close-log-activity-modal"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              {/* Activity Type Selection */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-3">Activity Type</label>
+                <div className="grid grid-cols-5 gap-2">
+                  {[
+                    { key: 'email', label: 'Email', icon: Mail, color: 'blue' },
+                    { key: 'call', label: 'Call', icon: Phone, color: 'green' },
+                    { key: 'meeting', label: 'Meeting', icon: Calendar, color: 'purple' },
+                    { key: 'task', label: 'Task', icon: CheckSquare, color: 'orange' },
+                    { key: 'note', label: 'Note', icon: FileText, color: 'cyan' }
+                  ].map((type) => {
+                    const IconComponent = type.icon;
+                    const isSelected = activityType === type.key;
+                    return (
+                      <button
+                        key={type.key}
+                        onClick={() => setActivityType(type.key as any)}
+                        className={`p-3 rounded-lg border text-center transition-all duration-200 hover:scale-105 ${
+                          isSelected
+                            ? `border-${type.color}-500 bg-${type.color}-50 text-${type.color}-700`
+                            : 'border-gray-200 hover:border-gray-300 text-gray-700 hover:bg-gray-50'
+                        }`}
+                        data-testid={`activity-type-${type.key}`}
+                      >
+                        <IconComponent className={`h-5 w-5 mx-auto mb-1 ${
+                          isSelected ? `text-${type.color}-600` : 'text-gray-400'
+                        }`} />
+                        <div className="text-xs font-medium">{type.label}</div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Activity Form */}
+              <div className="space-y-4">
+                {/* Title */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {activityType === 'email' && 'Email Subject'}
+                    {activityType === 'call' && 'Call Purpose'}
+                    {activityType === 'meeting' && 'Meeting Title'}
+                    {activityType === 'task' && 'Task Title'}
+                    {activityType === 'note' && 'Note Title'}
+                  </label>
+                  <input
+                    type="text"
+                    value={activityForm.title}
+                    onChange={(e) => setActivityForm(prev => ({ ...prev, title: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder={
+                      activityType === 'email' ? 'Enter email subject...' :
+                      activityType === 'call' ? 'Enter call purpose...' :
+                      activityType === 'meeting' ? 'Enter meeting title...' :
+                      activityType === 'task' ? 'Enter task title...' :
+                      'Enter note title...'
+                    }
+                    data-testid="activity-title-input"
+                  />
+                </div>
+
+                {/* Description */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {activityType === 'email' && 'Email Content'}
+                    {activityType === 'call' && 'Call Notes'}
+                    {activityType === 'meeting' && 'Meeting Notes'}
+                    {activityType === 'task' && 'Task Description'}
+                    {activityType === 'note' && 'Note Content'}
+                  </label>
+                  <textarea
+                    value={activityForm.description}
+                    onChange={(e) => setActivityForm(prev => ({ ...prev, description: e.target.value }))}
+                    rows={4}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                    placeholder={
+                      activityType === 'email' ? 'Enter email content...' :
+                      activityType === 'call' ? 'Enter call notes and outcomes...' :
+                      activityType === 'meeting' ? 'Enter meeting agenda and notes...' :
+                      activityType === 'task' ? 'Enter task description and requirements...' :
+                      'Enter note content...'
+                    }
+                    data-testid="activity-description-input"
+                  />
+                </div>
+
+                {/* Contact Selection */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {activityType === 'email' && 'Email Recipient'}
+                    {activityType === 'call' && 'Call Contact'}
+                    {activityType === 'meeting' && 'Meeting Attendees'}
+                    {activityType === 'task' && 'Task Assignee'}
+                    {activityType === 'note' && 'Related Contact'}
+                  </label>
+                  <select
+                    value={activityForm.contact}
+                    onChange={(e) => setActivityForm(prev => ({ ...prev, contact: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    data-testid="activity-contact-select"
+                  >
+                    <option value="">Select contact...</option>
+                    {keyContacts.map((contact) => (
+                      <option key={contact.id} value={contact.name}>
+                        {contact.name} - {contact.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Date and Time */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                    <input
+                      type="date"
+                      value={activityForm.date}
+                      onChange={(e) => setActivityForm(prev => ({ ...prev, date: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      data-testid="activity-date-input"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Time</label>
+                    <input
+                      type="time"
+                      value={activityForm.time}
+                      onChange={(e) => setActivityForm(prev => ({ ...prev, time: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      data-testid="activity-time-input"
+                    />
+                  </div>
+                </div>
+
+                {/* Status */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { key: 'completed', label: 'Completed', color: 'green' },
+                      { key: 'scheduled', label: 'Scheduled', color: 'blue' },
+                      { key: 'pending', label: 'Pending', color: 'yellow' }
+                    ].map((status) => (
+                      <button
+                        key={status.key}
+                        onClick={() => setActivityForm(prev => ({ ...prev, status: status.key as any }))}
+                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 ${
+                          activityForm.status === status.key
+                            ? `bg-${status.color}-600 text-white`
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                        data-testid={`activity-status-${status.key}`}
+                      >
+                        {status.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex space-x-3 mt-6">
+                <button
+                  onClick={() => {
+                    setShowLogActivityModal(false);
+                    setActivityForm({
+                      title: '',
+                      description: '',
+                      contact: '',
+                      date: new Date().toISOString().split('T')[0],
+                      time: new Date().toTimeString().split(' ')[0].substring(0, 5),
+                      status: 'completed'
+                    });
+                  }}
+                  className="flex-1 px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 hover:scale-105 transition-all duration-200 active:scale-95"
+                  data-testid="cancel-log-activity"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    // Here you would typically save the activity to your backend
+                    console.log('Logging activity:', { activityType, ...activityForm });
+                    setShowLogActivityModal(false);
+                    setActivityForm({
+                      title: '',
+                      description: '',
+                      contact: '',
+                      date: new Date().toISOString().split('T')[0],
+                      time: new Date().toTimeString().split(' ')[0].substring(0, 5),
+                      status: 'completed'
+                    });
+                  }}
+                  disabled={!activityForm.title || !activityForm.description}
+                  className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+                  data-testid="save-log-activity"
+                >
+                  Log Activity
                 </button>
               </div>
             </div>
