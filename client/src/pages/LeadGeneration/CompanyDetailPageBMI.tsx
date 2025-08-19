@@ -2563,25 +2563,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                       </button>
                     </div>
                   </div>
-                  
-                  {/* Data Sources Information */}
-                  <div className="mt-6 p-4 bg-gradient-to-r from-gray-50 to-white rounded-lg border border-gray-200">
-                    <h4 className="text-sm font-medium text-gray-900 mb-2">Data Sources</h4>
-                    <div className="grid grid-cols-3 gap-4 text-xs text-gray-600">
-                      <div>
-                        <span className="font-medium">LinkedIn:</span> Premium, Sales Navigator
-                      </div>
-                      <div>
-                        <span className="font-medium">Web:</span> Company Website, ZoomInfo
-                      </div>
-                      <div>
-                        <span className="font-medium">Databases:</span> Clearbit, Internal
-                      </div>
-                    </div>
-                    <div className="mt-2 text-xs text-gray-500">
-                      Last updated: 2 hours ago • Next refresh: 22 hours
-                    </div>
-                  </div>
+
                     </>
                   )}
                 </div>
