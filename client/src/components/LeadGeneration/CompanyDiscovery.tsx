@@ -83,7 +83,6 @@ const CompanyDiscovery: React.FC = () => {
     { key: 'actions', label: 'Actions', width: 'col-span-1', minWidth: '100px', visible: true, sortable: false }
   ]);
 
-  // Use shared company data plus additional generated companies for pagination demo
   // Use only the first 3 companies from shared data
   const companies: CompanyData[] = sharedCompanies.slice(0, 3);
 
