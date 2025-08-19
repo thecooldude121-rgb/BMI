@@ -1253,42 +1253,7 @@ const CompanyDetailPageBMI: React.FC = () => {
               </div>
             </div>
 
-            {/* Deals Section */}
-            <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
-              <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
-                <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-t-xl">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <DollarSign className="h-5 w-5 text-green-600" />
-                      <h3 className="font-semibold text-gray-900 text-lg">Deals</h3>
-                      <span className="bg-green-600 text-white text-sm px-3 py-1 rounded-full">0</span>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <Plus className="h-5 w-5 text-gray-500 cursor-pointer hover:text-green-600 hover:scale-110 transition-all duration-200 hover:rotate-90" />
-                      <Settings className="h-4 w-4 text-gray-500 cursor-pointer hover:text-green-600 hover:scale-110 transition-all duration-200 hover:rotate-180" />
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-gradient-to-b from-white to-gray-50 rounded-b-xl overflow-y-auto">
-                  <div className="p-4 h-full flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="w-12 h-12 bg-gradient-to-br from-green-600 to-green-800 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
-                        <DollarSign className="h-6 w-6 text-white" />
-                      </div>
-                      <div className="text-gray-700 text-sm mb-2 font-medium">
-                        No deals yet
-                      </div>
-                      <div className="text-gray-500 text-xs mb-4">
-                        Create your first deal to start tracking opportunities
-                      </div>
-                      <button className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white px-4 py-2 rounded-lg text-xs font-medium transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95" data-testid="button-add-deal">
-                        + Create Deal
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+
 
             {/* Tasks Widget */}
             <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
