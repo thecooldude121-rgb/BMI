@@ -28,7 +28,11 @@ import {
   Download,
   Share,
   Shield,
-  CheckCircle
+  CheckCircle,
+  Network,
+  List,
+  Maximize2,
+  Minimize2
 } from 'lucide-react';
 import { Link } from 'wouter';
 import { companies, CompanyData as SharedCompanyData } from '../../data/companies';
@@ -107,6 +111,12 @@ const CompanyDetailPageBMI: React.FC = () => {
   const totalPages = 5;
   const contactsPerPage = 5;
   const employeesPerPage = 8;
+  
+  // Network visualization state
+  const [employeeViewMode, setEmployeeViewMode] = useState<'list' | 'network'>('list');
+  const [networkView, setNetworkView] = useState<'hierarchy' | 'department' | 'connections'>('hierarchy');
+  const [selectedEmployee, setSelectedEmployee] = useState<string | null>(null);
+  const [networkFullscreen, setNetworkFullscreen] = useState(false);
   
   // Track accessed contact info
   const [accessedEmails, setAccessedEmails] = useState<Set<number>>(new Set());
@@ -765,6 +775,106 @@ const CompanyDetailPageBMI: React.FC = () => {
       person: 'Jane Smith'
     }
   ];
+
+  // Network data structure for employee relationships
+  const networkData = useMemo(() => {
+    const nodes = allEmployees.map(emp => ({
+      id: emp.id,
+      name: emp.name,
+      title: emp.title,
+      department: emp.department,
+      seniority: emp.seniority,
+      location: emp.location,
+      x: Math.random() * 800,
+      y: Math.random() * 500,
+      size: emp.seniority === 'Executive' ? 40 : emp.seniority === 'Senior' ? 30 : 20,
+      color: getDepartmentColor(emp.department)
+    }));
+
+    const connections = [
+      // Hierarchy connections (manager-direct report relationships)
+      { from: 'emp_001', to: 'emp_002', type: 'reports_to', strength: 1 },
+      { from: 'emp_001', to: 'emp_003', type: 'reports_to', strength: 1 },
+      { from: 'emp_001', to: 'emp_004', type: 'reports_to', strength: 1 },
+      { from: 'emp_003', to: 'emp_005', type: 'reports_to', strength: 0.8 },
+      { from: 'emp_002', to: 'emp_006', type: 'reports_to', strength: 0.8 },
+      { from: 'emp_004', to: 'emp_007', type: 'reports_to', strength: 0.8 },
+      { from: 'emp_004', to: 'emp_008', type: 'reports_to', strength: 0.8 },
+      { from: 'emp_004', to: 'emp_009', type: 'reports_to', strength: 0.8 },
+      
+      // Collaboration connections (cross-departmental work)
+      { from: 'emp_003', to: 'emp_002', type: 'collaborates', strength: 0.6 },
+      { from: 'emp_005', to: 'emp_006', type: 'collaborates', strength: 0.5 },
+      { from: 'emp_007', to: 'emp_003', type: 'collaborates', strength: 0.4 },
+      { from: 'emp_008', to: 'emp_006', type: 'collaborates', strength: 0.7 },
+      { from: 'emp_009', to: 'emp_005', type: 'collaborates', strength: 0.3 },
+      
+      // Mentoring relationships
+      { from: 'emp_001', to: 'emp_005', type: 'mentors', strength: 0.5 },
+      { from: 'emp_003', to: 'emp_010', type: 'mentors', strength: 0.6 },
+    ];
+
+    return { nodes, connections };
+  }, [allEmployees]);
+
+  function getDepartmentColor(department: string): string {
+    const colors: Record<string, string> = {
+      'Executive': '#dc2626',
+      'Investment Management': '#2563eb', 
+      'Research & Analytics': '#7c3aed',
+      'Operations': '#059669',
+      'Legal & Compliance': '#ea580c',
+      'Trading': '#0891b2',
+      'Marketing': '#c2410c',
+      'Technology': '#4338ca',
+      'Finance': '#16a34a',
+      'Human Resources': '#be185d'
+    };
+    return colors[department] || '#6b7280';
+  }
+
+  // Network visualization helper functions
+  const getNetworkNodes = () => {
+    switch (networkView) {
+      case 'hierarchy':
+        return networkData.nodes.map(node => ({
+          ...node,
+          x: getHierarchyX(node),
+          y: getHierarchyY(node)
+        }));
+      case 'department':
+        return networkData.nodes.map(node => ({
+          ...node,
+          x: getDepartmentX(node),
+          y: getDepartmentY(node)
+        }));
+      default:
+        return networkData.nodes;
+    }
+  };
+
+  const getHierarchyX = (node: any) => {
+    // Position based on seniority level
+    if (node.seniority === 'Executive') return 400;
+    if (node.seniority === 'Senior') return 200 + Math.random() * 400;
+    return 100 + Math.random() * 600;
+  };
+
+  const getHierarchyY = (node: any) => {
+    if (node.seniority === 'Executive') return 100;
+    if (node.seniority === 'Senior') return 200 + Math.random() * 100;
+    return 300 + Math.random() * 150;
+  };
+
+  const getDepartmentX = (node: any) => {
+    const departments = Array.from(new Set(allEmployees.map(e => e.department)));
+    const deptIndex = departments.indexOf(node.department);
+    return (deptIndex + 1) * (800 / (departments.length + 1));
+  };
+
+  const getDepartmentY = (node: any) => {
+    return 150 + Math.random() * 200;
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 relative">
@@ -1878,6 +1988,33 @@ const CompanyDetailPageBMI: React.FC = () => {
                     </div>
                     <div className="flex items-center space-x-3">
                       <span className="text-xs text-gray-500">{allEmployees.length} employees found</span>
+                      
+                      {/* View Mode Toggle */}
+                      <div className="flex items-center bg-gray-100 rounded-lg p-1">
+                        <button
+                          onClick={() => setEmployeeViewMode('list')}
+                          className={`p-1 rounded transition-colors ${
+                            employeeViewMode === 'list' 
+                              ? 'bg-white text-blue-600 shadow-sm' 
+                              : 'text-gray-500 hover:text-gray-700'
+                          }`}
+                          data-testid="view-mode-list"
+                        >
+                          <List className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => setEmployeeViewMode('network')}
+                          className={`p-1 rounded transition-colors ${
+                            employeeViewMode === 'network' 
+                              ? 'bg-white text-blue-600 shadow-sm' 
+                              : 'text-gray-500 hover:text-gray-700'
+                          }`}
+                          data-testid="view-mode-network"
+                        >
+                          <Network className="h-4 w-4" />
+                        </button>
+                      </div>
+                      
                       <Search className="h-4 w-4 text-gray-500 cursor-pointer hover:text-blue-600 transition-colors" />
                       <Filter className="h-4 w-4 text-gray-500 cursor-pointer hover:text-blue-600 transition-colors" />
                       <Settings className="h-4 w-4 text-gray-500 cursor-pointer hover:text-blue-600 transition-colors" />
@@ -1886,18 +2023,235 @@ const CompanyDetailPageBMI: React.FC = () => {
                 </div>
                 
                 <div className="bg-gradient-to-b from-white to-gray-50 rounded-b-xl p-4">
-                  {/* Employee List Header */}
-                  <div className="grid grid-cols-6 gap-4 text-xs text-gray-600 font-medium mb-4 pb-2 border-b border-gray-200">
-                    <div>NAME & TITLE</div>
-                    <div>DEPARTMENT</div>
-                    <div>LOCATION</div>
-                    <div>SOURCE</div>
-                    <div>SENIORITY</div>
-                    <div>ACTIONS</div>
-                  </div>
+                  {/* Network View Controls */}
+                  {employeeViewMode === 'network' && (
+                    <div className="mb-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center space-x-4">
+                          <h3 className="text-lg font-medium text-gray-900">Network Visualization</h3>
+                          <div className="flex items-center bg-gray-100 rounded-lg p-1">
+                            {[
+                              { key: 'hierarchy', label: 'Hierarchy', icon: 'org' },
+                              { key: 'department', label: 'Department', icon: 'group' },
+                              { key: 'connections', label: 'Connections', icon: 'network' }
+                            ].map((view) => (
+                              <button
+                                key={view.key}
+                                onClick={() => setNetworkView(view.key as any)}
+                                className={`px-3 py-1 text-sm rounded transition-colors ${
+                                  networkView === view.key
+                                    ? 'bg-white text-blue-600 shadow-sm'
+                                    : 'text-gray-600 hover:text-gray-900'
+                                }`}
+                                data-testid={`network-view-${view.key}`}
+                              >
+                                {view.label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => setNetworkFullscreen(!networkFullscreen)}
+                          className="p-2 text-gray-500 hover:text-blue-600 transition-colors rounded-lg hover:bg-gray-100"
+                          data-testid="network-fullscreen"
+                        >
+                          {networkFullscreen ? (
+                            <Minimize2 className="h-4 w-4" />
+                          ) : (
+                            <Maximize2 className="h-4 w-4" />
+                          )}
+                        </button>
+                      </div>
+                      
+                      {/* Network Canvas */}
+                      <div className={`relative bg-white rounded-lg border border-gray-200 overflow-hidden ${
+                        networkFullscreen ? 'h-[80vh]' : 'h-[500px]'
+                      }`}>
+                        <svg 
+                          className="w-full h-full" 
+                          viewBox="0 0 900 600"
+                          data-testid="network-canvas"
+                        >
+                          {/* Background Grid */}
+                          <defs>
+                            <pattern
+                              id="grid"
+                              width="50"
+                              height="50"
+                              patternUnits="userSpaceOnUse"
+                            >
+                              <path
+                                d="M 50 0 L 0 0 0 50"
+                                fill="none"
+                                stroke="#f3f4f6"
+                                strokeWidth="1"
+                              />
+                            </pattern>
+                          </defs>
+                          <rect width="100%" height="100%" fill="url(#grid)" />
+                          
+                          {/* Connection Lines */}
+                          {networkData.connections.map((connection, index) => {
+                            const fromNode = getNetworkNodes().find(n => n.id === connection.from);
+                            const toNode = getNetworkNodes().find(n => n.id === connection.to);
+                            
+                            if (!fromNode || !toNode) return null;
+                            
+                            return (
+                              <line
+                                key={index}
+                                x1={fromNode.x}
+                                y1={fromNode.y}
+                                x2={toNode.x}
+                                y2={toNode.y}
+                                stroke={
+                                  connection.type === 'reports_to' ? '#3b82f6' :
+                                  connection.type === 'collaborates' ? '#10b981' :
+                                  '#f59e0b'
+                                }
+                                strokeWidth={connection.strength * 3}
+                                strokeOpacity={0.6}
+                                strokeDasharray={connection.type === 'mentors' ? '5,5' : 'none'}
+                              />
+                            );
+                          })}
+                          
+                          {/* Employee Nodes */}
+                          {getNetworkNodes().map((node, index) => (
+                            <g key={node.id}>
+                              <circle
+                                cx={node.x}
+                                cy={node.y}
+                                r={node.size}
+                                fill={node.color}
+                                stroke={selectedEmployee === node.id ? '#1d4ed8' : '#ffffff'}
+                                strokeWidth={selectedEmployee === node.id ? 3 : 2}
+                                className="cursor-pointer hover:opacity-80 transition-opacity"
+                                onClick={() => setSelectedEmployee(selectedEmployee === node.id ? null : node.id)}
+                                data-testid={`network-node-${index}`}
+                              />
+                              <text
+                                x={node.x}
+                                y={node.y + node.size + 15}
+                                textAnchor="middle"
+                                className="text-xs fill-gray-700 font-medium"
+                                style={{ fontSize: '10px' }}
+                              >
+                                {node.name.split(' ')[0]}
+                              </text>
+                              {selectedEmployee === node.id && (
+                                <text
+                                  x={node.x}
+                                  y={node.y + node.size + 28}
+                                  textAnchor="middle"
+                                  className="text-xs fill-gray-600"
+                                  style={{ fontSize: '8px' }}
+                                >
+                                  {node.title}
+                                </text>
+                              )}
+                            </g>
+                          ))}
+                        </svg>
+                        
+                        {/* Legend */}
+                        <div className="absolute bottom-4 left-4 bg-white rounded-lg border border-gray-200 p-3 shadow-lg">
+                          <h4 className="text-xs font-medium text-gray-900 mb-2">Legend</h4>
+                          <div className="space-y-1 text-xs">
+                            <div className="flex items-center space-x-2">
+                              <div className="w-3 h-1 bg-blue-500"></div>
+                              <span className="text-gray-600">Reports To</span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-3 h-1 bg-green-500"></div>
+                              <span className="text-gray-600">Collaborates</span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-3 h-1 bg-yellow-500" style={{borderTop: '1px dashed'}}></div>
+                              <span className="text-gray-600">Mentors</span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Node Size Legend */}
+                        <div className="absolute bottom-4 right-4 bg-white rounded-lg border border-gray-200 p-3 shadow-lg">
+                          <h4 className="text-xs font-medium text-gray-900 mb-2">Seniority</h4>
+                          <div className="space-y-1">
+                            <div className="flex items-center space-x-2">
+                              <div className="w-5 h-5 rounded-full bg-red-600"></div>
+                              <span className="text-xs text-gray-600">Executive</span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-4 h-4 rounded-full bg-blue-600"></div>
+                              <span className="text-xs text-gray-600">Senior</span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-3 h-3 rounded-full bg-gray-600"></div>
+                              <span className="text-xs text-gray-600">Mid</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Selected Employee Details */}
+                      {selectedEmployee && (
+                        <div className="mt-4 bg-gradient-to-r from-blue-50 to-white rounded-lg border border-blue-200 p-4">
+                          {(() => {
+                            const employee = allEmployees.find(e => e.id === selectedEmployee);
+                            if (!employee) return null;
+                            
+                            return (
+                              <div className="flex items-start justify-between">
+                                <div className="flex items-center space-x-4">
+                                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white font-medium">
+                                    {employee.name.split(' ').map(n => n[0]).join('')}
+                                  </div>
+                                  <div>
+                                    <h4 className="text-lg font-medium text-gray-900">{employee.name}</h4>
+                                    <p className="text-gray-600">{employee.title}</p>
+                                    <p className="text-sm text-gray-500">{employee.department} • {employee.location}</p>
+                                  </div>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  {employee.email && (
+                                    <button className="p-2 text-gray-500 hover:text-blue-600 transition-colors rounded-lg hover:bg-gray-100">
+                                      <Mail className="h-4 w-4" />
+                                    </button>
+                                  )}
+                                  {employee.phone && (
+                                    <button className="p-2 text-gray-500 hover:text-green-600 transition-colors rounded-lg hover:bg-gray-100">
+                                      <Phone className="h-4 w-4" />
+                                    </button>
+                                  )}
+                                  {employee.linkedinProfile && (
+                                    <button className="p-2 text-gray-500 hover:text-blue-600 transition-colors rounded-lg hover:bg-gray-100">
+                                      <ExternalLink className="h-4 w-4" />
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })()}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* List View */}
+                  {employeeViewMode === 'list' && (
+                    <>
+                      {/* Employee List Header */}
+                      <div className="grid grid-cols-6 gap-4 text-xs text-gray-600 font-medium mb-4 pb-2 border-b border-gray-200">
+                        <div>NAME & TITLE</div>
+                        <div>DEPARTMENT</div>
+                        <div>LOCATION</div>
+                        <div>SOURCE</div>
+                        <div>SENIORITY</div>
+                        <div>ACTIONS</div>
+                      </div>
                   
-                  {/* Employee List */}
-                  <div className="space-y-2 max-h-[600px] overflow-y-auto">
+                      {/* Employee List */}
+                      <div className="space-y-2 max-h-[600px] overflow-y-auto">
                     {getCurrentPageEmployees().map((employee, index) => (
                       <div key={employee.id} className="relative">
                         <div className="grid grid-cols-6 gap-4 py-3 px-2 rounded-lg hover:bg-gray-100/50 transition-colors border-b border-gray-200/50">
@@ -2055,6 +2409,8 @@ const CompanyDetailPageBMI: React.FC = () => {
                       Last updated: 2 hours ago • Next refresh: 22 hours
                     </div>
                   </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
