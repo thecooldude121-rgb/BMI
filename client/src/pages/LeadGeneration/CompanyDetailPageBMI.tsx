@@ -209,12 +209,23 @@ const CompanyDetailPageBMI: React.FC = () => {
     rating: 'A+'
   };
 
-  // Company to CRM Account mapping
+  // Fetch accounts first
+  const { data: accounts = [] } = useQuery({
+    queryKey: ['/api/accounts'],
+    queryFn: async () => {
+      const response = await fetch('/api/accounts');
+      if (!response.ok) throw new Error('Failed to fetch accounts');
+      return response.json();
+    }
+  });
+
+  // Company to CRM Account mapping (using static IDs to avoid dependency issues)
   const getAccountIdForCompany = (companyName: string): string | null => {
     const accountMapping: { [key: string]: string } = {
       'TechCorp Solutions': '5b90825b-4db6-42f9-8fb0-08d8dac939e3',
-      'GreenEnergy Dynamics': accounts.find((acc: any) => acc.name === 'GreenEnergy Dynamics')?.id || 
-                              accounts.find((acc: any) => acc.name.includes('Green'))?.id || 
+      // Will be populated dynamically once accounts are loaded
+      'GreenEnergy Dynamics': accounts.find?.((acc: any) => acc.name === 'GreenEnergy Dynamics')?.id || 
+                              accounts.find?.((acc: any) => acc.name.includes('Green'))?.id || 
                               accounts[1]?.id || null
     };
     return accountMapping[companyName] || null;
@@ -232,15 +243,6 @@ const CompanyDetailPageBMI: React.FC = () => {
       return response.json();
     },
     enabled: !!currentAccountId
-  });
-  
-  const { data: accounts = [] } = useQuery({
-    queryKey: ['/api/accounts'],
-    queryFn: async () => {
-      const response = await fetch('/api/accounts');
-      if (!response.ok) throw new Error('Failed to fetch accounts');
-      return response.json();
-    }
   });
   
   // Fetch company-specific contacts
