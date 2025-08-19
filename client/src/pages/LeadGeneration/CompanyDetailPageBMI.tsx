@@ -809,7 +809,7 @@ const CompanyDetailPageBMI: React.FC = () => {
               </div>
 
               {insightsExpanded && (
-                <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl p-4">
+                <div className="bg-gradient-to-b from-white to-gray-50 rounded-b-xl p-4">
                   {/* Enhanced Insight Tabs */}
                   <div className="flex flex-wrap gap-2 mb-6">
                     {[
@@ -827,7 +827,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                           className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 ${
                             activeInsightTab === tab.key
                               ? `${tab.bg} text-white shadow-lg`
-                              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                           }`}
                           data-testid={`insight-tab-${tab.key}`}
                         >
@@ -854,55 +854,55 @@ const CompanyDetailPageBMI: React.FC = () => {
                           <div className="w-24 h-24 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-2xl">
                             <span className="text-3xl font-bold text-white">85</span>
                           </div>
-                          <h3 className="text-xl font-semibold text-white mb-2">Company AI Score</h3>
-                          <p className="text-gray-300 text-sm">Based on comprehensive AI analysis of 247 data points</p>
+                          <h3 className="text-xl font-semibold text-gray-900 mb-2">Company AI Score</h3>
+                          <p className="text-gray-600 text-sm">Based on comprehensive AI analysis of 247 data points</p>
                         </div>
                         
                         <div className="grid grid-cols-2 gap-4">
-                          <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600">
+                          <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg border border-gray-200">
                             <div className="flex items-center justify-between mb-2">
-                              <span className="text-gray-400 text-sm">Financial Health</span>
-                              <span className="text-green-400 font-medium">92/100</span>
+                              <span className="text-gray-600 text-sm">Financial Health</span>
+                              <span className="text-green-600 font-medium">92/100</span>
                             </div>
-                            <div className="w-full bg-gray-600 rounded-full h-2">
+                            <div className="w-full bg-gray-200 rounded-full h-2">
                               <div className="bg-green-500 h-2 rounded-full" style={{width: '92%'}}></div>
                             </div>
                           </div>
                           
-                          <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600">
+                          <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg border border-gray-200">
                             <div className="flex items-center justify-between mb-2">
-                              <span className="text-gray-400 text-sm">Market Position</span>
-                              <span className="text-blue-400 font-medium">78/100</span>
+                              <span className="text-gray-600 text-sm">Market Position</span>
+                              <span className="text-blue-600 font-medium">78/100</span>
                             </div>
-                            <div className="w-full bg-gray-600 rounded-full h-2">
+                            <div className="w-full bg-gray-200 rounded-full h-2">
                               <div className="bg-blue-500 h-2 rounded-full" style={{width: '78%'}}></div>
                             </div>
                           </div>
                           
-                          <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600">
+                          <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg border border-gray-200">
                             <div className="flex items-center justify-between mb-2">
-                              <span className="text-gray-400 text-sm">Growth Potential</span>
-                              <span className="text-purple-400 font-medium">89/100</span>
+                              <span className="text-gray-600 text-sm">Growth Potential</span>
+                              <span className="text-purple-600 font-medium">89/100</span>
                             </div>
-                            <div className="w-full bg-gray-600 rounded-full h-2">
+                            <div className="w-full bg-gray-200 rounded-full h-2">
                               <div className="bg-purple-500 h-2 rounded-full" style={{width: '89%'}}></div>
                             </div>
                           </div>
                           
-                          <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600">
+                          <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg border border-gray-200">
                             <div className="flex items-center justify-between mb-2">
-                              <span className="text-gray-400 text-sm">Tech Innovation</span>
-                              <span className="text-cyan-400 font-medium">81/100</span>
+                              <span className="text-gray-600 text-sm">Tech Innovation</span>
+                              <span className="text-cyan-600 font-medium">81/100</span>
                             </div>
-                            <div className="w-full bg-gray-600 rounded-full h-2">
+                            <div className="w-full bg-gray-200 rounded-full h-2">
                               <div className="bg-cyan-500 h-2 rounded-full" style={{width: '81%'}}></div>
                             </div>
                           </div>
                         </div>
 
-                        <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600">
-                          <h4 className="text-white font-medium mb-3">Key AI Insights</h4>
-                          <ul className="space-y-2 text-sm text-gray-300">
+                        <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg border border-gray-200">
+                          <h4 className="text-gray-900 font-medium mb-3">Key AI Insights</h4>
+                          <ul className="space-y-2 text-sm text-gray-700">
                             <li className="flex items-start space-x-2">
                               <div className="w-2 h-2 bg-green-500 rounded-full mt-1.5"></div>
                               <span>Strong revenue growth trajectory with 34% YoY increase</span>
@@ -928,8 +928,8 @@ const CompanyDetailPageBMI: React.FC = () => {
                     {activeInsightTab === 'news' && (
                       <div className="space-y-4">
                         <div className="flex items-center justify-between mb-4">
-                          <h3 className="text-lg font-semibold text-white">Latest News & Mentions</h3>
-                          <span className="text-xs text-gray-400">Updated 2 hours ago</span>
+                          <h3 className="text-lg font-semibold text-gray-900">Latest News & Mentions</h3>
+                          <span className="text-xs text-gray-500">Updated 2 hours ago</span>
                         </div>
                         
                         {[
@@ -962,19 +962,19 @@ const CompanyDetailPageBMI: React.FC = () => {
                             summary: "Senior portfolio manager appointment strengthens investment team"
                           }
                         ].map((article, index) => (
-                          <div key={index} className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600 hover:border-gray-500 transition-colors">
+                          <div key={index} className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors">
                             <div className="flex items-start justify-between mb-2">
-                              <h4 className="text-white font-medium text-sm leading-tight pr-4">{article.title}</h4>
+                              <h4 className="text-gray-900 font-medium text-sm leading-tight pr-4">{article.title}</h4>
                               <div className={`px-2 py-1 rounded text-xs font-medium ${
-                                article.sentiment === 'positive' ? 'bg-green-900 text-green-300' :
-                                article.sentiment === 'negative' ? 'bg-red-900 text-red-300' :
-                                'bg-gray-600 text-gray-300'
+                                article.sentiment === 'positive' ? 'bg-green-100 text-green-700' :
+                                article.sentiment === 'negative' ? 'bg-red-100 text-red-700' :
+                                'bg-gray-100 text-gray-700'
                               }`}>
                                 {article.sentiment}
                               </div>
                             </div>
-                            <p className="text-gray-300 text-sm mb-3">{article.summary}</p>
-                            <div className="flex items-center justify-between text-xs text-gray-400">
+                            <p className="text-gray-700 text-sm mb-3">{article.summary}</p>
+                            <div className="flex items-center justify-between text-xs text-gray-500">
                               <span>{article.source}</span>
                               <span>{article.date}</span>
                             </div>
@@ -987,13 +987,13 @@ const CompanyDetailPageBMI: React.FC = () => {
                     {activeInsightTab === 'technologies' && (
                       <div className="space-y-6">
                         <div className="flex items-center justify-between mb-4">
-                          <h3 className="text-lg font-semibold text-white">Technology Stack & Platforms</h3>
-                          <span className="text-xs text-gray-400">Last scanned: 4 hours ago</span>
+                          <h3 className="text-lg font-semibold text-gray-900">Technology Stack & Platforms</h3>
+                          <span className="text-xs text-gray-500">Last scanned: 4 hours ago</span>
                         </div>
 
                         <div className="grid grid-cols-2 gap-6">
                           <div>
-                            <h4 className="text-white font-medium mb-3">Core Infrastructure</h4>
+                            <h4 className="text-gray-900 font-medium mb-3">Core Infrastructure</h4>
                             <div className="space-y-2">
                               {[
                                 { name: "Microsoft Azure", confidence: "95%", category: "Cloud" },
@@ -1001,19 +1001,19 @@ const CompanyDetailPageBMI: React.FC = () => {
                                 { name: "Bloomberg Terminal", confidence: "92%", category: "Financial Data" },
                                 { name: "Salesforce", confidence: "87%", category: "CRM" }
                               ].map((tech, index) => (
-                                <div key={index} className="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
+                                <div key={index} className="bg-gradient-to-br from-white to-gray-50 p-3 rounded-lg border border-gray-200">
                                   <div className="flex items-center justify-between">
-                                    <span className="text-white text-sm font-medium">{tech.name}</span>
-                                    <span className="text-blue-400 text-xs">{tech.confidence}</span>
+                                    <span className="text-gray-900 text-sm font-medium">{tech.name}</span>
+                                    <span className="text-blue-600 text-xs">{tech.confidence}</span>
                                   </div>
-                                  <span className="text-gray-400 text-xs">{tech.category}</span>
+                                  <span className="text-gray-600 text-xs">{tech.category}</span>
                                 </div>
                               ))}
                             </div>
                           </div>
 
                           <div>
-                            <h4 className="text-white font-medium mb-3">Investment & Analytics</h4>
+                            <h4 className="text-gray-900 font-medium mb-3">Investment & Analytics</h4>
                             <div className="space-y-2">
                               {[
                                 { name: "FactSet", confidence: "89%", category: "Research Platform" },
@@ -1021,28 +1021,28 @@ const CompanyDetailPageBMI: React.FC = () => {
                                 { name: "Python/R", confidence: "85%", category: "Analytics" },
                                 { name: "Tableau", confidence: "78%", category: "Visualization" }
                               ].map((tech, index) => (
-                                <div key={index} className="bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
+                                <div key={index} className="bg-gradient-to-br from-white to-gray-50 p-3 rounded-lg border border-gray-200">
                                   <div className="flex items-center justify-between">
-                                    <span className="text-white text-sm font-medium">{tech.name}</span>
-                                    <span className="text-green-400 text-xs">{tech.confidence}</span>
+                                    <span className="text-gray-900 text-sm font-medium">{tech.name}</span>
+                                    <span className="text-green-600 text-xs">{tech.confidence}</span>
                                   </div>
-                                  <span className="text-gray-400 text-xs">{tech.category}</span>
+                                  <span className="text-gray-600 text-xs">{tech.category}</span>
                                 </div>
                               ))}
                             </div>
                           </div>
                         </div>
 
-                        <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600">
-                          <h4 className="text-white font-medium mb-3">Recent Technology Adoptions</h4>
+                        <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg border border-gray-200">
+                          <h4 className="text-gray-900 font-medium mb-3">Recent Technology Adoptions</h4>
                           <div className="space-y-2">
                             <div className="flex items-center justify-between">
-                              <span className="text-gray-300 text-sm">AI/ML Analytics Platform</span>
-                              <span className="text-cyan-400 text-xs">Added 2 weeks ago</span>
+                              <span className="text-gray-700 text-sm">AI/ML Analytics Platform</span>
+                              <span className="text-cyan-600 text-xs">Added 2 weeks ago</span>
                             </div>
                             <div className="flex items-center justify-between">
-                              <span className="text-gray-300 text-sm">Enhanced Cybersecurity Suite</span>
-                              <span className="text-purple-400 text-xs">Added 1 month ago</span>
+                              <span className="text-gray-700 text-sm">Enhanced Cybersecurity Suite</span>
+                              <span className="text-purple-600 text-xs">Added 1 month ago</span>
                             </div>
                           </div>
                         </div>
@@ -1053,43 +1053,43 @@ const CompanyDetailPageBMI: React.FC = () => {
                     {activeInsightTab === 'funding' && (
                       <div className="space-y-6">
                         <div className="flex items-center justify-between mb-4">
-                          <h3 className="text-lg font-semibold text-white">Funding History & Financial Data</h3>
-                          <span className="text-xs text-gray-400">Source: Crunchbase, Public Records</span>
+                          <h3 className="text-lg font-semibold text-gray-900">Funding History & Financial Data</h3>
+                          <span className="text-xs text-gray-500">Source: Crunchbase, Public Records</span>
                         </div>
 
-                        <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-6 rounded-lg border border-gray-600">
+                        <div className="bg-gradient-to-br from-white to-gray-50 p-6 rounded-lg border border-gray-200">
                           <div className="text-center mb-4">
-                            <div className="text-3xl font-bold text-green-400 mb-2">$2.1B</div>
-                            <div className="text-gray-300">Total Assets Under Management</div>
+                            <div className="text-3xl font-bold text-green-600 mb-2">$2.1B</div>
+                            <div className="text-gray-700">Total Assets Under Management</div>
                           </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
-                          <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600">
-                            <div className="text-lg font-semibold text-blue-400 mb-1">IPO (2017)</div>
-                            <div className="text-sm text-gray-300 mb-2">Listed on ASX</div>
-                            <div className="text-xs text-gray-400">Market Cap: $450M</div>
+                          <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg border border-gray-200">
+                            <div className="text-lg font-semibold text-blue-600 mb-1">IPO (2017)</div>
+                            <div className="text-sm text-gray-700 mb-2">Listed on ASX</div>
+                            <div className="text-xs text-gray-500">Market Cap: $450M</div>
                           </div>
                           
-                          <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600">
-                            <div className="text-lg font-semibold text-green-400 mb-1">Revenue</div>
-                            <div className="text-sm text-gray-300 mb-2">$45M (2023)</div>
-                            <div className="text-xs text-gray-400">+34% YoY Growth</div>
+                          <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg border border-gray-200">
+                            <div className="text-lg font-semibold text-green-600 mb-1">Revenue</div>
+                            <div className="text-sm text-gray-700 mb-2">$45M (2023)</div>
+                            <div className="text-xs text-gray-500">+34% YoY Growth</div>
                           </div>
                         </div>
 
                         <div className="space-y-3">
-                          <h4 className="text-white font-medium">Key Financial Metrics</h4>
+                          <h4 className="text-gray-900 font-medium">Key Financial Metrics</h4>
                           {[
                             { metric: "Price-to-Earnings Ratio", value: "18.5", trend: "stable" },
                             { metric: "Return on Equity", value: "22.4%", trend: "up" },
                             { metric: "Dividend Yield", value: "4.2%", trend: "up" },
                             { metric: "Net Profit Margin", value: "31.8%", trend: "up" }
                           ].map((item, index) => (
-                            <div key={index} className="flex items-center justify-between bg-gradient-to-br from-gray-700 to-gray-800 p-3 rounded-lg border border-gray-600">
-                              <span className="text-gray-300 text-sm">{item.metric}</span>
+                            <div key={index} className="flex items-center justify-between bg-gradient-to-br from-white to-gray-50 p-3 rounded-lg border border-gray-200">
+                              <span className="text-gray-700 text-sm">{item.metric}</span>
                               <div className="flex items-center space-x-2">
-                                <span className="text-white font-medium">{item.value}</span>
+                                <span className="text-gray-900 font-medium">{item.value}</span>
                                 <div className={`w-2 h-2 rounded-full ${
                                   item.trend === 'up' ? 'bg-green-500' :
                                   item.trend === 'down' ? 'bg-red-500' : 'bg-gray-500'
@@ -1105,22 +1105,22 @@ const CompanyDetailPageBMI: React.FC = () => {
                     {activeInsightTab === 'job-postings' && (
                       <div className="space-y-6">
                         <div className="flex items-center justify-between mb-4">
-                          <h3 className="text-lg font-semibold text-white">Active Job Postings</h3>
-                          <span className="text-xs text-gray-400">12 active positions</span>
+                          <h3 className="text-lg font-semibold text-gray-900">Active Job Postings</h3>
+                          <span className="text-xs text-gray-500">12 active positions</span>
                         </div>
 
                         <div className="grid grid-cols-3 gap-4 mb-6">
-                          <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600 text-center">
-                            <div className="text-2xl font-bold text-blue-400 mb-1">8</div>
-                            <div className="text-xs text-gray-400">Investment Roles</div>
+                          <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg border border-gray-200 text-center">
+                            <div className="text-2xl font-bold text-blue-600 mb-1">8</div>
+                            <div className="text-xs text-gray-600">Investment Roles</div>
                           </div>
-                          <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600 text-center">
-                            <div className="text-2xl font-bold text-green-400 mb-1">3</div>
-                            <div className="text-xs text-gray-400">Tech Positions</div>
+                          <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg border border-gray-200 text-center">
+                            <div className="text-2xl font-bold text-green-600 mb-1">3</div>
+                            <div className="text-xs text-gray-600">Tech Positions</div>
                           </div>
-                          <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600 text-center">
-                            <div className="text-2xl font-bold text-purple-400 mb-1">1</div>
-                            <div className="text-xs text-gray-400">Operations</div>
+                          <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg border border-gray-200 text-center">
+                            <div className="text-2xl font-bold text-purple-600 mb-1">1</div>
+                            <div className="text-xs text-gray-600">Operations</div>
                           </div>
                         </div>
 
@@ -1159,20 +1159,20 @@ const CompanyDetailPageBMI: React.FC = () => {
                               urgent: false
                             }
                           ].map((job, index) => (
-                            <div key={index} className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600 hover:border-gray-500 transition-colors">
+                            <div key={index} className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors">
                               <div className="flex items-start justify-between mb-2">
                                 <div className="flex-1">
                                   <div className="flex items-center space-x-2 mb-1">
-                                    <h4 className="text-white font-medium text-sm">{job.title}</h4>
+                                    <h4 className="text-gray-900 font-medium text-sm">{job.title}</h4>
                                     {job.urgent && (
                                       <span className="bg-red-600 text-white text-xs px-2 py-0.5 rounded">Urgent</span>
                                     )}
                                   </div>
-                                  <div className="text-gray-300 text-sm">{job.department}</div>
-                                  <div className="text-gray-400 text-xs">{job.location}</div>
+                                  <div className="text-gray-700 text-sm">{job.department}</div>
+                                  <div className="text-gray-500 text-xs">{job.location}</div>
                                 </div>
                               </div>
-                              <div className="flex items-center justify-between text-xs text-gray-400">
+                              <div className="flex items-center justify-between text-xs text-gray-500">
                                 <span>Source: {job.source}</span>
                                 <span>{job.posted}</span>
                               </div>
@@ -1180,20 +1180,20 @@ const CompanyDetailPageBMI: React.FC = () => {
                           ))}
                         </div>
 
-                        <div className="bg-gradient-to-br from-gray-700 to-gray-800 p-4 rounded-lg border border-gray-600">
-                          <h4 className="text-white font-medium mb-3">Hiring Trends Analysis</h4>
+                        <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg border border-gray-200">
+                          <h4 className="text-gray-900 font-medium mb-3">Hiring Trends Analysis</h4>
                           <div className="space-y-2">
                             <div className="flex items-center justify-between">
-                              <span className="text-gray-300 text-sm">Average time to fill</span>
-                              <span className="text-blue-400 text-sm font-medium">45 days</span>
+                              <span className="text-gray-700 text-sm">Average time to fill</span>
+                              <span className="text-blue-600 text-sm font-medium">45 days</span>
                             </div>
                             <div className="flex items-center justify-between">
-                              <span className="text-gray-300 text-sm">Most in-demand skills</span>
-                              <span className="text-green-400 text-sm font-medium">Portfolio Analysis, ESG</span>
+                              <span className="text-gray-700 text-sm">Most in-demand skills</span>
+                              <span className="text-green-600 text-sm font-medium">Portfolio Analysis, ESG</span>
                             </div>
                             <div className="flex items-center justify-between">
-                              <span className="text-gray-300 text-sm">Salary range trend</span>
-                              <span className="text-purple-400 text-sm font-medium">+12% vs last year</span>
+                              <span className="text-gray-700 text-sm">Salary range trend</span>
+                              <span className="text-purple-600 text-sm font-medium">+12% vs last year</span>
                             </div>
                           </div>
                         </div>
@@ -1208,24 +1208,24 @@ const CompanyDetailPageBMI: React.FC = () => {
           
 
           {/* Lookalike Companies */}
-          <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
-            <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
-              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+          <div className="mb-3 bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
+            <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
+              <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-t-xl">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <h2 className="text-lg font-semibold text-white">Lookalike companies</h2>
+                    <h2 className="text-lg font-semibold text-gray-900">Lookalike companies</h2>
                     <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded">Beta</span>
                     <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded flex items-center">
                       <Target className="h-3 w-3 mr-1" />
                       Apollo AI
                     </span>
                   </div>
-                  <ChevronUp className="h-4 w-4 text-gray-400" />
+                  <ChevronUp className="h-4 w-4 text-gray-500" />
                 </div>
               </div>
 
-              <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl p-4">
-                <div className="grid grid-cols-4 gap-4 text-xs text-gray-400 font-medium mb-4">
+              <div className="bg-gradient-to-b from-white to-gray-50 rounded-b-xl p-4">
+                <div className="grid grid-cols-4 gap-4 text-xs text-gray-600 font-medium mb-4">
                   <div>NAME</div>
                   <div>LOCATION</div>
                   <div>NUMBER OF EMPLOYEES</div>
@@ -1233,17 +1233,17 @@ const CompanyDetailPageBMI: React.FC = () => {
                 </div>
                 <div className="space-y-3">
                   {lookalikeCompanies.map((company) => (
-                    <div key={company.id} className="grid grid-cols-4 gap-4 py-2 border-b border-gray-700">
+                    <div key={company.id} className="grid grid-cols-4 gap-4 py-2 border-b border-gray-200">
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-xs font-semibold">
                           {company.logo}
                         </div>
-                        <div className="text-white font-medium">{company.name}</div>
+                        <div className="text-gray-900 font-medium">{company.name}</div>
                       </div>
-                      <div className="text-gray-300">{company.location}</div>
-                      <div className="text-gray-300">{company.employees}</div>
+                      <div className="text-gray-700">{company.location}</div>
+                      <div className="text-gray-700">{company.employees}</div>
                       <div>
-                        <button className="flex items-center space-x-1 text-gray-300 hover:text-white transition-colors" data-testid={`button-save-${company.id}`}>
+                        <button className="flex items-center space-x-1 text-gray-700 hover:text-gray-900 transition-colors" data-testid={`button-save-${company.id}`}>
                           <Plus className="h-4 w-4" />
                           <span>Save</span>
                         </button>
@@ -1251,7 +1251,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                     </div>
                   ))}
                 </div>
-                <div className="flex items-center justify-between mt-4 text-sm text-gray-400">
+                <div className="flex items-center justify-between mt-4 text-sm text-gray-600">
                   <span>1 - 2 of 100</span>
                 </div>
               </div>
@@ -1259,25 +1259,25 @@ const CompanyDetailPageBMI: React.FC = () => {
           </div>
 
           {/* Key Prospects Widget */}
-          <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
-            <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
-              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+          <div className="mb-3 bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
+            <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
+              <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-t-xl">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <Users className="h-5 w-5 text-blue-400" />
-                    <h2 className="text-lg font-semibold text-white">Key Prospects</h2>
+                    <Users className="h-5 w-5 text-blue-600" />
+                    <h2 className="text-lg font-semibold text-gray-900">Key Prospects</h2>
                     <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">Live Data</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <span className="text-xs text-gray-400">{allContacts.length} contacts found</span>
-                    <Settings className="h-4 w-4 text-gray-400 cursor-pointer hover:text-blue-400 transition-colors" />
+                    <span className="text-xs text-gray-500">{allContacts.length} contacts found</span>
+                    <Settings className="h-4 w-4 text-gray-500 cursor-pointer hover:text-blue-600 transition-colors" />
                   </div>
                 </div>
               </div>
               
-              <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl p-4">
+              <div className="bg-gradient-to-b from-white to-gray-50 rounded-b-xl p-4">
                 {/* List Header */}
-                <div className="grid grid-cols-5 gap-4 text-xs text-gray-400 font-medium mb-4 pb-2 border-b border-gray-700">
+                <div className="grid grid-cols-5 gap-4 text-xs text-gray-600 font-medium mb-4 pb-2 border-b border-gray-200">
                   <div>NAME</div>
                   <div>TITLE</div>
                   <div>DEPARTMENT</div>
@@ -1289,7 +1289,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                 <div className="space-y-2">
                   {getCurrentPageContacts().map((contact, index) => (
                     <div key={index} className="relative">
-                      <div className="grid grid-cols-5 gap-4 py-3 px-2 rounded-lg hover:bg-gray-700/30 transition-colors border-b border-gray-700/50">
+                      <div className="grid grid-cols-5 gap-4 py-3 px-2 rounded-lg hover:bg-gray-100/50 transition-colors border-b border-gray-200/50">
                         <div className="group col-span-4 grid grid-cols-4 gap-4 cursor-pointer">
                           {/* Name with Avatar */}
                           <div className="flex items-center space-x-3 min-w-0">
@@ -1297,12 +1297,12 @@ const CompanyDetailPageBMI: React.FC = () => {
                               {contact.name.split(' ').map(n => n[0]).join('')}
                             </div>
                             <div className="min-w-0 flex-1">
-                              <div className="text-white font-medium text-sm flex items-center space-x-1">
+                              <div className="text-gray-900 font-medium text-sm flex items-center space-x-1">
                                 <span className="truncate">
                                   {contact.name}
                                 </span>
                                 {contact.verified && (
-                                  <CheckCircle className="h-3 w-3 text-green-400 flex-shrink-0" />
+                                  <CheckCircle className="h-3 w-3 text-green-600 flex-shrink-0" />
                                 )}
                               </div>
                             </div>
@@ -1310,27 +1310,27 @@ const CompanyDetailPageBMI: React.FC = () => {
                           
                           {/* Title */}
                           <div className="flex flex-col justify-center min-w-0">
-                            <div className="text-gray-300 text-sm truncate">
+                            <div className="text-gray-700 text-sm truncate">
                               {contact.title}
                             </div>
                           </div>
                           
                           {/* Department */}
                           <div className="flex flex-col justify-center min-w-0">
-                            <div className="text-gray-300 text-sm truncate">
+                            <div className="text-gray-600 text-sm truncate">
                               {contact.department}
                             </div>
                           </div>
                           
                           {/* Location */}
                           <div className="flex flex-col justify-center min-w-0">
-                            <div className="text-gray-300 text-sm truncate">
+                            <div className="text-gray-600 text-sm truncate">
                               {contact.location}
                             </div>
                           </div>
 
                           {/* Hover Card for first 4 columns only */}
-                          <div className="absolute left-0 top-full mt-2 w-96 bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg border border-gray-600 shadow-2xl p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                          <div className="absolute left-0 top-full mt-2 w-96 bg-gradient-to-br from-white to-gray-50 rounded-lg border border-gray-200 shadow-2xl p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                             <div className="flex items-start space-x-4">
                               {/* Avatar */}
                               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white font-medium flex-shrink-0">
@@ -1341,32 +1341,32 @@ const CompanyDetailPageBMI: React.FC = () => {
                                 {/* Header */}
                                 <div>
                                   <div className="flex items-center space-x-2 mb-1">
-                                    <h3 className="text-white font-semibold text-base">{contact.name}</h3>
+                                    <h3 className="text-gray-900 font-semibold text-base">{contact.name}</h3>
                                     {contact.verified && (
-                                      <CheckCircle className="h-4 w-4 text-green-400" />
+                                      <CheckCircle className="h-4 w-4 text-green-600" />
                                     )}
                                   </div>
-                                  <div className="text-gray-300 font-medium">{contact.title}</div>
-                                  <div className="text-gray-400 text-sm">{contact.department}</div>
+                                  <div className="text-gray-700 font-medium">{contact.title}</div>
+                                  <div className="text-gray-600 text-sm">{contact.department}</div>
                                 </div>
 
                                 {/* Location Details */}
-                                <div className="space-y-2 border-t border-gray-600 pt-3">
+                                <div className="space-y-2 border-t border-gray-200 pt-3">
                                   <div className="flex items-center space-x-2">
-                                    <MapPin className="h-4 w-4 text-purple-400" />
-                                    <span className="text-gray-300 text-sm">{contact.location}</span>
+                                    <MapPin className="h-4 w-4 text-purple-600" />
+                                    <span className="text-gray-700 text-sm">{contact.location}</span>
                                   </div>
                                 </div>
 
                                 {/* Status & Source */}
-                                <div className="flex items-center justify-between border-t border-gray-600 pt-3">
+                                <div className="flex items-center justify-between border-t border-gray-200 pt-3">
                                   <div>
-                                    <div className="text-gray-400 text-xs">Connection</div>
-                                    <div className="text-gray-300 text-sm">{contact.connection}</div>
+                                    <div className="text-gray-600 text-xs">Connection</div>
+                                    <div className="text-gray-700 text-sm">{contact.connection}</div>
                                   </div>
                                   <div>
-                                    <div className="text-gray-400 text-xs">Last Activity</div>
-                                    <div className="text-gray-300 text-sm">{contact.lastActivity}</div>
+                                    <div className="text-gray-600 text-xs">Last Activity</div>
+                                    <div className="text-gray-700 text-sm">{contact.lastActivity}</div>
                                   </div>
                                   <span className={`text-xs px-2 py-1 rounded-full ${
                                     contact.source.includes('LinkedIn') 
