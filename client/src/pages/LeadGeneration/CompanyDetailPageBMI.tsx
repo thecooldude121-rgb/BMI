@@ -502,7 +502,7 @@ const CompanyDetailPageBMI: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gray-900 text-white relative">
       {/* Header - Fixed at top */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-gray-800 border-b border-gray-700 shadow-lg">
         <div className="px-6 py-4">
@@ -573,7 +573,7 @@ const CompanyDetailPageBMI: React.FC = () => {
         </div>
       </div>
       {/* Main Content - With padding for fixed header */}
-      <div className="flex h-full bg-gray-900 pt-36">
+      <div className="flex h-full bg-gray-900 pt-[120px]">
         {/* Left Sidebar - All Widgets */}
         <div className="w-80 bg-gray-900 border-r border-gray-700 overflow-y-auto">
           <div className="p-3 space-y-3">
