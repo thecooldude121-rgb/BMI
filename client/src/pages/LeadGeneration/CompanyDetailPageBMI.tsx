@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useRoute } from 'wouter';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { 
   ArrowLeft, 
   Phone, 
@@ -34,7 +36,13 @@ import {
   Maximize2,
   Minimize2,
   FileSpreadsheet,
-  X
+  X,
+  LayoutGrid,
+  BarChart3,
+  Clock,
+  Edit,
+  Trash2,
+  Globe
 } from 'lucide-react';
 import { Link } from 'wouter';
 import { companies, CompanyData as SharedCompanyData } from '../../data/companies';
@@ -101,13 +109,46 @@ interface LookalikeCompany {
   employees: string;
 }
 
+// Deal-related interfaces
+interface Deal {
+  id: string;
+  name: string;
+  title: string;
+  value: string;
+  stage: string;
+  probability: number;
+  expectedCloseDate: string;
+  assignedTo: string;
+  dealHealth: string;
+  dealType: string;
+  aiScore: number;
+  lastActivityDate: string;
+  account?: {
+    id: string;
+    name: string;
+  };
+  contact?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  };
+}
+
+interface DealStageColumn {
+  id: string;
+  title: string;
+  color: string;
+  deals: Deal[];
+}
+
 const CompanyDetailPageBMI: React.FC = () => {
   const [match, params] = useRoute('/lead-generation/company/:id');
   const companyId = params?.id || '1';
+  const queryClient = useQueryClient();
   const [insightsExpanded, setInsightsExpanded] = useState(true);
   const [activeInsightTab, setActiveInsightTab] = useState('ai-score');
   const [activeActivityTab, setActiveActivityTab] = useState('all');
-  const [activeMainTab, setActiveMainTab] = useState('overview');
+  const [activeMainTab, setActiveMainTab] = useState<'overview' | 'employees' | 'deals' | 'activities'>('overview');
   const [currentPage, setCurrentPage] = useState(1);
   const [employeeCurrentPage, setEmployeeCurrentPage] = useState(1);
   const totalPages = 5;
@@ -131,9 +172,49 @@ const CompanyDetailPageBMI: React.FC = () => {
     includeVerifiedOnly: false
   });
   
+  // Deal management state
+  const [dealViewMode, setDealViewMode] = useState<'kanban' | 'list' | 'table'>('kanban');
+  const [dealSearchTerm, setDealSearchTerm] = useState('');
+  const [selectedDeals, setSelectedDeals] = useState<string[]>([]);
+  const [showDealFilters, setShowDealFilters] = useState(false);
+  const [dealFilters, setDealFilters] = useState({
+    stage: '',
+    health: '',
+    assignee: '',
+    dateRange: ''
+  });
+  
   // Track accessed contact info
   const [accessedEmails, setAccessedEmails] = useState<Set<number>>(new Set());
   const [accessedNumbers, setAccessedNumbers] = useState<Set<number>>(new Set());
+  
+  // Deal data queries
+  const { data: deals = [], isLoading: dealsLoading } = useQuery({
+    queryKey: ['/api/deals'],
+    queryFn: async () => {
+      const response = await fetch('/api/deals');
+      if (!response.ok) throw new Error('Failed to fetch deals');
+      return response.json();
+    }
+  });
+  
+  const { data: accounts = [] } = useQuery({
+    queryKey: ['/api/accounts'],
+    queryFn: async () => {
+      const response = await fetch('/api/accounts');
+      if (!response.ok) throw new Error('Failed to fetch accounts');
+      return response.json();
+    }
+  });
+  
+  const { data: crmContacts = [] } = useQuery({
+    queryKey: ['/api/contacts'],
+    queryFn: async () => {
+      const response = await fetch('/api/contacts');
+      if (!response.ok) throw new Error('Failed to fetch contacts');
+      return response.json();
+    }
+  });
   
   // Handler functions for accessing contact info
   const handleAccessEmail = (contactIndex: number) => {
@@ -143,6 +224,40 @@ const CompanyDetailPageBMI: React.FC = () => {
   const handleAccessNumber = (contactIndex: number) => {
     setAccessedNumbers(prev => new Set(Array.from(prev).concat(contactIndex)));
   };
+  
+  // Deal constants
+  const DEAL_STAGES = [
+    { id: 'discovery', title: 'Discovery', color: 'bg-blue-500' },
+    { id: 'qualification', title: 'Qualification', color: 'bg-purple-500' },
+    { id: 'proposal', title: 'Proposal', color: 'bg-yellow-500' },
+    { id: 'negotiation', title: 'Negotiation', color: 'bg-orange-500' },
+    { id: 'closed-won', title: 'Closed Won', color: 'bg-green-500' },
+    { id: 'closed-lost', title: 'Closed Lost', color: 'bg-red-500' }
+  ];
+
+  const DEAL_HEALTH_COLORS = {
+    healthy: 'bg-green-100 text-green-800',
+    at_risk: 'bg-yellow-100 text-yellow-800',
+    critical: 'bg-red-100 text-red-800',
+    hot_opportunity: 'bg-blue-100 text-blue-800',
+    stalled: 'bg-gray-100 text-gray-800'
+  };
+  
+  // Deal update mutation
+  const updateDealMutation = useMutation({
+    mutationFn: async ({ dealId, updates }: { dealId: string; updates: Partial<Deal> }) => {
+      const response = await fetch(`/api/deals/${dealId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates)
+      });
+      if (!response.ok) throw new Error('Failed to update deal');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/deals'] });
+    }
+  });
 
   // Comprehensive employee data sourced from web, LinkedIn, company website, and databases
   const allEmployees: EmployeeData[] = [
@@ -704,8 +819,8 @@ const CompanyDetailPageBMI: React.FC = () => {
     rating: 'A+'
   };
 
-  // Sample contacts data
-  const contacts: Contact[] = [
+  // Sample key contacts data
+  const keyContacts: Contact[] = [
     {
       id: '1',
       name: 'Robert Luciano',
@@ -1127,6 +1242,17 @@ const CompanyDetailPageBMI: React.FC = () => {
               data-testid="tab-employees"
             >
               Employees
+            </button>
+            <button 
+              onClick={() => setActiveMainTab('deals')}
+              className={`pb-2 border-b-2 transition-all duration-300 text-sm hover:scale-105 hover:-translate-y-0.5 ${
+                activeMainTab === 'deals' 
+                  ? 'border-blue-500 text-blue-600 font-medium' 
+                  : 'border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-300'
+              }`}
+              data-testid="tab-deals"
+            >
+              Deals
             </button>
             <button 
               onClick={() => setActiveMainTab('deals')}
