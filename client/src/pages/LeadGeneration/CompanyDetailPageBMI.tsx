@@ -3387,30 +3387,32 @@ const CompanyDetailPageBMI: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Status */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {[
-                      { key: 'completed', label: 'Completed', color: 'green' },
-                      { key: 'scheduled', label: 'Scheduled', color: 'blue' },
-                      { key: 'pending', label: 'Pending', color: 'yellow' }
-                    ].map((status) => (
-                      <button
-                        key={status.key}
-                        onClick={() => setActivityForm(prev => ({ ...prev, status: status.key as any }))}
-                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 ${
-                          activityForm.status === status.key
-                            ? `bg-${status.color}-600 text-white`
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }`}
-                        data-testid={`activity-status-${status.key}`}
-                      >
-                        {status.label}
-                      </button>
-                    ))}
+                {/* Status - Hide for Notes */}
+                {activityType !== 'note' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[
+                        { key: 'completed', label: 'Completed', color: 'green' },
+                        { key: 'scheduled', label: 'Scheduled', color: 'blue' },
+                        { key: 'pending', label: 'Pending', color: 'yellow' }
+                      ].map((status) => (
+                        <button
+                          key={status.key}
+                          onClick={() => setActivityForm(prev => ({ ...prev, status: status.key as any }))}
+                          className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 ${
+                            activityForm.status === status.key
+                              ? `bg-${status.color}-600 text-white`
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          }`}
+                          data-testid={`activity-status-${status.key}`}
+                        >
+                          {status.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Action Buttons */}
