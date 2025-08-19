@@ -483,24 +483,7 @@ const PeopleDiscovery: React.FC = () => {
               )}
             </div>
             
-            {/* Trend Summary */}
-            <div className="mt-1 flex items-center space-x-2 text-xs">
-              <div className="flex items-center space-x-1">
-                <span>🔥</span>
-                <span className="text-gray-600">
-                  {person.keywords.filter(k => getTrendInfo(k).trend === 'hot').length}
-                </span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <span>📈</span>
-                <span className="text-gray-600">
-                  {person.keywords.filter(k => getTrendInfo(k).trend === 'rising').length}
-                </span>
-              </div>
-              <div className="text-gray-500 truncate">
-                Market trends
-              </div>
-            </div>
+            
 
             {/* Additional keywords */}
             {person.keywords.length > 2 && (
