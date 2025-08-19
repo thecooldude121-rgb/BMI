@@ -47,7 +47,7 @@ import {
   User
 } from 'lucide-react';
 import { Link } from 'wouter';
-import { companies, CompanyData as SharedCompanyData } from '../../data/companies';
+import { getCompanies, localCompanies, CompanyData as SharedCompanyData } from '../../data/companies';
 
 interface Contact {
   id: string;
@@ -202,6 +202,21 @@ const CompanyDetailPageBMI: React.FC = () => {
   const [accessedEmails, setAccessedEmails] = useState<Set<number>>(new Set());
   const [accessedNumbers, setAccessedNumbers] = useState<Set<number>>(new Set());
   
+  // Fetch accounts first
+  const { data: accounts = [] } = useQuery({
+    queryKey: ['/api/accounts'],
+    queryFn: async () => {
+      const response = await fetch('/api/accounts');
+      if (!response.ok) throw new Error('Failed to fetch accounts');
+      return response.json();
+    }
+  });
+  
+  // Get companies from CRM Accounts first, fallback to local data
+  const companies = useMemo(() => {
+    return getCompanies(accounts);
+  }, [accounts]);
+  
   // Company data - moved up to be available early
   const selectedCompany = companies.find(c => c.id === companyId) || companies[0];
   
@@ -222,16 +237,6 @@ const CompanyDetailPageBMI: React.FC = () => {
     score: 85,
     rating: 'A+'
   };
-
-  // Fetch accounts first
-  const { data: accounts = [] } = useQuery({
-    queryKey: ['/api/accounts'],
-    queryFn: async () => {
-      const response = await fetch('/api/accounts');
-      if (!response.ok) throw new Error('Failed to fetch accounts');
-      return response.json();
-    }
-  });
 
   // Fetch all activities from CRM system
   const { data: allActivities = [] } = useQuery({
