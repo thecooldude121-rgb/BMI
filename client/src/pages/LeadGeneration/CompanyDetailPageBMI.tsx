@@ -504,7 +504,7 @@ const CompanyDetailPageBMI: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-gray-800 border-b border-gray-700 backdrop-blur-sm">
+      <div className="sticky top-0 z-50 bg-gray-800 border-b border-gray-700">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -573,9 +573,9 @@ const CompanyDetailPageBMI: React.FC = () => {
         </div>
       </div>
       {/* Main Content */}
-      <div className="flex mt-[120px] bg-gray-900" style={{minHeight: 'calc(100vh - 120px)'}}>
+      <div className="flex h-full bg-gray-900">
         {/* Left Sidebar - All Widgets */}
-        <div className="w-80 bg-gray-900 border-r border-gray-700 overflow-y-auto h-full">
+        <div className="w-80 bg-gray-900 border-r border-gray-700 overflow-y-auto">
           <div className="p-3 space-y-3">
 
             {/* Company Information Widget */}
@@ -781,7 +781,7 @@ const CompanyDetailPageBMI: React.FC = () => {
         </div>
 
         {/* Main Content Area - Full Width */}
-        <div className="flex-1 p-3 overflow-y-auto bg-gray-900">
+        <div className="flex-1 p-3 bg-gray-900">
           {/* Company Insights Widget */}
           <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
             <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
