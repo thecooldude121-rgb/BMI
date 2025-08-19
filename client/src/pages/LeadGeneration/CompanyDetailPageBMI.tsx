@@ -639,23 +639,23 @@ const CompanyDetailPageBMI: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl overflow-y-auto">
+                <div className="bg-gradient-to-b from-white to-gray-50 rounded-b-xl overflow-y-auto">
                   <div className="p-4 space-y-3">
                     {contacts.map((contact) => (
-                      <div key={contact.id} className="bg-gradient-to-r from-gray-700 to-gray-800 p-3 rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-200 shadow-lg border border-gray-600 hover:shadow-xl hover:border-blue-500/30">
+                      <div key={contact.id} className="bg-gradient-to-r from-gray-50 to-white p-3 rounded-lg hover:from-gray-100 hover:to-gray-50 transition-all duration-200 shadow-lg border border-gray-200 hover:shadow-xl hover:border-blue-500/30">
                         <div className="flex items-center space-x-3">
                           <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-sm font-bold text-white shadow-lg">
                             {contact.initials}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="text-white text-sm font-medium truncate">{contact.name}</div>
-                            <div className="text-gray-300 text-xs truncate">{contact.title}</div>
+                            <div className="text-gray-900 text-sm font-medium truncate">{contact.name}</div>
+                            <div className="text-gray-600 text-xs truncate">{contact.title}</div>
                           </div>
                           <div className="flex items-center space-x-1">
-                            <button className="p-1 text-gray-400 hover:text-blue-400 transition-colors rounded hover:bg-gray-600">
+                            <button className="p-1 text-gray-500 hover:text-blue-600 transition-colors rounded hover:bg-gray-100">
                               <Mail className="h-3 w-3" />
                             </button>
-                            <button className="p-1 text-gray-400 hover:text-green-400 transition-colors rounded hover:bg-gray-600">
+                            <button className="p-1 text-gray-500 hover:text-green-600 transition-colors rounded hover:bg-gray-100">
                               <Phone className="h-3 w-3" />
                             </button>
                           </div>
@@ -668,31 +668,31 @@ const CompanyDetailPageBMI: React.FC = () => {
             </div>
 
             {/* Deals Section */}
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
-              <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
-                <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
+              <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
+                <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-t-xl">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <DollarSign className="h-5 w-5 text-green-400" />
-                      <h3 className="font-semibold text-white text-lg">Deals</h3>
+                      <DollarSign className="h-5 w-5 text-green-600" />
+                      <h3 className="font-semibold text-gray-900 text-lg">Deals</h3>
                       <span className="bg-green-600 text-white text-sm px-3 py-1 rounded-full">0</span>
                     </div>
                     <div className="flex items-center space-x-3">
-                      <Plus className="h-5 w-5 text-gray-400 cursor-pointer hover:text-green-400 transition-colors" />
-                      <Settings className="h-4 w-4 text-gray-400 cursor-pointer hover:text-green-400 transition-colors" />
+                      <Plus className="h-5 w-5 text-gray-500 cursor-pointer hover:text-green-600 transition-colors" />
+                      <Settings className="h-4 w-4 text-gray-500 cursor-pointer hover:text-green-600 transition-colors" />
                     </div>
                   </div>
                 </div>
-                <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl overflow-y-auto">
+                <div className="bg-gradient-to-b from-white to-gray-50 rounded-b-xl overflow-y-auto">
                   <div className="p-4 h-full flex items-center justify-center">
                     <div className="text-center">
                       <div className="w-12 h-12 bg-gradient-to-br from-green-600 to-green-800 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
                         <DollarSign className="h-6 w-6 text-white" />
                       </div>
-                      <div className="text-gray-300 text-sm mb-2 font-medium">
+                      <div className="text-gray-700 text-sm mb-2 font-medium">
                         No deals yet
                       </div>
-                      <div className="text-gray-400 text-xs mb-4">
+                      <div className="text-gray-500 text-xs mb-4">
                         Create your first deal to start tracking opportunities
                       </div>
                       <button className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white px-4 py-2 rounded-lg text-xs font-medium transition-all duration-200 shadow-lg hover:shadow-xl" data-testid="button-add-deal">
@@ -705,29 +705,29 @@ const CompanyDetailPageBMI: React.FC = () => {
             </div>
 
             {/* Tasks Widget */}
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
-              <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
-                <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
+              <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
+                <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-t-xl">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <CheckSquare className="h-5 w-5 text-purple-400" />
-                      <h3 className="font-semibold text-white text-lg">Tasks</h3>
+                      <CheckSquare className="h-5 w-5 text-purple-600" />
+                      <h3 className="font-semibold text-gray-900 text-lg">Tasks</h3>
                       <span className="bg-purple-600 text-white text-sm px-3 py-1 rounded-full">0</span>
                     </div>
                     <div className="flex items-center space-x-3">
-                      <Plus className="h-5 w-5 text-gray-400 cursor-pointer hover:text-purple-400 transition-colors" />
-                      <Settings className="h-4 w-4 text-gray-400 cursor-pointer hover:text-purple-400 transition-colors" />
+                      <Plus className="h-5 w-5 text-gray-500 cursor-pointer hover:text-purple-600 transition-colors" />
+                      <Settings className="h-4 w-4 text-gray-500 cursor-pointer hover:text-purple-600 transition-colors" />
                     </div>
                   </div>
                 </div>
-                <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl overflow-y-auto">
+                <div className="bg-gradient-to-b from-white to-gray-50 rounded-b-xl overflow-y-auto">
                   <div className="p-6 h-full flex items-center justify-center">
                     <div className="text-center">
                       <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                         <CheckSquare className="h-8 w-8 text-white" />
                       </div>
-                      <div className="text-gray-300 text-lg mb-3 font-medium">No tasks yet</div>
-                      <div className="text-gray-400 text-sm mb-6 max-w-md">
+                      <div className="text-gray-700 text-lg mb-3 font-medium">No tasks yet</div>
+                      <div className="text-gray-500 text-sm mb-6 max-w-md">
                         Create tasks to track important actions and follow-ups
                       </div>
                       <button className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl" data-testid="button-add-task">
@@ -740,29 +740,29 @@ const CompanyDetailPageBMI: React.FC = () => {
             </div>
 
             {/* Notes Widget */}
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
-              <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
-                <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
+              <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
+                <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-t-xl">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <FileText className="h-5 w-5 text-orange-400" />
-                      <h3 className="font-semibold text-white text-lg">Notes</h3>
+                      <FileText className="h-5 w-5 text-orange-600" />
+                      <h3 className="font-semibold text-gray-900 text-lg">Notes</h3>
                       <span className="bg-orange-600 text-white text-sm px-3 py-1 rounded-full">0</span>
                     </div>
                     <div className="flex items-center space-x-3">
-                      <Plus className="h-5 w-5 text-gray-400 cursor-pointer hover:text-orange-400 transition-colors" />
-                      <Settings className="h-4 w-4 text-gray-400 cursor-pointer hover:text-orange-400 transition-colors" />
+                      <Plus className="h-5 w-5 text-gray-500 cursor-pointer hover:text-orange-600 transition-colors" />
+                      <Settings className="h-4 w-4 text-gray-500 cursor-pointer hover:text-orange-600 transition-colors" />
                     </div>
                   </div>
                 </div>
-                <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl overflow-y-auto">
+                <div className="bg-gradient-to-b from-white to-gray-50 rounded-b-xl overflow-y-auto">
                   <div className="p-6 h-full flex items-center justify-center">
                     <div className="text-center">
                       <div className="w-16 h-16 bg-gradient-to-br from-orange-600 to-orange-800 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                         <FileText className="h-8 w-8 text-white" />
                       </div>
-                      <div className="text-gray-300 text-lg mb-3 font-medium">No notes yet</div>
-                      <div className="text-gray-400 text-sm mb-6 max-w-md">
+                      <div className="text-gray-700 text-lg mb-3 font-medium">No notes yet</div>
+                      <div className="text-gray-500 text-sm mb-6 max-w-md">
                         Start documenting important information and insights
                       </div>
                       <button className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-500 hover:to-orange-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl" data-testid="button-add-note">
@@ -1475,23 +1475,23 @@ const CompanyDetailPageBMI: React.FC = () => {
           </div>
 
           {/* Activities */}
-          <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
-            <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
-              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+          <div className="mb-3 bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
+            <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
+              <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-t-xl">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold text-white">Activities</h2>
+                  <h2 className="text-lg font-semibold text-gray-900">Activities</h2>
                   <div className="flex items-center space-x-2">
-                    <select className="bg-gray-700 text-white text-sm px-2 py-1 rounded border border-gray-600">
+                    <select className="bg-gray-100 text-gray-900 text-sm px-2 py-1 rounded border border-gray-300">
                       <option>Log activity</option>
                     </select>
-                    <ChevronUp className="h-4 w-4 text-gray-400" />
+                    <ChevronUp className="h-4 w-4 text-gray-500" />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl p-4">
+              <div className="bg-gradient-to-b from-white to-gray-50 rounded-b-xl p-4">
                 {/* Activity Tabs */}
-                <div className="flex space-x-4 mb-4 border-b border-gray-700">
+                <div className="flex space-x-4 mb-4 border-b border-gray-200">
                   {[
                     { key: 'all', label: 'All' },
                     { key: 'emails', label: 'Emails' },
@@ -1507,8 +1507,8 @@ const CompanyDetailPageBMI: React.FC = () => {
                       onClick={() => setActiveActivityTab(tab.key as any)}
                       className={`pb-2 border-b-2 transition-colors text-sm ${
                         activeActivityTab === tab.key
-                          ? 'border-blue-500 text-white'
-                          : 'border-transparent text-gray-400 hover:text-white'
+                          ? 'border-blue-500 text-gray-900'
+                          : 'border-transparent text-gray-500 hover:text-gray-900'
                       }`}
                       data-testid={`activity-tab-${tab.key}`}
                     >
@@ -1518,8 +1518,8 @@ const CompanyDetailPageBMI: React.FC = () => {
                 </div>
 
                 <div className="flex items-center justify-between mb-4">
-                  <div className="text-white font-medium">Upcoming</div>
-                  <button className="flex items-center space-x-1 text-gray-400 hover:text-white transition-colors text-sm" data-testid="button-filter">
+                  <div className="text-gray-900 font-medium">Upcoming</div>
+                  <button className="flex items-center space-x-1 text-gray-500 hover:text-gray-900 transition-colors text-sm" data-testid="button-filter">
                     <Filter className="h-4 w-4" />
                     <span>Filter 6/6</span>
                   </button>
@@ -1532,20 +1532,20 @@ const CompanyDetailPageBMI: React.FC = () => {
                         <div className="flex-1">
                           <div className="flex items-center space-x-2 mb-1">
                             {activity.type === 'email' && (
-                              <Mail className="h-4 w-4 text-green-400" />
+                              <Mail className="h-4 w-4 text-green-600" />
                             )}
                             {activity.type === 'task' && (
-                              <CheckSquare className="h-4 w-4 text-blue-400" />
+                              <CheckSquare className="h-4 w-4 text-blue-600" />
                             )}
-                            <span className="text-white font-medium text-sm">{activity.title}</span>
+                            <span className="text-gray-900 font-medium text-sm">{activity.title}</span>
                           </div>
                           {activity.description && (
-                            <div className="text-gray-300 text-sm mb-2">
+                            <div className="text-gray-600 text-sm mb-2">
                               {activity.description}
                             </div>
                           )}
                         </div>
-                        <div className="text-gray-400 text-sm">
+                        <div className="text-gray-500 text-sm">
                           {activity.timestamp}
                         </div>
                       </div>
