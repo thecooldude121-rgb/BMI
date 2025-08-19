@@ -502,9 +502,9 @@ const CompanyDetailPageBMI: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white relative">
+    <div className="min-h-screen bg-gray-50 text-gray-900 relative">
       {/* Header - Fixed below global header */}
-      <div className="fixed top-14 left-0 right-0 z-50 bg-gray-800 border-b border-gray-700 shadow-lg">
+      <div className="fixed top-14 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-lg">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -521,10 +521,10 @@ const CompanyDetailPageBMI: React.FC = () => {
                   VGI
                 </div>
                 <div>
-                  <h1 className="text-xl font-semibold text-white" data-testid="text-company-name">
+                  <h1 className="text-xl font-semibold text-gray-900" data-testid="text-company-name">
                     {companyData.name}
                   </h1>
-                  <div className="flex items-center space-x-4 text-sm text-gray-400">
+                  <div className="flex items-center space-x-4 text-sm text-gray-600">
                     <span>{companyData.industry}</span>
                     <span>•</span>
                     <span>{companyData.location}</span>
@@ -537,17 +537,17 @@ const CompanyDetailPageBMI: React.FC = () => {
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <button className="p-2 hover:bg-gray-700 rounded-lg transition-colors" data-testid="button-phone">
-                <Phone className="h-5 w-5" />
+              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" data-testid="button-phone">
+                <Phone className="h-5 w-5 text-gray-600" />
               </button>
-              <button className="p-2 hover:bg-gray-700 rounded-lg transition-colors" data-testid="button-email">
-                <Mail className="h-5 w-5" />
+              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" data-testid="button-email">
+                <Mail className="h-5 w-5 text-gray-600" />
               </button>
-              <button className="p-2 hover:bg-gray-700 rounded-lg transition-colors" data-testid="button-external">
-                <ExternalLink className="h-5 w-5" />
+              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" data-testid="button-external">
+                <ExternalLink className="h-5 w-5 text-gray-600" />
               </button>
-              <button className="p-2 hover:bg-gray-700 rounded-lg transition-colors" data-testid="button-list">
-                <MoreHorizontal className="h-5 w-5" />
+              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" data-testid="button-list">
+                <MoreHorizontal className="h-5 w-5 text-gray-600" />
               </button>
               <div className="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm font-medium">
                 Actions
@@ -557,65 +557,65 @@ const CompanyDetailPageBMI: React.FC = () => {
 
           {/* Navigation Tabs */}
           <div className="flex space-x-6 mt-4">
-            <button className="pb-2 border-b-2 border-blue-500 text-white font-medium text-sm">Overview</button>
-            <button className="pb-2 border-b-2 border-transparent text-gray-400 hover:text-white text-sm">Employees</button>
-            <button className="pb-2 border-b-2 border-transparent text-gray-400 hover:text-white text-sm">
+            <button className="pb-2 border-b-2 border-blue-500 text-blue-600 font-medium text-sm">Overview</button>
+            <button className="pb-2 border-b-2 border-transparent text-gray-500 hover:text-gray-900 text-sm">Employees</button>
+            <button className="pb-2 border-b-2 border-transparent text-gray-500 hover:text-gray-900 text-sm">
               Deals
             </button>
-            <button className="pb-2 border-b-2 border-transparent text-gray-400 hover:text-white text-sm">
+            <button className="pb-2 border-b-2 border-transparent text-gray-500 hover:text-gray-900 text-sm">
               Activities
             </button>
           </div>
         </div>
       </div>
       {/* Main Content - With padding for both headers */}
-      <div className="flex h-full bg-gray-900 pt-[176px]">
+      <div className="flex h-full bg-gray-50 pt-[176px]">
         {/* Left Sidebar - All Widgets */}
-        <div className="w-80 bg-gray-900 border-r border-gray-700 overflow-y-auto">
+        <div className="w-80 bg-white border-r border-gray-200 overflow-y-auto">
           <div className="p-3 space-y-3">
 
             {/* Company Information Widget */}
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
-              <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
-                <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
+              <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
+                <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-t-xl">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <Building2 className="h-5 w-5 text-blue-400" />
-                      <h3 className="font-semibold text-white text-lg">Company Information</h3>
+                      <Building2 className="h-5 w-5 text-blue-600" />
+                      <h3 className="font-semibold text-gray-900 text-lg">Company Information</h3>
                     </div>
-                    <Settings className="h-4 w-4 text-gray-400 cursor-pointer hover:text-blue-400 transition-colors" />
+                    <Settings className="h-4 w-4 text-gray-500 cursor-pointer hover:text-blue-600 transition-colors" />
                   </div>
                 </div>
-                <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-b-xl p-4">
+                <div className="bg-gradient-to-b from-white to-gray-50 rounded-b-xl p-4">
                   <div className="space-y-4">
                     <div>
-                      <h4 className="text-gray-400 font-medium mb-2">ABOUT</h4>
-                      <p className="text-gray-300 text-sm">{companyData.description}</p>
+                      <h4 className="text-gray-600 font-medium mb-2">ABOUT</h4>
+                      <p className="text-gray-800 text-sm">{companyData.description}</p>
                     </div>
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <h4 className="text-gray-400 font-medium mb-2">INDUSTRY</h4>
-                        <p className="text-gray-300">{companyData.industry}</p>
+                        <h4 className="text-gray-600 font-medium mb-2">INDUSTRY</h4>
+                        <p className="text-gray-800">{companyData.industry}</p>
                       </div>
                       <div>
-                        <h4 className="text-gray-400 font-medium mb-2">LOCATION</h4>
-                        <p className="text-gray-300">{companyData.location}</p>
+                        <h4 className="text-gray-600 font-medium mb-2">LOCATION</h4>
+                        <p className="text-gray-800">{companyData.location}</p>
                       </div>
                       <div>
-                        <h4 className="text-gray-400 font-medium mb-2">EMPLOYEES</h4>
-                        <p className="text-gray-300">{companyData.employees}</p>
+                        <h4 className="text-gray-600 font-medium mb-2">EMPLOYEES</h4>
+                        <p className="text-gray-800">{companyData.employees}</p>
                       </div>
                       <div>
-                        <h4 className="text-gray-400 font-medium mb-2">REVENUE</h4>
-                        <p className="text-gray-300">{companyData.revenue}</p>
+                        <h4 className="text-gray-600 font-medium mb-2">REVENUE</h4>
+                        <p className="text-gray-800">{companyData.revenue}</p>
                       </div>
                       <div>
-                        <h4 className="text-gray-400 font-medium mb-2">PHONE NUMBER</h4>
-                        <p className="text-gray-300">{companyData.phone}</p>
+                        <h4 className="text-gray-600 font-medium mb-2">PHONE NUMBER</h4>
+                        <p className="text-gray-800">{companyData.phone}</p>
                       </div>
                       <div>
-                        <h4 className="text-gray-400 font-medium mb-2">FOUNDING YEAR</h4>
-                        <p className="text-gray-300">{companyData.founded}</p>
+                        <h4 className="text-gray-600 font-medium mb-2">FOUNDING YEAR</h4>
+                        <p className="text-gray-800">{companyData.founded}</p>
                       </div>
                     </div>
                   </div>
@@ -624,18 +624,18 @@ const CompanyDetailPageBMI: React.FC = () => {
             </div>
 
             {/* Contacts Section */}
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
-              <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
-                <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
+              <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
+                <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-t-xl">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <Users className="h-5 w-5 text-blue-400" />
-                      <h3 className="font-semibold text-white text-lg">Contacts</h3>
+                      <Users className="h-5 w-5 text-blue-600" />
+                      <h3 className="font-semibold text-gray-900 text-lg">Contacts</h3>
                       <span className="bg-blue-600 text-white text-sm px-3 py-1 rounded-full">{contacts.length}</span>
                     </div>
                     <div className="flex items-center space-x-3">
-                      <Plus className="h-5 w-5 text-gray-400 cursor-pointer hover:text-blue-400 transition-colors" />
-                      <Settings className="h-4 w-4 text-gray-400 cursor-pointer hover:text-blue-400 transition-colors" />
+                      <Plus className="h-5 w-5 text-gray-500 cursor-pointer hover:text-blue-600 transition-colors" />
+                      <Settings className="h-4 w-4 text-gray-500 cursor-pointer hover:text-blue-600 transition-colors" />
                     </div>
                   </div>
                 </div>
@@ -777,31 +777,31 @@ const CompanyDetailPageBMI: React.FC = () => {
         </div>
 
         {/* Main Content Area - Full Width */}
-        <div className="flex-1 p-3 bg-gray-900">
+        <div className="flex-1 p-3 bg-gray-50">
           {/* Company Insights Widget */}
-          <div className="mb-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700">
-            <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-inner border border-gray-600">
+          <div className="mb-3 bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
+            <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
               {/* Widget Header */}
-              <div className="p-4 border-b border-gray-600 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 rounded-t-xl">
+              <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-t-xl">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <TrendingUp className="h-5 w-5 text-cyan-400" />
-                    <h2 className="text-lg font-semibold text-white">Company Insights</h2>
+                    <TrendingUp className="h-5 w-5 text-cyan-600" />
+                    <h2 className="text-lg font-semibold text-gray-900">Company Insights</h2>
                     <span className="bg-cyan-600 text-white text-xs px-2 py-1 rounded-full">AI Powered</span>
                     <span className="bg-green-600 text-white text-xs px-2 py-1 rounded-full">Live Data</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <span className="text-xs text-gray-400">Last updated: 2 min ago</span>
-                    <Settings className="h-4 w-4 text-gray-400 cursor-pointer hover:text-cyan-400 transition-colors" />
+                    <span className="text-xs text-gray-500">Last updated: 2 min ago</span>
+                    <Settings className="h-4 w-4 text-gray-500 cursor-pointer hover:text-cyan-600 transition-colors" />
                     <button 
                       onClick={() => setInsightsExpanded(!insightsExpanded)}
-                      className="p-1 rounded hover:bg-gray-600 transition-colors"
+                      className="p-1 rounded hover:bg-gray-100 transition-colors"
                       data-testid="toggle-insights"
                     >
                       {insightsExpanded ? (
-                        <ChevronUp className="h-4 w-4 text-gray-400" />
+                        <ChevronUp className="h-4 w-4 text-gray-500" />
                       ) : (
-                        <ChevronDown className="h-4 w-4 text-gray-400" />
+                        <ChevronDown className="h-4 w-4 text-gray-500" />
                       )}
                     </button>
                   </div>
