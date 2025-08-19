@@ -188,6 +188,27 @@ const CompanyDetailPageBMI: React.FC = () => {
   const [accessedEmails, setAccessedEmails] = useState<Set<number>>(new Set());
   const [accessedNumbers, setAccessedNumbers] = useState<Set<number>>(new Set());
   
+  // Company data - moved up to be available early
+  const selectedCompany = companies.find(c => c.id === companyId) || companies[0];
+  
+  const companyData: CompanyData = {
+    id: selectedCompany.id,
+    name: selectedCompany.name,
+    logo: selectedCompany.name.split(' ').map(n => n[0]).join('').toUpperCase(),
+    domain: selectedCompany.domain || 'company.com',
+    description: selectedCompany.description,
+    industry: selectedCompany.industry,
+    location: selectedCompany.location,
+    founded: selectedCompany.founded?.toString() || '2000',
+    employees: selectedCompany.employeeCount || '1-10',
+    revenue: selectedCompany.revenue || 'N/A',
+    phone: '+1 (555) 000-0000',
+    tradingSymbol: 'N/A',
+    subsidiaries: 0,
+    score: 85,
+    rating: 'A+'
+  };
+
   // Deal data queries
   const { data: deals = [], isLoading: dealsLoading } = useQuery({
     queryKey: ['/api/deals'],
@@ -259,12 +280,17 @@ const CompanyDetailPageBMI: React.FC = () => {
     }
   });
   
-  // Filter deals based on search term
+  // Filter deals based on company association and search term
   const filteredDeals = deals.filter((deal: any) => {
+    // First filter by company - only show deals associated with the current company
+    const matchesCompany = deal.account?.name === companyData.name;
+    
+    // Then filter by search term
     const matchesSearch = dealSearchTerm === '' || 
       deal.name?.toLowerCase().includes(dealSearchTerm.toLowerCase()) ||
       deal.title?.toLowerCase().includes(dealSearchTerm.toLowerCase());
-    return matchesSearch;
+    
+    return matchesCompany && matchesSearch;
   });
 
   // Comprehensive employee data sourced from web, LinkedIn, company website, and databases
@@ -805,27 +831,7 @@ const CompanyDetailPageBMI: React.FC = () => {
     return allContacts.slice(startIndex, endIndex);
   };
 
-  // Company data
-  // Get company data from the companies array based on companyId
-  const selectedCompany = companies.find(c => c.id === companyId) || companies[0];
-  
-  const companyData: CompanyData = {
-    id: selectedCompany.id,
-    name: selectedCompany.name,
-    logo: selectedCompany.name.split(' ').map(n => n[0]).join('').toUpperCase(),
-    domain: selectedCompany.domain || 'company.com',
-    description: selectedCompany.description,
-    industry: selectedCompany.industry,
-    location: selectedCompany.location,
-    founded: selectedCompany.founded?.toString() || '2000',
-    employees: selectedCompany.employeeCount || '1-10',
-    revenue: selectedCompany.revenue || 'N/A',
-    phone: '+1 (555) 000-0000',
-    tradingSymbol: 'N/A',
-    subsidiaries: 0,
-    score: 85,
-    rating: 'A+'
-  };
+
 
   // Sample key contacts data
   const keyContacts: Contact[] = [
