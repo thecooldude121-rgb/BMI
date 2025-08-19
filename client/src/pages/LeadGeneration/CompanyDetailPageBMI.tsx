@@ -1083,19 +1083,19 @@ const CompanyDetailPageBMI: React.FC = () => {
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" data-testid="button-phone">
-                <Phone className="h-5 w-5 text-gray-600" />
+              <button className="p-2 hover:bg-gray-100 hover:scale-110 rounded-lg transition-all duration-200 hover:shadow-md active:scale-95" data-testid="button-phone">
+                <Phone className="h-5 w-5 text-gray-600 hover:text-green-600 transition-colors duration-200" />
               </button>
-              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" data-testid="button-email">
-                <Mail className="h-5 w-5 text-gray-600" />
+              <button className="p-2 hover:bg-gray-100 hover:scale-110 rounded-lg transition-all duration-200 hover:shadow-md active:scale-95" data-testid="button-email">
+                <Mail className="h-5 w-5 text-gray-600 hover:text-blue-600 transition-colors duration-200" />
               </button>
-              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" data-testid="button-external">
-                <ExternalLink className="h-5 w-5 text-gray-600" />
+              <button className="p-2 hover:bg-gray-100 hover:scale-110 rounded-lg transition-all duration-200 hover:shadow-md active:scale-95" data-testid="button-external">
+                <ExternalLink className="h-5 w-5 text-gray-600 hover:text-purple-600 transition-colors duration-200" />
               </button>
-              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" data-testid="button-list">
-                <MoreHorizontal className="h-5 w-5 text-gray-600" />
+              <button className="p-2 hover:bg-gray-100 hover:scale-110 rounded-lg transition-all duration-200 hover:shadow-md active:scale-95" data-testid="button-list">
+                <MoreHorizontal className="h-5 w-5 text-gray-600 hover:text-indigo-600 transition-colors duration-200" />
               </button>
-              <div className="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm font-medium">
+              <div className="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 hover:scale-105 hover:shadow-lg transition-all duration-200 cursor-pointer active:scale-95">
                 Actions
               </div>
             </div>
@@ -1105,10 +1105,10 @@ const CompanyDetailPageBMI: React.FC = () => {
           <div className="flex space-x-6 mt-4">
             <button 
               onClick={() => setActiveMainTab('overview')}
-              className={`pb-2 border-b-2 transition-colors text-sm ${
+              className={`pb-2 border-b-2 transition-all duration-300 text-sm hover:scale-105 hover:-translate-y-0.5 ${
                 activeMainTab === 'overview' 
                   ? 'border-blue-500 text-blue-600 font-medium' 
-                  : 'border-transparent text-gray-500 hover:text-gray-900'
+                  : 'border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-300'
               }`}
               data-testid="tab-overview"
             >
@@ -1116,10 +1116,10 @@ const CompanyDetailPageBMI: React.FC = () => {
             </button>
             <button 
               onClick={() => setActiveMainTab('employees')}
-              className={`pb-2 border-b-2 transition-colors text-sm ${
+              className={`pb-2 border-b-2 transition-all duration-300 text-sm hover:scale-105 hover:-translate-y-0.5 ${
                 activeMainTab === 'employees' 
                   ? 'border-blue-500 text-blue-600 font-medium' 
-                  : 'border-transparent text-gray-500 hover:text-gray-900'
+                  : 'border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-300'
               }`}
               data-testid="tab-employees"
             >
@@ -1127,10 +1127,10 @@ const CompanyDetailPageBMI: React.FC = () => {
             </button>
             <button 
               onClick={() => setActiveMainTab('deals')}
-              className={`pb-2 border-b-2 transition-colors text-sm ${
+              className={`pb-2 border-b-2 transition-all duration-300 text-sm hover:scale-105 hover:-translate-y-0.5 ${
                 activeMainTab === 'deals' 
                   ? 'border-blue-500 text-blue-600 font-medium' 
-                  : 'border-transparent text-gray-500 hover:text-gray-900'
+                  : 'border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-300'
               }`}
               data-testid="tab-deals"
             >
@@ -1138,10 +1138,10 @@ const CompanyDetailPageBMI: React.FC = () => {
             </button>
             <button 
               onClick={() => setActiveMainTab('activities')}
-              className={`pb-2 border-b-2 transition-colors text-sm ${
+              className={`pb-2 border-b-2 transition-all duration-300 text-sm hover:scale-105 hover:-translate-y-0.5 ${
                 activeMainTab === 'activities' 
                   ? 'border-blue-500 text-blue-600 font-medium' 
-                  : 'border-transparent text-gray-500 hover:text-gray-900'
+                  : 'border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-300'
               }`}
               data-testid="tab-activities"
             >
@@ -2445,7 +2445,6 @@ const CompanyDetailPageBMI: React.FC = () => {
                             <div className="min-w-0 flex-1">
                               <div className="text-gray-900 text-sm font-medium truncate">{employee.name}</div>
                               <div className="text-gray-600 text-xs truncate flex items-center space-x-1">
-                                <span>{employee.source}</span>
                                 {employee.verified && (
                                   <CheckCircle className="h-3 w-3 text-green-600" />
                                 )}
