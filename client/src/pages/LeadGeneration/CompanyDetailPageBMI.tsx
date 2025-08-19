@@ -979,17 +979,17 @@ const CompanyDetailPageBMI: React.FC = () => {
     
     // Filter activities by account ID or related entities
     const companyActivities = allActivities
-      .filter(activity => {
+      .filter((activity: any) => {
         // Direct account relationship
         if (activity.accountId === currentAccountId) return true;
         
         // Related through deals or contacts that belong to this account
-        if (activity.dealId && deals?.some(deal => deal.id === activity.dealId)) return true;
-        if (activity.contactId && crmContacts?.some(contact => contact.id === activity.contactId)) return true;
+        if (activity.dealId && deals?.some((deal: any) => deal.id === activity.dealId)) return true;
+        if (activity.contactId && crmContacts?.some((contact: any) => contact.id === activity.contactId)) return true;
         
         return false;
       })
-      .map(activity => ({
+      .map((activity: any) => ({
         id: activity.id,
         type: activity.type,
         title: activity.subject || activity.emailSubject || 'Untitled Activity',
@@ -1004,13 +1004,13 @@ const CompanyDetailPageBMI: React.FC = () => {
 
     // Separate activities into upcoming and completed
     const upcomingActivities = companyActivities
-      .filter(activity => 
+      .filter((activity: any) => 
         activity.status === 'open' || 
         activity.status === 'planned' || 
         activity.status === 'in_progress' ||
         (activity.scheduledAt && new Date(activity.scheduledAt) > new Date())
       )
-      .sort((a, b) => {
+      .sort((a: any, b: any) => {
         // Sort by scheduled date if available, otherwise by created date
         const dateA = new Date(a.scheduledAt || a.rawActivity.createdAt);
         const dateB = new Date(b.scheduledAt || b.rawActivity.createdAt);
@@ -1019,11 +1019,11 @@ const CompanyDetailPageBMI: React.FC = () => {
 
     // Get last 2 completed activities
     const completedActivities = companyActivities
-      .filter(activity => 
+      .filter((activity: any) => 
         activity.status === 'completed' || 
         activity.completedAt
       )
-      .sort((a, b) => {
+      .sort((a: any, b: any) => {
         const dateA = new Date(a.completedAt || a.rawActivity.createdAt);
         const dateB = new Date(b.completedAt || b.rawActivity.createdAt);
         return dateB.getTime() - dateA.getTime(); // Most recent first
@@ -3613,7 +3613,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                         accountId: currentAccountId,
                         relatedToType: 'account',
                         relatedToId: currentAccountId,
-                        scheduledAt: activityForm.status === 'planned' ? `${activityForm.date}T${activityForm.time}:00.000Z` : null,
+                        scheduledAt: activityForm.status === 'scheduled' ? `${activityForm.date}T${activityForm.time}:00.000Z` : null,
                         completedAt: activityForm.status === 'completed' ? new Date().toISOString() : null,
                         direction: 'outbound',
                         source: 'manual'
