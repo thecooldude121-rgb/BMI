@@ -573,7 +573,7 @@ const CompanyDetailPageBMI: React.FC = () => {
         </div>
       </div>
       {/* Main Content */}
-      <div className="flex pt-32 min-h-screen">
+      <div className="flex mt-[120px] min-h-screen">
         {/* Left Sidebar - All Widgets */}
         <div className="w-80 bg-gray-900 border-r border-gray-700 overflow-y-auto">
           <div className="p-3 space-y-3">
