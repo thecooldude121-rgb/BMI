@@ -2788,42 +2788,74 @@ const CompanyDetailPageBMI: React.FC = () => {
                 <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
                   <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100 p-6">
                     {/* List View - Always Displayed */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {filteredDeals.map((deal: any) => (
-                          <div key={deal.id} className="bg-white rounded-lg p-4 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-                            <div className="flex items-start justify-between mb-3">
-                              <div className="flex-1">
-                                <h4 className="font-semibold text-sm mb-1">{deal.name}</h4>
-                                <p className="text-xs text-gray-600 mb-2">{deal.title || 'No title'}</p>
-                              </div>
-                              <span className={`text-xs px-2 py-1 rounded-full ${DEAL_STAGES.find(s => s.id === deal.stage)?.color || 'bg-gray-500'} text-white`}>
-                                {DEAL_STAGES.find(s => s.id === deal.stage)?.title || deal.stage}
-                              </span>
-                            </div>
-                            
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="text-lg font-bold text-green-600">
-                                ${parseFloat(deal.value || '0').toLocaleString()}
-                              </div>
-                              <div className="flex items-center space-x-1">
-                                <TrendingUp className="w-3 h-3" />
-                                <span className="text-xs">{deal.probability || 0}%</span>
-                              </div>
-                            </div>
-                            
-                            <div className="flex items-center justify-between text-xs text-gray-500">
-                              <span className="flex items-center">
-                                <Calendar className="w-3 h-3 mr-1" />
-                                {deal.expectedCloseDate ? new Date(deal.expectedCloseDate).toLocaleDateString() : 'No date'}
-                              </span>
-                              <span className="flex items-center">
-                                <Clock className="w-3 h-3 mr-1" />
-                                {deal.lastActivityDate ? new Date(deal.lastActivityDate).toLocaleDateString() : 'No activity'}
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deal</th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Value</th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stage</th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Probability</th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Close Date</th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Activity</th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {filteredDeals.map((deal: any) => (
+                            <tr key={deal.id} className="hover:bg-gray-50 transition-colors">
+                              <td className="px-4 py-4 whitespace-nowrap">
+                                <div>
+                                  <div className="text-sm font-medium text-gray-900">{deal.name}</div>
+                                  <div className="text-sm text-gray-500">{deal.title || 'No title'}</div>
+                                </div>
+                              </td>
+                              <td className="px-4 py-4 whitespace-nowrap">
+                                <div className="text-sm font-semibold text-green-600">
+                                  ${parseFloat(deal.value || '0').toLocaleString()}
+                                </div>
+                              </td>
+                              <td className="px-4 py-4 whitespace-nowrap">
+                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${DEAL_STAGES.find(s => s.id === deal.stage)?.color || 'bg-gray-500'} text-white`}>
+                                  {DEAL_STAGES.find(s => s.id === deal.stage)?.title || deal.stage}
+                                </span>
+                              </td>
+                              <td className="px-4 py-4 whitespace-nowrap">
+                                <div className="flex items-center">
+                                  <TrendingUp className="w-4 h-4 text-gray-400 mr-1" />
+                                  <span className="text-sm text-gray-900">{deal.probability || 0}%</span>
+                                </div>
+                              </td>
+                              <td className="px-4 py-4 whitespace-nowrap">
+                                <div className="flex items-center text-sm text-gray-900">
+                                  <Calendar className="w-4 h-4 text-gray-400 mr-1" />
+                                  {deal.expectedCloseDate ? new Date(deal.expectedCloseDate).toLocaleDateString() : 'No date'}
+                                </div>
+                              </td>
+                              <td className="px-4 py-4 whitespace-nowrap">
+                                <div className="flex items-center text-sm text-gray-500">
+                                  <Clock className="w-4 h-4 text-gray-400 mr-1" />
+                                  {deal.lastActivityDate ? new Date(deal.lastActivityDate).toLocaleDateString() : 'No activity'}
+                                </div>
+                              </td>
+                              <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
+                                <div className="flex items-center space-x-2">
+                                  <button className="p-1 text-gray-400 hover:text-blue-600 hover:scale-110 transition-all" title="View">
+                                    <Eye className="w-4 h-4" />
+                                  </button>
+                                  <button className="p-1 text-gray-400 hover:text-green-600 hover:scale-110 transition-all" title="Edit">
+                                    <Edit className="w-4 h-4" />
+                                  </button>
+                                  <button className="p-1 text-gray-400 hover:text-red-600 hover:scale-110 transition-all" title="Delete">
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               )}
