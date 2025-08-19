@@ -1293,7 +1293,166 @@ const CompanyDetailPageBMI: React.FC = () => {
         <div className="w-full p-3 bg-gray-50">
           {/* Overview Tab Content */}
           {activeMainTab === 'overview' && (
-            <React.Fragment>
+            <div className="flex space-x-3">
+              {/* Left Sidebar - Company Info, Contacts, Deals, Tasks, Notes */}
+              <div className="w-80 space-y-3">
+                {/* Company Information Widget */}
+                <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
+                  <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
+                    <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-t-xl">
+                      <div className="flex items-center space-x-2">
+                        <Building2 className="h-5 w-5 text-blue-600" />
+                        <h3 className="text-lg font-semibold text-gray-900">Company Information</h3>
+                      </div>
+                    </div>
+                    <div className="p-4 bg-gradient-to-b from-white to-gray-50 rounded-b-xl">
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-600 text-sm">Industry:</span>
+                          <span className="text-gray-900 font-medium">{companyData.industry}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-600 text-sm">Founded:</span>
+                          <span className="text-gray-900 font-medium">{companyData.founded}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-600 text-sm">Employees:</span>
+                          <span className="text-gray-900 font-medium">{companyData.employees}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-600 text-sm">Revenue:</span>
+                          <span className="text-gray-900 font-medium">{companyData.revenue}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-600 text-sm">Location:</span>
+                          <span className="text-gray-900 font-medium">{companyData.location}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-600 text-sm">Phone:</span>
+                          <span className="text-gray-900 font-medium">{companyData.phone}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Key Contacts Widget */}
+                <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
+                  <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
+                    <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-t-xl">
+                      <div className="flex items-center space-x-2">
+                        <Users className="h-5 w-5 text-green-600" />
+                        <h3 className="text-lg font-semibold text-gray-900">Key Contacts</h3>
+                        <span className="bg-green-600 text-white text-xs px-2 py-1 rounded-full">{keyContacts.length}</span>
+                      </div>
+                    </div>
+                    <div className="p-4 bg-gradient-to-b from-white to-gray-50 rounded-b-xl">
+                      <div className="space-y-3">
+                        {keyContacts.map((contact) => (
+                          <div key={contact.id} className="flex items-center space-x-3">
+                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white font-medium text-sm">
+                              {contact.initials}
+                            </div>
+                            <div className="flex-1">
+                              <div className="font-medium text-sm text-gray-900">{contact.name}</div>
+                              <div className="text-xs text-gray-600">{contact.title}</div>
+                              <div className="text-xs text-gray-500">{contact.location}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recent Deals Widget */}
+                <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
+                  <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
+                    <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-t-xl">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <DollarSign className="h-5 w-5 text-green-600" />
+                          <h3 className="text-lg font-semibold text-gray-900">Recent Deals</h3>
+                        </div>
+                        <button 
+                          onClick={() => setActiveMainTab('deals')}
+                          className="text-xs text-blue-600 hover:text-blue-800 font-medium hover:scale-105 transition-all"
+                        >
+                          View All
+                        </button>
+                      </div>
+                    </div>
+                    <div className="p-4 bg-gradient-to-b from-white to-gray-50 rounded-b-xl">
+                      <div className="space-y-3">
+                        {filteredDeals.slice(0, 3).map((deal: any) => (
+                          <div key={deal.id} className="border-l-4 border-green-500 pl-3">
+                            <div className="font-medium text-sm text-gray-900">{deal.name}</div>
+                            <div className="text-xs text-gray-600 mb-1">{deal.title || 'No title'}</div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-green-600 font-bold text-sm">
+                                ${parseFloat(deal.value || '0').toLocaleString()}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                {DEAL_STAGES.find(s => s.id === deal.stage)?.title || deal.stage}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recent Tasks Widget */}
+                <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
+                  <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
+                    <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-t-xl">
+                      <div className="flex items-center space-x-2">
+                        <CheckSquare className="h-5 w-5 text-purple-600" />
+                        <h3 className="text-lg font-semibold text-gray-900">Recent Tasks</h3>
+                        <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">2</span>
+                      </div>
+                    </div>
+                    <div className="p-4 bg-gradient-to-b from-white to-gray-50 rounded-b-xl">
+                      <div className="space-y-3">
+                        {activities.filter(a => a.type === 'task').map((task) => (
+                          <div key={task.id} className="border-l-4 border-purple-500 pl-3">
+                            <div className="font-medium text-sm text-gray-900">{task.title}</div>
+                            <div className="text-xs text-gray-600 mb-1">{task.description}</div>
+                            <div className="text-xs text-gray-500">{task.timestamp}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Notes Widget */}
+                <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
+                  <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
+                    <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-t-xl">
+                      <div className="flex items-center space-x-2">
+                        <FileText className="h-5 w-5 text-orange-600" />
+                        <h3 className="text-lg font-semibold text-gray-900">Notes</h3>
+                      </div>
+                    </div>
+                    <div className="p-4 bg-gradient-to-b from-white to-gray-50 rounded-b-xl">
+                      <div className="space-y-3">
+                        <div className="text-sm text-gray-600">
+                          Strong investment track record with focus on Australian equities. 
+                          Potential for large institutional deal.
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          Added Aug 18, 2025
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Main Content Area */}
+              <div className="flex-1 space-y-3">
               {/* Company Insights Widget */}
               <div className="mb-3 bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
             <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
@@ -2071,7 +2230,8 @@ const CompanyDetailPageBMI: React.FC = () => {
               </div>
             </div>
           </div>
-            </React.Fragment>
+              </div>
+            </div>
           )}
 
           {/* Employees Tab Content - Full Width */}
