@@ -240,14 +240,15 @@ const PeopleDiscovery: React.FC = () => {
     switch (column.key) {
       case 'name':
         return (
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white font-medium text-xs">
+          <div className="flex items-center space-x-3 min-w-0">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white font-medium text-xs flex-shrink-0">
               {person.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
             </div>
-            <div>
+            <div className="min-w-0 flex-1">
               <button
                 onClick={() => handlePersonClick(person.id, person)}
-                className="font-medium text-blue-600 hover:text-blue-800 hover:scale-105 transition-all duration-200 text-left"
+                className="font-medium text-blue-600 hover:text-blue-800 hover:scale-105 transition-all duration-200 text-left truncate block w-full"
+                title={person.name}
               >
                 {person.name}
               </button>
@@ -256,34 +257,34 @@ const PeopleDiscovery: React.FC = () => {
         );
 
       case 'jobTitle':
-        return <span className="text-gray-900">{person.jobTitle}</span>;
+        return <span className="text-gray-900 truncate block" title={person.jobTitle}>{person.jobTitle}</span>;
 
       case 'company':
         return (
-          <div className="flex items-center space-x-2">
-            <Building2 className="h-4 w-4 text-gray-400" />
-            <span className="text-gray-900">{person.company}</span>
+          <div className="flex items-center space-x-2 min-w-0">
+            <Building2 className="h-4 w-4 text-gray-400 flex-shrink-0" />
+            <span className="text-gray-900 truncate" title={person.company}>{person.company}</span>
           </div>
         );
 
       case 'location':
         return (
-          <div className="flex items-center space-x-2">
-            <MapPin className="h-4 w-4 text-gray-400" />
-            <span className="text-gray-700 text-sm">{person.location}</span>
+          <div className="flex items-center space-x-2 min-w-0">
+            <MapPin className="h-4 w-4 text-gray-400 flex-shrink-0" />
+            <span className="text-gray-700 text-sm truncate" title={person.location}>{person.location}</span>
           </div>
         );
 
       case 'emails':
         return (
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 min-w-0">
             {person.accessibleEmail ? (
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-sm text-gray-700">{person.email}</span>
+              <div className="flex items-center space-x-2 min-w-0">
+                <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
+                <span className="text-sm text-gray-700 truncate" title={person.email}>{person.email}</span>
               </div>
             ) : (
-              <button className="bg-blue-600 text-white text-xs px-3 py-1 rounded-full hover:bg-blue-700 hover:scale-105 transition-all">
+              <button className="bg-blue-600 text-white text-xs px-3 py-1 rounded-full hover:bg-blue-700 hover:scale-105 transition-all flex-shrink-0">
                 Access email
               </button>
             )}
@@ -292,14 +293,14 @@ const PeopleDiscovery: React.FC = () => {
 
       case 'phoneNumbers':
         return (
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 min-w-0">
             {person.accessiblePhone ? (
-              <div className="flex items-center space-x-2">
-                <Phone className="h-3 w-3 text-gray-400" />
-                <span className="text-sm text-gray-700">{person.phone}</span>
+              <div className="flex items-center space-x-2 min-w-0">
+                <Phone className="h-3 w-3 text-gray-400 flex-shrink-0" />
+                <span className="text-sm text-gray-700 truncate" title={person.phone}>{person.phone}</span>
               </div>
             ) : (
-              <button className="bg-blue-600 text-white text-xs px-3 py-1 rounded-full hover:bg-blue-700 hover:scale-105 transition-all">
+              <button className="bg-blue-600 text-white text-xs px-3 py-1 rounded-full hover:bg-blue-700 hover:scale-105 transition-all flex-shrink-0">
                 Access Mobile
               </button>
             )}
@@ -337,22 +338,26 @@ const PeopleDiscovery: React.FC = () => {
 
       case 'companySize':
         return (
-          <div>
-            <div className="text-sm text-gray-900">{person.company}</div>
-            <div className="text-xs text-gray-600">{person.companyEmployeeCount}</div>
+          <div className="min-w-0">
+            <div className="text-sm text-gray-900 truncate" title={person.company}>{person.company}</div>
+            <div className="text-xs text-gray-600 truncate" title={person.companyEmployeeCount}>{person.companyEmployeeCount}</div>
           </div>
         );
 
       case 'keywords':
         return (
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-1 min-w-0">
             {person.keywords.slice(0, 2).map((keyword, index) => (
-              <span key={index} className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">
+              <span 
+                key={index} 
+                className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full truncate max-w-20 flex-shrink-0"
+                title={keyword}
+              >
                 {keyword}
               </span>
             ))}
             {person.keywords.length > 2 && (
-              <span className="bg-gray-100 text-gray-500 text-xs px-2 py-1 rounded-full">
+              <span className="bg-gray-100 text-gray-500 text-xs px-2 py-1 rounded-full flex-shrink-0">
                 +{person.keywords.length - 2}
               </span>
             )}
@@ -516,14 +521,16 @@ const PeopleDiscovery: React.FC = () => {
             <div className="h-full overflow-y-auto" ref={frozenScrollRef}>
               {paginatedPeople.map((person) => (
                 <div key={person.id} className="border-b border-gray-100 h-16 flex items-center px-4 hover:bg-gray-50">
-                  <div className="flex items-center space-x-3 w-full">
+                  <div className="flex items-center space-x-3 w-full min-w-0">
                     <input
                       type="checkbox"
                       checked={selectedPeople.includes(person.id)}
                       onChange={() => togglePersonSelection(person.id)}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 flex-shrink-0"
                     />
-                    {renderTableCell(person, { key: 'name' } as TableColumn)}
+                    <div className="min-w-0 flex-1">
+                      {renderTableCell(person, { key: 'name' } as TableColumn)}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -551,10 +558,12 @@ const PeopleDiscovery: React.FC = () => {
                   {visibleColumns.filter(col => col.key !== 'name').map((column) => (
                     <div 
                       key={column.key} 
-                      className="flex-shrink-0 px-4 flex items-center"
+                      className="flex-shrink-0 px-4 flex items-center min-w-0"
                       style={{ minWidth: column.minWidth }}
                     >
-                      {renderTableCell(person, column)}
+                      <div className="w-full min-w-0">
+                        {renderTableCell(person, column)}
+                      </div>
                     </div>
                   ))}
                 </div>
