@@ -485,13 +485,7 @@ const PeopleDiscovery: React.FC = () => {
             
             
 
-            {/* Additional keywords */}
-            {person.keywords.length > 2 && (
-              <div className="text-xs text-gray-500 mt-1 truncate">
-                {person.keywords.slice(2, 5).map(k => getTrendInfo(k).icon).join(' ')} {person.keywords.slice(2, 4).join(', ')}
-                {person.keywords.length > 4 && '...'}
-              </div>
-            )}
+            
           </div>
         );
 
