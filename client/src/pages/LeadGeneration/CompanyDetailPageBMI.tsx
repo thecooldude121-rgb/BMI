@@ -1444,6 +1444,34 @@ const CompanyDetailPageBMI: React.FC = () => {
                           <span className="text-gray-600 text-sm">Phone:</span>
                           <span className="text-gray-900 font-medium">{companyData.phone}</span>
                         </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-600 text-sm">Website:</span>
+                          <a 
+                            href={selectedCompany.website || `https://${companyData.domain}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 font-medium hover:text-blue-800 hover:scale-105 transition-all duration-200 text-sm"
+                          >
+                            <div className="flex items-center space-x-1">
+                              <Globe className="h-3 w-3" />
+                              <span>{companyData.domain}</span>
+                            </div>
+                          </a>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-600 text-sm">LinkedIn:</span>
+                          <a 
+                            href={selectedCompany.linkedinUrl || `https://linkedin.com/company/${companyData.name?.toLowerCase().replace(/\s+/g, '-')}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 font-medium hover:text-blue-800 hover:scale-105 transition-all duration-200 text-sm"
+                          >
+                            <div className="flex items-center space-x-1">
+                              <ExternalLink className="h-3 w-3" />
+                              <span>View Profile</span>
+                            </div>
+                          </a>
+                        </div>
                       </div>
                     </div>
                   </div>
