@@ -695,12 +695,12 @@ const CompanyDetailPageBMI: React.FC = () => {
     industry: selectedCompany.industry,
     location: selectedCompany.location,
     founded: selectedCompany.founded?.toString() || '2000',
-    employees: selectedCompany.employeeCount || selectedCompany.employees || '1-10',
+    employees: selectedCompany.employeeCount || '1-10',
     revenue: selectedCompany.revenue || 'N/A',
     phone: '+1 (555) 000-0000',
     tradingSymbol: 'N/A',
     subsidiaries: 0,
-    score: selectedCompany.aiScore || 85,
+    score: 85,
     rating: 'A+'
   };
 
