@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
-import { companies as sharedCompanies } from '../../data/companies';
+import { localCompanies, getCompanies, CompanyData } from '../../data/companies';
+import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { 
   Search, Filter, Building2, Globe, Users, MapPin, DollarSign,
@@ -10,25 +11,7 @@ import {
 } from 'lucide-react';
 import { SiLinkedin } from 'react-icons/si';
 
-interface CompanyData {
-  id: string;
-  name: string;
-  logo?: string;
-  domain: string;
-  website: string;
-  linkedinUrl: string;
-  industry: string;
-  location: string;
-  employeeCount: string;
-  revenue: string;
-  founded: number;
-  description: string;
-  technologies: string[];
-  keywords: string[];
-  funding: string;
-  lastActivity?: Date;
-  saved?: boolean;
-}
+// Remove duplicate interface as it's now imported from companies.ts
 
 interface TableColumn {
   key: string;
@@ -83,8 +66,20 @@ const CompanyDiscovery: React.FC = () => {
     { key: 'actions', label: 'Actions', width: 'col-span-1', minWidth: '100px', visible: true, sortable: false }
   ]);
 
-  // Use only 2 companies similar to CRM Accounts module
-  const companies: CompanyData[] = sharedCompanies.slice(0, 2);
+  // Fetch CRM Accounts as primary data source
+  const { data: crmAccounts = [] } = useQuery({
+    queryKey: ['/api/accounts'],
+    queryFn: async () => {
+      const response = await fetch('/api/accounts');
+      if (!response.ok) throw new Error('Failed to fetch CRM accounts');
+      return response.json();
+    }
+  });
+
+  // Get companies from CRM Accounts first, fallback to local data
+  const companies: CompanyData[] = useMemo(() => {
+    return getCompanies(crmAccounts);
+  }, [crmAccounts]);
 
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
 
