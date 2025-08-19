@@ -209,14 +209,29 @@ const CompanyDetailPageBMI: React.FC = () => {
     rating: 'A+'
   };
 
-  // Deal data queries
+  // Company to CRM Account mapping
+  const getAccountIdForCompany = (companyName: string): string | null => {
+    const accountMapping: { [key: string]: string } = {
+      'TechCorp Solutions': '5b90825b-4db6-42f9-8fb0-08d8dac939e3',
+      'GreenEnergy Dynamics': accounts.find((acc: any) => acc.name === 'GreenEnergy Dynamics')?.id || 
+                              accounts.find((acc: any) => acc.name.includes('Green'))?.id || 
+                              accounts[1]?.id || null
+    };
+    return accountMapping[companyName] || null;
+  };
+
+  const currentAccountId = getAccountIdForCompany(selectedCompany.name);
+
+  // Deal data queries - fetch company-specific deals
   const { data: deals = [], isLoading: dealsLoading } = useQuery({
-    queryKey: ['/api/deals'],
+    queryKey: ['/api/deals/by-account', currentAccountId],
     queryFn: async () => {
-      const response = await fetch('/api/deals');
+      if (!currentAccountId) return [];
+      const response = await fetch(`/api/deals/by-account/${currentAccountId}`);
       if (!response.ok) throw new Error('Failed to fetch deals');
       return response.json();
-    }
+    },
+    enabled: !!currentAccountId
   });
   
   const { data: accounts = [] } = useQuery({
@@ -228,13 +243,16 @@ const CompanyDetailPageBMI: React.FC = () => {
     }
   });
   
+  // Fetch company-specific contacts
   const { data: crmContacts = [] } = useQuery({
-    queryKey: ['/api/contacts'],
+    queryKey: ['/api/contacts/by-account', currentAccountId],
     queryFn: async () => {
-      const response = await fetch('/api/contacts');
+      if (!currentAccountId) return [];
+      const response = await fetch(`/api/contacts/by-account/${currentAccountId}`);
       if (!response.ok) throw new Error('Failed to fetch contacts');
       return response.json();
-    }
+    },
+    enabled: !!currentAccountId
   });
   
   // Handler functions for accessing contact info
@@ -276,21 +294,18 @@ const CompanyDetailPageBMI: React.FC = () => {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/deals'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/deals/by-account', currentAccountId] });
     }
   });
   
-  // Filter deals based on company association and search term
+  // Filter deals based on search term (company filtering handled by API)
   const filteredDeals = deals.filter((deal: any) => {
-    // First filter by company - only show deals associated with the current company
-    const matchesCompany = deal.account?.name === companyData.name;
-    
-    // Then filter by search term
+    // Filter by search term
     const matchesSearch = dealSearchTerm === '' || 
       deal.name?.toLowerCase().includes(dealSearchTerm.toLowerCase()) ||
       deal.title?.toLowerCase().includes(dealSearchTerm.toLowerCase());
     
-    return matchesCompany && matchesSearch;
+    return matchesSearch;
   });
 
   // Comprehensive employee data sourced from web, LinkedIn, company website, and databases
