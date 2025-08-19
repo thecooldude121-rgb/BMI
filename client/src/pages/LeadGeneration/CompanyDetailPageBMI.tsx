@@ -683,21 +683,24 @@ const CompanyDetailPageBMI: React.FC = () => {
   };
 
   // Company data
+  // Get company data from the companies array based on companyId
+  const selectedCompany = companies.find(c => c.id === companyId) || companies[0];
+  
   const companyData: CompanyData = {
-    id: companyId,
-    name: 'VGI Partners Ltd',
-    logo: 'VGI',
-    domain: 'vgipartners.com',
-    description: 'Leading investment management company specializing in long-term value creation',
-    industry: 'Financial Services',
-    location: 'Sydney, NSW, Australia',
-    founded: '2008',
-    employees: '50-100',
-    revenue: '$50M - $100M',
-    phone: '+61 2 9237 8900',
-    tradingSymbol: 'VG1',
-    subsidiaries: 3,
-    score: 85,
+    id: selectedCompany.id,
+    name: selectedCompany.name,
+    logo: selectedCompany.name.split(' ').map(n => n[0]).join('').toUpperCase(),
+    domain: selectedCompany.domain || 'company.com',
+    description: selectedCompany.description,
+    industry: selectedCompany.industry,
+    location: selectedCompany.location,
+    founded: selectedCompany.founded?.toString() || '2000',
+    employees: selectedCompany.employeeCount || selectedCompany.employees || '1-10',
+    revenue: selectedCompany.revenue || 'N/A',
+    phone: '+1 (555) 000-0000',
+    tradingSymbol: 'N/A',
+    subsidiaries: 0,
+    score: selectedCompany.aiScore || 85,
     rating: 'A+'
   };
 
@@ -1064,7 +1067,7 @@ const CompanyDetailPageBMI: React.FC = () => {
               </Link>
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-sm font-semibold">
-                  VGI
+                  {companyData.logo}
                 </div>
                 <div>
                   <h1 className="text-xl font-semibold text-gray-900" data-testid="text-company-name">
@@ -1217,8 +1220,8 @@ const CompanyDetailPageBMI: React.FC = () => {
                       <span className="bg-blue-600 text-white text-sm px-3 py-1 rounded-full">{contacts.length}</span>
                     </div>
                     <div className="flex items-center space-x-3">
-                      <Plus className="h-5 w-5 text-gray-500 cursor-pointer hover:text-blue-600 transition-colors" />
-                      <Settings className="h-4 w-4 text-gray-500 cursor-pointer hover:text-blue-600 transition-colors" />
+                      <Plus className="h-5 w-5 text-gray-500 cursor-pointer hover:text-blue-600 hover:scale-110 transition-all duration-200" />
+                      <Settings className="h-4 w-4 text-gray-500 cursor-pointer hover:text-blue-600 hover:scale-110 transition-all duration-200" />
                     </div>
                   </div>
                 </div>
@@ -1235,10 +1238,10 @@ const CompanyDetailPageBMI: React.FC = () => {
                             <div className="text-gray-600 text-xs truncate">{contact.title}</div>
                           </div>
                           <div className="flex items-center space-x-1">
-                            <button className="p-1 text-gray-500 hover:text-blue-600 transition-colors rounded hover:bg-gray-100">
+                            <button className="p-1 text-gray-500 hover:text-blue-600 hover:scale-110 transition-all duration-200 rounded hover:bg-gray-100 active:scale-95">
                               <Mail className="h-3 w-3" />
                             </button>
-                            <button className="p-1 text-gray-500 hover:text-green-600 transition-colors rounded hover:bg-gray-100">
+                            <button className="p-1 text-gray-500 hover:text-green-600 hover:scale-110 transition-all duration-200 rounded hover:bg-gray-100 active:scale-95">
                               <Phone className="h-3 w-3" />
                             </button>
                           </div>
@@ -1261,8 +1264,8 @@ const CompanyDetailPageBMI: React.FC = () => {
                       <span className="bg-green-600 text-white text-sm px-3 py-1 rounded-full">0</span>
                     </div>
                     <div className="flex items-center space-x-3">
-                      <Plus className="h-5 w-5 text-gray-500 cursor-pointer hover:text-green-600 transition-colors" />
-                      <Settings className="h-4 w-4 text-gray-500 cursor-pointer hover:text-green-600 transition-colors" />
+                      <Plus className="h-5 w-5 text-gray-500 cursor-pointer hover:text-green-600 hover:scale-110 transition-all duration-200 hover:rotate-90" />
+                      <Settings className="h-4 w-4 text-gray-500 cursor-pointer hover:text-green-600 hover:scale-110 transition-all duration-200 hover:rotate-180" />
                     </div>
                   </div>
                 </div>
@@ -1278,7 +1281,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                       <div className="text-gray-500 text-xs mb-4">
                         Create your first deal to start tracking opportunities
                       </div>
-                      <button className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white px-4 py-2 rounded-lg text-xs font-medium transition-all duration-200 shadow-lg hover:shadow-xl" data-testid="button-add-deal">
+                      <button className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white px-4 py-2 rounded-lg text-xs font-medium transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95" data-testid="button-add-deal">
                         + Create Deal
                       </button>
                     </div>
@@ -1298,8 +1301,8 @@ const CompanyDetailPageBMI: React.FC = () => {
                       <span className="bg-purple-600 text-white text-sm px-3 py-1 rounded-full">0</span>
                     </div>
                     <div className="flex items-center space-x-3">
-                      <Plus className="h-5 w-5 text-gray-500 cursor-pointer hover:text-purple-600 transition-colors" />
-                      <Settings className="h-4 w-4 text-gray-500 cursor-pointer hover:text-purple-600 transition-colors" />
+                      <Plus className="h-5 w-5 text-gray-500 cursor-pointer hover:text-purple-600 hover:scale-110 transition-all duration-200 hover:rotate-180" />
+                      <Settings className="h-4 w-4 text-gray-500 cursor-pointer hover:text-purple-600 hover:scale-110 transition-all duration-200 hover:rotate-90" />
                     </div>
                   </div>
                 </div>
@@ -1313,7 +1316,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                       <div className="text-gray-500 text-sm mb-6 max-w-md">
                         Create tasks to track important actions and follow-ups
                       </div>
-                      <button className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl" data-testid="button-add-task">
+                      <button className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95" data-testid="button-add-task">
                         + Add First Task
                       </button>
                     </div>
@@ -1333,8 +1336,8 @@ const CompanyDetailPageBMI: React.FC = () => {
                       <span className="bg-orange-600 text-white text-sm px-3 py-1 rounded-full">0</span>
                     </div>
                     <div className="flex items-center space-x-3">
-                      <Plus className="h-5 w-5 text-gray-500 cursor-pointer hover:text-orange-600 transition-colors" />
-                      <Settings className="h-4 w-4 text-gray-500 cursor-pointer hover:text-orange-600 transition-colors" />
+                      <Plus className="h-5 w-5 text-gray-500 cursor-pointer hover:text-orange-600 hover:scale-110 transition-all duration-200 hover:rotate-45" />
+                      <Settings className="h-4 w-4 text-gray-500 cursor-pointer hover:text-orange-600 hover:scale-110 transition-all duration-200 hover:rotate-90" />
                     </div>
                   </div>
                 </div>
@@ -1348,7 +1351,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                       <div className="text-gray-500 text-sm mb-6 max-w-md">
                         Start documenting important information and insights
                       </div>
-                      <button className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-500 hover:to-orange-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl" data-testid="button-add-note">
+                      <button className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-500 hover:to-orange-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95" data-testid="button-add-note">
                         + Add First Note
                       </button>
                     </div>
@@ -1379,7 +1382,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                   </div>
                   <div className="flex items-center space-x-3">
                     <span className="text-xs text-gray-500">Last updated: 2 min ago</span>
-                    <Settings className="h-4 w-4 text-gray-500 cursor-pointer hover:text-cyan-600 transition-colors" />
+                    <Settings className="h-4 w-4 text-gray-500 cursor-pointer hover:text-cyan-600 hover:scale-110 transition-all duration-200 hover:rotate-180" />
                     <button 
                       onClick={() => setInsightsExpanded(!insightsExpanded)}
                       className="p-1 rounded hover:bg-gray-100 transition-colors"
@@ -2483,7 +2486,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                           <div className="flex items-center space-x-1">
                             {employee.email && (
                               <button 
-                                className="p-1 text-gray-500 hover:text-blue-600 transition-colors rounded hover:bg-gray-100"
+                                className="p-1 text-gray-500 hover:text-blue-600 hover:scale-110 transition-all duration-200 rounded hover:bg-gray-100 active:scale-95"
                                 data-testid={`email-employee-${index}`}
                               >
                                 <Mail className="h-4 w-4" />
@@ -2491,7 +2494,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                             )}
                             {employee.phone && (
                               <button 
-                                className="p-1 text-gray-500 hover:text-green-600 transition-colors rounded hover:bg-gray-100"
+                                className="p-1 text-gray-500 hover:text-green-600 hover:scale-110 transition-all duration-200 rounded hover:bg-gray-100 active:scale-95"
                                 data-testid={`phone-employee-${index}`}
                               >
                                 <Phone className="h-4 w-4" />
@@ -2499,14 +2502,14 @@ const CompanyDetailPageBMI: React.FC = () => {
                             )}
                             {employee.linkedinProfile && (
                               <button 
-                                className="p-1 text-gray-500 hover:text-blue-600 transition-colors rounded hover:bg-gray-100"
+                                className="p-1 text-gray-500 hover:text-blue-600 hover:scale-110 transition-all duration-200 rounded hover:bg-gray-100 active:scale-95"
                                 data-testid={`linkedin-employee-${index}`}
                               >
                                 <ExternalLink className="h-4 w-4" />
                               </button>
                             )}
                             <button 
-                              className="p-1 text-gray-500 hover:text-gray-700 transition-colors rounded hover:bg-gray-100"
+                              className="p-1 text-gray-500 hover:text-gray-700 hover:scale-110 transition-all duration-200 rounded hover:bg-gray-100 active:scale-95"
                               data-testid={`more-employee-${index}`}
                             >
                               <MoreHorizontal className="h-4 w-4" />
@@ -2526,7 +2529,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                       <button
                         onClick={() => setEmployeeCurrentPage(prev => Math.max(1, prev - 1))}
                         disabled={employeeCurrentPage === 1}
-                        className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
                         data-testid="prev-employee-page"
                       >
                         Previous
@@ -2539,11 +2542,11 @@ const CompanyDetailPageBMI: React.FC = () => {
                             <button
                               key={pageNum}
                               onClick={() => setEmployeeCurrentPage(pageNum)}
-                              className={`px-3 py-1 text-sm rounded ${
+                              className={`px-3 py-1 text-sm rounded transition-all duration-200 ${
                                 employeeCurrentPage === pageNum
-                                  ? 'bg-blue-600 text-white'
-                                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                              }`}
+                                  ? 'bg-blue-600 text-white hover:bg-blue-700 hover:scale-105'
+                                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 hover:scale-105'
+                              } active:scale-95`}
                               data-testid={`employee-page-${pageNum}`}
                             >
                               {pageNum}
@@ -2555,7 +2558,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                       <button
                         onClick={() => setEmployeeCurrentPage(prev => Math.min(employeeTotalPages, prev + 1))}
                         disabled={employeeCurrentPage === employeeTotalPages}
-                        className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
                         data-testid="next-employee-page"
                       >
                         Next
@@ -2607,7 +2610,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                 <h3 className="text-lg font-semibold text-gray-900">Export Employee Data</h3>
                 <button
                   onClick={() => setShowExportModal(false)}
-                  className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-100"
+                  className="p-2 text-gray-400 hover:text-gray-600 hover:scale-110 transition-all duration-200 rounded-lg hover:bg-gray-100 active:scale-95"
                   data-testid="close-export-modal"
                 >
                   <X className="h-5 w-5" />
@@ -2752,7 +2755,7 @@ const CompanyDetailPageBMI: React.FC = () => {
               <div className="flex space-x-3">
                 <button
                   onClick={() => setShowExportModal(false)}
-                  className="flex-1 px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex-1 px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 hover:scale-105 transition-all duration-200 active:scale-95"
                   data-testid="cancel-export"
                 >
                   Cancel
@@ -2760,7 +2763,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                 <button
                   onClick={exportEmployeeData}
                   disabled={getFilteredEmployees().length === 0}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
                   data-testid="confirm-export"
                 >
                   Export Data
