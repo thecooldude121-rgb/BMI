@@ -233,6 +233,16 @@ const CompanyDetailPageBMI: React.FC = () => {
     }
   });
 
+  // Fetch all activities from CRM system
+  const { data: allActivities = [] } = useQuery({
+    queryKey: ['/api/activities'],
+    queryFn: async () => {
+      const response = await fetch('/api/activities');
+      if (!response.ok) throw new Error('Failed to fetch activities');
+      return response.json();
+    }
+  });
+
   // Company to CRM Account mapping (using static IDs to avoid dependency issues)
   const getAccountIdForCompany = (companyName: string): string | null => {
     const accountMapping: { [key: string]: string } = {
@@ -245,9 +255,11 @@ const CompanyDetailPageBMI: React.FC = () => {
     return accountMapping[companyName] || null;
   };
 
-  const currentAccountId = getAccountIdForCompany(selectedCompany.name);
+  // Get current account ID first
+  const currentAccountId = useMemo(() => {
+    return getAccountIdForCompany(companyData.name);
+  }, [companyData.name]);
 
-  // Deal data queries - fetch company-specific deals
   const { data: deals = [], isLoading: dealsLoading } = useQuery({
     queryKey: ['/api/deals/by-account', currentAccountId],
     queryFn: async () => {
@@ -933,24 +945,64 @@ const CompanyDetailPageBMI: React.FC = () => {
   ];
 
   // Sample activities
-  const activities = [
-    {
-      id: '1',
-      type: 'task',
-      title: 'Follow up on Q3 investment proposal',
-      description: 'Schedule meeting to discuss portfolio allocation strategy',
-      timestamp: 'Aug 18, 2025, 10:30 am',
-      person: 'Robert Luciano'
-    },
-    {
-      id: '2',
-      type: 'email',
-      title: 'sales@company.com to Jane Smith',
-      description: 'Follow-up on enterprise solution proposal',
-      timestamp: 'Aug 15, 2025, 2:18 pm',
-      person: 'Jane Smith'
+  // Helper function to format activity timestamps
+  const formatActivityTimestamp = (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffMinutes < 60) {
+      return `${diffMinutes} minutes ago`;
+    } else if (diffHours < 24) {
+      return `${diffHours} hours ago`;
+    } else if (diffDays < 7) {
+      return `${diffDays} days ago`;
+    } else {
+      return date.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric', 
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+      });
     }
-  ];
+  };
+
+  // Activities filtering is handled above with currentAccountId
+
+  // Filter activities related to the current company/account
+  const activities = useMemo(() => {
+    if (!currentAccountId || !allActivities.length) return [];
+    
+    // Filter activities by account ID or related entities
+    return allActivities
+      .filter(activity => {
+        // Direct account relationship
+        if (activity.accountId === currentAccountId) return true;
+        
+        // Related through deals or contacts that belong to this account
+        if (activity.dealId && deals?.some(deal => deal.id === activity.dealId)) return true;
+        if (activity.contactId && crmContacts?.some(contact => contact.id === activity.contactId)) return true;
+        
+        return false;
+      })
+      .map(activity => ({
+        id: activity.id,
+        type: activity.type,
+        title: activity.subject || activity.emailSubject || 'Untitled Activity',
+        description: activity.description || activity.outcome || '',
+        timestamp: formatActivityTimestamp(activity.createdAt),
+        person: activity.assignedTo || activity.createdBy || 'Unknown',
+        status: activity.status,
+        scheduledAt: activity.scheduledAt,
+        completedAt: activity.completedAt,
+        rawActivity: activity // Keep reference to original data
+      }))
+      .sort((a, b) => new Date(b.rawActivity.createdAt).getTime() - new Date(a.rawActivity.createdAt).getTime());
+  }, [currentAccountId, allActivities, deals, crmContacts]);
 
   // Network data structure for employee relationships
   const networkData = useMemo(() => {
@@ -3435,18 +3487,47 @@ const CompanyDetailPageBMI: React.FC = () => {
                   Cancel
                 </button>
                 <button
-                  onClick={() => {
-                    // Here you would typically save the activity to your backend
-                    console.log('Logging activity:', { activityType, ...activityForm });
-                    setShowLogActivityModal(false);
-                    setActivityForm({
-                      title: '',
-                      description: '',
-                      contact: '',
-                      date: new Date().toISOString().split('T')[0],
-                      time: new Date().toTimeString().split(' ')[0].substring(0, 5),
-                      status: 'completed'
-                    });
+                  onClick={async () => {
+                    try {
+                      // Create activity in CRM database
+                      const newActivity = {
+                        subject: activityForm.title,
+                        type: activityType,
+                        description: activityForm.description,
+                        status: activityType === 'note' ? 'completed' : activityForm.status, // Notes are always completed
+                        priority: 'medium',
+                        accountId: currentAccountId,
+                        relatedToType: 'account',
+                        relatedToId: currentAccountId,
+                        scheduledAt: activityForm.status === 'planned' ? `${activityForm.date}T${activityForm.time}:00.000Z` : null,
+                        completedAt: activityForm.status === 'completed' ? new Date().toISOString() : null,
+                        direction: 'outbound',
+                        source: 'manual'
+                      };
+
+                      const response = await fetch('/api/activities', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(newActivity)
+                      });
+
+                      if (!response.ok) throw new Error('Failed to create activity');
+
+                      // Refresh activities data
+                      queryClient.invalidateQueries({ queryKey: ['/api/activities'] });
+
+                      setShowLogActivityModal(false);
+                      setActivityForm({
+                        title: '',
+                        description: '',
+                        contact: '',
+                        date: new Date().toISOString().split('T')[0],
+                        time: new Date().toTimeString().split(' ')[0].substring(0, 5),
+                        status: 'completed'
+                      });
+                    } catch (error) {
+                      console.error('Error creating activity:', error);
+                    }
                   }}
                   disabled={!activityForm.title || !activityForm.description}
                   className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
