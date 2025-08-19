@@ -42,7 +42,9 @@ import {
   Clock,
   Edit,
   Trash2,
-  Globe
+  Globe,
+  Activity,
+  User
 } from 'lucide-react';
 import { Link } from 'wouter';
 import { companies, CompanyData as SharedCompanyData } from '../../data/companies';
@@ -2862,14 +2864,182 @@ const CompanyDetailPageBMI: React.FC = () => {
             </div>
           )}
 
-          {/* Activities Tab Content - Placeholder */}
+          {/* Activities Tab Content */}
           {activeMainTab === 'activities' && (
             <div className="mb-3 bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
               <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
-                <div className="p-8 text-center">
-                  <Calendar className="h-16 w-16 text-purple-600 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Activities View</h3>
-                  <p className="text-gray-600">Activity management interface coming soon</p>
+                {/* Activities Header with Sub-tabs */}
+                <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-t-xl">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <Calendar className="h-5 w-5 text-purple-600" />
+                      <h2 className="text-lg font-semibold text-gray-900">Company Activities</h2>
+                      <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
+                        {activities.length}
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <span className="text-xs text-gray-500">Last activity: 2 hours ago</span>
+                      <button className="p-1 text-gray-400 hover:text-purple-600 hover:scale-110 transition-all duration-200">
+                        <Plus className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {/* Activity Sub-tabs */}
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { key: 'all', label: 'All', icon: List, count: activities.length },
+                      { key: 'email', label: 'Email', icon: Mail, count: activities.filter(a => a.type === 'email').length },
+                      { key: 'call', label: 'Call', icon: Phone, count: activities.filter(a => a.type === 'call').length },
+                      { key: 'meeting', label: 'Meeting', icon: Calendar, count: activities.filter(a => a.type === 'meeting').length },
+                      { key: 'task', label: 'Tasks', icon: CheckSquare, count: activities.filter(a => a.type === 'task').length },
+                      { key: 'note', label: 'Notes', icon: FileText, count: activities.filter(a => a.type === 'note').length }
+                    ].map((tab) => {
+                      const IconComponent = tab.icon;
+                      return (
+                        <button
+                          key={tab.key}
+                          onClick={() => setActiveActivityTab(tab.key)}
+                          className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm transition-all duration-200 hover:scale-105 ${
+                            activeActivityTab === tab.key
+                              ? 'bg-purple-600 text-white shadow-lg'
+                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          }`}
+                          data-testid={`activity-tab-${tab.key}`}
+                        >
+                          <IconComponent className="h-4 w-4" />
+                          <span className="font-medium">{tab.label}</span>
+                          <span className={`text-xs px-2 py-0.5 rounded-full ${
+                            activeActivityTab === tab.key ? 'bg-white bg-opacity-20' : 'bg-gray-600 text-white'
+                          }`}>
+                            {tab.count}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Activity Content */}
+                <div className="p-6 bg-gradient-to-b from-white to-gray-50 rounded-b-xl">
+                  <div className="space-y-4">
+                    {/* Filter and show activities based on selected tab */}
+                    {(() => {
+                      const filteredActivities = activeActivityTab === 'all' 
+                        ? activities 
+                        : activities.filter(activity => activity.type === activeActivityTab);
+                      
+                      if (filteredActivities.length === 0) {
+                        return (
+                          <div className="text-center py-12">
+                            <div className="text-gray-400 mb-4">
+                              {activeActivityTab === 'all' ? (
+                                <List className="h-12 w-12 mx-auto" />
+                              ) : activeActivityTab === 'email' ? (
+                                <Mail className="h-12 w-12 mx-auto" />
+                              ) : activeActivityTab === 'call' ? (
+                                <Phone className="h-12 w-12 mx-auto" />
+                              ) : activeActivityTab === 'meeting' ? (
+                                <Calendar className="h-12 w-12 mx-auto" />
+                              ) : activeActivityTab === 'task' ? (
+                                <CheckSquare className="h-12 w-12 mx-auto" />
+                              ) : (
+                                <FileText className="h-12 w-12 mx-auto" />
+                              )}
+                            </div>
+                            <h3 className="text-lg font-medium text-gray-900 mb-2">
+                              No {activeActivityTab === 'all' ? 'activities' : `${activeActivityTab}s`} found
+                            </h3>
+                            <p className="text-gray-600">
+                              {activeActivityTab === 'all' && 'No activities recorded for this company yet.'}
+                              {activeActivityTab === 'email' && 'No emails sent to company employees yet.'}
+                              {activeActivityTab === 'call' && 'No calls made with company employees yet.'}
+                              {activeActivityTab === 'meeting' && 'No meetings scheduled or completed yet.'}
+                              {activeActivityTab === 'task' && 'No tasks created for this company yet.'}
+                              {activeActivityTab === 'note' && 'No notes added from overview sections yet.'}
+                            </p>
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <div className="space-y-4">
+                          {/* Activity Timeline */}
+                          <div className="relative">
+                            {/* Timeline line */}
+                            <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+                            
+                            {filteredActivities.map((activity, index) => (
+                              <div key={activity.id} className="relative flex items-start space-x-4 pb-6">
+                                {/* Timeline dot */}
+                                <div className={`relative z-10 flex items-center justify-center w-12 h-12 rounded-full border-4 border-white shadow-lg ${
+                                  activity.type === 'email' ? 'bg-blue-500' :
+                                  activity.type === 'call' ? 'bg-green-500' :
+                                  activity.type === 'meeting' ? 'bg-purple-500' :
+                                  activity.type === 'task' ? 'bg-orange-500' :
+                                  activity.type === 'note' ? 'bg-cyan-500' :
+                                  'bg-gray-500'
+                                }`}>
+                                  {activity.type === 'email' && <Mail className="h-5 w-5 text-white" />}
+                                  {activity.type === 'call' && <Phone className="h-5 w-5 text-white" />}
+                                  {activity.type === 'meeting' && <Calendar className="h-5 w-5 text-white" />}
+                                  {activity.type === 'task' && <CheckSquare className="h-5 w-5 text-white" />}
+                                  {activity.type === 'note' && <FileText className="h-5 w-5 text-white" />}
+                                  {!['email', 'call', 'meeting', 'task', 'note'].includes(activity.type) && <Activity className="h-5 w-5 text-white" />}
+                                </div>
+
+                                {/* Activity card */}
+                                <div className="flex-1 bg-white rounded-lg p-4 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+                                  <div className="flex items-start justify-between mb-2">
+                                    <div className="flex-1">
+                                      <h4 className="font-medium text-gray-900 mb-1">{activity.title}</h4>
+                                      <p className="text-sm text-gray-600 mb-2">{activity.description}</p>
+                                    </div>
+                                    <div className="flex items-center space-x-2 ml-4">
+                                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                                        activity.type === 'email' ? 'bg-blue-100 text-blue-700' :
+                                        activity.type === 'call' ? 'bg-green-100 text-green-700' :
+                                        activity.type === 'meeting' ? 'bg-purple-100 text-purple-700' :
+                                        activity.type === 'task' ? 'bg-orange-100 text-orange-700' :
+                                        activity.type === 'note' ? 'bg-cyan-100 text-cyan-700' :
+                                        'bg-gray-100 text-gray-700'
+                                      }`}>
+                                        {activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  
+                                  <div className="flex items-center justify-between text-xs text-gray-500">
+                                    <div className="flex items-center space-x-4">
+                                      <span className="flex items-center">
+                                        <Clock className="w-3 h-3 mr-1" />
+                                        {activity.timestamp}
+                                      </span>
+                                      {activity.person && (
+                                        <span className="flex items-center">
+                                          <User className="w-3 h-3 mr-1" />
+                                          {activity.person}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                      <button className="p-1 text-gray-400 hover:text-blue-600 hover:scale-110 transition-all" title="View">
+                                        <Eye className="w-3 h-3" />
+                                      </button>
+                                      <button className="p-1 text-gray-400 hover:text-green-600 hover:scale-110 transition-all" title="Edit">
+                                        <Edit className="w-3 h-3" />
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
                 </div>
               </div>
             </div>
