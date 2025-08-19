@@ -28,6 +28,7 @@ import SimpleRealAccountDetail from './pages/CRM/SimpleRealAccountDetail';
 import ContactDetailPage from './pages/CRM/ContactDetailPage';
 import GamificationModule from './pages/CRM/GamificationModuleNextGen';
 import CompanyDetailPageBMI from './pages/LeadGeneration/CompanyDetailPageBMI';
+import PersonDetails from './components/LeadGeneration/PersonDetails';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
@@ -52,6 +53,7 @@ const App = () => {
               <Route path="/crm/accounts/:id" component={SimpleRealAccountDetail} />
               <Route path="/crm/contacts/:id" component={ContactDetailPage} />
               <Route path="/lead-generation/company/:id" component={CompanyDetailPageBMI} />
+              <Route path="/lead-generation/people/:id" component={PersonDetails} />
               <Route path="/crm" component={() => (
                 <div className="min-h-screen w-full">
                   <GamificationModule />
