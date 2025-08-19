@@ -47,9 +47,7 @@ const PeopleDiscovery: React.FC = () => {
   const [showColumnManager, setShowColumnManager] = useState(false);
   const columnManagerRef = useRef<HTMLDivElement>(null);
 
-  // References for synchronized scrolling
-  const frozenScrollRef = useRef<HTMLDivElement>(null);
-  const scrollableScrollRef = useRef<HTMLDivElement>(null);
+
 
   // Close column manager when clicking outside
   useEffect(() => {
@@ -193,29 +191,7 @@ const PeopleDiscovery: React.FC = () => {
 
   const visibleColumns = useMemo(() => columns.filter(col => col.visible), [columns]);
 
-  // Synchronized scrolling between frozen and scrollable sections
-  useEffect(() => {
-    const frozenEl = frozenScrollRef.current;
-    const scrollableEl = scrollableScrollRef.current;
 
-    if (!frozenEl || !scrollableEl) return;
-
-    const syncScrollFromFrozen = () => {
-      scrollableEl.scrollTop = frozenEl.scrollTop;
-    };
-
-    const syncScrollFromScrollable = () => {
-      frozenEl.scrollTop = scrollableEl.scrollTop;
-    };
-
-    frozenEl.addEventListener('scroll', syncScrollFromFrozen);
-    scrollableEl.addEventListener('scroll', syncScrollFromScrollable);
-
-    return () => {
-      frozenEl.removeEventListener('scroll', syncScrollFromFrozen);
-      scrollableEl.removeEventListener('scroll', syncScrollFromScrollable);
-    };
-  }, [paginatedPeople]);
 
   const togglePersonSelection = (id: string) => {
     setSelectedPeople(prev => 
@@ -495,10 +471,10 @@ const PeopleDiscovery: React.FC = () => {
       </div>
 
       {/* Table */}
-      <div className="flex-1 overflow-hidden bg-white">
-        <div className="h-full">
+      <div className="flex-1 overflow-auto bg-white">
+        <div className="min-w-max">
           {/* Table Header */}
-          <div className="bg-gray-50 border-b border-gray-200 h-12 flex items-center">
+          <div className="bg-gray-50 border-b border-gray-200 h-12 flex items-center sticky top-0 z-10">
             {visibleColumns.map((column) => (
               <div 
                 key={column.key} 
@@ -530,39 +506,37 @@ const PeopleDiscovery: React.FC = () => {
           </div>
 
           {/* Table Body */}
-          <div className="flex-1 overflow-auto">
-            <div className="h-full">
-              {paginatedPeople.map((person) => (
-                <div key={person.id} className="border-b border-gray-100 h-16 flex items-center hover:bg-gray-50">
-                  {visibleColumns.map((column) => (
-                    <div 
-                      key={column.key} 
-                      className="flex-shrink-0 px-4 flex items-center border-r border-gray-100 last:border-r-0 min-w-0"
-                      style={{ width: column.width }}
-                    >
-                      {column.key === 'name' && (
-                        <div className="flex items-center space-x-3 w-full min-w-0">
-                          <input
-                            type="checkbox"
-                            checked={selectedPeople.includes(person.id)}
-                            onChange={() => togglePersonSelection(person.id)}
-                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 flex-shrink-0"
-                          />
-                          <div className="min-w-0 flex-1">
-                            {renderTableCell(person, column)}
-                          </div>
-                        </div>
-                      )}
-                      {column.key !== 'name' && (
-                        <div className="w-full min-w-0">
+          <div>
+            {paginatedPeople.map((person) => (
+              <div key={person.id} className="border-b border-gray-100 h-16 flex items-center hover:bg-gray-50">
+                {visibleColumns.map((column) => (
+                  <div 
+                    key={column.key} 
+                    className="flex-shrink-0 px-4 flex items-center border-r border-gray-100 last:border-r-0 min-w-0"
+                    style={{ width: column.width }}
+                  >
+                    {column.key === 'name' && (
+                      <div className="flex items-center space-x-3 w-full min-w-0">
+                        <input
+                          type="checkbox"
+                          checked={selectedPeople.includes(person.id)}
+                          onChange={() => togglePersonSelection(person.id)}
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 flex-shrink-0"
+                        />
+                        <div className="min-w-0 flex-1">
                           {renderTableCell(person, column)}
                         </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
+                      </div>
+                    )}
+                    {column.key !== 'name' && (
+                      <div className="w-full min-w-0">
+                        {renderTableCell(person, column)}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ))}
           </div>
         </div>
       </div>
