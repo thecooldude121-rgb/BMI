@@ -84,28 +84,8 @@ const CompanyDiscovery: React.FC = () => {
   ]);
 
   // Use shared company data plus additional generated companies for pagination demo
-  const companies: CompanyData[] = [
-    ...sharedCompanies,
-    // Adding more entries to demonstrate pagination
-    ...Array.from({ length: 20 }, (_, i) => ({
-      id: `comp-auto-${i + 1}`,
-      name: `Company ${i + 7}`,
-      logo: '🏢',
-      domain: `company${i + 7}.com`,
-      website: `https://company${i + 7}.com`,
-      linkedinUrl: `https://linkedin.com/company/company-${i + 7}`,
-      industry: ['Technology', 'Healthcare', 'Finance', 'Manufacturing', 'Retail'][i % 5],
-      location: ['San Francisco, CA', 'New York, NY', 'Austin, TX', 'Seattle, WA', 'Boston, MA'][i % 5],
-      employeeCount: ['1-50', '51-200', '201-500', '501-1000', '1001-5000'][i % 5],
-      revenue: ['$1M-$5M', '$5M-$10M', '$10M-$25M', '$25M-$50M', '$50M-$100M'][i % 5],
-      founded: 2010 + (i % 10),
-      description: `Sample company description for Company ${i + 7}`,
-      technologies: [['React', 'Node.js'], ['Python', 'Django'], ['Java', 'Spring'], ['Vue', 'Express'], ['Angular', 'Rails']][i % 5],
-      keywords: [['Tech', 'Innovation'], ['Health', 'Medical'], ['Finance', 'Banking'], ['Manufacturing', 'Industrial'], ['Retail', 'E-commerce']][i % 5],
-      funding: ['Seed', 'Series A', 'Series B', 'Series C', 'Bootstrap'][i % 5],
-      saved: i % 3 === 0
-    }))
-  ];
+  // Use only the first 3 companies from shared data
+  const companies: CompanyData[] = sharedCompanies.slice(0, 3);
 
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
 

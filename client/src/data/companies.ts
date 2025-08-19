@@ -72,42 +72,6 @@ export const companies: CompanyData[] = [
     keywords: ['Startup', 'Innovation', 'Technology', 'Disruptive'],
     funding: 'Seed - $2M',
     saved: false
-  },
-  {
-    id: 'comp-4',
-    name: 'HealthTech Innovations',
-    logo: '🏥',
-    domain: 'healthtech-innovations.com',
-    website: 'https://healthtech-innovations.com',
-    linkedinUrl: 'https://linkedin.com/company/healthtech-innovations',
-    industry: 'Healthcare Technology',
-    location: 'Boston, MA',
-    employeeCount: '201-500',
-    revenue: '$25M-$50M',
-    founded: 2018,
-    description: 'Revolutionary healthcare technology solutions',
-    technologies: ['AI/ML', 'Python', 'FHIR', 'Cloud Computing'],
-    keywords: ['Healthcare', 'Medical Technology', 'AI', 'Patient Care'],
-    funding: 'Series B - $20M',
-    saved: true
-  },
-  {
-    id: 'comp-5',
-    name: 'Green Energy Corp',
-    logo: '🌱',
-    domain: 'greenenergy.com',
-    website: 'https://greenenergy.com',
-    linkedinUrl: 'https://linkedin.com/company/green-energy-corp',
-    industry: 'Renewable Energy',
-    location: 'Austin, TX',
-    employeeCount: '501-1,000',
-    revenue: '$50M-$100M',
-    founded: 2015,
-    description: 'Sustainable energy solutions for the future',
-    technologies: ['Solar', 'Wind', 'Battery Storage', 'Smart Grid'],
-    keywords: ['Renewable Energy', 'Sustainability', 'Clean Tech', 'Environment'],
-    funding: 'Series C - $45M',
-    saved: false
-  },
+  }
 
 ];
