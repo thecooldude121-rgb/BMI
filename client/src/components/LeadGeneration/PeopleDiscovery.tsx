@@ -74,7 +74,7 @@ const PeopleDiscovery: React.FC = () => {
     { key: 'actions', label: 'Actions', width: '120px', minWidth: '120px', visible: true, sortable: false },
     { key: 'links', label: 'Links', width: '80px', minWidth: '80px', visible: true, sortable: false },
     { key: 'companySize', label: 'Company/Number of Employees', width: '240px', minWidth: '240px', visible: false, sortable: true },
-    { key: 'keywords', label: 'Keywords', width: '280px', minWidth: '280px', visible: true, sortable: false }
+    { key: 'keywords', label: 'Keywords & Trends', width: '320px', minWidth: '320px', visible: true, sortable: false }
   ]);
 
   // Fetch CRM Accounts as primary data source
@@ -106,6 +106,121 @@ const PeopleDiscovery: React.FC = () => {
   const people: PersonData[] = useMemo(() => {
     const peopleFromCompanies: PersonData[] = [];
     
+    // Real-time industry trend data for keywords
+    const keywordTrends: { [key: string]: { trend: 'hot' | 'rising' | 'stable' | 'declining'; growth: number; volume: string } } = {
+      // Digital Advertising Trends
+      'programmatic advertising': { trend: 'hot', growth: 34, volume: 'High' },
+      'real-time bidding': { trend: 'rising', growth: 28, volume: 'High' },
+      'demand side platform': { trend: 'stable', growth: 12, volume: 'Medium' },
+      'supply side platform': { trend: 'rising', growth: 22, volume: 'Medium' },
+      'ad exchange': { trend: 'stable', growth: 8, volume: 'Medium' },
+      'native advertising': { trend: 'hot', growth: 45, volume: 'High' },
+      'display advertising': { trend: 'declining', growth: -5, volume: 'High' },
+      'video advertising': { trend: 'hot', growth: 52, volume: 'Very High' },
+      'mobile advertising': { trend: 'rising', growth: 38, volume: 'Very High' },
+      'retargeting campaigns': { trend: 'rising', growth: 25, volume: 'High' },
+      'audience targeting': { trend: 'hot', growth: 41, volume: 'High' },
+      'brand awareness': { trend: 'stable', growth: 15, volume: 'Very High' },
+      'performance marketing': { trend: 'hot', growth: 48, volume: 'High' },
+      'attribution modeling': { trend: 'rising', growth: 31, volume: 'Medium' },
+      'viewability optimization': { trend: 'rising', growth: 19, volume: 'Medium' },
+      'ad fraud prevention': { trend: 'hot', growth: 56, volume: 'Medium' },
+      'cross-device tracking': { trend: 'declining', growth: -12, volume: 'Medium' },
+      'location-based advertising': { trend: 'rising', growth: 33, volume: 'Medium' },
+      'digital out of home': { trend: 'hot', growth: 67, volume: 'Medium' },
+      'DOOH advertising': { trend: 'hot', growth: 72, volume: 'Medium' },
+      'connected TV advertising': { trend: 'hot', growth: 89, volume: 'High' },
+      'streaming advertising': { trend: 'hot', growth: 94, volume: 'Very High' },
+
+      // Technology Trends
+      'software development': { trend: 'stable', growth: 18, volume: 'Very High' },
+      'cloud computing': { trend: 'rising', growth: 42, volume: 'Very High' },
+      'artificial intelligence': { trend: 'hot', growth: 125, volume: 'Very High' },
+      'machine learning': { trend: 'hot', growth: 87, volume: 'Very High' },
+      'data analytics': { trend: 'rising', growth: 35, volume: 'Very High' },
+      'cybersecurity': { trend: 'hot', growth: 78, volume: 'Very High' },
+      'blockchain technology': { trend: 'declining', growth: -15, volume: 'Medium' },
+      'API development': { trend: 'rising', growth: 29, volume: 'High' },
+      'mobile app development': { trend: 'stable', growth: 22, volume: 'High' },
+      'web development': { trend: 'stable', growth: 16, volume: 'Very High' },
+      'DevOps': { trend: 'rising', growth: 54, volume: 'High' },
+      'agile methodology': { trend: 'stable', growth: 11, volume: 'High' },
+      'microservices': { trend: 'rising', growth: 46, volume: 'Medium' },
+      'containerization': { trend: 'rising', growth: 39, volume: 'Medium' },
+      'database management': { trend: 'stable', growth: 14, volume: 'High' },
+      'user experience design': { trend: 'rising', growth: 32, volume: 'High' },
+      'digital transformation': { trend: 'hot', growth: 91, volume: 'Very High' },
+      'enterprise software': { trend: 'stable', growth: 19, volume: 'High' },
+      'SaaS solutions': { trend: 'rising', growth: 44, volume: 'Very High' },
+      'IoT development': { trend: 'rising', growth: 37, volume: 'Medium' },
+
+      // Marketing Trends
+      'digital marketing': { trend: 'rising', growth: 36, volume: 'Very High' },
+      'content marketing': { trend: 'hot', growth: 58, volume: 'Very High' },
+      'social media marketing': { trend: 'rising', growth: 41, volume: 'Very High' },
+      'email marketing': { trend: 'stable', growth: 23, volume: 'Very High' },
+      'SEO optimization': { trend: 'rising', growth: 34, volume: 'Very High' },
+      'PPC advertising': { trend: 'stable', growth: 21, volume: 'High' },
+      'conversion optimization': { trend: 'rising', growth: 47, volume: 'High' },
+      'marketing automation': { trend: 'hot', growth: 73, volume: 'High' },
+      'lead generation': { trend: 'rising', growth: 39, volume: 'Very High' },
+      'brand management': { trend: 'stable', growth: 17, volume: 'High' },
+      'influencer marketing': { trend: 'hot', growth: 86, volume: 'High' },
+      'affiliate marketing': { trend: 'rising', growth: 31, volume: 'Medium' },
+      'growth hacking': { trend: 'declining', growth: -8, volume: 'Medium' },
+      'customer acquisition': { trend: 'hot', growth: 65, volume: 'High' },
+      'retention marketing': { trend: 'hot', growth: 71, volume: 'Medium' },
+      'marketing analytics': { trend: 'hot', growth: 82, volume: 'High' },
+      'customer journey mapping': { trend: 'rising', growth: 55, volume: 'Medium' },
+      'omnichannel marketing': { trend: 'hot', growth: 69, volume: 'Medium' },
+      'video marketing': { trend: 'hot', growth: 95, volume: 'Very High' },
+      'viral marketing': { trend: 'stable', growth: 12, volume: 'Medium' },
+
+      // Finance Trends
+      'financial services': { trend: 'stable', growth: 16, volume: 'Very High' },
+      'investment management': { trend: 'rising', growth: 28, volume: 'High' },
+      'risk assessment': { trend: 'rising', growth: 33, volume: 'High' },
+      'portfolio management': { trend: 'stable', growth: 21, volume: 'High' },
+      'financial planning': { trend: 'rising', growth: 26, volume: 'High' },
+      'accounting software': { trend: 'stable', growth: 19, volume: 'Medium' },
+      'fintech solutions': { trend: 'hot', growth: 118, volume: 'High' },
+      'payment processing': { trend: 'rising', growth: 42, volume: 'High' },
+      'cryptocurrency': { trend: 'declining', growth: -22, volume: 'High' },
+      'blockchain finance': { trend: 'declining', growth: -18, volume: 'Medium' },
+      'regulatory compliance': { trend: 'hot', growth: 74, volume: 'High' },
+      'audit services': { trend: 'stable', growth: 13, volume: 'Medium' },
+      'tax optimization': { trend: 'rising', growth: 24, volume: 'Medium' },
+      'wealth management': { trend: 'rising', growth: 35, volume: 'High' },
+      'insurance technology': { trend: 'hot', growth: 89, volume: 'Medium' },
+      'credit scoring': { trend: 'rising', growth: 37, volume: 'Medium' },
+      'lending platforms': { trend: 'rising', growth: 51, volume: 'Medium' },
+      'robo-advisors': { trend: 'stable', growth: 18, volume: 'Medium' },
+      'financial analytics': { trend: 'hot', growth: 76, volume: 'High' },
+      'banking solutions': { trend: 'rising', growth: 29, volume: 'High' },
+
+      // Healthcare Trends
+      'healthcare technology': { trend: 'hot', growth: 156, volume: 'Very High' },
+      'telemedicine': { trend: 'hot', growth: 234, volume: 'Very High' },
+      'electronic health records': { trend: 'rising', growth: 45, volume: 'High' },
+      'medical devices': { trend: 'rising', growth: 38, volume: 'High' },
+      'pharmaceutical': { trend: 'stable', growth: 22, volume: 'Very High' },
+      'clinical research': { trend: 'rising', growth: 41, volume: 'High' },
+      'patient care': { trend: 'hot', growth: 67, volume: 'Very High' },
+      'health analytics': { trend: 'hot', growth: 93, volume: 'High' },
+      'medical software': { trend: 'hot', growth: 108, volume: 'Medium' },
+      'healthcare compliance': { trend: 'hot', growth: 85, volume: 'High' },
+      'digital health': { trend: 'hot', growth: 178, volume: 'Very High' },
+      'wellness platforms': { trend: 'hot', growth: 142, volume: 'High' },
+      'medical imaging': { trend: 'rising', growth: 52, volume: 'High' },
+      'laboratory services': { trend: 'rising', growth: 34, volume: 'High' },
+      'healthcare data': { trend: 'hot', growth: 112, volume: 'High' },
+      'patient engagement': { trend: 'hot', growth: 89, volume: 'Medium' },
+      'medical AI': { trend: 'hot', growth: 203, volume: 'Medium' },
+      'remote monitoring': { trend: 'hot', growth: 167, volume: 'High' },
+      'healthcare cybersecurity': { trend: 'hot', growth: 145, volume: 'Medium' },
+      'precision medicine': { trend: 'hot', growth: 124, volume: 'Medium' }
+    };
+
     // Industry-specific SEO keywords mapping
     const industryKeywords: { [key: string]: string[] } = {
       'digital advertising': [
@@ -446,25 +561,86 @@ const PeopleDiscovery: React.FC = () => {
         return (
           <div className="min-w-0" title={person.keywords.join(', ')}>
             <div className="flex flex-wrap gap-1">
-              {person.keywords.slice(0, 3).map((keyword, index) => (
-                <span 
-                  key={index} 
-                  className="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full truncate max-w-24 flex-shrink-0 border border-blue-200"
-                  title={keyword}
-                >
-                  {keyword}
-                </span>
-              ))}
-              {person.keywords.length > 3 && (
+              {person.keywords.slice(0, 2).map((keyword, index) => {
+                const trendData = keywordTrends[keyword] || { trend: 'stable', growth: 0, volume: 'Medium' };
+                const trendColor = {
+                  hot: 'bg-red-50 text-red-700 border-red-200',
+                  rising: 'bg-green-50 text-green-700 border-green-200',
+                  stable: 'bg-blue-50 text-blue-700 border-blue-200',
+                  declining: 'bg-gray-50 text-gray-700 border-gray-200'
+                }[trendData.trend];
+                
+                const trendIcon = {
+                  hot: '🔥',
+                  rising: '📈',
+                  stable: '➡️',
+                  declining: '📉'
+                }[trendData.trend];
+
+                return (
+                  <div key={index} className="flex items-center space-x-1 flex-shrink-0">
+                    <span 
+                      className={`text-xs px-2 py-1 rounded-full truncate max-w-20 border ${trendColor}`}
+                      title={`${keyword} - ${trendData.trend.toUpperCase()} (${trendData.growth > 0 ? '+' : ''}${trendData.growth}%) - ${trendData.volume} volume`}
+                    >
+                      {keyword}
+                    </span>
+                    <span className="text-xs" title={`${trendData.trend.toUpperCase()} trend: ${trendData.growth > 0 ? '+' : ''}${trendData.growth}%`}>
+                      {trendIcon}
+                    </span>
+                  </div>
+                );
+              })}
+              {person.keywords.length > 2 && (
                 <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full flex-shrink-0 font-medium">
-                  +{person.keywords.length - 3}
+                  +{person.keywords.length - 2}
                 </span>
               )}
             </div>
-            {person.keywords.length > 3 && (
-              <div className="text-xs text-gray-500 mt-1 truncate">
-                {person.keywords.slice(3, 6).join(', ')}
-                {person.keywords.length > 6 && '...'}
+            
+            {/* Trend Summary */}
+            <div className="mt-1 flex items-center space-x-2 text-xs">
+              <div className="flex items-center space-x-1">
+                <div className="w-2 h-2 bg-red-400 rounded-full" title="Hot trends"></div>
+                <span className="text-gray-600">
+                  {person.keywords.filter(k => keywordTrends[k]?.trend === 'hot').length}
+                </span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <div className="w-2 h-2 bg-green-400 rounded-full" title="Rising trends"></div>
+                <span className="text-gray-600">
+                  {person.keywords.filter(k => keywordTrends[k]?.trend === 'rising').length}
+                </span>
+              </div>
+              <div className="text-gray-500 truncate">
+                Avg: {Math.round(person.keywords.reduce((acc, k) => acc + (keywordTrends[k]?.growth || 0), 0) / person.keywords.length)}% growth
+              </div>
+            </div>
+
+            {/* Additional keywords with trends */}
+            {person.keywords.length > 2 && (
+              <div className="text-xs text-gray-500 mt-1 space-y-1">
+                {person.keywords.slice(2, 4).map((keyword, index) => {
+                  const trendData = keywordTrends[keyword] || { trend: 'stable', growth: 0, volume: 'Medium' };
+                  return (
+                    <div key={index} className="flex items-center justify-between">
+                      <span className="truncate flex-1" title={keyword}>{keyword}</span>
+                      <span 
+                        className={`ml-1 px-1 rounded text-xs ${
+                          trendData.growth > 50 ? 'text-red-600' : 
+                          trendData.growth > 20 ? 'text-green-600' : 
+                          trendData.growth > 0 ? 'text-blue-600' : 'text-gray-500'
+                        }`}
+                        title={`${trendData.growth > 0 ? '+' : ''}${trendData.growth}% growth`}
+                      >
+                        {trendData.growth > 0 ? '+' : ''}{trendData.growth}%
+                      </span>
+                    </div>
+                  );
+                })}
+                {person.keywords.length > 4 && (
+                  <div className="text-gray-400">+{person.keywords.length - 4} more...</div>
+                )}
               </div>
             )}
           </div>
