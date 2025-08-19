@@ -4,6 +4,7 @@ import {
   Target, Users, Building2, ChevronRight, ChevronDown
 } from 'lucide-react';
 import ProspectDiscovery from '../../components/LeadGeneration/ProspectDiscovery';
+import PeopleDiscovery from '../../components/LeadGeneration/PeopleDiscovery';
 import CompanyDiscovery from '../../components/LeadGeneration/CompanyDiscovery';
 
 const LeadGeneration: React.FC = () => {
@@ -103,7 +104,7 @@ const LeadGeneration: React.FC = () => {
               transition={{ duration: 0.3 }}
               className="h-full"
             >
-              <ProspectDiscovery />
+              <PeopleDiscovery />
             </motion.div>
           )}
 
