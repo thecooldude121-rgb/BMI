@@ -978,7 +978,7 @@ const CompanyDetailPageBMI: React.FC = () => {
     if (!currentAccountId || !allActivities.length) return [];
     
     // Filter activities by account ID or related entities
-    return allActivities
+    const companyActivities = allActivities
       .filter(activity => {
         // Direct account relationship
         if (activity.accountId === currentAccountId) return true;
@@ -1000,8 +1000,38 @@ const CompanyDetailPageBMI: React.FC = () => {
         scheduledAt: activity.scheduledAt,
         completedAt: activity.completedAt,
         rawActivity: activity // Keep reference to original data
-      }))
-      .sort((a, b) => new Date(b.rawActivity.createdAt).getTime() - new Date(a.rawActivity.createdAt).getTime());
+      }));
+
+    // Separate activities into upcoming and completed
+    const upcomingActivities = companyActivities
+      .filter(activity => 
+        activity.status === 'open' || 
+        activity.status === 'planned' || 
+        activity.status === 'in_progress' ||
+        (activity.scheduledAt && new Date(activity.scheduledAt) > new Date())
+      )
+      .sort((a, b) => {
+        // Sort by scheduled date if available, otherwise by created date
+        const dateA = new Date(a.scheduledAt || a.rawActivity.createdAt);
+        const dateB = new Date(b.scheduledAt || b.rawActivity.createdAt);
+        return dateA.getTime() - dateB.getTime();
+      });
+
+    // Get last 2 completed activities
+    const completedActivities = companyActivities
+      .filter(activity => 
+        activity.status === 'completed' || 
+        activity.completedAt
+      )
+      .sort((a, b) => {
+        const dateA = new Date(a.completedAt || a.rawActivity.createdAt);
+        const dateB = new Date(b.completedAt || b.rawActivity.createdAt);
+        return dateB.getTime() - dateA.getTime(); // Most recent first
+      })
+      .slice(0, 2); // Only last 2 completed
+
+    // Combine upcoming and last 2 completed
+    return [...upcomingActivities, ...completedActivities];
   }, [currentAccountId, allActivities, deals, crmContacts]);
 
   // Network data structure for employee relationships
@@ -2270,40 +2300,124 @@ const CompanyDetailPageBMI: React.FC = () => {
                   ))}
                 </div>
 
-                <div className="flex items-center justify-between mb-4">
-                  <div className="text-gray-900 font-medium">Upcoming</div>
-                  <button className="flex items-center space-x-1 text-gray-500 hover:text-gray-900 transition-colors text-sm" data-testid="button-filter">
-                    <Filter className="h-4 w-4" />
-                    <span>Filter 6/6</span>
-                  </button>
-                </div>
+                {/* Split activities into upcoming and completed sections */}
+                <div className="space-y-6">
+                  {/* Upcoming Activities Section */}
+                  {activities.filter(activity => 
+                    activity.status === 'open' || 
+                    activity.status === 'planned' || 
+                    activity.status === 'in_progress' ||
+                    (activity.scheduledAt && new Date(activity.scheduledAt) > new Date())
+                  ).length > 0 && (
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="text-gray-900 font-medium">Upcoming Activities</div>
+                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                          {activities.filter(activity => 
+                            activity.status === 'open' || 
+                            activity.status === 'planned' || 
+                            activity.status === 'in_progress' ||
+                            (activity.scheduledAt && new Date(activity.scheduledAt) > new Date())
+                          ).length}
+                        </span>
+                      </div>
 
-                <div className="space-y-4">
-                  {activities.map((activity) => (
-                    <div key={activity.id} className="border-l-2 border-blue-500 pl-4">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-1">
-                            {activity.type === 'email' && (
-                              <Mail className="h-4 w-4 text-green-600" />
-                            )}
-                            {activity.type === 'task' && (
-                              <CheckSquare className="h-4 w-4 text-blue-600" />
-                            )}
-                            <span className="text-gray-900 font-medium text-sm">{activity.title}</span>
-                          </div>
-                          {activity.description && (
-                            <div className="text-gray-600 text-sm mb-2">
-                              {activity.description}
+                      <div className="space-y-3">
+                        {activities
+                          .filter(activity => 
+                            activity.status === 'open' || 
+                            activity.status === 'planned' || 
+                            activity.status === 'in_progress' ||
+                            (activity.scheduledAt && new Date(activity.scheduledAt) > new Date())
+                          )
+                          .map((activity) => (
+                            <div key={activity.id} className="border-l-2 border-blue-500 pl-4 bg-blue-50/30 rounded-r-lg py-2">
+                              <div className="flex items-start justify-between">
+                                <div className="flex-1">
+                                  <div className="flex items-center space-x-2 mb-1">
+                                    {activity.type === 'email' && <Mail className="h-4 w-4 text-green-600" />}
+                                    {activity.type === 'call' && <Phone className="h-4 w-4 text-blue-600" />}
+                                    {activity.type === 'meeting' && <Calendar className="h-4 w-4 text-purple-600" />}
+                                    {activity.type === 'task' && <CheckSquare className="h-4 w-4 text-orange-600" />}
+                                    {activity.type === 'note' && <FileText className="h-4 w-4 text-gray-600" />}
+                                    <span className="text-gray-900 font-medium text-sm">{activity.title}</span>
+                                    <span className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full">
+                                      Upcoming
+                                    </span>
+                                  </div>
+                                  {activity.description && (
+                                    <div className="text-gray-600 text-sm mb-2">
+                                      {activity.description}
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="text-gray-500 text-sm">
+                                  {activity.scheduledAt ? formatActivityTimestamp(activity.scheduledAt) : activity.timestamp}
+                                </div>
+                              </div>
                             </div>
-                          )}
-                        </div>
-                        <div className="text-gray-500 text-sm">
-                          {activity.timestamp}
-                        </div>
+                          ))}
                       </div>
                     </div>
-                  ))}
+                  )}
+
+                  {/* Recent Completed Activities Section */}
+                  {activities.filter(activity => 
+                    activity.status === 'completed' || activity.completedAt
+                  ).length > 0 && (
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="text-gray-900 font-medium">Recent Completed</div>
+                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                          Last 2
+                        </span>
+                      </div>
+
+                      <div className="space-y-3">
+                        {activities
+                          .filter(activity => 
+                            activity.status === 'completed' || activity.completedAt
+                          )
+                          .slice(0, 2)
+                          .map((activity) => (
+                            <div key={activity.id} className="border-l-2 border-green-500 pl-4 bg-green-50/30 rounded-r-lg py-2">
+                              <div className="flex items-start justify-between">
+                                <div className="flex-1">
+                                  <div className="flex items-center space-x-2 mb-1">
+                                    {activity.type === 'email' && <Mail className="h-4 w-4 text-green-600" />}
+                                    {activity.type === 'call' && <Phone className="h-4 w-4 text-blue-600" />}
+                                    {activity.type === 'meeting' && <Calendar className="h-4 w-4 text-purple-600" />}
+                                    {activity.type === 'task' && <CheckSquare className="h-4 w-4 text-orange-600" />}
+                                    {activity.type === 'note' && <FileText className="h-4 w-4 text-gray-600" />}
+                                    <span className="text-gray-900 font-medium text-sm">{activity.title}</span>
+                                    <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full">
+                                      Completed
+                                    </span>
+                                  </div>
+                                  {activity.description && (
+                                    <div className="text-gray-600 text-sm mb-2">
+                                      {activity.description}
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="text-gray-500 text-sm">
+                                  {activity.completedAt ? formatActivityTimestamp(activity.completedAt) : activity.timestamp}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Empty state */}
+                  {activities.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      <Activity className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                      <p>No activities found for this company</p>
+                      <p className="text-sm">Activities will appear here once they're logged</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
