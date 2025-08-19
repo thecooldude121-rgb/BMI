@@ -2424,10 +2424,10 @@ const CompanyDetailPageBMI: React.FC = () => {
                     <>
                       {/* Employee List Header */}
                       <div className="grid grid-cols-6 gap-4 text-xs text-gray-600 font-medium mb-4 pb-2 border-b border-gray-200">
-                        <div>NAME & TITLE</div>
+                        <div>NAME</div>
+                        <div>JOB TITLE</div>
                         <div>DEPARTMENT</div>
                         <div>LOCATION</div>
-                        <div>SOURCE</div>
                         <div>SENIORITY</div>
                         <div>ACTIONS</div>
                       </div>
@@ -2437,15 +2437,25 @@ const CompanyDetailPageBMI: React.FC = () => {
                     {getCurrentPageEmployees().map((employee, index) => (
                       <div key={employee.id} className="relative">
                         <div className="grid grid-cols-6 gap-4 py-3 px-2 rounded-lg hover:bg-gray-100/50 transition-colors border-b border-gray-200/50">
-                          {/* Name & Title */}
+                          {/* Name */}
                           <div className="flex items-center space-x-3 min-w-0">
                             <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white font-medium text-sm flex-shrink-0">
                               {employee.name.split(' ').map(n => n[0]).join('')}
                             </div>
                             <div className="min-w-0 flex-1">
                               <div className="text-gray-900 text-sm font-medium truncate">{employee.name}</div>
-                              <div className="text-gray-600 text-xs truncate">{employee.title}</div>
+                              <div className="text-gray-600 text-xs truncate flex items-center space-x-1">
+                                <span>{employee.source}</span>
+                                {employee.verified && (
+                                  <CheckCircle className="h-3 w-3 text-green-600" />
+                                )}
+                              </div>
                             </div>
+                          </div>
+                          
+                          {/* Job Title */}
+                          <div className="flex items-center">
+                            <span className="text-gray-700 text-sm truncate">{employee.title}</span>
                           </div>
                           
                           {/* Department */}
@@ -2456,25 +2466,6 @@ const CompanyDetailPageBMI: React.FC = () => {
                           {/* Location */}
                           <div className="flex items-center">
                             <span className="text-gray-700 text-sm truncate">{employee.location}</span>
-                          </div>
-                          
-                          {/* Source */}
-                          <div className="flex items-center">
-                            <div className="flex items-center space-x-1">
-                              <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                                employee.source === 'LinkedIn Premium' ? 'bg-blue-100 text-blue-700' :
-                                employee.source === 'LinkedIn Sales Navigator' ? 'bg-blue-100 text-blue-700' :
-                                employee.source === 'Company Website' ? 'bg-green-100 text-green-700' :
-                                employee.source === 'ZoomInfo' ? 'bg-purple-100 text-purple-700' :
-                                employee.source === 'Clearbit' ? 'bg-orange-100 text-orange-700' :
-                                'bg-gray-100 text-gray-700'
-                              }`}>
-                                {employee.source}
-                              </span>
-                              {employee.verified && (
-                                <CheckCircle className="h-4 w-4 text-green-600" />
-                              )}
-                            </div>
                           </div>
                           
                           {/* Seniority */}
