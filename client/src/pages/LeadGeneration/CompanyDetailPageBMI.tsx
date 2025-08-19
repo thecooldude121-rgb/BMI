@@ -32,7 +32,9 @@ import {
   Network,
   List,
   Maximize2,
-  Minimize2
+  Minimize2,
+  FileSpreadsheet,
+  X
 } from 'lucide-react';
 import { Link } from 'wouter';
 import { companies, CompanyData as SharedCompanyData } from '../../data/companies';
@@ -117,6 +119,17 @@ const CompanyDetailPageBMI: React.FC = () => {
   const [networkView, setNetworkView] = useState<'hierarchy' | 'department' | 'connections'>('hierarchy');
   const [selectedEmployee, setSelectedEmployee] = useState<string | null>(null);
   const [networkFullscreen, setNetworkFullscreen] = useState(false);
+  
+  // Export feature state
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exportFormat, setExportFormat] = useState<'csv' | 'json' | 'xlsx'>('csv');
+  const [exportFilters, setExportFilters] = useState({
+    departments: [] as string[],
+    seniorities: [] as string[],
+    sources: [] as string[],
+    includeContactInfo: true,
+    includeVerifiedOnly: false
+  });
   
   // Track accessed contact info
   const [accessedEmails, setAccessedEmails] = useState<Set<number>>(new Set());
@@ -875,6 +888,164 @@ const CompanyDetailPageBMI: React.FC = () => {
   const getDepartmentY = (node: any) => {
     return 150 + Math.random() * 200;
   };
+
+  // Export functionality
+  const getFilteredEmployees = () => {
+    let filtered = allEmployees;
+    
+    if (exportFilters.departments.length > 0) {
+      filtered = filtered.filter(emp => exportFilters.departments.includes(emp.department));
+    }
+    
+    if (exportFilters.seniorities.length > 0) {
+      filtered = filtered.filter(emp => exportFilters.seniorities.includes(emp.seniority));
+    }
+    
+    if (exportFilters.sources.length > 0) {
+      filtered = filtered.filter(emp => exportFilters.sources.includes(emp.source));
+    }
+    
+    if (exportFilters.includeVerifiedOnly) {
+      filtered = filtered.filter(emp => emp.verified);
+    }
+    
+    return filtered;
+  };
+
+  const exportEmployeeData = () => {
+    const filteredData = getFilteredEmployees();
+    const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+    const filename = `vgi-partners-employees-${timestamp}`;
+    
+    if (exportFormat === 'csv') {
+      exportToCSV(filteredData, filename);
+    } else if (exportFormat === 'json') {
+      exportToJSON(filteredData, filename);
+    } else if (exportFormat === 'xlsx') {
+      exportToXLSX(filteredData, filename);
+    }
+    
+    setShowExportModal(false);
+  };
+
+  const exportToCSV = (data: any[], filename: string) => {
+    const headers = [
+      'Name',
+      'Title', 
+      'Department',
+      'Location',
+      'Source',
+      'Seniority',
+      'Year Started',
+      'Last Activity',
+      'Verified',
+      ...(exportFilters.includeContactInfo ? ['Email', 'Phone', 'LinkedIn Profile'] : [])
+    ];
+    
+    const csvContent = [
+      headers.join(','),
+      ...data.map(emp => [
+        `"${emp.name}"`,
+        `"${emp.title}"`,
+        `"${emp.department}"`,
+        `"${emp.location}"`,
+        `"${emp.source}"`,
+        `"${emp.seniority}"`,
+        `"${emp.yearStarted || ''}"`,
+        `"${emp.lastActivity || ''}"`,
+        emp.verified ? 'Yes' : 'No',
+        ...(exportFilters.includeContactInfo ? [
+          `"${emp.email || ''}"`,
+          `"${emp.phone || ''}"`,
+          `"${emp.linkedinProfile || ''}"`
+        ] : [])
+      ].join(','))
+    ].join('\n');
+    
+    downloadFile(csvContent, `${filename}.csv`, 'text/csv');
+  };
+
+  const exportToJSON = (data: any[], filename: string) => {
+    const jsonData = data.map(emp => ({
+      name: emp.name,
+      title: emp.title,
+      department: emp.department,
+      location: emp.location,
+      source: emp.source,
+      seniority: emp.seniority,
+      yearStarted: emp.yearStarted,
+      lastActivity: emp.lastActivity,
+      verified: emp.verified,
+      ...(exportFilters.includeContactInfo && {
+        email: emp.email,
+        phone: emp.phone,
+        linkedinProfile: emp.linkedinProfile
+      })
+    }));
+    
+    const jsonContent = JSON.stringify({
+      company: 'VGI Partners',
+      exportDate: new Date().toISOString(),
+      totalEmployees: jsonData.length,
+      employees: jsonData
+    }, null, 2);
+    
+    downloadFile(jsonContent, `${filename}.json`, 'application/json');
+  };
+
+  const exportToXLSX = (data: any[], filename: string) => {
+    // For XLSX export, we'll create a simple tab-separated format that Excel can open
+    const headers = [
+      'Name',
+      'Title',
+      'Department', 
+      'Location',
+      'Source',
+      'Seniority',
+      'Year Started',
+      'Last Activity',
+      'Verified',
+      ...(exportFilters.includeContactInfo ? ['Email', 'Phone', 'LinkedIn Profile'] : [])
+    ];
+    
+    const xlsxContent = [
+      headers.join('\t'),
+      ...data.map(emp => [
+        emp.name,
+        emp.title,
+        emp.department,
+        emp.location,
+        emp.source,
+        emp.seniority,
+        emp.yearStarted || '',
+        emp.lastActivity || '',
+        emp.verified ? 'Yes' : 'No',
+        ...(exportFilters.includeContactInfo ? [
+          emp.email || '',
+          emp.phone || '',
+          emp.linkedinProfile || ''
+        ] : [])
+      ].join('\t'))
+    ].join('\n');
+    
+    downloadFile(xlsxContent, `${filename}.xlsx`, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  };
+
+  const downloadFile = (content: string, filename: string, mimeType: string) => {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const uniqueDepartments = Array.from(new Set(allEmployees.map(e => e.department)));
+  const uniqueSeniorities = Array.from(new Set(allEmployees.map(e => e.seniority)));
+  const uniqueSources = Array.from(new Set(allEmployees.map(e => e.source)));
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 relative">
@@ -2017,6 +2188,17 @@ const CompanyDetailPageBMI: React.FC = () => {
                       
                       <Search className="h-4 w-4 text-gray-500 cursor-pointer hover:text-blue-600 transition-colors" />
                       <Filter className="h-4 w-4 text-gray-500 cursor-pointer hover:text-blue-600 transition-colors" />
+                      
+                      {/* Export Button */}
+                      <button
+                        onClick={() => setShowExportModal(true)}
+                        className="flex items-center space-x-1 px-3 py-1 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 transition-colors"
+                        data-testid="export-employees"
+                      >
+                        <Download className="h-3 w-3" />
+                        <span>Export</span>
+                      </button>
+                      
                       <Settings className="h-4 w-4 text-gray-500 cursor-pointer hover:text-blue-600 transition-colors" />
                     </div>
                   </div>
@@ -2443,6 +2625,179 @@ const CompanyDetailPageBMI: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Export Modal */}
+      {showExportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" data-testid="export-modal">
+          <div className="bg-white rounded-xl shadow-2xl border border-gray-200 max-w-md w-full mx-4">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900">Export Employee Data</h3>
+                <button
+                  onClick={() => setShowExportModal(false)}
+                  className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-100"
+                  data-testid="close-export-modal"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              {/* Export Format Selection */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-3">Export Format</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { key: 'csv', label: 'CSV', icon: FileText, desc: 'Spreadsheet' },
+                    { key: 'json', label: 'JSON', icon: FileText, desc: 'Structured' },
+                    { key: 'xlsx', label: 'Excel', icon: FileSpreadsheet, desc: 'Workbook' }
+                  ].map((format) => (
+                    <button
+                      key={format.key}
+                      onClick={() => setExportFormat(format.key as any)}
+                      className={`p-3 rounded-lg border text-center transition-colors ${
+                        exportFormat === format.key
+                          ? 'border-blue-500 bg-blue-50 text-blue-700'
+                          : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                      }`}
+                      data-testid={`format-${format.key}`}
+                    >
+                      <format.icon className="h-5 w-5 mx-auto mb-1" />
+                      <div className="text-sm font-medium">{format.label}</div>
+                      <div className="text-xs text-gray-500">{format.desc}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Filter Options */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-3">Filter Options</label>
+                
+                {/* Department Filter */}
+                <div className="mb-4">
+                  <label className="block text-xs text-gray-600 mb-2">Departments ({exportFilters.departments.length} selected)</label>
+                  <div className="max-h-24 overflow-y-auto border border-gray-200 rounded-lg p-2">
+                    {uniqueDepartments.map((dept) => (
+                      <label key={dept} className="flex items-center space-x-2 py-1">
+                        <input
+                          type="checkbox"
+                          checked={exportFilters.departments.includes(dept)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setExportFilters(prev => ({
+                                ...prev,
+                                departments: [...prev.departments, dept]
+                              }));
+                            } else {
+                              setExportFilters(prev => ({
+                                ...prev,
+                                departments: prev.departments.filter(d => d !== dept)
+                              }));
+                            }
+                          }}
+                          className="rounded text-blue-600"
+                        />
+                        <span className="text-xs text-gray-700">{dept}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Seniority Filter */}
+                <div className="mb-4">
+                  <label className="block text-xs text-gray-600 mb-2">Seniority Levels ({exportFilters.seniorities.length} selected)</label>
+                  <div className="flex flex-wrap gap-2">
+                    {uniqueSeniorities.map((seniority) => (
+                      <button
+                        key={seniority}
+                        onClick={() => {
+                          if (exportFilters.seniorities.includes(seniority)) {
+                            setExportFilters(prev => ({
+                              ...prev,
+                              seniorities: prev.seniorities.filter(s => s !== seniority)
+                            }));
+                          } else {
+                            setExportFilters(prev => ({
+                              ...prev,
+                              seniorities: [...prev.seniorities, seniority]
+                            }));
+                          }
+                        }}
+                        className={`px-2 py-1 text-xs rounded transition-colors ${
+                          exportFilters.seniorities.includes(seniority)
+                            ? 'bg-blue-100 text-blue-700 border border-blue-300'
+                            : 'bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200'
+                        }`}
+                      >
+                        {seniority}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Additional Options */}
+                <div className="space-y-2">
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={exportFilters.includeContactInfo}
+                      onChange={(e) => setExportFilters(prev => ({
+                        ...prev,
+                        includeContactInfo: e.target.checked
+                      }))}
+                      className="rounded text-blue-600"
+                    />
+                    <span className="text-sm text-gray-700">Include contact information</span>
+                  </label>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={exportFilters.includeVerifiedOnly}
+                      onChange={(e) => setExportFilters(prev => ({
+                        ...prev,
+                        includeVerifiedOnly: e.target.checked
+                      }))}
+                      className="rounded text-blue-600"
+                    />
+                    <span className="text-sm text-gray-700">Verified contacts only</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Export Summary */}
+              <div className="mb-6 p-3 bg-gray-50 rounded-lg">
+                <div className="text-sm text-gray-700">
+                  <strong>{getFilteredEmployees().length}</strong> of <strong>{allEmployees.length}</strong> employees will be exported
+                </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  Format: {exportFormat.toUpperCase()} • 
+                  Contact info: {exportFilters.includeContactInfo ? 'Included' : 'Excluded'} •
+                  Verified only: {exportFilters.includeVerifiedOnly ? 'Yes' : 'No'}
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setShowExportModal(false)}
+                  className="flex-1 px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  data-testid="cancel-export"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={exportEmployeeData}
+                  disabled={getFilteredEmployees().length === 0}
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  data-testid="confirm-export"
+                >
+                  Export Data
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
