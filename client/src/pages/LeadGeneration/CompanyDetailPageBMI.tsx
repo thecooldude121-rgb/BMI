@@ -1263,17 +1263,6 @@ const CompanyDetailPageBMI: React.FC = () => {
               Deals
             </button>
             <button 
-              onClick={() => setActiveMainTab('deals')}
-              className={`pb-2 border-b-2 transition-all duration-300 text-sm hover:scale-105 hover:-translate-y-0.5 ${
-                activeMainTab === 'deals' 
-                  ? 'border-blue-500 text-blue-600 font-medium' 
-                  : 'border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-300'
-              }`}
-              data-testid="tab-deals"
-            >
-              Deals
-            </button>
-            <button 
               onClick={() => setActiveMainTab('activities')}
               className={`pb-2 border-b-2 transition-all duration-300 text-sm hover:scale-105 hover:-translate-y-0.5 ${
                 activeMainTab === 'activities' 
