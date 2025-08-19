@@ -558,9 +558,7 @@ const CompanyDetailPageBMI: React.FC = () => {
           {/* Navigation Tabs */}
           <div className="flex space-x-6 mt-4">
             <button className="pb-2 border-b-2 border-blue-500 text-white font-medium text-sm">Overview</button>
-            <button className="pb-2 border-b-2 border-transparent text-gray-400 hover:text-white text-sm">
-              Contacts
-            </button>
+            <button className="pb-2 border-b-2 border-transparent text-gray-400 hover:text-white text-sm">Employees</button>
             <button className="pb-2 border-b-2 border-transparent text-gray-400 hover:text-white text-sm">
               Deals
             </button>
