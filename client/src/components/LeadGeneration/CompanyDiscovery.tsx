@@ -83,8 +83,8 @@ const CompanyDiscovery: React.FC = () => {
     { key: 'actions', label: 'Actions', width: 'col-span-1', minWidth: '100px', visible: true, sortable: false }
   ]);
 
-  // Use only the first 3 companies from shared data
-  const companies: CompanyData[] = sharedCompanies.slice(0, 3);
+  // Use only 2 companies similar to CRM Accounts module
+  const companies: CompanyData[] = sharedCompanies.slice(0, 2);
 
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
 
