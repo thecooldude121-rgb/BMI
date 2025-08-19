@@ -3065,7 +3065,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                     </div>
                     <div className="flex items-center space-x-3">
                       <span className="text-xs text-gray-500">
-                        Last activity: {allActivities.length > 0 ? formatActivityTimestamp(allActivities[0]?.createdAt || new Date().toISOString()) : 'No activities'}
+                        Last activity: {allActivities.length > 0 ? 'Recently' : 'No activities'}
                       </span>
                       <button 
                         onClick={() => setShowLogActivityModal(true)}
