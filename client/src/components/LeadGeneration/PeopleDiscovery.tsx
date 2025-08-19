@@ -470,9 +470,7 @@ const PeopleDiscovery: React.FC = () => {
                     >
                       {keyword.length > 15 ? keyword.substring(0, 12) + '...' : keyword}
                     </span>
-                    <span className="text-xs" title={`${trendInfo.trend.toUpperCase()} trend`}>
-                      {trendInfo.icon}
-                    </span>
+                    
                   </div>
                 );
               })}
