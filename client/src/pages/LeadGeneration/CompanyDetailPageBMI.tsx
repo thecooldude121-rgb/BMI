@@ -1151,7 +1151,7 @@ const CompanyDetailPageBMI: React.FC = () => {
         </div>
       </div>
       {/* Main Content - With padding for both headers */}
-      <div className="flex h-full bg-gray-50 pt-[88px]">
+      <div className="flex h-full bg-gray-50 pt-[104px]">
         {/* Left Sidebar - All Widgets - Hidden when viewing employees */}
         {activeMainTab !== 'employees' && (
           <div className="w-80 bg-white border-r border-gray-200 overflow-y-auto">
