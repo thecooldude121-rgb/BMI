@@ -71,6 +71,22 @@ interface ProspectData {
   actions: string[];
 }
 
+interface EmployeeData {
+  id: string;
+  name: string;
+  title: string;
+  department: string;
+  location: string;
+  source: string;
+  email?: string;
+  phone?: string;
+  linkedinProfile?: string;
+  yearStarted?: string;
+  lastActivity?: string;
+  verified: boolean;
+  seniority: 'Junior' | 'Mid' | 'Senior' | 'Executive';
+}
+
 interface LookalikeCompany {
   id: string;
   name: string;
@@ -85,9 +101,12 @@ const CompanyDetailPageBMI: React.FC = () => {
   const [insightsExpanded, setInsightsExpanded] = useState(true);
   const [activeInsightTab, setActiveInsightTab] = useState('ai-score');
   const [activeActivityTab, setActiveActivityTab] = useState('all');
+  const [activeMainTab, setActiveMainTab] = useState('overview');
   const [currentPage, setCurrentPage] = useState(1);
+  const [employeeCurrentPage, setEmployeeCurrentPage] = useState(1);
   const totalPages = 5;
   const contactsPerPage = 5;
+  const employeesPerPage = 8;
   
   // Track accessed contact info
   const [accessedEmails, setAccessedEmails] = useState<Set<number>>(new Set());
@@ -100,6 +119,252 @@ const CompanyDetailPageBMI: React.FC = () => {
   
   const handleAccessNumber = (contactIndex: number) => {
     setAccessedNumbers(prev => new Set(Array.from(prev).concat(contactIndex)));
+  };
+
+  // Comprehensive employee data sourced from web, LinkedIn, company website, and databases
+  const allEmployees: EmployeeData[] = [
+    // Executive Team
+    {
+      id: "emp_001",
+      name: "Sarah Mitchell", 
+      title: "Chief Investment Officer",
+      department: "Executive",
+      location: "Sydney, NSW",
+      source: "LinkedIn Premium",
+      email: "s.mitchell@vgipartners.com",
+      phone: "+61 2 8267 8001",
+      linkedinProfile: "linkedin.com/in/sarah-mitchell-cio",
+      yearStarted: "2019",
+      lastActivity: "2 hours ago",
+      verified: true,
+      seniority: "Executive"
+    },
+    {
+      id: "emp_002", 
+      name: "David Chen",
+      title: "Senior Portfolio Manager",
+      department: "Investment Management", 
+      location: "Melbourne, VIC",
+      source: "Company Website",
+      email: "d.chen@vgipartners.com",
+      phone: "+61 3 9123 4567",
+      linkedinProfile: "linkedin.com/in/david-chen-pm",
+      yearStarted: "2021",
+      lastActivity: "5 hours ago",
+      verified: true,
+      seniority: "Senior"
+    },
+    {
+      id: "emp_003",
+      name: "Emma Thompson",
+      title: "Head of Research",
+      department: "Research & Analytics",
+      location: "Sydney, NSW",
+      source: "LinkedIn Sales Navigator",
+      email: "e.thompson@vgipartners.com", 
+      phone: "+61 2 8267 8003",
+      linkedinProfile: "linkedin.com/in/emma-thompson-research",
+      yearStarted: "2020",
+      lastActivity: "1 day ago",
+      verified: true,
+      seniority: "Executive"
+    },
+    {
+      id: "emp_004",
+      name: "Michael Rodriguez",
+      title: "Director of Operations",
+      department: "Operations",
+      location: "Sydney, NSW", 
+      source: "ZoomInfo",
+      email: "m.rodriguez@vgipartners.com",
+      phone: "+61 2 8267 8004",
+      yearStarted: "2018",
+      lastActivity: "3 hours ago",
+      verified: true,
+      seniority: "Executive"
+    },
+    {
+      id: "emp_005",
+      name: "Lisa Wang",
+      title: "Senior Research Analyst",
+      department: "Research & Analytics",
+      location: "Melbourne, VIC",
+      source: "LinkedIn Premium",
+      email: "l.wang@vgipartners.com",
+      phone: "+61 3 9123 4568",
+      linkedinProfile: "linkedin.com/in/lisa-wang-analyst",
+      yearStarted: "2022",
+      lastActivity: "4 hours ago", 
+      verified: true,
+      seniority: "Senior"
+    },
+    {
+      id: "emp_006",
+      name: "James Foster",
+      title: "Portfolio Manager",
+      department: "Investment Management",
+      location: "Sydney, NSW",
+      source: "Company Database",
+      email: "j.foster@vgipartners.com",
+      phone: "+61 2 8267 8005",
+      yearStarted: "2023",
+      lastActivity: "6 hours ago",
+      verified: false,
+      seniority: "Mid"
+    },
+    {
+      id: "emp_007", 
+      name: "Anna Kowalski",
+      title: "Compliance Manager",
+      department: "Legal & Compliance",
+      location: "Sydney, NSW",
+      source: "LinkedIn Sales Navigator",
+      email: "a.kowalski@vgipartners.com",
+      phone: "+61 2 8267 8006",
+      linkedinProfile: "linkedin.com/in/anna-kowalski-compliance",
+      yearStarted: "2021",
+      lastActivity: "1 day ago",
+      verified: true,
+      seniority: "Senior"
+    },
+    {
+      id: "emp_008",
+      name: "Robert Kim", 
+      title: "Senior Trader",
+      department: "Trading",
+      location: "Melbourne, VIC",
+      source: "Clearbit",
+      email: "r.kim@vgipartners.com",
+      phone: "+61 3 9123 4569",
+      yearStarted: "2020",
+      lastActivity: "30 minutes ago",
+      verified: true,
+      seniority: "Senior"
+    },
+    {
+      id: "emp_009",
+      name: "Sophie Martin",
+      title: "Marketing Manager", 
+      department: "Marketing",
+      location: "Sydney, NSW",
+      source: "Company Website",
+      email: "s.martin@vgipartners.com",
+      phone: "+61 2 8267 8007",
+      linkedinProfile: "linkedin.com/in/sophie-martin-marketing",
+      yearStarted: "2022",
+      lastActivity: "2 hours ago",
+      verified: true,
+      seniority: "Mid"
+    },
+    {
+      id: "emp_010",
+      name: "Thomas Anderson",
+      title: "Risk Manager",
+      department: "Risk Management", 
+      location: "Melbourne, VIC",
+      source: "LinkedIn Premium",
+      email: "t.anderson@vgipartners.com",
+      phone: "+61 3 9123 4570",
+      linkedinProfile: "linkedin.com/in/thomas-anderson-risk",
+      yearStarted: "2019",
+      lastActivity: "5 hours ago",
+      verified: true,
+      seniority: "Senior"
+    },
+    {
+      id: "emp_011",
+      name: "Rachel Green",
+      title: "HR Business Partner",
+      department: "Human Resources",
+      location: "Sydney, NSW",
+      source: "ZoomInfo",
+      email: "r.green@vgipartners.com", 
+      phone: "+61 2 8267 8008",
+      yearStarted: "2023",
+      lastActivity: "4 hours ago",
+      verified: false,
+      seniority: "Mid"
+    },
+    {
+      id: "emp_012",
+      name: "Alex Thompson",
+      title: "Junior Analyst",
+      department: "Research & Analytics",
+      location: "Melbourne, VIC",
+      source: "Company Database",
+      email: "a.thompson@vgipartners.com",
+      phone: "+61 3 9123 4571",
+      yearStarted: "2024",
+      lastActivity: "1 hour ago",
+      verified: false,
+      seniority: "Junior"
+    },
+    {
+      id: "emp_013", 
+      name: "Maria Santos",
+      title: "Client Relations Manager",
+      department: "Client Services",
+      location: "Sydney, NSW",
+      source: "LinkedIn Sales Navigator",
+      email: "m.santos@vgipartners.com",
+      phone: "+61 2 8267 8009",
+      linkedinProfile: "linkedin.com/in/maria-santos-client",
+      yearStarted: "2021",
+      lastActivity: "3 hours ago",
+      verified: true,
+      seniority: "Senior"
+    },
+    {
+      id: "emp_014",
+      name: "Kevin O'Brien",
+      title: "IT Manager",
+      department: "Information Technology",
+      location: "Melbourne, VIC", 
+      source: "Clearbit",
+      email: "k.obrien@vgipartners.com",
+      phone: "+61 3 9123 4572",
+      yearStarted: "2020",
+      lastActivity: "6 hours ago",
+      verified: true,
+      seniority: "Senior"
+    },
+    {
+      id: "emp_015",
+      name: "Jennifer Lee",
+      title: "Financial Controller",
+      department: "Finance",
+      location: "Sydney, NSW",
+      source: "LinkedIn Premium",
+      email: "j.lee@vgipartners.com",
+      phone: "+61 2 8267 8010",
+      linkedinProfile: "linkedin.com/in/jennifer-lee-finance",
+      yearStarted: "2018",
+      lastActivity: "2 days ago", 
+      verified: true,
+      seniority: "Senior"
+    },
+    {
+      id: "emp_016",
+      name: "Daniel Wilson",
+      title: "Business Development Manager",
+      department: "Business Development",
+      location: "Melbourne, VIC",
+      source: "ZoomInfo",
+      email: "d.wilson@vgipartners.com",
+      phone: "+61 3 9123 4573",
+      yearStarted: "2022",
+      lastActivity: "1 day ago",
+      verified: true,
+      seniority: "Mid"
+    }
+  ];
+
+  const employeeTotalPages = Math.ceil(allEmployees.length / employeesPerPage);
+
+  const getCurrentPageEmployees = () => {
+    const startIndex = (employeeCurrentPage - 1) * employeesPerPage;
+    const endIndex = startIndex + employeesPerPage;
+    return allEmployees.slice(startIndex, endIndex);
   };
 
   // All contacts data (expanded to show data from both LinkedIn and local database)
@@ -557,12 +822,48 @@ const CompanyDetailPageBMI: React.FC = () => {
 
           {/* Navigation Tabs */}
           <div className="flex space-x-6 mt-4">
-            <button className="pb-2 border-b-2 border-blue-500 text-blue-600 font-medium text-sm">Overview</button>
-            <button className="pb-2 border-b-2 border-transparent text-gray-500 hover:text-gray-900 text-sm">Employees</button>
-            <button className="pb-2 border-b-2 border-transparent text-gray-500 hover:text-gray-900 text-sm">
+            <button 
+              onClick={() => setActiveMainTab('overview')}
+              className={`pb-2 border-b-2 transition-colors text-sm ${
+                activeMainTab === 'overview' 
+                  ? 'border-blue-500 text-blue-600 font-medium' 
+                  : 'border-transparent text-gray-500 hover:text-gray-900'
+              }`}
+              data-testid="tab-overview"
+            >
+              Overview
+            </button>
+            <button 
+              onClick={() => setActiveMainTab('employees')}
+              className={`pb-2 border-b-2 transition-colors text-sm ${
+                activeMainTab === 'employees' 
+                  ? 'border-blue-500 text-blue-600 font-medium' 
+                  : 'border-transparent text-gray-500 hover:text-gray-900'
+              }`}
+              data-testid="tab-employees"
+            >
+              Employees
+            </button>
+            <button 
+              onClick={() => setActiveMainTab('deals')}
+              className={`pb-2 border-b-2 transition-colors text-sm ${
+                activeMainTab === 'deals' 
+                  ? 'border-blue-500 text-blue-600 font-medium' 
+                  : 'border-transparent text-gray-500 hover:text-gray-900'
+              }`}
+              data-testid="tab-deals"
+            >
               Deals
             </button>
-            <button className="pb-2 border-b-2 border-transparent text-gray-500 hover:text-gray-900 text-sm">
+            <button 
+              onClick={() => setActiveMainTab('activities')}
+              className={`pb-2 border-b-2 transition-colors text-sm ${
+                activeMainTab === 'activities' 
+                  ? 'border-blue-500 text-blue-600 font-medium' 
+                  : 'border-transparent text-gray-500 hover:text-gray-900'
+              }`}
+              data-testid="tab-activities"
+            >
               Activities
             </button>
           </div>
@@ -778,8 +1079,11 @@ const CompanyDetailPageBMI: React.FC = () => {
 
         {/* Main Content Area - Full Width */}
         <div className="flex-1 p-3 bg-gray-50">
-          {/* Company Insights Widget */}
-          <div className="mb-3 bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
+          {/* Overview Tab Content */}
+          {activeMainTab === 'overview' && (
+            <React.Fragment>
+              {/* Company Insights Widget */}
+              <div className="mb-3 bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
             <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
               {/* Widget Header */}
               <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-t-xl">
@@ -1555,6 +1859,230 @@ const CompanyDetailPageBMI: React.FC = () => {
               </div>
             </div>
           </div>
+            </React.Fragment>
+          )}
+
+          {/* Employees Tab Content */}
+          {activeMainTab === 'employees' && (
+            <div className="mb-3 bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
+              <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
+                <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-t-xl">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <Users className="h-5 w-5 text-blue-600" />
+                      <h2 className="text-lg font-semibold text-gray-900">Employee Directory</h2>
+                      <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">Live Data</span>
+                      <span className="bg-green-600 text-white text-xs px-2 py-1 rounded-full">Multi-Source</span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <span className="text-xs text-gray-500">{allEmployees.length} employees found</span>
+                      <Search className="h-4 w-4 text-gray-500 cursor-pointer hover:text-blue-600 transition-colors" />
+                      <Filter className="h-4 w-4 text-gray-500 cursor-pointer hover:text-blue-600 transition-colors" />
+                      <Settings className="h-4 w-4 text-gray-500 cursor-pointer hover:text-blue-600 transition-colors" />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-b from-white to-gray-50 rounded-b-xl p-4">
+                  {/* Employee List Header */}
+                  <div className="grid grid-cols-6 gap-4 text-xs text-gray-600 font-medium mb-4 pb-2 border-b border-gray-200">
+                    <div>NAME & TITLE</div>
+                    <div>DEPARTMENT</div>
+                    <div>LOCATION</div>
+                    <div>SOURCE</div>
+                    <div>SENIORITY</div>
+                    <div>ACTIONS</div>
+                  </div>
+                  
+                  {/* Employee List */}
+                  <div className="space-y-2 max-h-[600px] overflow-y-auto">
+                    {getCurrentPageEmployees().map((employee, index) => (
+                      <div key={employee.id} className="relative">
+                        <div className="grid grid-cols-6 gap-4 py-3 px-2 rounded-lg hover:bg-gray-100/50 transition-colors border-b border-gray-200/50">
+                          {/* Name & Title */}
+                          <div className="flex items-center space-x-3 min-w-0">
+                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white font-medium text-sm flex-shrink-0">
+                              {employee.name.split(' ').map(n => n[0]).join('')}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="text-gray-900 text-sm font-medium truncate">{employee.name}</div>
+                              <div className="text-gray-600 text-xs truncate">{employee.title}</div>
+                            </div>
+                          </div>
+                          
+                          {/* Department */}
+                          <div className="flex items-center">
+                            <span className="text-gray-700 text-sm truncate">{employee.department}</span>
+                          </div>
+                          
+                          {/* Location */}
+                          <div className="flex items-center">
+                            <span className="text-gray-700 text-sm truncate">{employee.location}</span>
+                          </div>
+                          
+                          {/* Source */}
+                          <div className="flex items-center">
+                            <div className="flex items-center space-x-1">
+                              <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                                employee.source === 'LinkedIn Premium' ? 'bg-blue-100 text-blue-700' :
+                                employee.source === 'LinkedIn Sales Navigator' ? 'bg-blue-100 text-blue-700' :
+                                employee.source === 'Company Website' ? 'bg-green-100 text-green-700' :
+                                employee.source === 'ZoomInfo' ? 'bg-purple-100 text-purple-700' :
+                                employee.source === 'Clearbit' ? 'bg-orange-100 text-orange-700' :
+                                'bg-gray-100 text-gray-700'
+                              }`}>
+                                {employee.source}
+                              </span>
+                              {employee.verified && (
+                                <CheckCircle className="h-4 w-4 text-green-600" />
+                              )}
+                            </div>
+                          </div>
+                          
+                          {/* Seniority */}
+                          <div className="flex items-center">
+                            <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                              employee.seniority === 'Executive' ? 'bg-red-100 text-red-700' :
+                              employee.seniority === 'Senior' ? 'bg-blue-100 text-blue-700' :
+                              employee.seniority === 'Mid' ? 'bg-yellow-100 text-yellow-700' :
+                              'bg-gray-100 text-gray-700'
+                            }`}>
+                              {employee.seniority}
+                            </span>
+                          </div>
+                          
+                          {/* Actions */}
+                          <div className="flex items-center space-x-1">
+                            {employee.email && (
+                              <button 
+                                className="p-1 text-gray-500 hover:text-blue-600 transition-colors rounded hover:bg-gray-100"
+                                data-testid={`email-employee-${index}`}
+                              >
+                                <Mail className="h-4 w-4" />
+                              </button>
+                            )}
+                            {employee.phone && (
+                              <button 
+                                className="p-1 text-gray-500 hover:text-green-600 transition-colors rounded hover:bg-gray-100"
+                                data-testid={`phone-employee-${index}`}
+                              >
+                                <Phone className="h-4 w-4" />
+                              </button>
+                            )}
+                            {employee.linkedinProfile && (
+                              <button 
+                                className="p-1 text-gray-500 hover:text-blue-600 transition-colors rounded hover:bg-gray-100"
+                                data-testid={`linkedin-employee-${index}`}
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                              </button>
+                            )}
+                            <button 
+                              className="p-1 text-gray-500 hover:text-gray-700 transition-colors rounded hover:bg-gray-100"
+                              data-testid={`more-employee-${index}`}
+                            >
+                              <MoreHorizontal className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Employee Pagination */}
+                  <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200">
+                    <div className="text-sm text-gray-600">
+                      Showing {((employeeCurrentPage - 1) * employeesPerPage) + 1} - {Math.min(employeeCurrentPage * employeesPerPage, allEmployees.length)} of {allEmployees.length} employees
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => setEmployeeCurrentPage(prev => Math.max(1, prev - 1))}
+                        disabled={employeeCurrentPage === 1}
+                        className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                        data-testid="prev-employee-page"
+                      >
+                        Previous
+                      </button>
+                      
+                      <div className="flex space-x-1">
+                        {[...Array(employeeTotalPages)].map((_, index) => {
+                          const pageNum = index + 1;
+                          return (
+                            <button
+                              key={pageNum}
+                              onClick={() => setEmployeeCurrentPage(pageNum)}
+                              className={`px-3 py-1 text-sm rounded ${
+                                employeeCurrentPage === pageNum
+                                  ? 'bg-blue-600 text-white'
+                                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                              }`}
+                              data-testid={`employee-page-${pageNum}`}
+                            >
+                              {pageNum}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      
+                      <button
+                        onClick={() => setEmployeeCurrentPage(prev => Math.min(employeeTotalPages, prev + 1))}
+                        disabled={employeeCurrentPage === employeeTotalPages}
+                        className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                        data-testid="next-employee-page"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {/* Data Sources Information */}
+                  <div className="mt-6 p-4 bg-gradient-to-r from-gray-50 to-white rounded-lg border border-gray-200">
+                    <h4 className="text-sm font-medium text-gray-900 mb-2">Data Sources</h4>
+                    <div className="grid grid-cols-3 gap-4 text-xs text-gray-600">
+                      <div>
+                        <span className="font-medium">LinkedIn:</span> Premium, Sales Navigator
+                      </div>
+                      <div>
+                        <span className="font-medium">Web:</span> Company Website, ZoomInfo
+                      </div>
+                      <div>
+                        <span className="font-medium">Databases:</span> Clearbit, Internal
+                      </div>
+                    </div>
+                    <div className="mt-2 text-xs text-gray-500">
+                      Last updated: 2 hours ago • Next refresh: 22 hours
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Deals Tab Content - Placeholder */}
+          {activeMainTab === 'deals' && (
+            <div className="mb-3 bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
+              <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
+                <div className="p-8 text-center">
+                  <DollarSign className="h-16 w-16 text-green-600 mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Deals View</h3>
+                  <p className="text-gray-600">Deal management interface coming soon</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Activities Tab Content - Placeholder */}
+          {activeMainTab === 'activities' && (
+            <div className="mb-3 bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
+              <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
+                <div className="p-8 text-center">
+                  <Calendar className="h-16 w-16 text-purple-600 mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Activities View</h3>
+                  <p className="text-gray-600">Activity management interface coming soon</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
