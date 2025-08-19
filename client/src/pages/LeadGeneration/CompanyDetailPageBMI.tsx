@@ -502,9 +502,9 @@ const CompanyDetailPageBMI: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col">
+    <div className="min-h-screen bg-gray-900 text-white">
       {/* Header */}
-      <div className="sticky top-0 z-50 bg-gray-800 border-b border-gray-700 backdrop-blur-sm flex-shrink-0">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-gray-800 border-b border-gray-700 backdrop-blur-sm">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -573,7 +573,7 @@ const CompanyDetailPageBMI: React.FC = () => {
         </div>
       </div>
       {/* Main Content */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex pt-32 min-h-screen">
         {/* Left Sidebar - All Widgets */}
         <div className="w-80 bg-gray-900 border-r border-gray-700 overflow-y-auto">
           <div className="p-3 space-y-3">
