@@ -332,8 +332,8 @@ const PeopleDiscovery: React.FC = () => {
   };
 
   const handlePersonClick = (personId: string, person: PersonData) => {
-    // Navigate to person detail view or company detail view
-    setLocation(`/lead-generation/company/${person.companyId}`);
+    // Navigate to person detail view
+    setLocation(`/lead-generation/people/${personId}`);
   };
 
   const renderTableCell = (person: PersonData, column: TableColumn) => {
@@ -480,10 +480,6 @@ const PeopleDiscovery: React.FC = () => {
                 </span>
               )}
             </div>
-            
-            
-
-            
           </div>
         );
 
