@@ -54,24 +54,6 @@ export const companies: CompanyData[] = [
     keywords: ['Manufacturing', 'Industrial', 'Automation', 'Supply Chain'],
     funding: 'Public Company',
     saved: true
-  },
-  {
-    id: 'comp-3',
-    name: 'StartupX',
-    logo: '🚀',
-    domain: 'startupx.io',
-    website: 'https://startupx.io',
-    linkedinUrl: 'https://linkedin.com/company/startupx',
-    industry: 'Technology',
-    location: 'San Francisco, CA',
-    employeeCount: '11-50',
-    revenue: '$1M-$5M',
-    founded: 2021,
-    description: 'Innovative startup disrupting the tech industry',
-    technologies: ['React', 'Node.js', 'AWS', 'MongoDB'],
-    keywords: ['Startup', 'Innovation', 'Technology', 'Disruptive'],
-    funding: 'Seed - $2M',
-    saved: false
   }
 
 ];
