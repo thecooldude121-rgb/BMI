@@ -258,6 +258,14 @@ const CompanyDetailPageBMI: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['/api/deals'] });
     }
   });
+  
+  // Filter deals based on search term
+  const filteredDeals = deals.filter((deal: any) => {
+    const matchesSearch = dealSearchTerm === '' || 
+      deal.name?.toLowerCase().includes(dealSearchTerm.toLowerCase()) ||
+      deal.title?.toLowerCase().includes(dealSearchTerm.toLowerCase());
+    return matchesSearch;
+  });
 
   // Comprehensive employee data sourced from web, LinkedIn, company website, and databases
   const allEmployees: EmployeeData[] = [
@@ -2491,16 +2499,301 @@ const CompanyDetailPageBMI: React.FC = () => {
             </div>
           )}
 
-          {/* Deals Tab Content - Placeholder */}
+          {/* Deals Tab Content */}
           {activeMainTab === 'deals' && (
-            <div className="mb-3 bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
-              <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
-                <div className="p-8 text-center">
-                  <DollarSign className="h-16 w-16 text-green-600 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Deals View</h3>
-                  <p className="text-gray-600">Deal management interface coming soon</p>
+            <div className="space-y-4">
+              {/* Deal Management Header */}
+              <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
+                <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
+                  <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-t-xl">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <DollarSign className="h-6 w-6 text-green-600" />
+                        <h2 className="text-xl font-semibold text-gray-900">Deal Management</h2>
+                        <span className="bg-green-600 text-white text-xs px-2 py-1 rounded-full">
+                          {filteredDeals.length} Active
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center space-x-4">
+                        {/* View Mode Toggle */}
+                        <div className="flex items-center bg-gray-100 rounded-lg p-1">
+                          <button
+                            onClick={() => setDealViewMode('kanban')}
+                            className={`p-2 rounded transition-all hover:scale-105 hover:shadow-sm ${
+                              dealViewMode === 'kanban' 
+                                ? 'bg-white text-blue-600 shadow-sm' 
+                                : 'text-gray-500 hover:text-gray-700'
+                            }`}
+                            data-testid="deal-view-kanban"
+                          >
+                            <LayoutGrid className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => setDealViewMode('list')}
+                            className={`p-2 rounded transition-all hover:scale-105 hover:shadow-sm ${
+                              dealViewMode === 'list' 
+                                ? 'bg-white text-blue-600 shadow-sm' 
+                                : 'text-gray-500 hover:text-gray-700'
+                            }`}
+                            data-testid="deal-view-list"
+                          >
+                            <List className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => setDealViewMode('table')}
+                            className={`p-2 rounded transition-all hover:scale-105 hover:shadow-sm ${
+                              dealViewMode === 'table' 
+                                ? 'bg-white text-blue-600 shadow-sm' 
+                                : 'text-gray-500 hover:text-gray-700'
+                            }`}
+                            data-testid="deal-view-table"
+                          >
+                            <BarChart3 className="h-4 w-4" />
+                          </button>
+                        </div>
+                        
+                        {/* Search */}
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                          <input
+                            type="text"
+                            placeholder="Search deals..."
+                            value={dealSearchTerm}
+                            onChange={(e) => setDealSearchTerm(e.target.value)}
+                            className="pl-10 pr-4 py-2 w-64 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all hover:shadow-sm"
+                          />
+                        </div>
+                        
+                        <button 
+                          onClick={() => setShowDealFilters(!showDealFilters)}
+                          className="p-2 text-gray-500 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-all hover:scale-105"
+                        >
+                          <Filter className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Deal Metrics */}
+                  <div className="p-6 bg-gradient-to-b from-white to-gray-50">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                      <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-blue-600">Total Pipeline</p>
+                            <p className="text-2xl font-bold text-blue-700">
+                              ${filteredDeals.reduce((sum: number, deal: any) => sum + parseFloat(deal.value || '0'), 0).toLocaleString()}
+                            </p>
+                            <p className="text-sm text-blue-600 mt-1">{filteredDeals.length} deals</p>
+                          </div>
+                          <DollarSign className="h-8 w-8 text-blue-600" />
+                        </div>
+                      </div>
+                      
+                      <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-4 border border-green-200">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-green-600">Won Deals</p>
+                            <p className="text-2xl font-bold text-green-700">
+                              {filteredDeals.filter((deal: any) => deal.stage === 'closed-won').length}
+                            </p>
+                            <p className="text-sm text-green-600 mt-1">This month</p>
+                          </div>
+                          <TrendingUp className="h-8 w-8 text-green-600" />
+                        </div>
+                      </div>
+                      
+                      <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-purple-600">Avg Deal Size</p>
+                            <p className="text-2xl font-bold text-purple-700">
+                              ${filteredDeals.length > 0 ? Math.round(filteredDeals.reduce((sum: number, deal: any) => sum + parseFloat(deal.value || '0'), 0) / filteredDeals.length).toLocaleString() : '0'}
+                            </p>
+                            <p className="text-sm text-purple-600 mt-1">Per opportunity</p>
+                          </div>
+                          <Target className="h-8 w-8 text-purple-600" />
+                        </div>
+                      </div>
+                      
+                      <div className="bg-gradient-to-r from-orange-50 to-orange-100 rounded-xl p-4 border border-orange-200">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-orange-600">Close Rate</p>
+                            <p className="text-2xl font-bold text-orange-700">
+                              {filteredDeals.length > 0 ? Math.round((filteredDeals.filter((deal: any) => deal.stage === 'closed-won').length / filteredDeals.length) * 100) : 0}%
+                            </p>
+                            <p className="text-sm text-orange-600 mt-1">Success rate</p>
+                          </div>
+                          <BarChart3 className="h-8 w-8 text-orange-600" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
+              
+              {/* Deal Content Based on View Mode */}
+              {dealsLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                    <p className="text-gray-600">Loading deals...</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
+                  <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100 p-6">
+                    {dealViewMode === 'kanban' && (
+                      <div className="grid grid-cols-6 gap-4">
+                        {DEAL_STAGES.map((stage) => {
+                          const stageDeals = filteredDeals.filter((deal: any) => deal.stage === stage.id);
+                          return (
+                            <div key={stage.id} className="bg-gray-50 rounded-lg p-3">
+                              <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center space-x-2">
+                                  <div className={`w-3 h-3 rounded-full ${stage.color}`} />
+                                  <h3 className="font-semibold text-sm">{stage.title}</h3>
+                                  <span className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">
+                                    {stageDeals.length}
+                                  </span>
+                                </div>
+                              </div>
+                              
+                              <div className="space-y-3">
+                                {stageDeals.map((deal: any) => (
+                                  <div key={deal.id} className="bg-white rounded-lg p-3 shadow-sm border border-gray-200 hover:shadow-md transition-shadow cursor-pointer">
+                                    <div className="mb-2">
+                                      <h4 className="font-medium text-sm text-gray-900 mb-1">{deal.name}</h4>
+                                      <p className="text-xs text-gray-600">{deal.title || 'No title'}</p>
+                                    </div>
+                                    
+                                    <div className="flex items-center justify-between mb-2">
+                                      <span className="text-green-600 font-bold text-sm">
+                                        ${parseFloat(deal.value || '0').toLocaleString()}
+                                      </span>
+                                      <span className="text-xs text-gray-500">
+                                        {deal.probability || 0}%
+                                      </span>
+                                    </div>
+                                    
+                                    <div className="flex items-center justify-between text-xs text-gray-500">
+                                      <span className="flex items-center">
+                                        <Calendar className="w-3 h-3 mr-1" />
+                                        {deal.expectedCloseDate ? new Date(deal.expectedCloseDate).toLocaleDateString() : 'No date'}
+                                      </span>
+                                      <span className="flex items-center">
+                                        <Clock className="w-3 h-3 mr-1" />
+                                        {deal.lastActivityDate ? new Date(deal.lastActivityDate).toLocaleDateString() : 'No activity'}
+                                      </span>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                    
+                    {dealViewMode === 'list' && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {filteredDeals.map((deal: any) => (
+                          <div key={deal.id} className="bg-white rounded-lg p-4 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+                            <div className="flex items-start justify-between mb-3">
+                              <div className="flex-1">
+                                <h4 className="font-semibold text-sm mb-1">{deal.name}</h4>
+                                <p className="text-xs text-gray-600 mb-2">{deal.title || 'No title'}</p>
+                              </div>
+                              <span className={`text-xs px-2 py-1 rounded-full ${DEAL_STAGES.find(s => s.id === deal.stage)?.color || 'bg-gray-500'} text-white`}>
+                                {DEAL_STAGES.find(s => s.id === deal.stage)?.title || deal.stage}
+                              </span>
+                            </div>
+                            
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="text-lg font-bold text-green-600">
+                                ${parseFloat(deal.value || '0').toLocaleString()}
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <TrendingUp className="w-3 h-3" />
+                                <span className="text-xs">{deal.probability || 0}%</span>
+                              </div>
+                            </div>
+                            
+                            <div className="flex items-center justify-between text-xs text-gray-500">
+                              <span className="flex items-center">
+                                <Calendar className="w-3 h-3 mr-1" />
+                                {deal.expectedCloseDate ? new Date(deal.expectedCloseDate).toLocaleDateString() : 'No date'}
+                              </span>
+                              <span className="flex items-center">
+                                <Clock className="w-3 h-3 mr-1" />
+                                {deal.lastActivityDate ? new Date(deal.lastActivityDate).toLocaleDateString() : 'No activity'}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    
+                    {dealViewMode === 'table' && (
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Deal</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Value</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stage</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Probability</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Close Date</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-200">
+                            {filteredDeals.map((deal: any) => (
+                              <tr key={deal.id} className="hover:bg-gray-50">
+                                <td className="px-4 py-3">
+                                  <div>
+                                    <div className="font-medium text-sm">{deal.name}</div>
+                                    <div className="text-xs text-gray-500">{deal.title || 'No title'}</div>
+                                  </div>
+                                </td>
+                                <td className="px-4 py-3">
+                                  <div className="text-sm font-medium text-green-600">
+                                    ${parseFloat(deal.value || '0').toLocaleString()}
+                                  </div>
+                                </td>
+                                <td className="px-4 py-3">
+                                  <span className={`text-xs px-2 py-1 rounded-full ${DEAL_STAGES.find(s => s.id === deal.stage)?.color || 'bg-gray-500'} text-white`}>
+                                    {DEAL_STAGES.find(s => s.id === deal.stage)?.title || deal.stage}
+                                  </span>
+                                </td>
+                                <td className="px-4 py-3 text-sm">{deal.probability || 0}%</td>
+                                <td className="px-4 py-3 text-sm">
+                                  {deal.expectedCloseDate ? new Date(deal.expectedCloseDate).toLocaleDateString() : 'No date'}
+                                </td>
+                                <td className="px-4 py-3">
+                                  <div className="flex items-center space-x-2">
+                                    <button className="p-1 text-gray-400 hover:text-blue-600 hover:scale-110 transition-all">
+                                      <Eye className="w-4 h-4" />
+                                    </button>
+                                    <button className="p-1 text-gray-400 hover:text-green-600 hover:scale-110 transition-all">
+                                      <Edit className="w-4 h-4" />
+                                    </button>
+                                    <button className="p-1 text-gray-400 hover:text-red-600 hover:scale-110 transition-all">
+                                      <Trash2 className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
