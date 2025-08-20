@@ -130,15 +130,27 @@ const PersonDetails: React.FC = () => {
 
   // Show error state for API errors or missing contact
   if (contactError || (!contactLoading && !contact)) {
+    const isInvalidId = params?.id && (params.id.startsWith('person-') || params.id.startsWith('fake-'));
+    
     return (
       <div className="h-full bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <User className="h-16 w-16 text-gray-300 mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Person Not Found</h2>
           <p className="text-gray-600 mb-4">
-            {contactError ? 'Error loading person data.' : 'The requested person could not be found in our database.'}
+            {isInvalidId 
+              ? 'This is demo data. Person details are only available for real CRM contacts.'
+              : contactError 
+                ? 'Error loading person data from database.'
+                : 'The requested person could not be found in our database.'
+            }
           </p>
           <p className="text-sm text-gray-500 mb-4">ID: {params?.id}</p>
+          {isInvalidId && (
+            <p className="text-sm text-blue-600 mb-4">
+              Try clicking on contacts with UUID-style IDs (like: 70933e97-a136-4d8b-adca-8a062cb429e9)
+            </p>
+          )}
           <button
             onClick={() => setLocation('/lead-generation/people')}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
