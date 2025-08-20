@@ -78,7 +78,7 @@ const PersonDetails: React.FC = () => {
   const [activeTab, setActiveTab] = useState('about');
 
   // Fetch contact data from CRM database
-  const { data: contact, isLoading: contactLoading } = useQuery<Contact>({
+  const { data: contact, isLoading: contactLoading, error: contactError } = useQuery<Contact>({
     queryKey: [`/api/contacts/${params?.id}`],
     enabled: !!params?.id
   });
@@ -107,14 +107,17 @@ const PersonDetails: React.FC = () => {
     );
   }
 
-  // If contact not found, show error state
-  if (!contact) {
+  // Show error state for API errors or missing contact
+  if (contactError || (!contactLoading && !contact)) {
     return (
       <div className="h-full bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <User className="h-16 w-16 text-gray-300 mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Person Not Found</h2>
-          <p className="text-gray-600 mb-4">The requested person could not be found in our database.</p>
+          <p className="text-gray-600 mb-4">
+            {contactError ? 'Error loading person data.' : 'The requested person could not be found in our database.'}
+          </p>
+          <p className="text-sm text-gray-500 mb-4">ID: {params?.id}</p>
           <button
             onClick={() => setLocation('/lead-generation/people')}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
@@ -126,10 +129,22 @@ const PersonDetails: React.FC = () => {
     );
   }
 
+  // Ensure we have a contact object before proceeding
+  if (!contact) {
+    return (
+      <div className="h-full bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading person details...</p>
+        </div>
+      </div>
+    );
+  }
+
   // Create person object from CRM data
   const person: PersonData = {
     id: contact.id,
-    name: contact.name || `${contact.firstName || ''} ${contact.lastName || ''}`.trim(),
+    name: contact.name || `${contact.firstName || ''} ${contact.lastName || ''}`.trim() || 'Unknown Person',
     jobTitle: contact.title || contact.position || 'N/A',
     company: account?.name || 'Unknown Company',
     companyId: contact.accountId || '',
