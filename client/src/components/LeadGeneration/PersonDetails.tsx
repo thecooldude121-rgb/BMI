@@ -77,9 +77,6 @@ const PersonDetails: React.FC = () => {
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState('about');
 
-  // Debug logging
-  console.log('PersonDetails mounted with params:', params);
-
   // Early return for debugging
   if (!params?.id) {
     return (
@@ -115,6 +112,11 @@ const PersonDetails: React.FC = () => {
     queryKey: [`/api/activities`],
     select: (data: Activity[]) => data.filter((activity: Activity) => activity.contactId === params?.id)
   });
+
+  // Debug logging
+  console.log('PersonDetails mounted with params:', params);
+  console.log('Contact loading:', contactLoading, 'Contact data:', contact);
+  console.log('Account loading:', accountLoading, 'Account data:', account);
 
   // If data is loading, show loading state
   if (contactLoading || accountLoading) {
@@ -175,10 +177,11 @@ const PersonDetails: React.FC = () => {
   }
 
   // Create person object from CRM data
+  const fullName = `${contact.firstName || ''} ${contact.lastName || ''}`.trim() || 'Unknown Person';
   const person: PersonData = {
     id: contact.id,
-    name: contact.name || `${contact.firstName || ''} ${contact.lastName || ''}`.trim() || 'Unknown Person',
-    jobTitle: contact.title || contact.position || 'N/A',
+    name: fullName,
+    jobTitle: contact.position || contact.title || 'N/A',
     company: account?.name || 'Unknown Company',
     companyId: contact.accountId || '',
     location: contact.location || account?.location || 'Unknown',
