@@ -77,6 +77,27 @@ const PersonDetails: React.FC = () => {
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState('about');
 
+  // Debug logging
+  console.log('PersonDetails mounted with params:', params);
+
+  // Early return for debugging
+  if (!params?.id) {
+    return (
+      <div className="h-full bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">No Person ID</h2>
+          <p className="text-gray-600 mb-4">No person ID provided in the URL.</p>
+          <button
+            onClick={() => setLocation('/lead-generation/people')}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Back to People Discovery
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // Fetch contact data from CRM database
   const { data: contact, isLoading: contactLoading, error: contactError } = useQuery<Contact>({
     queryKey: [`/api/contacts/${params?.id}`],
