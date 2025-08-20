@@ -332,26 +332,50 @@ const PeopleDiscovery: React.FC = () => {
   };
 
   const handlePersonClick = (personId: string, person: PersonData) => {
-    // Navigate to person detail view
+    // Only navigate to detail view for real CRM contacts (not fake company employees)
+    if (personId.startsWith('person-') || personId.startsWith('fake-')) {
+      // Show a message for fake demo data
+      alert('This is demo data. Person details are only available for real CRM contacts.');
+      return;
+    }
+    
+    // Navigate to person detail view for real CRM contacts
     setLocation(`/lead-generation/people/${personId}`);
   };
 
   const renderTableCell = (person: PersonData, column: TableColumn) => {
     switch (column.key) {
       case 'name':
+        const isRealContact = !person.id.startsWith('person-') && !person.id.startsWith('fake-');
         return (
           <div className="flex items-center space-x-3 min-w-0">
             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white font-medium text-xs flex-shrink-0">
               {person.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
-              <button
-                onClick={() => handlePersonClick(person.id, person)}
-                className="font-medium text-blue-600 hover:text-blue-800 hover:scale-105 transition-all duration-200 text-left truncate block w-full"
-                title={person.name}
-              >
-                {person.name}
-              </button>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => handlePersonClick(person.id, person)}
+                  className={`font-medium hover:scale-105 transition-all duration-200 text-left truncate block flex-1 ${
+                    isRealContact 
+                      ? 'text-blue-600 hover:text-blue-800' 
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                  title={person.name}
+                >
+                  {person.name}
+                </button>
+                {isRealContact && (
+                  <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full flex-shrink-0">
+                    CRM
+                  </span>
+                )}
+                {!isRealContact && (
+                  <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full flex-shrink-0">
+                    Demo
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         );
