@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import AIAutomationPanel from '../../components/activities/AIAutomationPanel';
+import { useActivitiesSync, type Activity as SyncActivity, type ActivityMetrics } from '../../hooks/useActivitiesSync';
 import { 
   Calendar, Clock, Users, Phone, Mail, Video, MessageSquare, 
   CheckCircle, AlertCircle, TrendingUp, Plus, Filter, Search,
@@ -13,63 +14,8 @@ import {
 } from 'lucide-react';
 import Fuse from 'fuse.js';
 
-// Types
-interface Activity {
-  id: string;
-  subject: string;
-  type: 'task' | 'call' | 'meeting' | 'email' | 'sms' | 'whatsapp' | 'note' | 'linkedin' | 'demo' | 'proposal' | 'follow_up' | 'presentation' | 'training' | 'webinar' | 'custom';
-  status: 'open' | 'in_progress' | 'completed' | 'overdue' | 'cancelled' | 'on_hold' | 'recurring';
-  priority: 'low' | 'medium' | 'high' | 'urgent' | 'critical';
-  description?: string;
-  outcome?: string;
-  duration?: number;
-  scheduledAt?: string;
-  completedAt?: string;
-  dueDate?: string;
-  assignedTo?: string;
-  assignedToUser?: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    avatarUrl?: string;
-  };
-  createdBy?: string;
-  createdByUser?: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    avatarUrl?: string;
-  };
-  
-  // Related entities
-  relatedToType?: 'lead' | 'deal' | 'contact' | 'account';
-  relatedToId?: string;
-  relatedTo?: {
-    id: string;
-    name: string;
-    type: string;
-  };
-  
-  // Enhanced fields
-  recurrence?: 'none' | 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly' | 'custom';
-  nextAction?: string;
-  tags?: string[];
-  followers?: string[];
-  attachments?: any[];
-  source?: string;
-  
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface ActivityMetrics {
-  totalActivities: number;
-  openActivities: number;
-  completedToday: number;
-  overdueActivities: number;
-  avgCompletionTime: number;
-  completionRate: number;
-}
+// Use shared Activity type from sync hook
+type Activity = SyncActivity;
 
 const NextGenActivitiesModule = () => {
   const [viewMode, setViewMode] = useState<'list' | 'grid' | 'kanban' | 'timeline'>('list');
@@ -88,20 +34,20 @@ const NextGenActivitiesModule = () => {
 
   const queryClient = useQueryClient();
 
-  // Fetch activities data
-  const { data: activities = [], isLoading, error: activitiesError } = useQuery<Activity[]>({
-    queryKey: ['/api/activities'],
-    retry: 3,
-    retryDelay: 1000,
-  });
-
-  // Fetch activity metrics
-  const { data: metrics, error: metricsError } = useQuery<ActivityMetrics>({
-    queryKey: ['/api/activities/metrics'],
-    retry: 3,
-    retryDelay: 1000,
-    refetchInterval: 30000, // Refresh every 30 seconds
-  });
+  // Use shared activities sync hook
+  const {
+    activities,
+    metrics,
+    isLoading,
+    metricsLoading,
+    error: activitiesError,
+    metricsError,
+    createActivity,
+    updateActivity,
+    completeActivity,
+    deleteActivity,
+    syncActivities
+  } = useActivitiesSync();
 
   // Log data for debugging
   React.useEffect(() => {
@@ -222,21 +168,8 @@ const NextGenActivitiesModule = () => {
   };
 
   // Mark activity as completed
-  const markCompletedMutation = useMutation({
-    mutationFn: async (activityId: string) => {
-      const response = await fetch(`/api/activities/${activityId}/complete`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ completedAt: new Date().toISOString() })
-      });
-      if (!response.ok) throw new Error('Failed to complete activity');
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/activities'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/activities/metrics'] });
-    },
-  });
+  // Use shared mutation from sync hook
+  const markCompletedMutation = completeActivity;
 
   if (isLoading) {
     return (
@@ -570,9 +503,9 @@ const NextGenActivitiesModule = () => {
                           </td>
                           <td className="py-4 px-4">
                             <div className="flex items-center">
-                              <Flag className={`w-4 h-4 mr-1 ${getPriorityColor(activity.priority)}`} />
-                              <span className={`text-sm font-medium ${getPriorityColor(activity.priority)} capitalize`}>
-                                {activity.priority}
+                              <Flag className={`w-4 h-4 mr-1 ${getPriorityColor(activity.priority || 'medium')}`} />
+                              <span className={`text-sm font-medium ${getPriorityColor(activity.priority || 'medium')} capitalize`}>
+                                {activity.priority || 'medium'}
                               </span>
                             </div>
                           </td>

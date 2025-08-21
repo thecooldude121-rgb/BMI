@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useRoute } from 'wouter';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useActivitiesSync } from '../../hooks/useActivitiesSync';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { 
   ArrowLeft, 
@@ -239,14 +240,15 @@ const CompanyDetailPageBMI: React.FC = () => {
   };
 
   // Fetch all activities from CRM system
-  const { data: allActivities = [] } = useQuery({
-    queryKey: ['/api/activities'],
-    queryFn: async () => {
-      const response = await fetch('/api/activities');
-      if (!response.ok) throw new Error('Failed to fetch activities');
-      return response.json();
-    }
-  });
+  // Use shared activities sync hook for real-time synchronization
+  const {
+    activities: allActivities,
+    createActivity,
+    updateActivity,
+    completeActivity,
+    deleteActivity,
+    syncActivities
+  } = useActivitiesSync();
 
   // Company to CRM Account mapping (using static IDs to avoid dependency issues)
   const getAccountIdForCompany = (companyName: string): string | null => {
@@ -3101,7 +3103,26 @@ const CompanyDetailPageBMI: React.FC = () => {
                         Last activity: {allActivities.length > 0 ? 'Recently' : 'No activities'}
                       </span>
                       <button 
-                        onClick={() => setShowLogActivityModal(true)}
+                        onClick={() => {
+                          // Create new activity for this company using shared sync hook
+                          const accountId = getAccountIdForCompany(company.name);
+                          const newActivity = {
+                            subject: `Company research activity for ${company.name}`,
+                            type: 'note' as const,
+                            description: `Activity logged from Company Details page - research and engagement tracking for ${company.name}`,
+                            status: 'open' as const,
+                            priority: 'medium' as const,
+                            relatedToType: 'account' as const,
+                            relatedToId: accountId || undefined,
+                            relatedTo: accountId ? {
+                              id: accountId,
+                              name: company.name,
+                              type: 'account'
+                            } : undefined
+                          };
+                          // This will automatically sync to CRM Activities Module and Deal Details
+                          createActivity.mutate(newActivity);
+                        }}
                         className="flex items-center space-x-2 px-3 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 hover:scale-105 transition-all duration-200 active:scale-95"
                         data-testid="log-activity-button"
                       >
