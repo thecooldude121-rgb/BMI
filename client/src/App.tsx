@@ -29,6 +29,7 @@ import ContactDetailPage from './pages/CRM/ContactDetailPage';
 import GamificationModule from './pages/CRM/GamificationModuleNextGen';
 import CompanyDetailPageBMI from './pages/LeadGeneration/CompanyDetailPageBMI';
 import PersonDetails from './components/LeadGeneration/PersonDetails';
+import IndustryTrendIndicator from './components/IndustryTrendIndicator';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
@@ -66,6 +67,7 @@ const App = () => {
               <Route path="/meeting-intelligence" component={MeetingIntelligencePage} />
               <Route path="/meetings/:id" component={MeetingDashboardWrapper} />
               <Route path="/lead-generation" component={LeadGeneration} />
+              <Route path="/trends" component={IndustryTrendIndicator} />
               <Route path="/gamification" component={GamificationPage} />
               <Route path="/settings" component={Settings} />
             </Switch>

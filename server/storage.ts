@@ -308,6 +308,16 @@ export interface IStorage {
   getComplianceTracking(leadId: string): Promise<schema.ComplianceTracking[]>;
   createComplianceTracking(tracking: schema.InsertComplianceTracking): Promise<schema.ComplianceTracking>;
   updateComplianceTracking(id: string, tracking: Partial<schema.InsertComplianceTracking>): Promise<schema.ComplianceTracking>;
+
+  // Industry Trends
+  getTrendKeywords(userId?: string, category?: string, industry?: string): Promise<schema.TrendKeyword[]>;
+  createTrendKeyword(data: schema.InsertTrendKeyword): Promise<schema.TrendKeyword>;
+  saveTrendData(data: any): Promise<schema.IndustryTrend>;
+  getIndustryTrends(industry: string, region: string, limit: number): Promise<schema.IndustryTrend[]>;
+  getTrendAlerts(userId: string, status?: string): Promise<schema.TrendAlert[]>;
+  createTrendAlert(data: schema.InsertTrendAlert): Promise<schema.TrendAlert>;
+  saveMarketIntelligence(data: any): Promise<schema.MarketIntelligence>;
+  saveCompetitorTracking(data: any): Promise<schema.CompetitorTracking>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -2861,6 +2871,70 @@ Respond with only valid JSON in this format:
     const trackings = await db.update(schema.complianceTracking).set(tracking)
       .where(eq(schema.complianceTracking.id, id)).returning();
     return trackings[0];
+  }
+
+  // Industry Trends methods
+  async getTrendKeywords(userId?: string, category?: string, industry?: string): Promise<schema.TrendKeyword[]> {
+    let query = db.select().from(schema.trendKeywords);
+    
+    if (userId) {
+      query = query.where(eq(schema.trendKeywords.userId, userId));
+    }
+    if (category) {
+      query = query.where(eq(schema.trendKeywords.category, category));
+    }
+    if (industry) {
+      query = query.where(eq(schema.trendKeywords.industry, industry));
+    }
+    
+    return await query;
+  }
+
+  async createTrendKeyword(data: schema.InsertTrendKeyword): Promise<schema.TrendKeyword> {
+    const [keyword] = await db.insert(schema.trendKeywords).values(data).returning();
+    return keyword;
+  }
+
+  async saveTrendData(data: any): Promise<schema.IndustryTrend> {
+    const [trend] = await db.insert(schema.industryTrends).values(data).returning();
+    return trend;
+  }
+
+  async getIndustryTrends(industry: string, region: string, limit: number): Promise<schema.IndustryTrend[]> {
+    return await db.select().from(schema.industryTrends)
+      .where(and(
+        eq(schema.industryTrends.industry, industry),
+        eq(schema.industryTrends.region, region),
+        eq(schema.industryTrends.isActive, true)
+      ))
+      .orderBy(desc(schema.industryTrends.lastUpdated))
+      .limit(limit);
+  }
+
+  async getTrendAlerts(userId: string, status?: string): Promise<schema.TrendAlert[]> {
+    let query = db.select().from(schema.trendAlerts)
+      .where(eq(schema.trendAlerts.userId, userId));
+    
+    if (status) {
+      query = query.where(eq(schema.trendAlerts.status, status));
+    }
+    
+    return await query.orderBy(desc(schema.trendAlerts.triggeredAt));
+  }
+
+  async createTrendAlert(data: schema.InsertTrendAlert): Promise<schema.TrendAlert> {
+    const [alert] = await db.insert(schema.trendAlerts).values(data).returning();
+    return alert;
+  }
+
+  async saveMarketIntelligence(data: any): Promise<schema.MarketIntelligence> {
+    const [intelligence] = await db.insert(schema.marketIntelligence).values(data).returning();
+    return intelligence;
+  }
+
+  async saveCompetitorTracking(data: any): Promise<schema.CompetitorTracking> {
+    const [tracking] = await db.insert(schema.competitorTracking).values(data).returning();
+    return tracking;
   }
 }
 

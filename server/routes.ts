@@ -4044,6 +4044,148 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Industry Trends API Routes
+  app.get("/api/trends/keywords", async (req, res) => {
+    try {
+      const { userId, category, industry } = req.query;
+      const keywords = await storage.getTrendKeywords(userId, category, industry);
+      res.json(keywords);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/trends/keywords", async (req, res) => {
+    try {
+      const keywordData = req.body;
+      const keyword = await storage.createTrendKeyword(keywordData);
+      res.json(keyword);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/trends/analyze/:keyword", async (req, res) => {
+    try {
+      const { keyword } = req.params;
+      const { industry = 'general', region = 'global' } = req.query;
+      const { industryTrendsService } = await import('./industry-trends');
+      const trendData = await industryTrendsService.analyzeTrendData(keyword, industry, region);
+      
+      // Store in database
+      await storage.saveTrendData(trendData);
+      
+      res.json(trendData);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/trends/industry/:industry", async (req, res) => {
+    try {
+      const { industry } = req.params;
+      const { region = 'global', limit = '20' } = req.query;
+      const trends = await storage.getIndustryTrends(industry, region, parseInt(limit));
+      res.json(trends);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/trends/alerts/:userId", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const { status = 'unread' } = req.query;
+      const alerts = await storage.getTrendAlerts(userId, status);
+      res.json(alerts);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/trends/alerts/generate", async (req, res) => {
+    try {
+      const { userId } = req.body;
+      const keywords = await storage.getTrendKeywords(userId);
+      const { industryTrendsService } = await import('./industry-trends');
+      const alerts = await industryTrendsService.generateTrendAlerts(userId, keywords);
+      
+      // Save alerts to database
+      for (const alert of alerts) {
+        await storage.createTrendAlert(alert);
+      }
+      
+      res.json(alerts);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/market-intelligence", async (req, res) => {
+    try {
+      const { companyId, category, keywords, limit = '10' } = req.query;
+      const { industryTrendsService } = await import('./industry-trends');
+      
+      const keywordList = keywords ? keywords.split(',') : [];
+      const intelligence = await industryTrendsService.getMarketIntelligence(companyId, keywordList);
+      
+      // Store in database
+      for (const item of intelligence.slice(0, parseInt(limit))) {
+        await storage.saveMarketIntelligence(item);
+      }
+      
+      res.json(intelligence.slice(0, parseInt(limit)));
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/competitor-tracking/:companyId", async (req, res) => {
+    try {
+      const { companyId } = req.params;
+      const { industryTrendsService } = await import('./industry-trends');
+      const tracking = await industryTrendsService.trackCompetitors(companyId);
+      
+      // Store in database
+      for (const competitor of tracking) {
+        await storage.saveCompetitorTracking(competitor);
+      }
+      
+      res.json(tracking);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/trends/dashboard", async (req, res) => {
+    try {
+      const { userId, industry = 'technology' } = req.query;
+      
+      // Get trending keywords
+      const topTrends = await storage.getIndustryTrends(industry, 'global', 10);
+      
+      // Get user alerts
+      const alerts = await storage.getTrendAlerts(userId, 'unread');
+      
+      // Get market intelligence
+      const { industryTrendsService } = await import('./industry-trends');
+      const intelligence = await industryTrendsService.getMarketIntelligence(undefined, []);
+      
+      res.json({
+        topTrends,
+        alerts: alerts.slice(0, 5), // Latest 5 alerts
+        intelligence: intelligence.slice(0, 8), // Latest 8 intelligence items
+        summary: {
+          totalTrends: topTrends.length,
+          activeAlerts: alerts.length,
+          latestIntelligence: intelligence.length
+        }
+      });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
   const server = createServer(app);
 
   return server;
