@@ -13,7 +13,8 @@ import ActivitiesPage from './pages/CRM/ActivitiesPage';
 import TasksPage from './pages/CRM/TasksPage';
 import CreateDealWizard from './components/Deal/CreateDealWizard';
 
-import DealDetailPageFixed from './pages/CRM/DealDetailPageFixed';
+import DealDetailPage from './components/Deal/DealDetailPage';
+import AdvancedDealDetailsPage from './components/Deal/AdvancedDealDetailsPage';
 import HRMSModule from './pages/HRMS/HRMSModule';
 import Analytics from './pages/Analytics/Analytics';
 import Calendar from './pages/Calendar/Calendar';
@@ -31,7 +32,7 @@ import PersonDetails from './components/LeadGeneration/PersonDetails';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
-const DealDetailWrapper = () => <DealDetailPageFixed />;
+const DealDetailWrapper = ({ params }: { params: { id: string } }) => <AdvancedDealDetailsPage dealId={params.id} />;
 const MeetingDashboardWrapper = ({ params }: { params: { id: string } }) => <MeetingDashboard />;
 
 
