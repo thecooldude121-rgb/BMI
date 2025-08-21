@@ -184,7 +184,11 @@ const CompanyDetailPageBMI: React.FC = () => {
     contact: '',
     date: new Date().toISOString().split('T')[0],
     time: new Date().toTimeString().split(' ')[0].substring(0, 5),
-    status: 'completed' as 'completed' | 'scheduled' | 'pending'
+    status: 'completed' as 'completed' | 'scheduled' | 'pending' | 'in-progress',
+    priority: 'medium' as 'low' | 'medium' | 'high' | 'urgent',
+    duration: '' as string,
+    outcome: '' as string,
+    tags: '' as string
   });
   
   // Deal management state - only list view available
@@ -3538,50 +3542,64 @@ const CompanyDetailPageBMI: React.FC = () => {
         </div>
       )}
 
-      {/* Log Activity Modal */}
+      {/* Enhanced Professional Log Activity Modal */}
       {showLogActivityModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" data-testid="log-activity-modal">
-          <div className="bg-white rounded-xl shadow-2xl border border-gray-200 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-gray-900">Log New Activity</h3>
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4" data-testid="log-activity-modal">
+          <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 max-w-2xl w-full max-h-[95vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-2xl">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-white bg-opacity-20 rounded-lg">
+                    <Plus className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold">Log New Activity</h3>
+                    <p className="text-blue-100 text-sm">Record your interaction with {companyData?.name || 'this company'}</p>
+                  </div>
+                </div>
                 <button
                   onClick={() => setShowLogActivityModal(false)}
-                  className="p-2 text-gray-400 hover:text-gray-600 hover:scale-110 transition-all duration-200 rounded-lg hover:bg-gray-100 active:scale-95"
+                  className="p-2 text-white hover:bg-white hover:bg-opacity-20 hover:scale-110 transition-all duration-200 rounded-lg active:scale-95"
                   data-testid="close-log-activity-modal"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-6 w-6" />
                 </button>
               </div>
+            </div>
+
+            <div className="p-6">
 
               {/* Activity Type Selection */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-3">Activity Type</label>
-                <div className="grid grid-cols-5 gap-2">
+                <label className="block text-sm font-semibold text-gray-800 mb-4">Activity Type</label>
+                <div className="grid grid-cols-5 gap-3">
                   {[
-                    { key: 'email', label: 'Email', icon: Mail, color: 'blue' },
-                    { key: 'call', label: 'Call', icon: Phone, color: 'green' },
-                    { key: 'meeting', label: 'Meeting', icon: Calendar, color: 'purple' },
-                    { key: 'task', label: 'Task', icon: CheckSquare, color: 'orange' },
-                    { key: 'note', label: 'Note', icon: FileText, color: 'cyan' }
+                    { key: 'email', label: 'Email', icon: Mail, color: 'blue', desc: 'Email communication' },
+                    { key: 'call', label: 'Call', icon: Phone, color: 'green', desc: 'Phone conversation' },
+                    { key: 'meeting', label: 'Meeting', icon: Calendar, color: 'purple', desc: 'Face-to-face meeting' },
+                    { key: 'task', label: 'Task', icon: CheckSquare, color: 'orange', desc: 'Follow-up task' },
+                    { key: 'note', label: 'Note', icon: FileText, color: 'cyan', desc: 'Quick note or memo' }
                   ].map((type) => {
                     const IconComponent = type.icon;
-                    const isSelected = activityType === type.key;
                     return (
                       <button
                         key={type.key}
                         onClick={() => setActivityType(type.key as any)}
-                        className={`p-3 rounded-lg border text-center transition-all duration-200 hover:scale-105 ${
-                          isSelected
-                            ? `border-${type.color}-500 bg-${type.color}-50 text-${type.color}-700`
-                            : 'border-gray-200 hover:border-gray-300 text-gray-700 hover:bg-gray-50'
+                        className={`p-4 rounded-xl border-2 transition-all duration-300 hover:scale-105 active:scale-95 group ${
+                          activityType === type.key
+                            ? `border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-lg ring-2 ring-blue-200`
+                            : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:shadow-md'
                         }`}
                         data-testid={`activity-type-${type.key}`}
                       >
-                        <IconComponent className={`h-5 w-5 mx-auto mb-1 ${
-                          isSelected ? `text-${type.color}-600` : 'text-gray-400'
-                        }`} />
-                        <div className="text-xs font-medium">{type.label}</div>
+                        <div className="flex flex-col items-center space-y-2">
+                          <IconComponent className={`h-6 w-6 transition-colors ${
+                            activityType === type.key ? 'text-blue-600' : 'text-gray-500 group-hover:text-gray-700'
+                          }`} />
+                          <span className="text-sm font-semibold">{type.label}</span>
+                          <span className="text-xs text-gray-500 text-center leading-tight">{type.desc}</span>
+                        </div>
                       </button>
                     );
                   })}
@@ -3589,121 +3607,69 @@ const CompanyDetailPageBMI: React.FC = () => {
               </div>
 
               {/* Activity Form */}
-              <div className="space-y-4">
-                {/* Title */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {activityType === 'email' && 'Email Subject'}
-                    {activityType === 'call' && 'Call Purpose'}
-                    {activityType === 'meeting' && 'Meeting Title'}
-                    {activityType === 'task' && 'Task Title'}
-                    {activityType === 'note' && 'Note Title'}
-                  </label>
-                  <input
-                    type="text"
-                    value={activityForm.title}
-                    onChange={(e) => setActivityForm(prev => ({ ...prev, title: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    placeholder={
-                      activityType === 'email' ? 'Enter email subject...' :
-                      activityType === 'call' ? 'Enter call purpose...' :
-                      activityType === 'meeting' ? 'Enter meeting title...' :
-                      activityType === 'task' ? 'Enter task title...' :
-                      'Enter note title...'
-                    }
-                    data-testid="activity-title-input"
-                  />
+              <div className="space-y-6">
+                {/* Subject and Priority Row */}
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="col-span-2">
+                    <label className="block text-sm font-semibold text-gray-800 mb-2">
+                      Subject <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={activityForm.title}
+                      onChange={(e) => setActivityForm({ ...activityForm, title: e.target.value })}
+                      placeholder={`Enter ${activityType} subject...`}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-gray-400"
+                      data-testid="activity-subject-input"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-800 mb-2">Priority</label>
+                    <select
+                      value={activityForm.priority || 'medium'}
+                      onChange={(e) => setActivityForm({ ...activityForm, priority: e.target.value as any })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      data-testid="activity-priority-select"
+                    >
+                      <option value="low">Low Priority</option>
+                      <option value="medium">Medium Priority</option>
+                      <option value="high">High Priority</option>
+                      <option value="urgent">Urgent</option>
+                    </select>
+                  </div>
                 </div>
 
                 {/* Description */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {activityType === 'email' && 'Email Content'}
-                    {activityType === 'call' && 'Call Notes'}
-                    {activityType === 'meeting' && 'Meeting Notes'}
-                    {activityType === 'task' && 'Task Description'}
-                    {activityType === 'note' && 'Note Content'}
+                  <label className="block text-sm font-semibold text-gray-800 mb-2">
+                    Description <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     value={activityForm.description}
-                    onChange={(e) => setActivityForm(prev => ({ ...prev, description: e.target.value }))}
+                    onChange={(e) => setActivityForm({ ...activityForm, description: e.target.value })}
+                    placeholder={`Describe the ${activityType} details, outcomes, and next steps...`}
                     rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
-                    placeholder={
-                      activityType === 'email' ? 'Enter email content...' :
-                      activityType === 'call' ? 'Enter call notes and outcomes...' :
-                      activityType === 'meeting' ? 'Enter meeting agenda and notes...' :
-                      activityType === 'task' ? 'Enter task description and requirements...' :
-                      'Enter note content...'
-                    }
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-all duration-200 hover:border-gray-400"
                     data-testid="activity-description-input"
                   />
                 </div>
 
-                {/* Contact Selection */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {activityType === 'email' && 'Email Recipient'}
-                    {activityType === 'call' && 'Call Contact'}
-                    {activityType === 'meeting' && 'Meeting Attendees'}
-                    {activityType === 'task' && 'Task Assignee'}
-                    {activityType === 'note' && 'Related Contact'}
-                  </label>
-                  <select
-                    value={activityForm.contact}
-                    onChange={(e) => setActivityForm(prev => ({ ...prev, contact: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    data-testid="activity-contact-select"
-                  >
-                    <option value="">Select contact...</option>
-                    {keyContacts.map((contact) => (
-                      <option key={contact.id} value={contact.name}>
-                        {contact.name} - {contact.title}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Date and Time */}
+                {/* Status and Duration Row */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
-                    <input
-                      type="date"
-                      value={activityForm.date}
-                      onChange={(e) => setActivityForm(prev => ({ ...prev, date: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                      data-testid="activity-date-input"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Time</label>
-                    <input
-                      type="time"
-                      value={activityForm.time}
-                      onChange={(e) => setActivityForm(prev => ({ ...prev, time: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                      data-testid="activity-time-input"
-                    />
-                  </div>
-                </div>
-
-                {/* Status - Hide for Notes */}
-                {activityType !== 'note' && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                    <div className="grid grid-cols-3 gap-2">
+                    <label className="block text-sm font-semibold text-gray-800 mb-3">Status</label>
+                    <div className="flex space-x-2">
                       {[
                         { key: 'completed', label: 'Completed', color: 'green' },
                         { key: 'scheduled', label: 'Scheduled', color: 'blue' },
-                        { key: 'pending', label: 'Pending', color: 'yellow' }
+                        { key: 'in-progress', label: 'In Progress', color: 'yellow' }
                       ].map((status) => (
                         <button
                           key={status.key}
-                          onClick={() => setActivityForm(prev => ({ ...prev, status: status.key as any }))}
-                          className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 ${
+                          onClick={() => setActivityForm({ ...activityForm, status: status.key as any })}
+                          className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:scale-105 active:scale-95 ${
                             activityForm.status === status.key
-                              ? `bg-${status.color}-600 text-white`
+                              ? `bg-green-600 text-white shadow-lg`
                               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                           }`}
                           data-testid={`activity-status-${status.key}`}
@@ -3713,11 +3679,101 @@ const CompanyDetailPageBMI: React.FC = () => {
                       ))}
                     </div>
                   </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-800 mb-2">Duration (minutes)</label>
+                    <input
+                      type="number"
+                      value={activityForm.duration || ''}
+                      onChange={(e) => setActivityForm({ ...activityForm, duration: e.target.value })}
+                      placeholder="30"
+                      min="1"
+                      max="480"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      data-testid="activity-duration-input"
+                    />
+                  </div>
+                </div>
+
+                {/* Date and Time for scheduled activities */}
+                {activityForm.status === 'scheduled' && (
+                  <div className="grid grid-cols-2 gap-4 p-4 bg-blue-50 rounded-xl border border-blue-200">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-2">
+                        <Calendar className="h-4 w-4 inline mr-1" />
+                        Scheduled Date
+                      </label>
+                      <input
+                        type="date"
+                        value={activityForm.date}
+                        onChange={(e) => setActivityForm({ ...activityForm, date: e.target.value })}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        data-testid="activity-date-input"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-2">
+                        <Clock className="h-4 w-4 inline mr-1" />
+                        Time
+                      </label>
+                      <input
+                        type="time"
+                        value={activityForm.time}
+                        onChange={(e) => setActivityForm({ ...activityForm, time: e.target.value })}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        data-testid="activity-time-input"
+                      />
+                    </div>
+                  </div>
                 )}
+
+                {/* Contact and Outcome Row */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-800 mb-2">Contact Person</label>
+                    <input
+                      type="text"
+                      value={activityForm.contact}
+                      onChange={(e) => setActivityForm({ ...activityForm, contact: e.target.value })}
+                      placeholder="Contact name or email..."
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      data-testid="activity-contact-input"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-800 mb-2">Outcome</label>
+                    <select
+                      value={activityForm.outcome || ''}
+                      onChange={(e) => setActivityForm({ ...activityForm, outcome: e.target.value })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      data-testid="activity-outcome-select"
+                    >
+                      <option value="">Select outcome...</option>
+                      <option value="successful">Successful</option>
+                      <option value="follow-up-required">Follow-up Required</option>
+                      <option value="no-response">No Response</option>
+                      <option value="not-interested">Not Interested</option>
+                      <option value="interested">Interested</option>
+                      <option value="meeting-scheduled">Meeting Scheduled</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Tags and Notes */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-800 mb-2">Tags (comma-separated)</label>
+                  <input
+                    type="text"
+                    value={activityForm.tags || ''}
+                    onChange={(e) => setActivityForm({ ...activityForm, tags: e.target.value })}
+                    placeholder="lead-generation, follow-up, urgent..."
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    data-testid="activity-tags-input"
+                  />
+                </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex space-x-3 mt-6">
+              <div className="flex space-x-4 mt-8 pt-6 border-t border-gray-200">
                 <button
                   onClick={() => {
                     setShowLogActivityModal(false);
@@ -3727,10 +3783,14 @@ const CompanyDetailPageBMI: React.FC = () => {
                       contact: '',
                       date: new Date().toISOString().split('T')[0],
                       time: new Date().toTimeString().split(' ')[0].substring(0, 5),
-                      status: 'completed'
+                      status: 'completed',
+                      priority: 'medium',
+                      duration: '',
+                      outcome: '',
+                      tags: ''
                     });
                   }}
-                  className="flex-1 px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 hover:scale-105 transition-all duration-200 active:scale-95"
+                  className="flex-1 px-6 py-3 text-gray-700 bg-gray-100 border border-gray-300 rounded-xl hover:bg-gray-200 hover:scale-105 transition-all duration-200 font-semibold active:scale-95"
                   data-testid="cancel-log-activity"
                 >
                   Cancel
@@ -3743,15 +3803,18 @@ const CompanyDetailPageBMI: React.FC = () => {
                         subject: activityForm.title,
                         type: activityType,
                         description: activityForm.description,
-                        status: activityType === 'note' ? 'completed' : activityForm.status, // Notes are always completed
-                        priority: 'medium',
+                        status: activityType === 'note' ? 'completed' : activityForm.status,
+                        priority: activityForm.priority || 'medium',
+                        outcome: activityForm.outcome || null,
+                        duration: activityForm.duration ? parseInt(activityForm.duration) : null,
                         accountId: currentAccountId,
                         relatedToType: 'account',
                         relatedToId: currentAccountId,
                         scheduledAt: activityForm.status === 'scheduled' ? `${activityForm.date}T${activityForm.time}:00.000Z` : null,
                         completedAt: activityForm.status === 'completed' ? new Date().toISOString() : null,
                         direction: 'outbound',
-                        source: 'manual'
+                        source: 'manual',
+                        tags: activityForm.tags ? activityForm.tags.split(',').map(tag => tag.trim()).filter(Boolean) : null
                       };
 
                       const response = await fetch('/api/activities', {
@@ -3772,16 +3835,21 @@ const CompanyDetailPageBMI: React.FC = () => {
                         contact: '',
                         date: new Date().toISOString().split('T')[0],
                         time: new Date().toTimeString().split(' ')[0].substring(0, 5),
-                        status: 'completed'
+                        status: 'completed',
+                        priority: 'medium',
+                        duration: '',
+                        outcome: '',
+                        tags: ''
                       });
                     } catch (error) {
                       console.error('Error creating activity:', error);
                     }
                   }}
                   disabled={!activityForm.title || !activityForm.description}
-                  className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+                  className="flex-2 px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-semibold shadow-lg active:scale-95"
                   data-testid="save-log-activity"
                 >
+                  <Plus className="h-5 w-5 inline mr-2" />
                   Log Activity
                 </button>
               </div>
