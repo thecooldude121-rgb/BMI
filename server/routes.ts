@@ -874,7 +874,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { id } = req.params;
       const activities = await storage.getActivities();
-      const dealActivities = activities.filter(activity => activity.dealId === id);
+      const dealActivities = activities.filter(activity => 
+        activity.dealId === id || 
+        (activity.relatedToType === 'deal' && activity.relatedToId === id)
+      );
       res.json(dealActivities);
     } catch (error) {
       handleError(error, res);
