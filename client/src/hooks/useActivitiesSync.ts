@@ -138,7 +138,7 @@ export const useActivitiesSync = () => {
     mutationFn: async (newActivity: Partial<Activity>) => {
       return apiRequest('/api/activities', {
         method: 'POST',
-        body: JSON.stringify(newActivity),
+        body: newActivity, // Remove JSON.stringify - apiRequest handles this
       });
     },
     onSuccess: async (data, variables) => {
@@ -165,7 +165,7 @@ export const useActivitiesSync = () => {
     mutationFn: async ({ id, ...updates }: Partial<Activity> & { id: string }) => {
       return apiRequest(`/api/activities/${id}`, {
         method: 'PATCH',
-        body: JSON.stringify(updates),
+        body: updates, // Remove JSON.stringify - apiRequest handles this
       });
     },
     onSuccess: async (data, variables) => {
