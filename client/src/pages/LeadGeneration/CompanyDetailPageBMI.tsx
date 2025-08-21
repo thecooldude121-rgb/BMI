@@ -2299,9 +2299,14 @@ const CompanyDetailPageBMI: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-semibold text-gray-900">Activities</h2>
                   <div className="flex items-center space-x-2">
-                    <select className="bg-gray-100 text-gray-900 text-sm px-2 py-1 rounded border border-gray-300">
-                      <option>Log activity</option>
-                    </select>
+                    <button 
+                      onClick={() => setShowLogActivityModal(true)}
+                      className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1.5 rounded border border-blue-600 transition-all duration-200 hover:scale-105 active:scale-95"
+                      data-testid="log-activity-button"
+                    >
+                      <Plus className="h-4 w-4 inline mr-1" />
+                      Log activity
+                    </button>
                     <ChevronUp className="h-4 w-4 text-gray-500" />
                   </div>
                 </div>
