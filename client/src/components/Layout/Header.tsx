@@ -39,6 +39,7 @@ const Header: React.FC = () => {
     { name: 'BI Board', href: '/analytics', icon: BarChart3 },
     { name: 'CRM', href: '/crm', icon: Users },
     { name: 'AI Meeting Intelligence', href: '/meeting-intelligence', icon: Brain },
+    { name: 'Industry Trends', href: '/trends', icon: Activity },
     { name: 'HRMS', href: '/hrms', icon: UserCheck },
     { name: 'Lead Generation', href: '/lead-generation', icon: Target },
     { name: 'Calendar', href: '/calendar', icon: Calendar },

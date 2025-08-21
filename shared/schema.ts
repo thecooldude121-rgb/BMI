@@ -2762,3 +2762,159 @@ export type InsertEngagementSequence = z.infer<typeof insertEngagementSequenceSc
 export type InsertAbTestCampaign = z.infer<typeof insertAbTestCampaignSchema>;
 export type InsertPersonalizedContent = z.infer<typeof insertPersonalizedContentSchema>;
 export type InsertComplianceTracking = z.infer<typeof insertComplianceTrackingSchema>;
+
+// Industry Trend Tracking System
+export const industryTrends = pgTable("industry_trends", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  keyword: text("keyword").notNull(),
+  industry: text("industry").notNull(),
+  region: text("region").default('global'),
+  trendScore: decimal("trend_score", { precision: 5, scale: 2 }).notNull(), // 0-100 trend strength
+  changePercent: decimal("change_percent", { precision: 5, scale: 2 }).notNull(), // % change from previous period
+  searchVolume: integer("search_volume").notNull(),
+  competitionLevel: text("competition_level").notNull(), // low, medium, high
+  sentimentScore: decimal("sentiment_score", { precision: 3, scale: 2 }).notNull(), // -1 to 1
+  dataSource: text("data_source").notNull(), // google_trends, news_api, social_media
+  metadata: jsonb("metadata"), // Additional trend data
+  isActive: boolean("is_active").notNull().default(true),
+  lastUpdated: timestamp("last_updated").notNull().defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const trendKeywords = pgTable("trend_keywords", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  keyword: text("keyword").notNull(),
+  category: text("category").notNull(), // technology, business, marketing, etc.
+  industry: text("industry"),
+  trackingEnabled: boolean("tracking_enabled").notNull().default(true),
+  alertThreshold: decimal("alert_threshold", { precision: 5, scale: 2 }).default('20'), // % change to trigger alert
+  userId: uuid("user_id").references(() => users.id),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const trendAlerts = pgTable("trend_alerts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  keywordId: uuid("keyword_id").references(() => trendKeywords.id).notNull(),
+  userId: uuid("user_id").references(() => users.id).notNull(),
+  alertType: text("alert_type").notNull(), // spike, drop, milestone
+  threshold: decimal("threshold", { precision: 5, scale: 2 }).notNull(),
+  actualValue: decimal("actual_value", { precision: 5, scale: 2 }).notNull(),
+  message: text("message").notNull(),
+  status: text("status").notNull().default('unread'), // unread, read, dismissed
+  triggeredAt: timestamp("triggered_at").notNull().defaultNow(),
+});
+
+export const marketIntelligence = pgTable("market_intelligence", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  companyId: uuid("company_id"), // Can be linked to accounts
+  topic: text("topic").notNull(),
+  category: text("category").notNull(), // news, funding, product_launch, acquisition, etc.
+  title: text("title").notNull(),
+  summary: text("summary").notNull(),
+  content: text("content"),
+  sourceUrl: text("source_url"),
+  sourceType: text("source_type").notNull(), // news, press_release, social_media, filing
+  sentimentScore: decimal("sentiment_score", { precision: 3, scale: 2 }), // -1 to 1
+  impactScore: decimal("impact_score", { precision: 3, scale: 2 }), // 0-1 market impact
+  keywords: text("keywords").array().default([]),
+  entities: jsonb("entities"), // People, companies, locations mentioned
+  publishedAt: timestamp("published_at").notNull(),
+  discoveredAt: timestamp("discovered_at").notNull().defaultNow(),
+});
+
+export const competitorTracking = pgTable("competitor_tracking", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  companyId: uuid("company_id").references(() => accounts.id),
+  competitorName: text("competitor_name").notNull(),
+  competitorDomain: text("competitor_domain"),
+  trackingCategories: text("tracking_categories").array().notNull(), // pricing, product, marketing, hiring
+  lastProductUpdate: timestamp("last_product_update"),
+  lastPricingChange: timestamp("last_pricing_change"),
+  lastHiringActivity: timestamp("last_hiring_activity"),
+  recentActivities: jsonb("recent_activities").default([]),
+  alertsEnabled: boolean("alerts_enabled").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Relations for trend tracking
+export const industryTrendsRelations = relations(industryTrends, ({ one }) => ({
+  keyword: one(trendKeywords, {
+    fields: [industryTrends.keyword],
+    references: [trendKeywords.keyword],
+  }),
+}));
+
+export const trendKeywordsRelations = relations(trendKeywords, ({ one, many }) => ({
+  user: one(users, {
+    fields: [trendKeywords.userId],
+    references: [users.id],
+  }),
+  alerts: many(trendAlerts),
+  trends: many(industryTrends),
+}));
+
+export const trendAlertsRelations = relations(trendAlerts, ({ one }) => ({
+  keyword: one(trendKeywords, {
+    fields: [trendAlerts.keywordId],
+    references: [trendKeywords.id],
+  }),
+  user: one(users, {
+    fields: [trendAlerts.userId],
+    references: [users.id],
+  }),
+}));
+
+export const marketIntelligenceRelations = relations(marketIntelligence, ({ one }) => ({
+  company: one(accounts, {
+    fields: [marketIntelligence.companyId],
+    references: [accounts.id],
+  }),
+}));
+
+export const competitorTrackingRelations = relations(competitorTracking, ({ one }) => ({
+  company: one(accounts, {
+    fields: [competitorTracking.companyId],
+    references: [accounts.id],
+  }),
+}));
+
+// Insert schemas for trend tracking
+export const insertIndustryTrendSchema = createInsertSchema(industryTrends).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertTrendKeywordSchema = createInsertSchema(trendKeywords).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertTrendAlertSchema = createInsertSchema(trendAlerts).omit({
+  id: true,
+  triggeredAt: true,
+});
+
+export const insertMarketIntelligenceSchema = createInsertSchema(marketIntelligence).omit({
+  id: true,
+  discoveredAt: true,
+});
+
+export const insertCompetitorTrackingSchema = createInsertSchema(competitorTracking).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+// Types for trend tracking
+export type IndustryTrend = typeof industryTrends.$inferSelect;
+export type TrendKeyword = typeof trendKeywords.$inferSelect;
+export type TrendAlert = typeof trendAlerts.$inferSelect;
+export type MarketIntelligence = typeof marketIntelligence.$inferSelect;
+export type CompetitorTracking = typeof competitorTracking.$inferSelect;
+
+export type InsertIndustryTrend = z.infer<typeof insertIndustryTrendSchema>;
+export type InsertTrendKeyword = z.infer<typeof insertTrendKeywordSchema>;
+export type InsertTrendAlert = z.infer<typeof insertTrendAlertSchema>;
+export type InsertMarketIntelligence = z.infer<typeof insertMarketIntelligenceSchema>;
+export type InsertCompetitorTracking = z.infer<typeof insertCompetitorTrackingSchema>;
