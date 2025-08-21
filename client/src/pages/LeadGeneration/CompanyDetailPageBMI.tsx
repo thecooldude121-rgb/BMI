@@ -2300,7 +2300,10 @@ const CompanyDetailPageBMI: React.FC = () => {
                   <h2 className="text-lg font-semibold text-gray-900">Activities</h2>
                   <div className="flex items-center space-x-2">
                     <button 
-                      onClick={() => setShowLogActivityModal(true)}
+                      onClick={() => {
+                        console.log('Log Activity button clicked!');
+                        setShowLogActivityModal(true);
+                      }}
                       className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1.5 rounded border border-blue-600 transition-all duration-200 hover:scale-105 active:scale-95"
                       data-testid="log-activity-button"
                     >
