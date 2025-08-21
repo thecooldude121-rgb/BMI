@@ -7,7 +7,7 @@ import {
   ArrowLeft, Edit2, Save, X, Plus, Mail, Phone, Globe, Building,
   Calendar, DollarSign, User, Target, Clock, FileText, Paperclip,
   Activity, Users, MessageSquare, Briefcase, TrendingUp, CheckCircle,
-  CheckSquare, Eye, History, ChevronRight, Award, Zap, ChevronDown,
+  CheckSquare, Eye, History, ChevronRight, Award, Zap, ChevronDown, ChevronUp,
   Upload, Download, Search, Filter, MoreVertical, Star, Flag,
   AlertTriangle, ThumbsUp, Send, Reply, Forward, Archive, Trash2,
   ExternalLink, Copy, Share2, Bell, BellOff, UserPlus, Settings,
@@ -997,6 +997,7 @@ const DeepAIInsightsPanel: React.FC<{
 
 const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealId }) => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [activeActivityTab, setActiveActivityTab] = useState('all');
   const [isFollowing, setIsFollowing] = useState(false);
   const [viewMode, setViewMode] = useState<'blocks' | 'timeline'>('blocks');
   const [expandedInsights, setExpandedInsights] = useState(true);
@@ -1910,13 +1911,278 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
       
       {activeTab === 'activities' && (
         <AnimatedTabContent tabKey="activities" isActive={true}>
-          <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
-                <Activity className="h-5 w-5 mr-2 text-blue-600" />
-                Activities Tab Content
-              </h3>
-              <p>Activities content will be implemented here...</p>
+          <div className="space-y-0">
+            {/* Activities Section */}
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl border border-gray-200">
+              <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-inner border border-gray-100">
+                <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-t-xl">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+                      <Activity className="h-5 w-5 mr-2 text-blue-600" />
+                      Activities
+                    </h2>
+                    <div className="flex items-center space-x-2">
+                      <button className="bg-blue-600 text-white text-sm px-3 py-1 rounded hover:bg-blue-700 transition-colors">
+                        + Log Activity
+                      </button>
+                      <ChevronUp className="h-4 w-4 text-gray-500" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-b from-white to-gray-50 rounded-b-xl p-4">
+                  {/* Activity Tabs */}
+                  <div className="flex space-x-4 mb-4 border-b border-gray-200">
+                    {[
+                      { key: 'all', label: 'All' },
+                      { key: 'email', label: 'Emails' },
+                      { key: 'call', label: 'Calls' },
+                      { key: 'meeting', label: 'Meetings' },
+                      { key: 'task', label: 'Tasks' },
+                      { key: 'note', label: 'Notes' }
+                    ].map((tab) => (
+                      <button
+                        key={tab.key}
+                        onClick={() => setActiveActivityTab(tab.key as any)}
+                        className={`pb-2 border-b-2 transition-colors text-sm ${
+                          activeActivityTab === tab.key
+                            ? 'border-blue-500 text-gray-900'
+                            : 'border-transparent text-gray-500 hover:text-gray-900'
+                        }`}
+                        data-testid={`activity-tab-${tab.key}`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Activities Content */}
+                  <div className="space-y-4">
+                    {(() => {
+                      // Filter activities for this specific deal
+                      const dealActivities = activities
+                        .filter((activity: any) => activity.dealId === deal.id)
+                        .map((activity: any) => ({
+                          id: activity.id,
+                          type: activity.type,
+                          title: activity.subject || activity.emailSubject || 'Untitled Activity',
+                          description: activity.description || activity.outcome || '',
+                          timestamp: format(new Date(activity.createdAt), 'MMM dd, h:mm a'),
+                          person: activity.assignedTo || activity.createdBy || 'Unknown',
+                          status: activity.status,
+                          scheduledAt: activity.scheduledAt,
+                          completedAt: activity.completedAt,
+                          priority: activity.priority || 'medium',
+                          rawActivity: activity
+                        }))
+                        .sort((a: any, b: any) => new Date(b.rawActivity.createdAt).getTime() - new Date(a.rawActivity.createdAt).getTime());
+
+                      // Filter by active tab
+                      const filteredActivities = activeActivityTab === 'all' 
+                        ? dealActivities 
+                        : dealActivities.filter((activity: any) => activity.type === activeActivityTab);
+
+                      if (filteredActivities.length === 0) {
+                        return (
+                          <div className="text-center py-12">
+                            <div className="text-gray-400 mb-4">
+                              {activeActivityTab === 'all' ? (
+                                <Activity className="h-12 w-12 mx-auto" />
+                              ) : activeActivityTab === 'email' ? (
+                                <Mail className="h-12 w-12 mx-auto" />
+                              ) : activeActivityTab === 'call' ? (
+                                <Phone className="h-12 w-12 mx-auto" />
+                              ) : activeActivityTab === 'meeting' ? (
+                                <Calendar className="h-12 w-12 mx-auto" />
+                              ) : activeActivityTab === 'task' ? (
+                                <CheckSquare className="h-12 w-12 mx-auto" />
+                              ) : (
+                                <FileText className="h-12 w-12 mx-auto" />
+                              )}
+                            </div>
+                            <h3 className="text-lg font-medium text-gray-900 mb-2">
+                              No {activeActivityTab === 'all' ? 'Activities' : activeActivityTab + 's'} Found
+                            </h3>
+                            <p className="text-gray-500 mb-4">
+                              {activeActivityTab === 'all' 
+                                ? 'No activities have been recorded for this deal yet.' 
+                                : `No ${activeActivityTab} activities found for this deal.`}
+                            </p>
+                            <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+                              + Create {activeActivityTab === 'all' ? 'Activity' : activeActivityTab.charAt(0).toUpperCase() + activeActivityTab.slice(1)}
+                            </button>
+                          </div>
+                        );
+                      }
+
+                      // Group activities by status (upcoming vs completed)
+                      const upcomingActivities = filteredActivities.filter((activity: any) => 
+                        activity.status === 'open' || 
+                        activity.status === 'planned' || 
+                        activity.status === 'in_progress' ||
+                        (activity.scheduledAt && new Date(activity.scheduledAt) > new Date())
+                      );
+
+                      const completedActivities = filteredActivities.filter((activity: any) => 
+                        activity.status === 'completed' || activity.completedAt
+                      );
+
+                      return (
+                        <div className="space-y-6">
+                          {/* Upcoming Activities */}
+                          {upcomingActivities.length > 0 && (
+                            <div>
+                              <div className="flex items-center justify-between mb-4">
+                                <div className="text-gray-900 font-medium">Upcoming Activities</div>
+                                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                                  {upcomingActivities.length}
+                                </span>
+                              </div>
+
+                              <div className="space-y-3">
+                                {upcomingActivities.map((activity: any) => (
+                                  <div key={activity.id} className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                                    <div className="flex items-start space-x-4">
+                                      {/* Activity Icon */}
+                                      <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                                        activity.type === 'email' ? 'bg-blue-100 text-blue-600' :
+                                        activity.type === 'call' ? 'bg-green-100 text-green-600' :
+                                        activity.type === 'meeting' ? 'bg-purple-100 text-purple-600' :
+                                        activity.type === 'task' ? 'bg-orange-100 text-orange-600' :
+                                        'bg-gray-100 text-gray-600'
+                                      }`}>
+                                        {activity.type === 'email' && <Mail className="h-5 w-5" />}
+                                        {activity.type === 'call' && <Phone className="h-5 w-5" />}
+                                        {activity.type === 'meeting' && <Calendar className="h-5 w-5" />}
+                                        {activity.type === 'task' && <CheckSquare className="h-5 w-5" />}
+                                        {activity.type === 'note' && <FileText className="h-5 w-5" />}
+                                      </div>
+
+                                      {/* Activity Content */}
+                                      <div className="flex-1 min-w-0">
+                                        <div className="flex items-center justify-between mb-2">
+                                          <h4 className="text-sm font-medium text-gray-900 truncate">
+                                            {activity.title}
+                                          </h4>
+                                          <div className="flex items-center space-x-2">
+                                            {activity.priority === 'high' && (
+                                              <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
+                                                High Priority
+                                              </span>
+                                            )}
+                                            <span className={`text-xs px-2 py-1 rounded-full ${
+                                              activity.status === 'open' ? 'bg-blue-100 text-blue-800' :
+                                              activity.status === 'planned' ? 'bg-purple-100 text-purple-800' :
+                                              'bg-yellow-100 text-yellow-800'
+                                            }`}>
+                                              {activity.status === 'in_progress' ? 'In Progress' : 
+                                               activity.status.charAt(0).toUpperCase() + activity.status.slice(1)}
+                                            </span>
+                                          </div>
+                                        </div>
+                                        
+                                        {activity.description && (
+                                          <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                                            {activity.description}
+                                          </p>
+                                        )}
+                                        
+                                        <div className="flex items-center justify-between">
+                                          <div className="flex items-center space-x-4 text-xs text-gray-500">
+                                            <span>Due: {activity.scheduledAt ? format(new Date(activity.scheduledAt), 'MMM dd, h:mm a') : activity.timestamp}</span>
+                                            <span>•</span>
+                                            <span>Assigned: {activity.person}</span>
+                                          </div>
+                                          
+                                          <div className="flex items-center space-x-2">
+                                            <button className="text-blue-600 hover:text-blue-800 text-xs">
+                                              View
+                                            </button>
+                                            <button className="text-gray-400 hover:text-gray-600 text-xs">
+                                              Edit
+                                            </button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Completed Activities */}
+                          {completedActivities.length > 0 && (
+                            <div>
+                              <div className="flex items-center justify-between mb-4">
+                                <div className="text-gray-900 font-medium">Recent Activity History</div>
+                                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                                  {completedActivities.length}
+                                </span>
+                              </div>
+
+                              <div className="space-y-3">
+                                {completedActivities.slice(0, 10).map((activity: any) => (
+                                  <div key={activity.id} className="bg-gray-50 rounded-lg border border-gray-200 p-4">
+                                    <div className="flex items-start space-x-4">
+                                      {/* Activity Icon */}
+                                      <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 opacity-75 ${
+                                        activity.type === 'email' ? 'bg-blue-100 text-blue-600' :
+                                        activity.type === 'call' ? 'bg-green-100 text-green-600' :
+                                        activity.type === 'meeting' ? 'bg-purple-100 text-purple-600' :
+                                        activity.type === 'task' ? 'bg-orange-100 text-orange-600' :
+                                        'bg-gray-100 text-gray-600'
+                                      }`}>
+                                        {activity.type === 'email' && <Mail className="h-4 w-4" />}
+                                        {activity.type === 'call' && <Phone className="h-4 w-4" />}
+                                        {activity.type === 'meeting' && <Calendar className="h-4 w-4" />}
+                                        {activity.type === 'task' && <CheckSquare className="h-4 w-4" />}
+                                        {activity.type === 'note' && <FileText className="h-4 w-4" />}
+                                      </div>
+
+                                      {/* Activity Content */}
+                                      <div className="flex-1 min-w-0">
+                                        <div className="flex items-center justify-between mb-1">
+                                          <h4 className="text-sm font-medium text-gray-700 truncate">
+                                            {activity.title}
+                                          </h4>
+                                          <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                                            Completed
+                                          </span>
+                                        </div>
+                                        
+                                        {activity.description && (
+                                          <p className="text-sm text-gray-500 mb-2 line-clamp-1">
+                                            {activity.description}
+                                          </p>
+                                        )}
+                                        
+                                        <div className="flex items-center justify-between">
+                                          <div className="flex items-center space-x-4 text-xs text-gray-500">
+                                            <span>Completed: {activity.completedAt ? format(new Date(activity.completedAt), 'MMM dd, h:mm a') : activity.timestamp}</span>
+                                            <span>•</span>
+                                            <span>By: {activity.person}</span>
+                                          </div>
+                                          
+                                          <div className="flex items-center space-x-2">
+                                            <button className="text-blue-600 hover:text-blue-800 text-xs">
+                                              View
+                                            </button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </AnimatedTabContent>
