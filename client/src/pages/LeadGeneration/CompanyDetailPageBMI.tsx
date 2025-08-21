@@ -45,7 +45,9 @@ import {
   Trash2,
   Globe,
   Activity,
-  User
+  User,
+  Upload,
+  Paperclip
 } from 'lucide-react';
 import { Link } from 'wouter';
 import { getCompanies, localCompanies, CompanyData as SharedCompanyData } from '../../data/companies';
@@ -3570,205 +3572,437 @@ const CompanyDetailPageBMI: React.FC = () => {
 
             <div className="p-6">
 
-              {/* Activity Type Selection */}
-              <div className="mb-6">
-                <label className="block text-sm font-semibold text-gray-800 mb-4">Activity Type</label>
-                <div className="grid grid-cols-5 gap-3">
+              {/* Activity Type Tabs */}
+              <div className="mb-8">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Select Activity Type</h3>
+                <div className="flex space-x-1 bg-gray-100 p-1 rounded-xl">
                   {[
-                    { key: 'email', label: 'Email', icon: Mail, color: 'blue', desc: 'Email communication' },
-                    { key: 'call', label: 'Call', icon: Phone, color: 'green', desc: 'Phone conversation' },
-                    { key: 'meeting', label: 'Meeting', icon: Calendar, color: 'purple', desc: 'Face-to-face meeting' },
-                    { key: 'task', label: 'Task', icon: CheckSquare, color: 'orange', desc: 'Follow-up task' },
-                    { key: 'note', label: 'Note', icon: FileText, color: 'cyan', desc: 'Quick note or memo' }
+                    { key: 'call', label: 'Call', icon: Phone },
+                    { key: 'email', label: 'Email', icon: Mail },
+                    { key: 'meeting', label: 'Meeting', icon: Calendar },
+                    { key: 'task', label: 'Task', icon: CheckSquare },
+                    { key: 'note', label: 'Note', icon: FileText }
                   ].map((type) => {
                     const IconComponent = type.icon;
                     return (
                       <button
                         key={type.key}
                         onClick={() => setActivityType(type.key as any)}
-                        className={`p-4 rounded-xl border-2 transition-all duration-300 hover:scale-105 active:scale-95 group ${
+                        className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 rounded-lg transition-all duration-300 font-semibold text-sm ${
                           activityType === type.key
-                            ? `border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-lg ring-2 ring-blue-200`
-                            : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:shadow-md'
+                            ? 'bg-white text-blue-600 shadow-md ring-2 ring-blue-200 scale-105'
+                            : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
                         }`}
                         data-testid={`activity-type-${type.key}`}
                       >
-                        <div className="flex flex-col items-center space-y-2">
-                          <IconComponent className={`h-6 w-6 transition-colors ${
-                            activityType === type.key ? 'text-blue-600' : 'text-gray-500 group-hover:text-gray-700'
-                          }`} />
-                          <span className="text-sm font-semibold">{type.label}</span>
-                          <span className="text-xs text-gray-500 text-center leading-tight">{type.desc}</span>
-                        </div>
+                        <IconComponent className="h-4 w-4" />
+                        <span>{type.label}</span>
                       </button>
                     );
                   })}
                 </div>
+                <p className="text-sm text-gray-500 mt-2 text-center">
+                  {activityType === 'call' && 'Record phone conversations and call outcomes'}
+                  {activityType === 'email' && 'Log email communications sent or received'}
+                  {activityType === 'meeting' && 'Document meetings, agendas, and next steps'}
+                  {activityType === 'task' && 'Create actionable items with deadlines'}
+                  {activityType === 'note' && 'Add general notes and observations'}
+                </p>
               </div>
 
-              {/* Activity Form */}
+              {/* Activity-Specific Form Fields */}
               <div className="space-y-6">
-                {/* Subject and Priority Row */}
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="col-span-2">
-                    <label className="block text-sm font-semibold text-gray-800 mb-2">
-                      Subject <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={activityForm.title}
-                      onChange={(e) => setActivityForm({ ...activityForm, title: e.target.value })}
-                      placeholder={`Enter ${activityType} subject...`}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-gray-400"
-                      data-testid="activity-subject-input"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-2">Priority</label>
-                    <select
-                      value={activityForm.priority || 'medium'}
-                      onChange={(e) => setActivityForm({ ...activityForm, priority: e.target.value as any })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                      data-testid="activity-priority-select"
-                    >
-                      <option value="low">Low Priority</option>
-                      <option value="medium">Medium Priority</option>
-                      <option value="high">High Priority</option>
-                      <option value="urgent">Urgent</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Description */}
-                <div>
-                  <label className="block text-sm font-semibold text-gray-800 mb-2">
-                    Description <span className="text-red-500">*</span>
-                  </label>
-                  <textarea
-                    value={activityForm.description}
-                    onChange={(e) => setActivityForm({ ...activityForm, description: e.target.value })}
-                    placeholder={`Describe the ${activityType} details, outcomes, and next steps...`}
-                    rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-all duration-200 hover:border-gray-400"
-                    data-testid="activity-description-input"
-                  />
-                </div>
-
-                {/* Status and Duration Row */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-3">Status</label>
-                    <div className="flex space-x-2">
-                      {[
-                        { key: 'completed', label: 'Completed', color: 'green' },
-                        { key: 'scheduled', label: 'Scheduled', color: 'blue' },
-                        { key: 'in-progress', label: 'In Progress', color: 'yellow' }
-                      ].map((status) => (
-                        <button
-                          key={status.key}
-                          onClick={() => setActivityForm({ ...activityForm, status: status.key as any })}
-                          className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:scale-105 active:scale-95 ${
-                            activityForm.status === status.key
-                              ? `bg-green-600 text-white shadow-lg`
-                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                          }`}
-                          data-testid={`activity-status-${status.key}`}
+                {/* Call-Specific Fields */}
+                {activityType === 'call' && (
+                  <>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-800 mb-2">
+                          Subject/Title <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={activityForm.title}
+                          onChange={(e) => setActivityForm({ ...activityForm, title: e.target.value })}
+                          placeholder="Purpose of the call..."
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="call-subject-input"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-800 mb-2">Duration (minutes)</label>
+                        <input
+                          type="number"
+                          value={activityForm.duration || ''}
+                          onChange={(e) => setActivityForm({ ...activityForm, duration: e.target.value })}
+                          placeholder="30"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="call-duration-input"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-800 mb-2">Date & Time</label>
+                        <input
+                          type="datetime-local"
+                          value={`${activityForm.date}T${activityForm.time}`}
+                          onChange={(e) => {
+                            const [date, time] = e.target.value.split('T');
+                            setActivityForm({ ...activityForm, date, time });
+                          }}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="call-datetime-input"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-800 mb-2">Outcome</label>
+                        <select
+                          value={activityForm.outcome || ''}
+                          onChange={(e) => setActivityForm({ ...activityForm, outcome: e.target.value })}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="call-outcome-select"
                         >
-                          {status.label}
-                        </button>
-                      ))}
+                          <option value="">Select outcome...</option>
+                          <option value="completed">Completed</option>
+                          <option value="no-answer">No Answer</option>
+                          <option value="follow-up-needed">Follow-up Needed</option>
+                          <option value="meeting-scheduled">Meeting Scheduled</option>
+                        </select>
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-2">Duration (minutes)</label>
-                    <input
-                      type="number"
-                      value={activityForm.duration || ''}
-                      onChange={(e) => setActivityForm({ ...activityForm, duration: e.target.value })}
-                      placeholder="30"
-                      min="1"
-                      max="480"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                      data-testid="activity-duration-input"
-                    />
-                  </div>
-                </div>
-
-                {/* Date and Time for scheduled activities */}
-                {activityForm.status === 'scheduled' && (
-                  <div className="grid grid-cols-2 gap-4 p-4 bg-blue-50 rounded-xl border border-blue-200">
                     <div>
-                      <label className="block text-sm font-semibold text-gray-800 mb-2">
-                        <Calendar className="h-4 w-4 inline mr-1" />
-                        Scheduled Date
-                      </label>
+                      <label className="block text-sm font-semibold text-gray-800 mb-2">Participants</label>
                       <input
-                        type="date"
-                        value={activityForm.date}
-                        onChange={(e) => setActivityForm({ ...activityForm, date: e.target.value })}
+                        type="text"
+                        value={activityForm.contact}
+                        onChange={(e) => setActivityForm({ ...activityForm, contact: e.target.value })}
+                        placeholder="Who participated in the call..."
                         className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        data-testid="activity-date-input"
+                        data-testid="call-participants-input"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-800 mb-2">
-                        <Clock className="h-4 w-4 inline mr-1" />
-                        Time
-                      </label>
-                      <input
-                        type="time"
-                        value={activityForm.time}
-                        onChange={(e) => setActivityForm({ ...activityForm, time: e.target.value })}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        data-testid="activity-time-input"
+                      <label className="block text-sm font-semibold text-gray-800 mb-2">Call Notes</label>
+                      <textarea
+                        value={activityForm.description}
+                        onChange={(e) => setActivityForm({ ...activityForm, description: e.target.value })}
+                        placeholder="Key discussion points, outcomes, and next steps..."
+                        rows={4}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                        data-testid="call-notes-textarea"
                       />
                     </div>
-                  </div>
+                  </>
                 )}
 
-                {/* Contact and Outcome Row */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-2">Contact Person</label>
+                {/* Email-Specific Fields */}
+                {activityType === 'email' && (
+                  <>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-800 mb-2">
+                          Subject/Title <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={activityForm.title}
+                          onChange={(e) => setActivityForm({ ...activityForm, title: e.target.value })}
+                          placeholder="Email subject line..."
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="email-subject-input"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-800 mb-2">Direction</label>
+                        <select
+                          value={activityForm.outcome || 'sent'}
+                          onChange={(e) => setActivityForm({ ...activityForm, outcome: e.target.value })}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="email-direction-select"
+                        >
+                          <option value="sent">Sent</option>
+                          <option value="received">Received</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-800 mb-2">Date & Time</label>
+                        <input
+                          type="datetime-local"
+                          value={`${activityForm.date}T${activityForm.time}`}
+                          onChange={(e) => {
+                            const [date, time] = e.target.value.split('T');
+                            setActivityForm({ ...activityForm, date, time });
+                          }}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="email-datetime-input"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-800 mb-2">Participants</label>
+                        <input
+                          type="text"
+                          value={activityForm.contact}
+                          onChange={(e) => setActivityForm({ ...activityForm, contact: e.target.value })}
+                          placeholder="Recipients/senders..."
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="email-participants-input"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-2">Summary/Notes</label>
+                      <textarea
+                        value={activityForm.description}
+                        onChange={(e) => setActivityForm({ ...activityForm, description: e.target.value })}
+                        placeholder="Email content summary and key points..."
+                        rows={4}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                        data-testid="email-summary-textarea"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {/* Meeting-Specific Fields */}
+                {activityType === 'meeting' && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-2">
+                        Subject/Title <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={activityForm.title}
+                        onChange={(e) => setActivityForm({ ...activityForm, title: e.target.value })}
+                        placeholder="Meeting title or agenda..."
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        data-testid="meeting-title-input"
+                      />
+                    </div>
+                    <div className="grid grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-800 mb-2">Start Date & Time</label>
+                        <input
+                          type="datetime-local"
+                          value={`${activityForm.date}T${activityForm.time}`}
+                          onChange={(e) => {
+                            const [date, time] = e.target.value.split('T');
+                            setActivityForm({ ...activityForm, date, time });
+                          }}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="meeting-start-datetime-input"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-800 mb-2">Duration (minutes)</label>
+                        <input
+                          type="number"
+                          value={activityForm.duration || ''}
+                          onChange={(e) => setActivityForm({ ...activityForm, duration: e.target.value })}
+                          placeholder="60"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="meeting-duration-input"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-800 mb-2">Outcome</label>
+                        <select
+                          value={activityForm.outcome || ''}
+                          onChange={(e) => setActivityForm({ ...activityForm, outcome: e.target.value })}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="meeting-outcome-select"
+                        >
+                          <option value="">Select outcome...</option>
+                          <option value="held">Held</option>
+                          <option value="cancelled">Cancelled</option>
+                          <option value="rescheduled">Rescheduled</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-2">Participants</label>
+                      <input
+                        type="text"
+                        value={activityForm.contact}
+                        onChange={(e) => setActivityForm({ ...activityForm, contact: e.target.value })}
+                        placeholder="Meeting attendees..."
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        data-testid="meeting-participants-input"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-2">Key Points/Notes</label>
+                      <textarea
+                        value={activityForm.description}
+                        onChange={(e) => setActivityForm({ ...activityForm, description: e.target.value })}
+                        placeholder="Meeting agenda, key discussion points, and decisions made..."
+                        rows={4}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                        data-testid="meeting-notes-textarea"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-2">Next Steps/Follow-up</label>
+                      <textarea
+                        value={activityForm.tags}
+                        onChange={(e) => setActivityForm({ ...activityForm, tags: e.target.value })}
+                        placeholder="Action items and follow-up tasks..."
+                        rows={3}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                        data-testid="meeting-followup-textarea"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {/* Task-Specific Fields */}
+                {activityType === 'task' && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-2">
+                        Title <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={activityForm.title}
+                        onChange={(e) => setActivityForm({ ...activityForm, title: e.target.value })}
+                        placeholder="Task title or objective..."
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        data-testid="task-title-input"
+                      />
+                    </div>
+                    <div className="grid grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-800 mb-2">Due Date</label>
+                        <input
+                          type="date"
+                          value={activityForm.date}
+                          onChange={(e) => setActivityForm({ ...activityForm, date: e.target.value })}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="task-due-date-input"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-800 mb-2">Priority</label>
+                        <select
+                          value={activityForm.priority || 'medium'}
+                          onChange={(e) => setActivityForm({ ...activityForm, priority: e.target.value as any })}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="task-priority-select"
+                        >
+                          <option value="low">Low</option>
+                          <option value="medium">Medium</option>
+                          <option value="high">High</option>
+                          <option value="urgent">Urgent</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-800 mb-2">Status</label>
+                        <select
+                          value={activityForm.status || 'pending'}
+                          onChange={(e) => setActivityForm({ ...activityForm, status: e.target.value as any })}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="task-status-select"
+                        >
+                          <option value="pending">Open</option>
+                          <option value="in-progress">In Progress</option>
+                          <option value="completed">Completed</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-2">Assigned To</label>
+                      <input
+                        type="text"
+                        value={activityForm.contact}
+                        onChange={(e) => setActivityForm({ ...activityForm, contact: e.target.value })}
+                        placeholder="Who is responsible for this task..."
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        data-testid="task-assigned-input"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-2">Description/Notes</label>
+                      <textarea
+                        value={activityForm.description}
+                        onChange={(e) => setActivityForm({ ...activityForm, description: e.target.value })}
+                        placeholder="Task details, requirements, and any additional notes..."
+                        rows={4}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                        data-testid="task-description-textarea"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {/* Note-Specific Fields */}
+                {activityType === 'note' && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-2">
+                        Title/Subject <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={activityForm.title}
+                        onChange={(e) => setActivityForm({ ...activityForm, title: e.target.value })}
+                        placeholder="Note title or summary..."
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        data-testid="note-title-input"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-2">Date & Time</label>
+                      <input
+                        type="datetime-local"
+                        value={`${activityForm.date}T${activityForm.time}`}
+                        onChange={(e) => {
+                          const [date, time] = e.target.value.split('T');
+                          setActivityForm({ ...activityForm, date, time });
+                        }}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        data-testid="note-datetime-input"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-2">Content/Notes</label>
+                      <textarea
+                        value={activityForm.description}
+                        onChange={(e) => setActivityForm({ ...activityForm, description: e.target.value })}
+                        placeholder="Your notes, observations, and important details..."
+                        rows={6}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                        data-testid="note-content-textarea"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {/* Attachments Section (Universal) */}
+                <div className="border-t border-gray-200 pt-6">
+                  <h4 className="text-md font-semibold text-gray-800 mb-4 flex items-center">
+                    <Paperclip className="h-5 w-5 mr-2" />
+                    Attachments (Optional)
+                  </h4>
+                  <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-gray-400 transition-colors">
+                    <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                    <p className="text-sm text-gray-500 mb-2">
+                      Drag and drop files here, or click to browse
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      Support for PDF, DOC, XLS, images, and other common file types
+                    </p>
                     <input
-                      type="text"
-                      value={activityForm.contact}
-                      onChange={(e) => setActivityForm({ ...activityForm, contact: e.target.value })}
-                      placeholder="Contact name or email..."
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                      data-testid="activity-contact-input"
+                      type="file"
+                      multiple
+                      className="hidden"
+                      accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.txt"
+                      data-testid="activity-attachments-input"
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-2">Outcome</label>
-                    <select
-                      value={activityForm.outcome || ''}
-                      onChange={(e) => setActivityForm({ ...activityForm, outcome: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                      data-testid="activity-outcome-select"
-                    >
-                      <option value="">Select outcome...</option>
-                      <option value="successful">Successful</option>
-                      <option value="follow-up-required">Follow-up Required</option>
-                      <option value="no-response">No Response</option>
-                      <option value="not-interested">Not Interested</option>
-                      <option value="interested">Interested</option>
-                      <option value="meeting-scheduled">Meeting Scheduled</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Tags and Notes */}
-                <div>
-                  <label className="block text-sm font-semibold text-gray-800 mb-2">Tags (comma-separated)</label>
-                  <input
-                    type="text"
-                    value={activityForm.tags || ''}
-                    onChange={(e) => setActivityForm({ ...activityForm, tags: e.target.value })}
-                    placeholder="lead-generation, follow-up, urgent..."
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                    data-testid="activity-tags-input"
-                  />
                 </div>
               </div>
 
