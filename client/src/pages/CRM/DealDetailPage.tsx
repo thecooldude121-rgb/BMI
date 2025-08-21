@@ -562,7 +562,7 @@ export default function DealDetailPage() {
                                 <p className="text-xs text-gray-500 mt-2">
                                   {activity.completedAt 
                                     ? `Completed ${new Date(activity.completedAt).toLocaleDateString()}`
-                                    : `Scheduled ${new Date(activity.scheduledAt).toLocaleDateString()}`
+                                    : activity.scheduledAt ? `Scheduled ${new Date(activity.scheduledAt).toLocaleDateString()}` : 'No date set'
                                   }
                                 </p>
                               </div>
