@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useActivitiesSync } from '../../hooks/useActivitiesSync';
+import ActivityLogModal from '../ActivityLogging/ActivityLogModal';
 import { 
   ArrowLeft, Edit2, Save, X, Plus, Mail, Phone, Globe, Building,
   Calendar, DollarSign, User, Target, Clock, FileText, Paperclip,
@@ -1002,6 +1003,7 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
   const [isFollowing, setIsFollowing] = useState(false);
   const [viewMode, setViewMode] = useState<'blocks' | 'timeline'>('blocks');
   const [expandedInsights, setExpandedInsights] = useState(true);
+  const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
   
   const queryClient = useQueryClient();
 
@@ -1927,51 +1929,11 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                     </h2>
                     <div className="flex items-center space-x-2">
                       <button 
-                        onClick={() => {
-                          if (deal) {
-                            console.log('Creating activity for deal:', deal.id, deal.title);
-                            // Create new activity that will sync across all modules
-                            const newActivity = {
-                              subject: `Follow-up activity for ${deal.title}`,
-                              type: 'note' as const,
-                              description: 'Activity logged from Deal Details page - requires follow-up action',
-                              status: 'completed' as const, // Using completed status since open is not available in current DB
-                              priority: 'medium' as const,
-                              relatedToType: 'deal' as const,
-                              relatedToId: deal.id,
-                              dealId: deal.id, // Ensure dealId is set for filtering
-                              assignedTo: 'f310c13c-3edf-4f46-a6ec-46503ed02377', // Add required field - using valid user ID
-                              createdBy: 'f310c13c-3edf-4f46-a6ec-46503ed02377', // Add required field - using valid user ID
-                              relatedTo: {
-                                id: deal.id,
-                                name: deal.title,
-                                type: 'deal'
-                              }
-                            };
-                            console.log('Activity data:', newActivity);
-                            // This will automatically sync to CRM Activities Module and Company Details
-                            createActivityMutation.mutate(newActivity, {
-                              onSuccess: (data) => {
-                                console.log('Activity created successfully:', data);
-                                // Show success feedback
-                                alert('Activity logged successfully!');
-                              },
-                              onError: (error) => {
-                                console.error('Failed to create activity:', error);
-                                alert('Failed to create activity. Please try again.');
-                              }
-                            });
-                          }
-                        }}
-                        disabled={createActivityMutation.isPending}
-                        className={`text-white text-sm px-3 py-1 rounded transition-colors hover:scale-105 active:scale-95 transition-all duration-200 ${
-                          createActivityMutation.isPending 
-                            ? 'bg-gray-400 cursor-not-allowed' 
-                            : 'bg-blue-600 hover:bg-blue-700'
-                        }`}
+                        onClick={() => setIsActivityModalOpen(true)}
+                        className="text-white text-sm px-3 py-1 rounded transition-colors hover:scale-105 active:scale-95 transition-all duration-200 bg-blue-600 hover:bg-blue-700"
                         data-testid="button-log-activity"
                       >
-                        {createActivityMutation.isPending ? 'Creating...' : '+ Log Activity'}
+                        + Log Activity
                       </button>
                       <ChevronUp className="h-4 w-4 text-gray-500" />
                     </div>
@@ -2281,6 +2243,14 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
           </div>
         </div>
       </div>
+      
+      {/* Activity Log Modal */}
+      <ActivityLogModal
+        isOpen={isActivityModalOpen}
+        onClose={() => setIsActivityModalOpen(false)}
+        dealId={deal?.id}
+        dealTitle={deal?.title}
+      />
     </motion.div>
   );
 };
