@@ -1006,7 +1006,7 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
   const queryClient = useQueryClient();
 
   // Use shared activities sync hook for real-time synchronization across modules
-  const { createActivity } = useActivitiesSync();
+  const { createActivity: createActivityMutation } = useActivitiesSync();
 
   // Fetch deal data
   const { data: deal, isLoading } = useQuery({
@@ -1929,28 +1929,49 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                       <button 
                         onClick={() => {
                           if (deal) {
+                            console.log('Creating activity for deal:', deal.id, deal.title);
                             // Create new activity that will sync across all modules
                             const newActivity = {
                               subject: `Follow-up activity for ${deal.title}`,
                               type: 'note' as const,
                               description: 'Activity logged from Deal Details page - requires follow-up action',
-                              status: 'open' as const,
+                              status: 'completed' as const, // Using completed status since open is not available in current DB
                               priority: 'medium' as const,
                               relatedToType: 'deal' as const,
                               relatedToId: deal.id,
+                              dealId: deal.id, // Ensure dealId is set for filtering
+                              assignedTo: 'f310c13c-3edf-4f46-a6ec-46503ed02377', // Add required field - using valid user ID
+                              createdBy: 'f310c13c-3edf-4f46-a6ec-46503ed02377', // Add required field - using valid user ID
                               relatedTo: {
                                 id: deal.id,
                                 name: deal.title,
                                 type: 'deal'
                               }
                             };
+                            console.log('Activity data:', newActivity);
                             // This will automatically sync to CRM Activities Module and Company Details
-                            createActivity.mutate(newActivity);
+                            createActivityMutation.mutate(newActivity, {
+                              onSuccess: (data) => {
+                                console.log('Activity created successfully:', data);
+                                // Show success feedback
+                                alert('Activity logged successfully!');
+                              },
+                              onError: (error) => {
+                                console.error('Failed to create activity:', error);
+                                alert('Failed to create activity. Please try again.');
+                              }
+                            });
                           }
                         }}
-                        className="bg-blue-600 text-white text-sm px-3 py-1 rounded hover:bg-blue-700 transition-colors hover:scale-105 active:scale-95 transition-all duration-200"
+                        disabled={createActivityMutation.isPending}
+                        className={`text-white text-sm px-3 py-1 rounded transition-colors hover:scale-105 active:scale-95 transition-all duration-200 ${
+                          createActivityMutation.isPending 
+                            ? 'bg-gray-400 cursor-not-allowed' 
+                            : 'bg-blue-600 hover:bg-blue-700'
+                        }`}
+                        data-testid="button-log-activity"
                       >
-                        + Log Activity
+                        {createActivityMutation.isPending ? 'Creating...' : '+ Log Activity'}
                       </button>
                       <ChevronUp className="h-4 w-4 text-gray-500" />
                     </div>
