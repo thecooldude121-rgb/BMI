@@ -157,7 +157,7 @@ export default function DealDetailPage() {
   const { data: activities = [] } = useQuery({
     queryKey: ['/api/activities', 'deal', id],
     queryFn: async () => {
-      const response = await fetch(`/api/activities?dealId=${id}`);
+      const response = await fetch(`/api/activities?relatedToType=deal&relatedToId=${id}`);
       if (!response.ok) throw new Error('Failed to fetch activities');
       return response.json();
     },
