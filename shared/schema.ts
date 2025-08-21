@@ -1719,7 +1719,7 @@ export const subscriptionTierEnum = pgEnum('subscription_tier', ['basic', 'profe
 // 1. CORE EMPLOYEE LIFECYCLE MANAGEMENT
 
 // Enhanced Employee Table with AI-powered features
-export const employees = pgTable("employees", {
+export const employees: any = pgTable("employees", {
   id: uuid("id").primaryKey().defaultRandom(),
   employeeId: text("employee_id").notNull().unique(), // EMP001, EMP002, etc.
   userId: uuid("user_id").references(() => users.id), // Link to auth user
@@ -2375,6 +2375,12 @@ export const insertTrainingEnrollmentSchema = createInsertSchema(trainingEnrollm
   updatedAt: true,
 });
 
+export const insertEmployeeSchema = createInsertSchema(employees).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // AI-Powered HRMS Types
 export type Employee = typeof employees.$inferSelect;
 export type InsertEmployee = z.infer<typeof insertEmployeeSchema>;
@@ -2668,8 +2674,8 @@ export const complianceTracking = pgTable("compliance_tracking", {
   id: uuid("id").primaryKey().defaultRandom(),
   leadId: uuid("lead_id").notNull().references(() => enrichedLeads.id, { onDelete: 'cascade' }),
   complianceStatus: complianceStatusEnum("compliance_status").notNull().default('compliant'),
-  gdprConsent: boolean("gdpr_consent").default(null),
-  ccpaConsent: boolean("ccpa_consent").default(null),
+  gdprConsent: boolean("gdpr_consent").default(false),
+  ccpaConsent: boolean("ccpa_consent").default(false),
   optInDate: timestamp("opt_in_date"),
   optOutDate: timestamp("opt_out_date"),
   dataRetentionExpiry: timestamp("data_retention_expiry"),
