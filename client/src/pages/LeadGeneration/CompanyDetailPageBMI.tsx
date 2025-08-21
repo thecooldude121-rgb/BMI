@@ -3110,18 +3110,18 @@ const CompanyDetailPageBMI: React.FC = () => {
                       <button 
                         onClick={() => {
                           // Create new activity for this company using shared sync hook
-                          const accountId = getAccountIdForCompany(company.name);
+                          const accountId = getAccountIdForCompany(companyData.name);
                           const newActivity = {
-                            subject: `Company research activity for ${company.name}`,
+                            subject: `Company research activity for ${companyData.name}`,
                             type: 'note' as const,
-                            description: `Activity logged from Company Details page - research and engagement tracking for ${company.name}`,
+                            description: `Activity logged from Company Details page - research and engagement tracking for ${companyData.name}`,
                             status: 'open' as const,
                             priority: 'medium' as const,
                             relatedToType: 'account' as const,
                             relatedToId: accountId || undefined,
                             relatedTo: accountId ? {
                               id: accountId,
-                              name: company.name,
+                              name: companyData.name,
                               type: 'account'
                             } : undefined
                           };
