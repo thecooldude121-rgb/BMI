@@ -3,6 +3,7 @@ import { useParams, Link } from 'wouter';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useActivitiesSync } from '../../hooks/useActivitiesSync';
 import { 
   ArrowLeft, Edit2, Save, X, Plus, Mail, Phone, Globe, Building,
   Calendar, DollarSign, User, Target, Clock, FileText, Paperclip,
@@ -1004,6 +1005,9 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
   
   const queryClient = useQueryClient();
 
+  // Use shared activities sync hook for real-time synchronization across modules
+  const { createActivity } = useActivitiesSync();
+
   // Fetch deal data
   const { data: deal, isLoading } = useQuery({
     queryKey: ['/api/deals', dealId],
@@ -1922,7 +1926,30 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                       Activities
                     </h2>
                     <div className="flex items-center space-x-2">
-                      <button className="bg-blue-600 text-white text-sm px-3 py-1 rounded hover:bg-blue-700 transition-colors">
+                      <button 
+                        onClick={() => {
+                          if (deal) {
+                            // Create new activity that will sync across all modules
+                            const newActivity = {
+                              subject: `Follow-up activity for ${deal.title}`,
+                              type: 'note' as const,
+                              description: 'Activity logged from Deal Details page - requires follow-up action',
+                              status: 'open' as const,
+                              priority: 'medium' as const,
+                              relatedToType: 'deal' as const,
+                              relatedToId: deal.id,
+                              relatedTo: {
+                                id: deal.id,
+                                name: deal.title,
+                                type: 'deal'
+                              }
+                            };
+                            // This will automatically sync to CRM Activities Module and Company Details
+                            createActivity.mutate(newActivity);
+                          }
+                        }}
+                        className="bg-blue-600 text-white text-sm px-3 py-1 rounded hover:bg-blue-700 transition-colors hover:scale-105 active:scale-95 transition-all duration-200"
+                      >
                         + Log Activity
                       </button>
                       <ChevronUp className="h-4 w-4 text-gray-500" />
