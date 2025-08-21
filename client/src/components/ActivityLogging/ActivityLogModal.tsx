@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Save, Phone, Mail, Calendar, CheckSquare, FileText } from 'lucide-react';
+import { X, Save, Phone, Calendar, CheckSquare, FileText } from 'lucide-react';
 import { useActivitiesSync } from '../../hooks/useActivitiesSync';
 
 interface ActivityLogModalProps {
@@ -12,7 +12,7 @@ interface ActivityLogModalProps {
   leadId?: string;
 }
 
-type ActivityType = 'call' | 'email' | 'meeting' | 'task' | 'note';
+type ActivityType = 'call' | 'meeting' | 'task' | 'note';
 
 interface ActivityFormData {
   subject: string;
@@ -24,11 +24,6 @@ interface ActivityFormData {
   // Call specific
   outcome?: 'completed' | 'no_answer' | 'follow_up_needed';
   participants?: string;
-  
-  // Email specific
-  direction?: 'inbound' | 'outbound';
-  emailTo?: string;
-  emailFrom?: string;
   
   // Meeting specific
   startTime?: string;
@@ -69,7 +64,6 @@ const ActivityLogModal: React.FC<ActivityLogModalProps> = ({
 
   const tabs = [
     { id: 'call' as ActivityType, label: 'Call', icon: Phone },
-    { id: 'email' as ActivityType, label: 'Email', icon: Mail },
     { id: 'meeting' as ActivityType, label: 'Meeting', icon: Calendar },
     { id: 'task' as ActivityType, label: 'Task', icon: CheckSquare },
     { id: 'note' as ActivityType, label: 'Note', icon: FileText },
@@ -106,11 +100,8 @@ const ActivityLogModal: React.FC<ActivityLogModalProps> = ({
         
         // Type-specific fields
         outcome: formData.outcome,
-        direction: formData.direction || 'outbound',
         scheduledAt: formData.scheduledAt,
         dueDate: formData.dueDate,
-        emailTo: formData.emailTo,
-        emailFrom: formData.emailFrom,
         nextAction: formData.nextSteps,
       };
 
@@ -244,49 +235,7 @@ const ActivityLogModal: React.FC<ActivityLogModalProps> = ({
               </>
             )}
 
-            {activeTab === 'email' && (
-              <>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Direction
-                  </label>
-                  <select
-                    value={formData.direction}
-                    onChange={(e) => handleInputChange('direction', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="outbound">Sent</option>
-                    <option value="inbound">Received</option>
-                  </select>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      To
-                    </label>
-                    <input
-                      type="email"
-                      value={formData.emailTo}
-                      onChange={(e) => handleInputChange('emailTo', e.target.value)}
-                      placeholder="recipient@example.com"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      From
-                    </label>
-                    <input
-                      type="email"
-                      value={formData.emailFrom}
-                      onChange={(e) => handleInputChange('emailFrom', e.target.value)}
-                      placeholder="sender@example.com"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-                </div>
-              </>
-            )}
+            
 
             {activeTab === 'meeting' && (
               <>
@@ -393,7 +342,7 @@ const ActivityLogModal: React.FC<ActivityLogModalProps> = ({
             {/* Description - Common for all types */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                {activeTab === 'note' ? 'Content/Notes' : activeTab === 'email' ? 'Summary/Notes' : 'Notes'} *
+                {activeTab === 'note' ? 'Content/Notes' : 'Notes'} *
               </label>
               <textarea
                 value={formData.description}
