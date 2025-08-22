@@ -843,6 +843,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/deals/:id", async (req, res) => {
     try {
+      // Skip UUID validation for special routes like 'new'
+      if (req.params.id === 'new') {
+        return res.status(400).json({ error: "Use POST /api/deals to create a new deal" });
+      }
+      
       const deal = await storage.getDeal(req.params.id);
       if (!deal) return res.status(404).json({ error: "Deal not found" });
       res.json(deal);
