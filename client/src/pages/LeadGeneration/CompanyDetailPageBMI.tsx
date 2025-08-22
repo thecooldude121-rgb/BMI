@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useRoute } from 'wouter';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActivitiesSync } from '../../hooks/useActivitiesSync';
+import ActivityLogModal from '../../components/ActivityLogging/ActivityLogModal';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { 
   ArrowLeft, 
@@ -47,7 +48,8 @@ import {
   Activity,
   User,
   Upload,
-  Paperclip
+  Paperclip,
+  RefreshCw
 } from 'lucide-react';
 import { Link } from 'wouter';
 import { getCompanies, localCompanies, CompanyData as SharedCompanyData } from '../../data/companies';
@@ -245,16 +247,22 @@ const CompanyDetailPageBMI: React.FC = () => {
     rating: 'A+'
   };
 
-  // Fetch all activities from CRM system
-  // Use shared activities sync hook for real-time synchronization
+  // Fetch all activities from CRM system with enhanced Lead Gen bidirectional sync
   const {
     activities: allActivities,
     createActivity,
     updateActivity,
     completeActivity,
     deleteActivity,
-    syncActivities
+    syncActivities,
+    isLoading: activitiesLoading,
+    error: activitiesError
   } = useActivitiesSync();
+
+  // Enhanced sync function for Lead Gen context
+  const syncLeadGenActivities = () => {
+    syncActivities('leadgen');
+  };
 
   // Company to CRM Account mapping (using static IDs to avoid dependency issues)
   const getAccountIdForCompany = (companyName: string): string | null => {
@@ -3110,38 +3118,35 @@ const CompanyDetailPageBMI: React.FC = () => {
                           return false;
                         }).length}
                       </span>
-                      <span className="bg-green-600 text-white text-xs px-2 py-1 rounded-full">Live CRM</span>
+                      <span className="bg-green-600 text-white text-xs px-2 py-1 rounded-full">
+                        {activitiesLoading ? 'Syncing...' : activitiesError ? 'Sync Error' : 'Live CRM'}
+                      </span>
                     </div>
                     <div className="flex items-center space-x-3">
                       <span className="text-xs text-gray-500">
-                        Last activity: {allActivities.length > 0 ? 'Recently' : 'No activities'}
+                        {activitiesLoading ? 'Loading activities...' : 
+                         activitiesError ? 'Failed to load activities' :
+                         `${allActivities.length} activities • Last sync: ${new Date().toLocaleTimeString()}`}
                       </span>
                       <button 
                         onClick={() => {
-                          // Create new activity for this company using shared sync hook
-                          const accountId = getAccountIdForCompany(companyData.name);
-                          const newActivity = {
-                            subject: `Company research activity for ${companyData.name}`,
-                            type: 'note' as const,
-                            description: `Activity logged from Company Details page - research and engagement tracking for ${companyData.name}`,
-                            status: 'open' as const,
-                            priority: 'medium' as const,
-                            relatedToType: 'account' as const,
-                            relatedToId: accountId || undefined,
-                            relatedTo: accountId ? {
-                              id: accountId,
-                              name: companyData.name,
-                              type: 'account'
-                            } : undefined
-                          };
-                          // This will automatically sync to CRM Activities Module and Deal Details
-                          createActivity.mutate(newActivity);
+                          console.log('Log Activity button clicked from Lead Gen Company Detail');
+                          setShowLogActivityModal(true);
                         }}
                         className="flex items-center space-x-2 px-3 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 hover:scale-105 transition-all duration-200 active:scale-95"
                         data-testid="log-activity-button"
                       >
                         <Plus className="h-4 w-4" />
                         <span>Log Activity</span>
+                      </button>
+                      <button
+                        onClick={syncLeadGenActivities}
+                        className="flex items-center space-x-1 px-2 py-2 bg-green-600 text-white rounded-lg text-xs font-medium hover:bg-green-700 hover:scale-105 transition-all duration-200 active:scale-95"
+                        data-testid="sync-activities-button"
+                        title="Sync with CRM"
+                      >
+                        <RefreshCw className="h-3 w-3" />
+                        <span>Sync</span>
                       </button>
                     </div>
                   </div>
@@ -3544,8 +3549,31 @@ const CompanyDetailPageBMI: React.FC = () => {
         </div>
       )}
 
-      {/* Enhanced Professional Log Activity Modal */}
-      {showLogActivityModal && (
+      {/* Enhanced ActivityLogModal with Lead Gen Bidirectional Sync */}
+      <ActivityLogModal
+        isOpen={showLogActivityModal}
+        onClose={() => {
+          setShowLogActivityModal(false);
+          setActivityForm({
+            title: '',
+            description: '',
+            contact: '',
+            date: new Date().toISOString().split('T')[0],
+            time: new Date().toTimeString().split(' ')[0].substring(0, 5),
+            status: 'completed',
+            priority: 'medium',
+            duration: '',
+            outcome: '',
+            tags: ''
+          });
+        }}
+        accountId={currentAccountId || undefined}
+        source="leadgen"
+        companyName={companyData.name}
+      />
+
+      {/* Fallback Original Log Activity Modal (keeping as backup) */}
+      {false && showLogActivityModal && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4" data-testid="log-activity-modal">
           <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 max-w-2xl w-full max-h-[95vh] overflow-y-auto">
             {/* Modal Header */}
@@ -4032,7 +4060,9 @@ const CompanyDetailPageBMI: React.FC = () => {
                 <button
                   onClick={async () => {
                     try {
-                      // Create activity in CRM database
+                      console.log('🔄 Creating activity from Lead Gen Company Detail Page');
+                      
+                      // Enhanced activity creation with Lead Gen source tracking
                       const newActivity = {
                         subject: activityForm.title,
                         type: activityType,
@@ -4047,7 +4077,7 @@ const CompanyDetailPageBMI: React.FC = () => {
                         scheduledAt: activityForm.status === 'scheduled' ? `${activityForm.date}T${activityForm.time}:00.000Z` : null,
                         completedAt: activityForm.status === 'completed' ? new Date().toISOString() : null,
                         direction: 'outbound',
-                        source: 'manual',
+                        source: 'leadgen', // Mark as Lead Gen source for enhanced sync tracking
                         tags: activityForm.tags ? activityForm.tags.split(',').map(tag => tag.trim()).filter(Boolean) : null
                       };
 
