@@ -12,6 +12,7 @@ import PipelinePage from './pages/CRM/PipelinePage';
 import ActivitiesPage from './pages/CRM/ActivitiesPage';
 import TasksPage from './pages/CRM/TasksPage';
 import CreateDealWizard from './components/Deal/CreateDealWizard';
+import CreateDealPage from './pages/CRM/CreateDealPage';
 
 import DealDetailPage from './components/Deal/DealDetailPage';
 import AdvancedDealDetailsPage from './components/Deal/AdvancedDealDetailsPage';
@@ -33,6 +34,7 @@ import IndustryTrendIndicator from './components/IndustryTrendIndicator';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
+const CreateDealPageWrapper = () => <CreateDealPage />;
 const DealDetailWrapper = ({ params }: { params: { id: string } }) => <AdvancedDealDetailsPage dealId={params.id} />;
 const MeetingDashboardWrapper = ({ params }: { params: { id: string } }) => <MeetingDashboard />;
 
@@ -49,7 +51,8 @@ const App = () => {
               <Route path="/login" component={Login} />
               <Route path="/" component={Analytics} />
               <Route path="/dashboard" component={Dashboard} />
-              <Route path="/crm/deals/create" component={CreateDealWrapper} />
+              <Route path="/crm/deals/create" component={CreateDealPageWrapper} />
+              <Route path="/crm/deals/create-wizard" component={CreateDealWrapper} />
               <Route path="/crm/deals/:id" component={DealDetailWrapper} />
               <Route path="/crm/accounts/:id" component={SimpleRealAccountDetail} />
               <Route path="/crm/contacts/:id" component={ContactDetailPage} />
