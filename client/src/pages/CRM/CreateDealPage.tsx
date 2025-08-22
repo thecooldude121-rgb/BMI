@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -248,28 +248,39 @@ const CreateDealPage: React.FC = () => {
     }
   });
 
-  // Auto-save functionality - removed to prevent infinite loops
-
-  // Auto-save effect - use a ref to avoid infinite loops
+  // Auto-save functionality - simplified to prevent infinite loops
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
   const formDataRef = useRef(formData);
-  formDataRef.current = formData;
   
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (formDataRef.current.name) {
+    formDataRef.current = formData;
+    
+    // Clear existing timeout
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+    
+    // Only auto-save if there's a name
+    if (formData.name.trim()) {
+      autoSaveTimeoutRef.current = setTimeout(() => {
         setAutoSaveStatus('saving');
         try {
-          const draftKey = `deal-draft-${Date.now()}`;
-          localStorage.setItem(draftKey, JSON.stringify(formDataRef.current));
+          const draftKey = `deal-draft-current`;
+          localStorage.setItem(draftKey, JSON.stringify(formData));
           setAutoSaveStatus('saved');
           setTimeout(() => setAutoSaveStatus('idle'), 2000);
         } catch (error) {
           setAutoSaveStatus('error');
         }
+      }, 3000);
+    }
+    
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
       }
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, [formData]);
+    };
+  }, [formData.name, formData.amount, formData.closingDate]); // Only depend on key fields
 
   // Form validation
   const validateSection = (sectionId: string): boolean => {
