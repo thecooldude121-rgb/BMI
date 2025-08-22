@@ -21,6 +21,10 @@ interface ActivityFormData {
   status: 'completed' | 'planned' | 'cancelled';
   priority: 'low' | 'medium' | 'high';
   
+  // Related to fields
+  relatedEntityType?: 'deal' | 'account';
+  relatedEntityName?: string;
+  
   // Call specific
   outcome?: 'completed' | 'no_answer' | 'follow_up_needed';
   participants?: string;
@@ -60,6 +64,8 @@ const ActivityLogModal: React.FC<ActivityLogModalProps> = ({
     description: '',
     status: 'completed',
     priority: 'medium',
+    relatedEntityType: dealId ? 'deal' : accountId ? 'account' : 'deal',
+    relatedEntityName: dealId ? dealTitle : accountId ? 'Account Name' : '',
   });
 
   const tabs = [
@@ -188,6 +194,30 @@ const ActivityLogModal: React.FC<ActivityLogModalProps> = ({
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
               />
+            </div>
+
+            {/* Related to field */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Related to
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                <select
+                  value={formData.relatedEntityType}
+                  onChange={(e) => handleInputChange('relatedEntityType', e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                >
+                  <option value="deal">Deal</option>
+                  <option value="account">Account</option>
+                </select>
+                <input
+                  type="text"
+                  value={formData.relatedEntityName}
+                  onChange={(e) => handleInputChange('relatedEntityName', e.target.value)}
+                  placeholder="Enter name..."
+                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                />
+              </div>
             </div>
 
             <div>
