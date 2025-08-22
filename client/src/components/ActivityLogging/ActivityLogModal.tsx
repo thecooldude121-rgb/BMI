@@ -201,11 +201,18 @@ const ActivityLogModal: React.FC<ActivityLogModalProps> = ({
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Related to
               </label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="flex gap-2 items-center">
                 <select
                   value={formData.relatedEntityType}
                   onChange={(e) => handleInputChange('relatedEntityType', e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className="px-2 py-1 text-xs border border-gray-300 rounded bg-gradient-to-b from-white to-gray-50 shadow-sm hover:shadow-md transition-shadow appearance-none cursor-pointer min-w-[80px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%23666' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>")`,
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'right 6px center',
+                    backgroundSize: '8px',
+                    paddingRight: '20px'
+                  }}
                 >
                   <option value="deal">Deal</option>
                   <option value="account">Account</option>
@@ -215,7 +222,7 @@ const ActivityLogModal: React.FC<ActivityLogModalProps> = ({
                   value={formData.relatedEntityName}
                   onChange={(e) => handleInputChange('relatedEntityName', e.target.value)}
                   placeholder="Enter name..."
-                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                 />
               </div>
             </div>
