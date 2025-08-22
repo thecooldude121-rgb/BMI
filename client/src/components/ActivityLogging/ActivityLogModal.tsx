@@ -10,6 +10,9 @@ interface ActivityLogModalProps {
   contactId?: string;
   accountId?: string;
   leadId?: string;
+  // Enhanced for Lead Gen bidirectional sync
+  source?: 'crm' | 'leadgen' | 'deal';
+  companyName?: string;
 }
 
 type ActivityType = 'call' | 'meeting' | 'task' | 'note';
@@ -53,6 +56,8 @@ const ActivityLogModal: React.FC<ActivityLogModalProps> = ({
   contactId,
   accountId,
   leadId,
+  source = 'crm',
+  companyName,
 }) => {
   const [activeTab, setActiveTab] = useState<ActivityType>('note');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -89,8 +94,10 @@ const ActivityLogModal: React.FC<ActivityLogModalProps> = ({
     setIsSubmitting(true);
 
     try {
+      console.log(`🔄 Creating activity from ${source} module via ActivityLogModal`);
+      
       const activityData = {
-        subject: formData.subject || `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} - ${dealTitle || 'Activity'}`,
+        subject: formData.subject || `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} - ${dealTitle || companyName || 'Activity'}`,
         type: formData.type,
         description: formData.description,
         status: formData.status,
@@ -103,6 +110,7 @@ const ActivityLogModal: React.FC<ActivityLogModalProps> = ({
         leadId,
         assignedTo: 'f310c13c-3edf-4f46-a6ec-46503ed02377', // Current user
         createdBy: 'f310c13c-3edf-4f46-a6ec-46503ed02377', // Current user
+        source, // Enhanced: Track source for bidirectional sync
         
         // Type-specific fields
         outcome: formData.outcome,
@@ -148,8 +156,20 @@ const ActivityLogModal: React.FC<ActivityLogModalProps> = ({
         {/* Subtitle */}
         <div className="px-6 py-3 bg-gray-50 border-b border-gray-200">
           <p className="text-sm text-gray-600">
-            Record all interactions and tasks related to this {dealId ? 'deal' : 'item'}. Select the appropriate activity type by switching tabs below, then fill in the details.
+            Record all interactions and tasks related to this {dealId ? 'deal' : accountId ? 'account' : 'item'}
+            {source === 'leadgen' && companyName && ` (${companyName})`}. 
+            Select the appropriate activity type by switching tabs below, then fill in the details.
           </p>
+          {source === 'leadgen' && (
+            <div className="mt-2 flex items-center space-x-2">
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                Lead Generation
+              </span>
+              <span className="text-xs text-gray-500">
+                This activity will sync with your CRM automatically
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Tabs */}
