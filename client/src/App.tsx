@@ -12,7 +12,7 @@ import PipelinePage from './pages/CRM/PipelinePage';
 import ActivitiesPage from './pages/CRM/ActivitiesPage';
 import TasksPage from './pages/CRM/TasksPage';
 import CreateDealWizard from './components/Deal/CreateDealWizard';
-import CreateDealPageSimple from './pages/CRM/CreateDealPageSimple';
+import CreateDealPageFixed from './pages/CRM/CreateDealPageFixed';
 
 import DealDetailPage from './components/Deal/DealDetailPage';
 import AdvancedDealDetailsPage from './components/Deal/AdvancedDealDetailsPage';
@@ -34,7 +34,7 @@ import IndustryTrendIndicator from './components/IndustryTrendIndicator';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
-const CreateDealPageWrapper = () => <CreateDealPageSimple />;
+const CreateDealPageWrapper = () => <CreateDealPageFixed />;
 const DealDetailWrapper = ({ params }: { params: { id: string } }) => <AdvancedDealDetailsPage dealId={params.id} />;
 const MeetingDashboardWrapper = ({ params }: { params: { id: string } }) => <MeetingDashboard />;
 
