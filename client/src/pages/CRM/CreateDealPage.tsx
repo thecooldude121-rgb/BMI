@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowLeft, 
   Save, 
-  FileText as FileTemplate, 
+  FileText, 
   Plus,
   Check,
   ChevronRight,
@@ -99,7 +99,7 @@ const FORM_SECTIONS = [
   {
     id: 'details',
     title: 'Additional Details',
-    icon: FileTemplate,
+    icon: FileText,
     description: 'Extended deal information',
     required: false,
     fields: ['description', 'nextStep', 'products', 'priority']
@@ -248,26 +248,28 @@ const CreateDealPage: React.FC = () => {
     }
   });
 
-  // Auto-save functionality
-  const autoSave = useCallback(async () => {
-    if (!formData.name) return;
-    
-    setAutoSaveStatus('saving');
-    try {
-      const draftKey = `deal-draft-${Date.now()}`;
-      localStorage.setItem(draftKey, JSON.stringify(formData));
-      setAutoSaveStatus('saved');
-      setTimeout(() => setAutoSaveStatus('idle'), 2000);
-    } catch (error) {
-      setAutoSaveStatus('error');
-    }
-  }, [formData]);
+  // Auto-save functionality - removed to prevent infinite loops
 
-  // Auto-save effect
+  // Auto-save effect - use a ref to avoid infinite loops
+  const formDataRef = useRef(formData);
+  formDataRef.current = formData;
+  
   useEffect(() => {
-    const timer = setTimeout(autoSave, 2000);
+    const timer = setTimeout(() => {
+      if (formDataRef.current.name) {
+        setAutoSaveStatus('saving');
+        try {
+          const draftKey = `deal-draft-${Date.now()}`;
+          localStorage.setItem(draftKey, JSON.stringify(formDataRef.current));
+          setAutoSaveStatus('saved');
+          setTimeout(() => setAutoSaveStatus('idle'), 2000);
+        } catch (error) {
+          setAutoSaveStatus('error');
+        }
+      }
+    }, 2000);
     return () => clearTimeout(timer);
-  }, [formData, autoSave]);
+  }, [formData]);
 
   // Form validation
   const validateSection = (sectionId: string): boolean => {
@@ -289,7 +291,19 @@ const CreateDealPage: React.FC = () => {
 
   // Handle form field changes
   const handleFieldChange = (field: keyof DealFormData, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData(prev => {
+      const newData = { ...prev, [field]: value };
+      
+      // Auto-update probability based on stage
+      if (field === 'stage') {
+        const stage = DEAL_STAGES.find(s => s.id === value);
+        if (stage) {
+          newData.probability = stage.probability;
+        }
+      }
+      
+      return newData;
+    });
     
     // Clear validation error for this field
     if (validationErrors[field]) {
@@ -298,14 +312,6 @@ const CreateDealPage: React.FC = () => {
         delete newErrors[field];
         return newErrors;
       });
-    }
-
-    // Auto-update probability based on stage
-    if (field === 'stage') {
-      const stage = DEAL_STAGES.find(s => s.id === value);
-      if (stage) {
-        setFormData(prev => ({ ...prev, probability: stage.probability }));
-      }
     }
   };
 
@@ -368,12 +374,22 @@ const CreateDealPage: React.FC = () => {
       }
 
       if (action === 'draft') {
-        autoSave();
-        showToast(
-          "Draft saved!",
-          "Your progress has been saved.",
-          'success'
-        );
+        // Manual save functionality
+        try {
+          const draftKey = `deal-draft-${Date.now()}`;
+          localStorage.setItem(draftKey, JSON.stringify(formData));
+          showToast(
+            "Draft saved!",
+            "Your progress has been saved.",
+            'success'
+          );
+        } catch (error) {
+          showToast(
+            "Error saving draft",
+            "Please try again.",
+            'error'
+          );
+        }
         return;
       }
 
