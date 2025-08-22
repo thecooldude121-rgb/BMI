@@ -159,6 +159,7 @@ export async function seedDatabase() {
     // Sample leads
     const sampleLeads = [
       {
+        name: "Emily Chen",
         firstName: "Emily",
         lastName: "Chen",
         email: "emily.chen@startup.com",
@@ -170,6 +171,7 @@ export async function seedDatabase() {
         score: 85
       },
       {
+        name: "David Brown",
         firstName: "David",
         lastName: "Brown",
         email: "david.brown@enterprise.com", 
@@ -188,23 +190,27 @@ export async function seedDatabase() {
     // Sample deals
     const sampleDeals = [
       {
+        name: "TechCorp Enterprise Solution",
         title: "TechCorp Enterprise Solution",
         accountId: accounts[0].id,
         contactId: contacts[0].id,
+        value: 125000,
         amount: 125000,
         stage: "proposal",
         probability: 75,
-        expectedCloseDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        expectedCloseDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         description: "Enterprise software implementation"
       },
       {
+        name: "GreenEnergy Smart Grid Platform",
         title: "GreenEnergy Smart Grid Platform",
         accountId: accounts[1].id,
         contactId: contacts[1].id,
+        value: 85000,
         amount: 85000,
         stage: "negotiation", 
         probability: 85,
-        expectedCloseDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(),
+        expectedCloseDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
         description: "Smart grid monitoring system"
       }
     ];

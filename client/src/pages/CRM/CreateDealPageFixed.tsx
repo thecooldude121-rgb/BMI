@@ -104,7 +104,7 @@ const FORM_SECTIONS = [
   }
 ];
 
-const CreateDealPageSimple: React.FC = () => {
+const CreateDealPageFixed: React.FC = () => {
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
   
@@ -199,6 +199,94 @@ const CreateDealPageSimple: React.FC = () => {
       setErrors({ submit: error.message || 'Failed to create deal' });
     }
   });
+
+  // Auto-save functionality
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
+  
+  useEffect(() => {
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+    
+    if (formData.name.trim()) {
+      setAutoSaveStatus('saving');
+      autoSaveTimeoutRef.current = setTimeout(() => {
+        try {
+          localStorage.setItem('deal-draft-current', JSON.stringify(formData));
+          setAutoSaveStatus('saved');
+          setTimeout(() => setAutoSaveStatus('idle'), 2000);
+        } catch (error) {
+          setAutoSaveStatus('error');
+        }
+      }, 3000);
+    }
+    
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, [formData.name, formData.amount, formData.closingDate]);
+
+  // Filter accounts and contacts based on search
+  useEffect(() => {
+    if (accounts && accountSearch) {
+      const filtered = accounts.filter((account: any) =>
+        account.name.toLowerCase().includes(accountSearch.toLowerCase()) ||
+        (account.industry && account.industry.toLowerCase().includes(accountSearch.toLowerCase()))
+      );
+      setFilteredAccounts(filtered);
+    } else {
+      setFilteredAccounts(accounts || []);
+    }
+  }, [accounts, accountSearch]);
+
+  useEffect(() => {
+    if (contacts && contactSearch) {
+      const filtered = contacts.filter((contact: any) =>
+        `${contact.firstName} ${contact.lastName}`.toLowerCase().includes(contactSearch.toLowerCase()) ||
+        (contact.email && contact.email.toLowerCase().includes(contactSearch.toLowerCase()))
+      );
+      setFilteredContacts(filtered);
+    } else {
+      setFilteredContacts(contacts || []);
+    }
+  }, [contacts, contactSearch]);
+
+  const DEAL_STAGES = [
+    { id: 'discovery', title: 'Discovery', probability: 10, color: 'bg-blue-500' },
+    { id: 'qualification', title: 'Qualification', probability: 25, color: 'bg-purple-500' },
+    { id: 'proposal', title: 'Proposal', probability: 50, color: 'bg-yellow-500' },
+    { id: 'negotiation', title: 'Negotiation', probability: 75, color: 'bg-orange-500' },
+    { id: 'closed-won', title: 'Closed Won', probability: 100, color: 'bg-green-500' }
+  ];
+
+  const DEAL_TYPES = [
+    { value: 'new_business', label: 'New Business' },
+    { value: 'existing_business', label: 'Existing Business' },
+    { value: 'renewal', label: 'Renewal' },
+    { value: 'expansion', label: 'Expansion' }
+  ];
+
+  const COUNTRIES = [
+    { code: 'US', name: 'United States' },
+    { code: 'CA', name: 'Canada' },
+    { code: 'GB', name: 'United Kingdom' },
+    { code: 'DE', name: 'Germany' },
+    { code: 'FR', name: 'France' }
+  ];
+
+  const CURRENCIES = [
+    { code: 'USD', symbol: '$', name: 'US Dollar' },
+    { code: 'EUR', symbol: '€', name: 'Euro' },
+    { code: 'GBP', symbol: '£', name: 'British Pound' }
+  ];
+
+  const PIPELINES = [
+    { id: 'sales', name: 'Sales Pipeline' },
+    { id: 'enterprise', name: 'Enterprise Pipeline' },
+    { id: 'partner', name: 'Partner Pipeline' }
+  ];
 
   const handleFieldChange = (field: keyof DealFormData, value: any) => {
     setFormData(prev => {
@@ -334,10 +422,8 @@ const CreateDealPageSimple: React.FC = () => {
       try {
         const draftKey = `deal-draft-${Date.now()}`;
         localStorage.setItem(draftKey, JSON.stringify(formData));
-        // Show success message for draft save
         return;
       } catch (error) {
-        // Show error message
         return;
       }
     }
@@ -349,10 +435,8 @@ const CreateDealPageSimple: React.FC = () => {
           ...formData,
           name: `${formData.name} Template`
         }));
-        // Show success message for template save
         return;
       } catch (error) {
-        // Show error message
         return;
       }
     }
@@ -379,94 +463,6 @@ const CreateDealPageSimple: React.FC = () => {
 
     createDealMutation.mutate(dealData);
   };
-
-  // Auto-save functionality
-  const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
-  
-  useEffect(() => {
-    if (autoSaveTimeoutRef.current) {
-      clearTimeout(autoSaveTimeoutRef.current);
-    }
-    
-    if (formData.name.trim()) {
-      setAutoSaveStatus('saving');
-      autoSaveTimeoutRef.current = setTimeout(() => {
-        try {
-          localStorage.setItem('deal-draft-current', JSON.stringify(formData));
-          setAutoSaveStatus('saved');
-          setTimeout(() => setAutoSaveStatus('idle'), 2000);
-        } catch (error) {
-          setAutoSaveStatus('error');
-        }
-      }, 3000);
-    }
-    
-    return () => {
-      if (autoSaveTimeoutRef.current) {
-        clearTimeout(autoSaveTimeoutRef.current);
-      }
-    };
-  }, [formData.name, formData.amount, formData.closingDate]);
-
-  // Filter accounts and contacts based on search
-  useEffect(() => {
-    if (accounts && accountSearch) {
-      const filtered = accounts.filter((account: any) =>
-        account.name.toLowerCase().includes(accountSearch.toLowerCase()) ||
-        (account.industry && account.industry.toLowerCase().includes(accountSearch.toLowerCase()))
-      );
-      setFilteredAccounts(filtered);
-    } else {
-      setFilteredAccounts(accounts || []);
-    }
-  }, [accounts, accountSearch]);
-
-  useEffect(() => {
-    if (contacts && contactSearch) {
-      const filtered = contacts.filter((contact: any) =>
-        `${contact.firstName} ${contact.lastName}`.toLowerCase().includes(contactSearch.toLowerCase()) ||
-        (contact.email && contact.email.toLowerCase().includes(contactSearch.toLowerCase()))
-      );
-      setFilteredContacts(filtered);
-    } else {
-      setFilteredContacts(contacts || []);
-    }
-  }, [contacts, contactSearch]);
-
-  const DEAL_STAGES = [
-    { id: 'discovery', title: 'Discovery', probability: 10, color: 'bg-blue-500' },
-    { id: 'qualification', title: 'Qualification', probability: 25, color: 'bg-purple-500' },
-    { id: 'proposal', title: 'Proposal', probability: 50, color: 'bg-yellow-500' },
-    { id: 'negotiation', title: 'Negotiation', probability: 75, color: 'bg-orange-500' },
-    { id: 'closed-won', title: 'Closed Won', probability: 100, color: 'bg-green-500' }
-  ];
-
-  const DEAL_TYPES = [
-    { value: 'new_business', label: 'New Business' },
-    { value: 'existing_business', label: 'Existing Business' },
-    { value: 'renewal', label: 'Renewal' },
-    { value: 'expansion', label: 'Expansion' }
-  ];
-
-  const COUNTRIES = [
-    { code: 'US', name: 'United States' },
-    { code: 'CA', name: 'Canada' },
-    { code: 'GB', name: 'United Kingdom' },
-    { code: 'DE', name: 'Germany' },
-    { code: 'FR', name: 'France' }
-  ];
-
-  const CURRENCIES = [
-    { code: 'USD', symbol: '$', name: 'US Dollar' },
-    { code: 'EUR', symbol: '€', name: 'Euro' },
-    { code: 'GBP', symbol: '£', name: 'British Pound' }
-  ];
-
-  const PIPELINES = [
-    { id: 'sales', name: 'Sales Pipeline' },
-    { id: 'enterprise', name: 'Enterprise Pipeline' },
-    { id: 'partner', name: 'Partner Pipeline' }
-  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -629,7 +625,7 @@ const CreateDealPageSimple: React.FC = () => {
                 </motion.div>
               );
             })}
-          </form>
+          </div>
         </div>
 
         {/* Sticky Summary Sidebar */}
@@ -675,7 +671,6 @@ const CreateDealPageSimple: React.FC = () => {
                               if (suggestion.field === 'nextStep') {
                                 handleFieldChange('nextStep', suggestion.suggestion);
                               }
-                              // Add more AI suggestion handlers here
                             }}
                             className="mt-2 text-xs text-purple-600 hover:text-purple-800 font-medium"
                           >
@@ -711,8 +706,8 @@ const CreateDealPageSimple: React.FC = () => {
               {getCompletionPercentage()}% complete
             </span>
             <button
-              type="submit"
-              onClick={handleSubmit}
+              type="button"
+              onClick={() => handleSubmit('create')}
               disabled={createDealMutation.isPending}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 flex items-center space-x-2"
             >
@@ -796,11 +791,10 @@ const CreateDealPageSimple: React.FC = () => {
           </select>
         </div>
 
-        {/* Smart Account Search */}
+        {/* Account Search */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Account *
-            <HelpCircle className="w-4 h-4 inline ml-1 text-gray-400" title="The company or organization this deal is with" />
           </label>
           <div className="relative">
             <div className="flex items-center border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent">
@@ -845,7 +839,7 @@ const CreateDealPageSimple: React.FC = () => {
           {errors.accountId && <p className="text-sm text-red-600 mt-1">{errors.accountId}</p>}
         </div>
 
-        {/* Smart Contact Search */}
+        {/* Contact Search */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Primary Contact
@@ -904,7 +898,6 @@ const CreateDealPageSimple: React.FC = () => {
               value={formData.currency}
               onChange={(e) => handleFieldChange('currency', e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              data-testid="currency-select"
             >
               {CURRENCIES.map(currency => (
                 <option key={currency.code} value={currency.code}>
@@ -922,7 +915,6 @@ const CreateDealPageSimple: React.FC = () => {
               }`}
               min="0"
               step="0.01"
-              data-testid="deal-amount"
             />
           </div>
           {errors.amount && <p className="text-sm text-red-600 mt-1">{errors.amount}</p>}
@@ -940,7 +932,6 @@ const CreateDealPageSimple: React.FC = () => {
             className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
               errors.closingDate ? 'border-red-500' : 'border-gray-300'
             }`}
-            data-testid="closing-date"
           />
           {errors.closingDate && <p className="text-sm text-red-600 mt-1">{errors.closingDate}</p>}
         </div>
@@ -958,7 +949,6 @@ const CreateDealPageSimple: React.FC = () => {
               value={formData.probability}
               onChange={(e) => handleFieldChange('probability', parseInt(e.target.value))}
               className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-              data-testid="probability-slider"
             />
             <div className="flex justify-between text-sm text-gray-500">
               <span>0%</span>
@@ -974,56 +964,38 @@ const CreateDealPageSimple: React.FC = () => {
   function renderOwnershipSection() {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Deal Owner */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Deal Owner *
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Deal Owner</label>
           <input
             type="text"
             value={formData.ownerId}
             onChange={(e) => handleFieldChange('ownerId', e.target.value)}
             placeholder="Select deal owner..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            data-testid="deal-owner"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
           />
         </div>
-
-        {/* Deal Type */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Deal Type
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Deal Type</label>
           <select
             value={formData.dealType}
             onChange={(e) => handleFieldChange('dealType', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            data-testid="deal-type-select"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
           >
             {DEAL_TYPES.map(type => (
-              <option key={type.value} value={type.value}>
-                {type.label}
-              </option>
+              <option key={type.value} value={type.value}>{type.label}</option>
             ))}
           </select>
         </div>
-
-        {/* Country */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Country
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Country</label>
           <select
             value={formData.country}
             onChange={(e) => handleFieldChange('country', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            data-testid="country-select"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
           >
             <option value="">Select country...</option>
             {COUNTRIES.map(country => (
-              <option key={country.code} value={country.code}>
-                {country.name}
-              </option>
+              <option key={country.code} value={country.code}>{country.name}</option>
             ))}
           </select>
         </div>
@@ -1034,169 +1006,25 @@ const CreateDealPageSimple: React.FC = () => {
   function renderDetailsSection() {
     return (
       <div className="space-y-6">
-        {/* Description */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Deal Description
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
           <textarea
             value={formData.description}
             onChange={(e) => handleFieldChange('description', e.target.value)}
-            placeholder="Describe the deal opportunity, requirements, and key details..."
+            placeholder="Describe the deal opportunity..."
             rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-            data-testid="deal-description"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg resize-none"
           />
         </div>
-
-        {/* Next Step */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Next Step
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Next Step</label>
           <input
             type="text"
             value={formData.nextStep}
             onChange={(e) => handleFieldChange('nextStep', e.target.value)}
-            placeholder="What's the next action for this deal?"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            data-testid="next-step"
+            placeholder="What's the next action?"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
           />
-        </div>
-
-        {/* Products Section */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Products & Services
-            </label>
-            <button
-              type="button"
-              onClick={addProduct}
-              className="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm flex items-center space-x-1"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add Product</span>
-            </button>
-          </div>
-          
-          {formData.products.length > 0 ? (
-            <div className="space-y-3">
-              {formData.products.map((product, index) => (
-                <div key={product.id} className="bg-gray-50 rounded-lg p-4">
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                    <div className="md:col-span-2">
-                      <input
-                        type="text"
-                        value={product.name}
-                        onChange={(e) => updateProduct(product.id, 'name', e.target.value)}
-                        placeholder="Product name"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                      />
-                    </div>
-                    <div>
-                      <input
-                        type="number"
-                        value={product.quantity}
-                        onChange={(e) => updateProduct(product.id, 'quantity', parseInt(e.target.value))}
-                        placeholder="Qty"
-                        min="1"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                      />
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="number"
-                        value={product.price}
-                        onChange={(e) => updateProduct(product.id, 'price', parseFloat(e.target.value))}
-                        placeholder="Price"
-                        min="0"
-                        step="0.01"
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeProduct(product.id)}
-                        className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-6 bg-gray-50 rounded-lg">
-              <Package className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-              <p className="text-sm text-gray-600">No products added yet</p>
-            </div>
-          )}
-        </div>
-
-        {/* Fee Structure */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Platform Fee
-              <HelpCircle className="w-4 h-4 inline ml-1 text-gray-400" title="Fee for platform usage" />
-            </label>
-            <input
-              type="number"
-              value={formData.platformFee}
-              onChange={(e) => handleFieldChange('platformFee', e.target.value)}
-              placeholder="0.00"
-              min="0"
-              step="0.01"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Custom Fee
-            </label>
-            <input
-              type="number"
-              value={formData.customFee}
-              onChange={(e) => handleFieldChange('customFee', e.target.value)}
-              placeholder="0.00"
-              min="0"
-              step="0.01"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              License Fee
-            </label>
-            <input
-              type="number"
-              value={formData.licenseFee}
-              onChange={(e) => handleFieldChange('licenseFee', e.target.value)}
-              placeholder="0.00"
-              min="0"
-              step="0.01"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Onboarding Fee
-              <HelpCircle className="w-4 h-4 inline ml-1 text-gray-400" title="One-time setup and onboarding fee" />
-            </label>
-            <input
-              type="number"
-              value={formData.onboardingFee}
-              onChange={(e) => handleFieldChange('onboardingFee', e.target.value)}
-              placeholder="0.00"
-              min="0"
-              step="0.01"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
         </div>
       </div>
     );
@@ -1211,7 +1039,7 @@ const CreateDealPageSimple: React.FC = () => {
             <button
               type="button"
               onClick={() => addActivity('call')}
-              className="px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm flex items-center space-x-1"
+              className="px-3 py-1 bg-green-600 text-white rounded-lg text-sm flex items-center space-x-1"
             >
               <Phone className="w-4 h-4" />
               <span>Call</span>
@@ -1219,18 +1047,10 @@ const CreateDealPageSimple: React.FC = () => {
             <button
               type="button"
               onClick={() => addActivity('meeting')}
-              className="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm flex items-center space-x-1"
+              className="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm flex items-center space-x-1"
             >
               <CalendarIcon className="w-4 h-4" />
               <span>Meeting</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => addActivity('email')}
-              className="px-3 py-1 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm flex items-center space-x-1"
-            >
-              <Mail className="w-4 h-4" />
-              <span>Email</span>
             </button>
           </div>
         </div>
@@ -1240,61 +1060,40 @@ const CreateDealPageSimple: React.FC = () => {
             {formData.activities.map((activity, index) => (
               <div key={index} className="bg-gray-50 rounded-lg p-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div>
-                    <input
-                      type="text"
-                      value={activity.title}
-                      onChange={(e) => {
-                        const newActivities = [...formData.activities];
-                        newActivities[index].title = e.target.value;
-                        handleFieldChange('activities', newActivities);
-                      }}
-                      placeholder="Activity title"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    />
-                  </div>
-                  <div>
-                    <input
-                      type="date"
-                      value={activity.dueDate}
-                      onChange={(e) => {
-                        const newActivities = [...formData.activities];
-                        newActivities[index].dueDate = e.target.value;
-                        handleFieldChange('activities', newActivities);
-                      }}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    />
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <select
-                      value={activity.priority}
-                      onChange={(e) => {
-                        const newActivities = [...formData.activities];
-                        newActivities[index].priority = e.target.value;
-                        handleFieldChange('activities', newActivities);
-                      }}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    >
-                      <option value="low">Low</option>
-                      <option value="medium">Medium</option>
-                      <option value="high">High</option>
-                    </select>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const newActivities = formData.activities.filter((_, i) => i !== index);
-                        handleFieldChange('activities', newActivities);
-                      }}
-                      className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
-                    >
-                      ×
-                    </button>
-                  </div>
-                </div>
-                <div className="mt-2 flex items-center space-x-2 text-xs text-gray-600">
-                  <span className="capitalize">{activity.type}</span>
-                  <span>•</span>
-                  <span className="capitalize">{activity.priority} priority</span>
+                  <input
+                    type="text"
+                    value={activity.title}
+                    onChange={(e) => {
+                      const newActivities = [...formData.activities];
+                      newActivities[index].title = e.target.value;
+                      handleFieldChange('activities', newActivities);
+                    }}
+                    placeholder="Activity title"
+                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  />
+                  <input
+                    type="date"
+                    value={activity.dueDate}
+                    onChange={(e) => {
+                      const newActivities = [...formData.activities];
+                      newActivities[index].dueDate = e.target.value;
+                      handleFieldChange('activities', newActivities);
+                    }}
+                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  />
+                  <select
+                    value={activity.priority}
+                    onChange={(e) => {
+                      const newActivities = [...formData.activities];
+                      newActivities[index].priority = e.target.value;
+                      handleFieldChange('activities', newActivities);
+                    }}
+                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
                 </div>
               </div>
             ))}
@@ -1303,223 +1102,11 @@ const CreateDealPageSimple: React.FC = () => {
           <div className="text-center py-6 bg-gray-50 rounded-lg">
             <Activity className="w-8 h-8 text-gray-400 mx-auto mb-2" />
             <p className="text-sm text-gray-600">No activities scheduled yet</p>
-            <p className="text-xs text-gray-500 mt-1">Add follow-up activities to keep your deal moving</p>
           </div>
         )}
       </div>
     );
   }
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => handleFieldChange('name', e.target.value)}
-                    placeholder="e.g. Acme Corp - Enterprise License"
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.name ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    data-testid="deal-name"
-                  />
-                  {errors.name && <p className="text-sm text-red-600 mt-1">{errors.name}</p>}
-                </div>
-
-                {/* Account */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Account *
-                  </label>
-                  <select
-                    value={formData.accountId}
-                    onChange={(e) => handleFieldChange('accountId', e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.accountId ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    data-testid="account-select"
-                  >
-                    <option value="">Select an account...</option>
-                    {accounts.map((account: any) => (
-                      <option key={account.id} value={account.id}>
-                        {account.name}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.accountId && <p className="text-sm text-red-600 mt-1">{errors.accountId}</p>}
-                </div>
-
-                {/* Contact */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Primary Contact
-                  </label>
-                  <select
-                    value={formData.contactId}
-                    onChange={(e) => handleFieldChange('contactId', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    data-testid="contact-select"
-                  >
-                    <option value="">Select a contact...</option>
-                    {contacts.map((contact: any) => (
-                      <option key={contact.id} value={contact.id}>
-                        {contact.firstName} {contact.lastName}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Amount */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Deal Value *
-                  </label>
-                  <div className="flex space-x-2">
-                    <select
-                      value={formData.currency}
-                      onChange={(e) => handleFieldChange('currency', e.target.value)}
-                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      data-testid="currency-select"
-                    >
-                      <option value="USD">$ USD</option>
-                      <option value="EUR">€ EUR</option>
-                      <option value="GBP">£ GBP</option>
-                    </select>
-                    <input
-                      type="number"
-                      value={formData.amount}
-                      onChange={(e) => handleFieldChange('amount', e.target.value)}
-                      placeholder="0.00"
-                      className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                        errors.amount ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                      min="0"
-                      step="0.01"
-                      data-testid="deal-amount"
-                    />
-                  </div>
-                  {errors.amount && <p className="text-sm text-red-600 mt-1">{errors.amount}</p>}
-                </div>
-
-                {/* Closing Date */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Expected Closing Date *
-                  </label>
-                  <input
-                    type="date"
-                    value={formData.closingDate}
-                    onChange={(e) => handleFieldChange('closingDate', e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.closingDate ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    data-testid="closing-date"
-                  />
-                  {errors.closingDate && <p className="text-sm text-red-600 mt-1">{errors.closingDate}</p>}
-                </div>
-
-                {/* Stage */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Deal Stage
-                  </label>
-                  <select
-                    value={formData.stage}
-                    onChange={(e) => {
-                      handleFieldChange('stage', e.target.value);
-                      const stage = DEAL_STAGES.find(s => s.id === e.target.value);
-                      if (stage) {
-                        handleFieldChange('probability', stage.probability);
-                      }
-                    }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    data-testid="deal-stage"
-                  >
-                    {DEAL_STAGES.map(stage => (
-                      <option key={stage.id} value={stage.id}>
-                        {stage.title} ({stage.probability}% probability)
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Probability */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Win Probability: {formData.probability}%
-                  </label>
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={formData.probability}
-                    onChange={(e) => handleFieldChange('probability', parseInt(e.target.value))}
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                    data-testid="probability-slider"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Description */}
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
-                <DollarSign className="w-5 h-5 mr-2 text-green-600" />
-                Deal Details
-              </h2>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Description
-                </label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => handleFieldChange('description', e.target.value)}
-                  placeholder="Describe the deal details, requirements, and opportunity..."
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                  data-testid="deal-description"
-                />
-              </div>
-            </div>
-
-            {/* Error Message */}
-            {errors.submit && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <p className="text-red-700 text-sm">{errors.submit}</p>
-              </div>
-            )}
-
-            {/* Submit Buttons */}
-            <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
-              <button
-                type="button"
-                onClick={() => setLocation('/crm/deals')}
-                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-                data-testid="cancel-button"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={createDealMutation.isPending}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 transition-colors"
-                data-testid="create-deal-button"
-              >
-                {createDealMutation.isPending ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    <span>Creating...</span>
-                  </>
-                ) : (
-                  <>
-                    <Zap className="w-4 h-4" />
-                    <span>Create Deal</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
-        </motion.div>
-      </div>
-    </div>
-  );
 };
 
-export default CreateDealPageSimple;
+export default CreateDealPageFixed;
