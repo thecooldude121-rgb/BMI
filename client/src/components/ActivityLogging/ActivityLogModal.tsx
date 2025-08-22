@@ -205,13 +205,13 @@ const ActivityLogModal: React.FC<ActivityLogModalProps> = ({
                 <select
                   value={formData.relatedEntityType}
                   onChange={(e) => handleInputChange('relatedEntityType', e.target.value)}
-                  className="px-2 py-1 text-xs border border-gray-300 rounded bg-gradient-to-b from-white to-gray-50 shadow-sm hover:shadow-md transition-shadow appearance-none cursor-pointer min-w-[80px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="px-3 py-2 text-sm border border-gray-300 rounded-md bg-gradient-to-b from-white to-gray-50 shadow-sm hover:shadow-md transition-shadow appearance-none cursor-pointer min-w-[100px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   style={{
                     backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%23666' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>")`,
                     backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'right 6px center',
-                    backgroundSize: '8px',
-                    paddingRight: '20px'
+                    backgroundPosition: 'right 8px center',
+                    backgroundSize: '10px',
+                    paddingRight: '28px'
                   }}
                 >
                   <option value="deal">Deal</option>
