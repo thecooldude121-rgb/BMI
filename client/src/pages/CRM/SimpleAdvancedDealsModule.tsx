@@ -1134,6 +1134,7 @@ export default function SimpleAdvancedDealsModule() {
               </div>
             )}
           </div>
+          </div>
 
           <div className="flex items-center space-x-2">
             {/* Compact View Toggle (only visible in Kanban mode) */}
