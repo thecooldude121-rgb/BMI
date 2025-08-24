@@ -853,7 +853,7 @@ export default function SimpleAdvancedDealsModule() {
   return (
     <div className="h-full bg-white">
       {/* Header */}
-      <div className="border-b px-6 py-4">
+      <div className="sticky top-0 z-10 bg-white border-b px-6 py-4 shadow-sm">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">Advanced Deals Pipeline</h1>
