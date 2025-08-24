@@ -1004,19 +1004,59 @@ const CreateDealPageFixed: React.FC = () => {
                 />
                 <span className="text-lg font-bold text-blue-600">%</span>
               </div>
-              <div className="flex-1">
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={formData.probability}
-                  onChange={(e) => handleFieldChange('probability', parseInt(e.target.value))}
-                  className="w-full h-3 bg-gradient-to-r from-red-200 via-yellow-200 to-green-200 rounded-full appearance-none cursor-pointer slider-thumb"
-                  style={{
-                    background: `linear-gradient(to right, #ef4444 0%, #f59e0b 50%, #10b981 100%)`
-                  }}
-                  data-testid="probability-slider"
-                />
+              <div className="flex-1 relative px-2">
+                <div className="relative">
+                  {/* Track Background */}
+                  <div className="w-full h-2 bg-gray-200 rounded-full shadow-inner">
+                    <div 
+                      className="h-full rounded-full transition-all duration-300 ease-out shadow-sm"
+                      style={{ 
+                        width: `${formData.probability}%`,
+                        background: formData.probability <= 25 
+                          ? 'linear-gradient(90deg, #ef4444, #f87171)' 
+                          : formData.probability <= 50 
+                          ? 'linear-gradient(90deg, #f59e0b, #fbbf24)' 
+                          : formData.probability <= 75 
+                          ? 'linear-gradient(90deg, #84cc16, #a3e635)' 
+                          : 'linear-gradient(90deg, #10b981, #34d399)'
+                      }}
+                    />
+                  </div>
+                  
+                  {/* Custom Slider */}
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={formData.probability}
+                    onChange={(e) => handleFieldChange('probability', parseInt(e.target.value))}
+                    className="absolute top-0 left-0 w-full h-2 opacity-0 cursor-pointer"
+                    data-testid="probability-slider"
+                  />
+                  
+                  {/* Custom Thumb */}
+                  <div 
+                    className="absolute top-1/2 w-5 h-5 bg-white border-3 border-gray-300 rounded-full shadow-lg transform -translate-y-1/2 -translate-x-1/2 transition-all duration-200 hover:scale-110 hover:border-blue-400 hover:shadow-xl"
+                    style={{ 
+                      left: `${formData.probability}%`,
+                      borderColor: formData.probability <= 25 
+                        ? '#ef4444' 
+                        : formData.probability <= 50 
+                        ? '#f59e0b' 
+                        : formData.probability <= 75 
+                        ? '#84cc16' 
+                        : '#10b981'
+                    }}
+                  />
+                </div>
+                
+                {/* Value Indicator */}
+                <div 
+                  className="absolute -top-8 transform -translate-x-1/2 px-2 py-1 bg-gray-800 text-white text-xs rounded-md shadow-lg opacity-0 hover:opacity-100 transition-opacity duration-200 pointer-events-none"
+                  style={{ left: `${formData.probability}%` }}
+                >
+                  {formData.probability}%
+                </div>
               </div>
             </div>
             <div className="flex justify-between text-sm font-medium">
