@@ -14,7 +14,7 @@ import WorkingAccountDetail from './WorkingAccountDetail';
 import AccountHealthDashboard from './AccountHealthDashboard';
 import SimpleAdvancedDealsModule from './SimpleAdvancedDealsModule';
 import DealDetailView from './DealDetailView';
-import EnhancedDealDetailPage from './EnhancedDealDetailPage';
+import EnhancedDealDetailPageWorking from './EnhancedDealDetailPageWorking';
 import NextGenActivitiesModule from './NextGenActivitiesModule';
 import WorkingActivitiesPage from './WorkingActivitiesPage';
 import DiagnosticPage from './DiagnosticPage';
@@ -40,7 +40,7 @@ const CRMModule = () => {
         <Route path="/crm/accounts">
           <NextGenAccountsModule />
         </Route>
-        <Route path="/crm/deals/enhanced/:id" component={() => import('./EnhancedDealDetailPageWorking')} />
+        <Route path="/crm/deals/enhanced/:id" component={EnhancedDealDetailPageWorking} />
         <Route path="/crm/deals/:id" component={DealDetailView} />
         <Route path="/crm/deals">
           <SimpleAdvancedDealsModule />
