@@ -1299,7 +1299,7 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                 </div>
                 
                 {/* Main Content Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-3">
               {/* Left Column - 3/5 width */}
               <div className="lg:col-span-3 space-y-0">
                 {/* Deal Summary Block */}
