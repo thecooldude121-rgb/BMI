@@ -1218,6 +1218,5 @@ export default function SimpleAdvancedDealsModule() {
         </div>
       </div>
     </div>
-    </div>
   );
 }
