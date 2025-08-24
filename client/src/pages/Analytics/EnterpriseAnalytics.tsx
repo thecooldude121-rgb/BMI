@@ -2144,20 +2144,9 @@ const EnterpriseAnalytics: React.FC = () => {
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Filters:</span>
               </div>
               
-              {/* Filter chips would go here */}
+              {/* Dynamic filter chips container - cleared static filters */}
               <div className="flex items-center space-x-2">
-                <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full text-sm flex items-center">
-                  All Accounts
-                  <button className="ml-2 hover:bg-blue-200 dark:hover:bg-blue-800/30 rounded-full p-0.5">
-                    <XCircle className="w-3 h-3" />
-                  </button>
-                </span>
-                <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded-full text-sm flex items-center">
-                  Active Deals
-                  <button className="ml-2 hover:bg-green-200 dark:hover:bg-green-800/30 rounded-full p-0.5">
-                    <XCircle className="w-3 h-3" />
-                  </button>
-                </span>
+                {/* Only dynamically applied filters will show here */}
               </div>
             </div>
 
