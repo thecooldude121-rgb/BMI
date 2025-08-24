@@ -853,8 +853,8 @@ export default function SimpleAdvancedDealsModule() {
   return (
     <div className="h-full bg-white">
       {/* Header */}
-      <div className="border-b px-6 py-4">
-        <div className="sticky top-0 z-10 bg-white pb-4 flex items-center justify-between">
+      <div className="sticky top-0 z-10 bg-white border-b px-6 py-4 shadow-sm">
+        <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">Advanced Deals Pipeline</h1>
             <p className="text-gray-600">Next-generation deal management</p>
@@ -938,9 +938,11 @@ export default function SimpleAdvancedDealsModule() {
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Advanced Analytics Dashboard */}
-        <div className="mt-4 grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
+      {/* Advanced Analytics Dashboard */}
+      <div className="px-6 py-4 border-b border-gray-200">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
           <div className="bg-blue-50 p-4 rounded-lg">
             <div className="text-2xl font-bold text-blue-600">{deals.length}</div>
             <div className="text-sm text-blue-600">Total Deals</div>
