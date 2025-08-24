@@ -883,11 +883,16 @@ export default function SimpleAdvancedDealsModule() {
                       </button>
 
                       <button
-                        className="w-full px-4 py-3 text-left flex items-center space-x-3 hover:bg-gray-50 transition-colors text-gray-400 cursor-not-allowed"
-                        disabled
+                        className={`w-full px-4 py-3 text-left flex items-center space-x-3 hover:bg-gray-50 transition-colors ${
+                          viewMode === 'table' ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
+                        }`}
+                        onClick={() => {
+                          setViewMode('table');
+                          setShowViewDropdown(false);
+                        }}
                       >
-                        <PieChart className="w-4 h-4" />
-                        <span className="font-medium">Chart View</span>
+                        <Table className="w-4 h-4" />
+                        <span className="font-medium">Table View</span>
                       </button>
 
                       <div className="px-4 py-2 border-t border-gray-100 mt-2">
@@ -901,27 +906,7 @@ export default function SimpleAdvancedDealsModule() {
                           <Layers className="w-4 h-4" />
                           <span className="font-medium">Custom List View</span>
                         </button>
-                        <button
-                          className="w-full px-4 py-2 text-left flex items-center space-x-3 hover:bg-gray-50 transition-colors text-gray-400 cursor-not-allowed"
-                          disabled
-                        >
-                          <Grid3x3 className="w-4 h-4" />
-                          <span className="font-medium">Tile View</span>
-                        </button>
                       </div>
-
-                      <button
-                        className={`w-full px-4 py-3 text-left flex items-center space-x-3 hover:bg-gray-50 transition-colors border-t border-gray-100 ${
-                          viewMode === 'table' ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
-                        }`}
-                        onClick={() => {
-                          setViewMode('table');
-                          setShowViewDropdown(false);
-                        }}
-                      >
-                        <Table className="w-4 h-4" />
-                        <span className="font-medium">Table View</span>
-                      </button>
                     </div>
                   </div>
                 )}
