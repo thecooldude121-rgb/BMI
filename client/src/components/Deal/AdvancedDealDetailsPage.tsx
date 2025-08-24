@@ -1299,8 +1299,8 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                 </div>
                 
                 {/* Main Content Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Left Column - 2/3 width */}
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+              {/* Left Column - Reduced width */}
               <div className="lg:col-span-2 space-y-0">
                 {/* Deal Summary Block */}
                 <AnimatedCard 
@@ -1735,8 +1735,8 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                 </AnimatedCard>
               </div>
 
-              {/* Right Column - 1/3 width */}
-              <div className="space-y-0 pl-2">
+              {/* Right Column - Expanded width */}
+              <div className="lg:col-span-3 space-y-0 pl-2">
                 {/* Quick Actions */}
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-3">
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">Quick Actions</h3>
