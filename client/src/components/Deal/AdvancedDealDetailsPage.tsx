@@ -5,6 +5,7 @@ import { apiRequest } from '@/lib/queryClient';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useActivitiesSync } from '../../hooks/useActivitiesSync';
 import ActivityLogModal from '../ActivityLogging/ActivityLogModal';
+import FilesDocumentsSection from './FilesDocumentsSection';
 import { 
   ArrowLeft, Edit2, Save, X, Plus, Mail, Phone, Globe, Building,
   Calendar, DollarSign, User, Target, Clock, FileText, Paperclip,
@@ -2236,15 +2237,7 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
       
       {activeTab === 'files' && (
         <AnimatedTabContent tabKey="files" isActive={true}>
-          <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
-                <FileText className="h-5 w-5 mr-2 text-purple-600" />
-                Files & Documents Tab Content
-              </h3>
-              <p>Files content will be implemented here...</p>
-            </div>
-          </div>
+          <FilesDocumentsSection dealId={deal?.id || dealId} />
         </AnimatedTabContent>
       )}
       
