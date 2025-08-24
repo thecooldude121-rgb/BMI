@@ -999,6 +999,7 @@ export default function SimpleAdvancedDealsModule() {
           </div>
         </div>
       </div>
+      </div>
 
       {/* Scrollable Content Section */}
       <div className="flex-1 overflow-auto">
