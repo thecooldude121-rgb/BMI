@@ -2202,8 +2202,8 @@ const EnterpriseAnalytics: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Content - Proper spacing below fixed header */}
-      <div className="pl-6 pr-8 pb-8" style={{ paddingTop: '240px' }}>
+      {/* Main Content - Minimal 5% gap below fixed header */}
+      <div className="pl-6 pr-8 pb-8" style={{ paddingTop: '160px' }}>
         {/* AI Intelligence Section - Positioned immediately below header */}
         {aiInsights.length > 0 && !isLoading && (
           <div className="mb-8">
