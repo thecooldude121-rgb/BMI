@@ -4240,8 +4240,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
           version: 1,
           uploadedBy: 'John Doe',
           uploadedAt: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
           category: 'legal',
-          tags: ['contract', 'important']
+          tags: ['contract', 'important'],
+          description: 'Main contract document for the deal',
+          type: 'contract',
+          signatureStatus: 'pending'
+        },
+        {
+          id: '2',
+          name: 'Proposal.docx',
+          mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          fileSize: 2048000,
+          version: 2,
+          uploadedBy: 'Jane Smith',
+          uploadedAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+          createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+          category: 'sales',
+          tags: ['proposal', 'pricing'],
+          description: 'Initial proposal document with pricing',
+          type: 'proposal',
+          signatureStatus: 'not_required'
         }
       ];
       res.json(mockDocuments);
