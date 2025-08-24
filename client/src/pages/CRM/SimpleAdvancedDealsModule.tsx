@@ -1055,7 +1055,7 @@ export default function SimpleAdvancedDealsModule() {
       </div>
 
       {/* Scrollable Content Section - Add top padding to account for fixed header */}
-      <div className="flex-1 overflow-auto" style={{ paddingTop: '300px' }}>
+      <div className="flex-1 overflow-auto" style={{ paddingTop: '380px' }}>
         {/* AI-Powered Quick Insights */}
         <div className="px-6 py-4">
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 mb-4">
