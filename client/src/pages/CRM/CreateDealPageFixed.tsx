@@ -467,7 +467,7 @@ const CreateDealPageFixed: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/20">
       {/* Header */}
-      <div className="sticky top-0 bg-white/80 backdrop-blur-sm border-b border-gray-200 px-8 py-5 shadow-sm z-50">
+      <div className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md border-b border-gray-200 px-8 py-5 shadow-lg z-50">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
@@ -525,7 +525,7 @@ const CreateDealPageFixed: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex gap-8 max-w-full px-8 pb-8">
+      <div className="flex gap-8 max-w-full px-8 pb-8 pt-24">
         {/* Main Form Content - Full Width */}
         <div className="flex-1 min-w-0">
           {/* Section Navigation */}
