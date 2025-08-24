@@ -783,21 +783,48 @@ export default function SimpleAdvancedDealsModule() {
                 <h1 className="text-2xl font-bold">Advanced Deals Pipeline</h1>
                 <p className="text-gray-600">Next-generation deal management</p>
               </div>
-              <button className="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 flex items-center space-x-2">
-                <Filter className="w-4 h-4" />
-                <span>Filters</span>
+              <button className="p-3 rounded-lg text-sm flex items-center justify-center transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]" 
+                style={{
+                  background: 'linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%)',
+                  boxShadow: 'inset 0 1px 2px rgba(255, 255, 255, 0.8), inset 0 -1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05)',
+                  border: '1px solid rgba(203, 213, 225, 0.6)',
+                }}
+                onMouseDown={(e) => e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.1)'}
+                onMouseUp={(e) => e.currentTarget.style.boxShadow = 'inset 0 1px 2px rgba(255, 255, 255, 0.8), inset 0 -1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05)'}
+                onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'inset 0 1px 2px rgba(255, 255, 255, 0.8), inset 0 -1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05)'}
+                title="Filters"
+              >
+                <Filter className="w-4 h-4 text-gray-600" />
               </button>
             </div>
             <div className="flex items-center space-x-3">
               <button 
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium flex items-center space-x-2"
+                className="px-4 py-3 rounded-lg text-sm font-medium flex items-center space-x-2 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                style={{
+                  background: 'linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%)',
+                  boxShadow: 'inset 0 1px 2px rgba(255, 255, 255, 0.8), inset 0 -1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05)',
+                  border: '1px solid rgba(203, 213, 225, 0.6)',
+                  color: '#374151'
+                }}
+                onMouseDown={(e) => e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.1)'}
+                onMouseUp={(e) => e.currentTarget.style.boxShadow = 'inset 0 1px 2px rgba(255, 255, 255, 0.8), inset 0 -1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05)'}
+                onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'inset 0 1px 2px rgba(255, 255, 255, 0.8), inset 0 -1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05)'}
                 onClick={() => alert('Advanced Analytics Dashboard - Coming Soon!\n\n• Deal Velocity Analysis\n• Revenue Forecasting\n• Conversion Funnel\n• Performance Trends\n• AI Insights')}
               >
                 <BarChart3 className="w-4 h-4" />
                 <span>Analytics</span>
               </button>
               <button 
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium flex items-center space-x-2"
+                className="px-4 py-3 rounded-lg text-sm font-medium flex items-center space-x-2 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                style={{
+                  background: 'linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%)',
+                  boxShadow: 'inset 0 1px 2px rgba(255, 255, 255, 0.8), inset 0 -1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05)',
+                  border: '1px solid rgba(203, 213, 225, 0.6)',
+                  color: '#374151'
+                }}
+                onMouseDown={(e) => e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.1)'}
+                onMouseUp={(e) => e.currentTarget.style.boxShadow = 'inset 0 1px 2px rgba(255, 255, 255, 0.8), inset 0 -1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05)'}
+                onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'inset 0 1px 2px rgba(255, 255, 255, 0.8), inset 0 -1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05)'}
                 onClick={() => alert('Pipeline Configuration - Coming Soon!\n\n• Custom Deal Stages\n• Probability Settings\n• Health Score Rules\n• Automation Triggers\n• Field Mapping')}
               >
                 <Settings className="w-4 h-4" />
@@ -807,17 +834,22 @@ export default function SimpleAdvancedDealsModule() {
               {/* View Mode Dropdown */}
               <div className="relative" ref={viewDropdownRef}>
                 <button
-                  className="flex items-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700"
+                  className="flex items-center space-x-2 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                  style={{
+                    background: 'linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%)',
+                    boxShadow: 'inset 0 1px 2px rgba(255, 255, 255, 0.8), inset 0 -1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05)',
+                    border: '1px solid rgba(203, 213, 225, 0.6)',
+                    color: '#374151'
+                  }}
+                  onMouseDown={(e) => e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.1)'}
+                  onMouseUp={(e) => e.currentTarget.style.boxShadow = 'inset 0 1px 2px rgba(255, 255, 255, 0.8), inset 0 -1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05)'}
+                  onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'inset 0 1px 2px rgba(255, 255, 255, 0.8), inset 0 -1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05)'}
                   onClick={() => setShowViewDropdown(!showViewDropdown)}
+                  title={`Current View: ${viewMode === 'kanban' ? 'Kanban' : viewMode === 'list' ? 'Cards' : 'Table'}`}
                 >
                   {viewMode === 'kanban' && <LayoutGrid className="w-4 h-4" />}
                   {viewMode === 'list' && <Grid3x3 className="w-4 h-4" />}
                   {viewMode === 'table' && <Table className="w-4 h-4" />}
-                  <span>
-                    {viewMode === 'kanban' && 'Kanban'}
-                    {viewMode === 'list' && 'Cards'}
-                    {viewMode === 'table' && 'Table'}
-                  </span>
                   <ChevronDown className="w-4 h-4" />
                 </button>
 
@@ -898,7 +930,16 @@ export default function SimpleAdvancedDealsModule() {
               {/* Actions Dropdown */}
               <div className="relative">
                 <button 
-                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium flex items-center space-x-2"
+                  className="px-4 py-3 rounded-lg text-sm font-medium flex items-center space-x-2 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                  style={{
+                    background: 'linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%)',
+                    boxShadow: 'inset 0 1px 2px rgba(255, 255, 255, 0.8), inset 0 -1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05)',
+                    border: '1px solid rgba(203, 213, 225, 0.6)',
+                    color: '#374151'
+                  }}
+                  onMouseDown={(e) => e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.1)'}
+                  onMouseUp={(e) => e.currentTarget.style.boxShadow = 'inset 0 1px 2px rgba(255, 255, 255, 0.8), inset 0 -1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05)'}
+                  onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'inset 0 1px 2px rgba(255, 255, 255, 0.8), inset 0 -1px 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05)'}
                   onClick={() => setShowActionsDropdown(!showActionsDropdown)}
                 >
                   <span>Actions</span>
@@ -950,7 +991,16 @@ export default function SimpleAdvancedDealsModule() {
               </div>
 
               <button 
-                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium flex items-center"
+                className="px-4 py-3 rounded-lg text-sm font-medium flex items-center transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                style={{
+                  background: 'linear-gradient(145deg, #3b82f6 0%, #2563eb 100%)',
+                  boxShadow: 'inset 0 1px 2px rgba(255, 255, 255, 0.3), inset 0 -1px 2px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1)',
+                  border: '1px solid rgba(37, 99, 235, 0.8)',
+                  color: 'white'
+                }}
+                onMouseDown={(e) => e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1)'}
+                onMouseUp={(e) => e.currentTarget.style.boxShadow = 'inset 0 1px 2px rgba(255, 255, 255, 0.3), inset 0 -1px 2px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1)'}
+                onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'inset 0 1px 2px rgba(255, 255, 255, 0.3), inset 0 -1px 2px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1)'}
                 onClick={() => window.location.href = '/crm/deals/new'}
               >
                 <Plus className="w-4 h-4 mr-2" />
