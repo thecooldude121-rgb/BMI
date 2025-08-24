@@ -123,6 +123,7 @@ const EnterpriseAnalytics: React.FC = () => {
     retry: 3
   });
 
+
   // Enhanced state management for next-level features - CRITICAL FIX: Initialize KPI Cards
   const [dashboardLayout, setDashboardLayout] = useState<DashboardWidget[]>([
     {
@@ -523,6 +524,21 @@ const EnterpriseAnalytics: React.FC = () => {
     };
   };
 
+
+  // Add funnel chart click handlers - CRITICAL FIX
+  const handleFunnelStageClick = (stage: string, value: number) => {
+    console.log(`Clicked funnel stage: ${stage} with value: ${value}`);
+    setNotifications(prev => [...prev, {
+      id: Date.now(),
+      type: 'info',
+      message: `Drilling down into ${stage} stage with ${value} records`,
+      timestamp: new Date()
+    }]);
+    
+    // Set drill-down path for detailed analysis
+    setDrillDownPath(prev => [...prev, stage]);
+  };
+
   // Natural language query processing
   const handleNaturalQuery = useCallback(async (query: string) => {
     if (!query.trim()) return;
@@ -759,6 +775,28 @@ const EnterpriseAnalytics: React.FC = () => {
         handleNaturalQuery(command.command);
     }
   };
+
+  // Initialize voice recognition after function definitions - CRITICAL FIX
+  useEffect(() => {
+    initializeVoiceRecognition();
+    
+    // Notify user that voice system is ready
+    const timer = setTimeout(() => {
+      setNotifications(prev => [...prev, {
+        id: Date.now(),
+        type: 'success',
+        message: 'Voice recognition ready! Click microphone to activate.',
+        timestamp: new Date()
+      }]);
+    }, 2000);
+
+    return () => {
+      clearTimeout(timer);
+      if (voiceRecognitionRef.current) {
+        voiceRecognitionRef.current.stop();
+      }
+    };
+  }, [initializeVoiceRecognition]);
 
   // Advanced Gesture Recognition for Mobile
   const initializeGestureRecognition = useCallback(() => {
@@ -1100,7 +1138,11 @@ const EnterpriseAnalytics: React.FC = () => {
   const calculateFilterPreview = useCallback((filters: any[]) => {
     if (filters.length === 0) return null;
     
-    let filteredData = [...(deals || []), ...(accounts || []), ...(leads || [])];
+    let filteredData = [
+      ...(Array.isArray(deals) ? deals : []), 
+      ...(Array.isArray(accounts) ? accounts : []), 
+      ...(Array.isArray(leads) ? leads : [])
+    ];
     
     filters.forEach(filter => {
       if (filter.category === 'Deal' && deals) {
@@ -1792,7 +1834,18 @@ const EnterpriseAnalytics: React.FC = () => {
     </div>
   );
 
-  // Original KPI Card Renderer
+  // Fixed KPI Card Renderer with Click Handlers
+  const handleKPICardClick = (widget: DashboardWidget) => {
+    console.log(`Clicked KPI: ${widget.title}`);
+    setNotifications(prev => [...prev, {
+      id: Date.now(),
+      type: 'info',
+      message: `Drilling down into ${widget.title} analytics`,
+      timestamp: new Date()
+    }]);
+    // Additional drill-down logic can be added here
+  };
+
   const renderKPICard = (widget: DashboardWidget) => {
     const value = metrics[widget.config.metric as keyof typeof metrics];
     const formattedValue = widget.config.format === 'currency' ? 
@@ -1802,9 +1855,11 @@ const EnterpriseAnalytics: React.FC = () => {
       (value as number)?.toLocaleString();
 
     return (
-      <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 ${
-        widget.voiceEnabled && isVoiceActive ? 'ring-2 ring-blue-500' : ''
-      }`}>
+      <div 
+        onClick={() => handleKPICardClick(widget)}
+        className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 ${
+          widget.voiceEnabled && isVoiceActive ? 'ring-2 ring-blue-500' : ''
+        }`}>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white">{widget.title}</h3>
           <div className="flex items-center space-x-2">
@@ -1985,10 +2040,26 @@ const EnterpriseAnalytics: React.FC = () => {
                 >
                   <Settings className="w-5 h-5" />
                 </button>
+
+                {/* Add Filter Button */}
+                <button
+                  onClick={() => setShowFilterModal(true)}
+                  className="flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                  title="Add Filter"
+                >
+                  <Filter className="w-4 h-4 mr-2" />
+                  Filter
+                </button>
                 
                 <div className="relative">
                   <button
-                    onClick={() => document.getElementById('export-menu')?.classList.toggle('hidden')}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const menu = document.getElementById('export-menu');
+                      if (menu) {
+                        menu.classList.toggle('hidden');
+                      }
+                    }}
                     disabled={exportLoading}
                     className="flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
                   >
