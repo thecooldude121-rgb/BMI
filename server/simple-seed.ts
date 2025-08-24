@@ -6,6 +6,13 @@ export async function seedVariedCRMData() {
   try {
     console.log("🌱 Starting varied CRM data seeding (10 records per module)...");
 
+    // Check if data already exists to prevent duplication
+    const existingAccounts = await db.select().from(schema.accounts);
+    if (existingAccounts.length > 2) {
+      console.log("📊 CRM data already exists, skipping seeding to prevent duplicates");
+      return { accounts: 0, contacts: 0, leads: 0, deals: 0, activities: 0, message: "Data already exists" };
+    }
+
     // Clear existing data first (respecting foreign key constraints)
     await db.delete(schema.meetings);
     await db.delete(schema.activities);
@@ -126,18 +133,23 @@ export async function seedVariedCRMData() {
     }
     console.log(`✅ Created ${leads.length} leads`);
 
-    // Create 10 varied deals
+    // Create 10 varied deals (4 proposal, 4 negotiation, 2 other stages)
     const dealData = [
+      // Proposal stage deals (4)
       { name: "TechCorp Enterprise License", amount: 250000, stage: "proposal", probability: 75, type: "New Business" },
-      { name: "GreenEnergy Solar Integration", amount: 180000, stage: "negotiation", probability: 65, type: "New Business" },
-      { name: "Healthcare Digital Transformation", amount: 320000, stage: "qualification", probability: 40, type: "New Business" },
-      { name: "EduTech Platform Expansion", amount: 95000, stage: "closed-won", probability: 100, type: "Expansion" },
-      { name: "Logistics Optimization Suite", amount: 450000, stage: "qualification", probability: 30, type: "New Business" },
       { name: "Biotech Research Platform", amount: 275000, stage: "proposal", probability: 55, type: "New Business" },
+      { name: "FinTech Security Suite", amount: 220000, stage: "proposal", probability: 70, type: "New Business" },
+      { name: "AgriTech IoT Implementation", amount: 165000, stage: "proposal", probability: 60, type: "New Business" },
+      
+      // Negotiation stage deals (4)
+      { name: "GreenEnergy Solar Integration", amount: 180000, stage: "negotiation", probability: 65, type: "New Business" },
       { name: "Fashion Design Studio Tools", amount: 45000, stage: "negotiation", probability: 80, type: "New Business" },
-      { name: "AgriTech IoT Implementation", amount: 165000, stage: "qualification", probability: 50, type: "New Business" },
-      { name: "MediaStream Content Platform", amount: 380000, stage: "closed-lost", probability: 0, type: "Renewal" },
-      { name: "FinTech Security Suite", amount: 220000, stage: "proposal", probability: 70, type: "New Business" }
+      { name: "Healthcare Digital Transformation", amount: 320000, stage: "negotiation", probability: 70, type: "New Business" },
+      { name: "MediaStream Content Platform", amount: 280000, stage: "negotiation", probability: 85, type: "New Business" },
+      
+      // Other stages (2)
+      { name: "EduTech Platform Expansion", amount: 95000, stage: "closed-won", probability: 100, type: "Expansion" },
+      { name: "Logistics Optimization Suite", amount: 450000, stage: "qualification", probability: 30, type: "New Business" }
     ];
 
     const deals = [];
