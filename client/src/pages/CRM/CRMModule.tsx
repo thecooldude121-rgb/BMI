@@ -40,7 +40,7 @@ const CRMModule = () => {
         <Route path="/crm/accounts">
           <NextGenAccountsModule />
         </Route>
-        <Route path="/crm/deals/enhanced/:id" component={EnhancedDealDetailPage} />
+        <Route path="/crm/deals/enhanced/:id" component={() => import('./EnhancedDealDetailPageWorking')} />
         <Route path="/crm/deals/:id" component={DealDetailView} />
         <Route path="/crm/deals">
           <SimpleAdvancedDealsModule />
