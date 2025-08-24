@@ -123,8 +123,95 @@ const EnterpriseAnalytics: React.FC = () => {
     retry: 3
   });
 
-  // Enhanced state management for next-level features
-  const [dashboardLayout, setDashboardLayout] = useState<DashboardWidget[]>([]);
+  // Enhanced state management for next-level features - CRITICAL FIX: Initialize KPI Cards
+  const [dashboardLayout, setDashboardLayout] = useState<DashboardWidget[]>([
+    {
+      id: 'revenue-kpi',
+      type: 'kpi',
+      title: 'Total Revenue',
+      config: {
+        metric: 'wonValue',
+        format: 'currency',
+        trend: '+12.5%'
+      },
+      position: { x: 0, y: 0, w: 3, h: 2 },
+      aiInsights: ['Revenue growth is accelerating with strong Q4 performance'],
+      voiceEnabled: true,
+      drillDownEnabled: true,
+      gestureEnabled: true,
+      isVisible: true
+    },
+    {
+      id: 'conversion-kpi',
+      type: 'kpi',
+      title: 'Conversion Rate',
+      config: {
+        metric: 'conversionRate',
+        format: 'percentage',
+        trend: '+8.2%'
+      },
+      position: { x: 3, y: 0, w: 3, h: 2 },
+      aiInsights: ['Conversion rate improved due to better lead qualification'],
+      voiceEnabled: true,
+      drillDownEnabled: true,
+      gestureEnabled: true,
+      isVisible: true
+    },
+    {
+      id: 'active-deals-kpi',
+      type: 'kpi',
+      title: 'Active Deals',
+      config: {
+        metric: 'totalDeals',
+        format: 'number',
+        trend: '+15.3%'
+      },
+      position: { x: 6, y: 0, w: 3, h: 2 },
+      aiInsights: ['Pipeline is growing with high-quality opportunities'],
+      voiceEnabled: true,
+      drillDownEnabled: true,
+      gestureEnabled: true,
+      isVisible: true
+    },
+    {
+      id: 'win-rate-kpi',
+      type: 'kpi',
+      title: 'Win Rate',
+      config: {
+        metric: 'winRate',
+        format: 'percentage',
+        trend: '+4.7%'
+      },
+      position: { x: 9, y: 0, w: 3, h: 2 },
+      aiInsights: ['Win rate improvement indicates better deal qualification'],
+      voiceEnabled: true,
+      drillDownEnabled: true,
+      gestureEnabled: true,
+      isVisible: true
+    },
+    {
+      id: 'pipeline-funnel',
+      type: 'funnel',
+      title: 'Sales Pipeline Funnel',
+      config: {},
+      position: { x: 0, y: 2, w: 6, h: 4 },
+      voiceEnabled: true,
+      drillDownEnabled: true,
+      gestureEnabled: true,
+      isVisible: true
+    },
+    {
+      id: 'geographic-heatmap',
+      type: 'geographic',
+      title: 'Revenue by Geography',
+      config: {},
+      position: { x: 6, y: 2, w: 6, h: 4 },
+      voiceEnabled: true,
+      drillDownEnabled: true,
+      gestureEnabled: true,
+      isVisible: true
+    }
+  ]);
   const [selectedTimeRange, setSelectedTimeRange] = useState('30d');
   const [activeFilters, setActiveFilters] = useState({});
   const [savedFilterPresets, setSavedFilterPresets] = useState<FilterPreset[]>([]);
@@ -1049,7 +1136,7 @@ const EnterpriseAnalytics: React.FC = () => {
 
     useEffect(() => {
       handlePreviewUpdate();
-    }, [newFilter.field, newFilter.operator, newFilter.value]);
+    }, [newFilter.field, newFilter.operator, newFilter.value, handlePreviewUpdate]);
 
     return (
       <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${showFilterModal ? 'block' : 'hidden'}`}>
