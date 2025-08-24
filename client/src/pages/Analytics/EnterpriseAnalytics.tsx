@@ -2202,8 +2202,64 @@ const EnterpriseAnalytics: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Content - FIXED: Increased top padding for better header clearance */}
-      <div className="pt-36 px-6 pb-8">
+      {/* Main Content - Enhanced positioning for Intelligence section */}
+      <div className="pt-40 pl-6 pr-8 pb-8">
+        {/* AI Intelligence Section - Positioned immediately below header */}
+        {aiInsights.length > 0 && !isLoading && (
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
+                <Brain className="w-7 h-7 mr-3 text-purple-600" />
+                AI-Powered Intelligence
+              </h2>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
+                  {aiInsights.filter(i => i.priority === 'critical').length} Critical • 
+                  {aiInsights.filter(i => i.priority === 'high').length} High Priority
+                </span>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              {aiInsights.slice(0, 6).map((insight) => (
+                <div key={insight.id} className={`rounded-xl border-l-4 p-6 shadow-sm hover:shadow-lg ${
+                  insight.priority === 'critical' ? 'bg-red-50 dark:bg-red-900/20 border-red-500' :
+                  insight.priority === 'high' ? 'bg-orange-50 dark:bg-orange-900/20 border-orange-500' :
+                  insight.priority === 'medium' ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-500' :
+                  'bg-blue-50 dark:bg-blue-900/20 border-blue-500'
+                } transition-all duration-200`}>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center mb-3">
+                        {insight.type === 'alert' && <AlertCircle className="w-5 h-5 mr-2 text-red-500" />}
+                        {insight.type === 'recommendation' && <Lightbulb className="w-5 h-5 mr-2 text-yellow-500" />}
+                        {insight.type === 'prediction' && <Zap className="w-5 h-5 mr-2 text-purple-500" />}
+                        {insight.type === 'trend' && <TrendingUp className="w-5 h-5 mr-2 text-green-500" />}
+                        <h4 className="font-semibold text-gray-900 dark:text-white text-base">
+                          {insight.title}
+                        </h4>
+                      </div>
+                      <p className="text-sm text-gray-700 dark:text-gray-300 mb-3 leading-relaxed">
+                        {insight.description}
+                      </p>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-gray-500 dark:text-gray-400 font-medium">
+                          Confidence: {insight.confidence}%
+                        </span>
+                        {insight.actionable && (
+                          <button className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors">
+                            Take Action →
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Loading State */}
         {isLoading && (
           <div className="flex items-center justify-center h-64">
@@ -2257,62 +2313,6 @@ const EnterpriseAnalytics: React.FC = () => {
                   Clear Results
                 </button>
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* AI Insights Banner - FIXED: Added proper top margin for Intelligence section */}
-        {aiInsights.length > 0 && !isLoading && (
-          <div className="mb-8 mt-4">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center">
-                <Brain className="w-6 h-6 mr-2 text-purple-600" />
-                AI-Powered Insights
-              </h2>
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  {aiInsights.filter(i => i.priority === 'critical').length} Critical • 
-                  {aiInsights.filter(i => i.priority === 'high').length} High Priority
-                </span>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-              {aiInsights.slice(0, 6).map((insight) => (
-                <div key={insight.id} className={`rounded-lg border-l-4 p-4 ${
-                  insight.priority === 'critical' ? 'bg-red-50 dark:bg-red-900/20 border-red-500' :
-                  insight.priority === 'high' ? 'bg-orange-50 dark:bg-orange-900/20 border-orange-500' :
-                  insight.priority === 'medium' ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-500' :
-                  'bg-blue-50 dark:bg-blue-900/20 border-blue-500'
-                } transition-all hover:shadow-md`}>
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center mb-2">
-                        {insight.type === 'alert' && <AlertCircle className="w-4 h-4 mr-2 text-red-500" />}
-                        {insight.type === 'recommendation' && <Lightbulb className="w-4 h-4 mr-2 text-yellow-500" />}
-                        {insight.type === 'prediction' && <Zap className="w-4 h-4 mr-2 text-purple-500" />}
-                        {insight.type === 'trend' && <TrendingUp className="w-4 h-4 mr-2 text-green-500" />}
-                        <h4 className="font-semibold text-gray-900 dark:text-white text-sm">
-                          {insight.title}
-                        </h4>
-                      </div>
-                      <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
-                        {insight.description}
-                      </p>
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-gray-500 dark:text-gray-400">
-                          Confidence: {insight.confidence}%
-                        </span>
-                        {insight.actionable && (
-                          <button className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
-                            Take Action →
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         )}
