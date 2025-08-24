@@ -977,8 +977,19 @@ const CreateDealPageFixed: React.FC = () => {
                 max="100"
                 value={formData.probability}
                 onChange={(e) => {
-                  const value = Math.min(100, Math.max(0, parseInt(e.target.value) || 0));
+                  let inputValue = e.target.value;
+                  
+                  // Remove leading zeros (e.g., "01" becomes "1", "02" becomes "2")
+                  if (inputValue.length > 1 && inputValue.startsWith('0') && !inputValue.startsWith('0.')) {
+                    inputValue = inputValue.substring(1);
+                  }
+                  
+                  const value = Math.min(100, Math.max(0, parseInt(inputValue) || 0));
                   handleFieldChange('probability', value);
+                }}
+                onFocus={(e) => {
+                  // Select all text when focused, so typing replaces the current value
+                  e.target.select();
                 }}
                 className="w-16 px-2 py-1 border-2 border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-200 text-center font-bold text-blue-600 bg-blue-50"
                 data-testid="probability-label-input"
