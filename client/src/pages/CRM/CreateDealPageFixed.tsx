@@ -969,26 +969,39 @@ const CreateDealPageFixed: React.FC = () => {
         {/* Win Probability */}
         <div className="md:col-span-2 xl:col-span-3">
           <label className="block text-sm font-semibold text-gray-800 mb-4">
-            Win Probability: <span className="text-lg font-bold text-blue-600">{formData.probability}%</span>
+            Win Probability
           </label>
           <div className="space-y-4">
-            <div className="relative">
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={formData.probability}
-                onChange={(e) => handleFieldChange('probability', parseInt(e.target.value))}
-                className="w-full h-3 bg-gradient-to-r from-red-200 via-yellow-200 to-green-200 rounded-full appearance-none cursor-pointer slider-thumb"
-                style={{
-                  background: `linear-gradient(to right, #ef4444 0%, #f59e0b 50%, #10b981 100%)`
-                }}
-              />
-              <div className="absolute top-0 left-0 w-full h-3 rounded-full pointer-events-none">
-                <div 
-                  className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-300"
-                  style={{ width: `${formData.probability}%` }}
-                ></div>
+            {/* Text Input and Slider Row */}
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={formData.probability}
+                  onChange={(e) => {
+                    const value = Math.min(100, Math.max(0, parseInt(e.target.value) || 0));
+                    handleFieldChange('probability', value);
+                  }}
+                  className="w-20 px-3 py-2 border-2 border-gray-200 rounded-lg focus:ring-3 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 text-center font-semibold"
+                  data-testid="probability-input"
+                />
+                <span className="text-lg font-bold text-blue-600">%</span>
+              </div>
+              <div className="flex-1">
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={formData.probability}
+                  onChange={(e) => handleFieldChange('probability', parseInt(e.target.value))}
+                  className="w-full h-3 bg-gradient-to-r from-red-200 via-yellow-200 to-green-200 rounded-full appearance-none cursor-pointer slider-thumb"
+                  style={{
+                    background: `linear-gradient(to right, #ef4444 0%, #f59e0b 50%, #10b981 100%)`
+                  }}
+                  data-testid="probability-slider"
+                />
               </div>
             </div>
             <div className="flex justify-between text-sm font-medium">
