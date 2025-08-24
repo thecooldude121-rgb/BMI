@@ -1222,6 +1222,7 @@ export const meetingFollowUpsRelations = relations(meetingFollowUps, ({ one }) =
   meeting: one(meetings, { fields: [meetingFollowUps.meetingId], references: [meetings.id] }),
 }));
 
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -1482,6 +1483,93 @@ export const insertAccountAuditSchema = createInsertSchema(accountAudit).omit({
   timestamp: true,
 });
 
+// Deal Document Management Tables
+export const dealDocuments = pgTable("deal_documents", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  dealId: uuid("deal_id").references(() => deals.id).notNull(),
+  name: text("name").notNull(),
+  type: text("type").notNull(), // contract, proposal, invoice, presentation, quote, nda, etc.
+  category: text("category").notNull(), // legal, financial, technical, marketing, sales
+  fileUrl: text("file_url").notNull(),
+  fileSize: integer("file_size"), // in bytes
+  mimeType: text("mime_type"),
+  version: integer("version").default(1),
+  description: text("description"),
+  tags: jsonb("tags"), // Array of tags for categorization
+  
+  // Access Control
+  uploadedBy: uuid("uploaded_by").references(() => users.id).notNull(),
+  isPublic: boolean("is_public").default(false),
+  permissions: jsonb("permissions"), // User permissions { userId: 'read'|'edit'|'download' }
+  sharedWith: jsonb("shared_with"), // Array of user IDs with access
+  
+  // E-signature Integration
+  signatureRequired: boolean("signature_required").default(false),
+  signatureStatus: text("signature_status"), // pending, signed, rejected, expired
+  signedBy: uuid("signed_by").references(() => users.id),
+  signedAt: timestamp("signed_at"),
+  signatureProvider: text("signature_provider"), // docusign, adobe_sign, hellosign
+  signatureDocumentId: text("signature_document_id"),
+  signatureRequestId: text("signature_request_id"),
+  
+  // Version Control
+  parentDocumentId: uuid("parent_document_id"),
+  isLatestVersion: boolean("is_latest_version").default(true),
+  versionNotes: text("version_notes"),
+  
+  // File Management
+  isArchived: boolean("is_archived").default(false),
+  expirationDate: timestamp("expiration_date"),
+  lastAccessed: timestamp("last_accessed"),
+  downloadCount: integer("download_count").default(0),
+  
+  // Search and Discovery
+  searchContent: text("search_content"), // Extracted text content for search
+  keywords: jsonb("keywords"), // AI-extracted keywords
+  
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Document Comments/Annotations
+export const documentComments = pgTable("document_comments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  documentId: uuid("document_id").notNull(),
+  userId: uuid("user_id").references(() => users.id).notNull(),
+  comment: text("comment").notNull(),
+  pageNumber: integer("page_number"), // For PDF annotations
+  xPosition: decimal("x_position", { precision: 10, scale: 2 }), // Annotation position
+  yPosition: decimal("y_position", { precision: 10, scale: 2 }), // Annotation position
+  isResolved: boolean("is_resolved").default(false),
+  parentCommentId: uuid("parent_comment_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Document Version History
+export const documentVersions = pgTable("document_versions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  documentId: uuid("document_id").notNull(),
+  version: integer("version").notNull(),
+  fileUrl: text("file_url").notNull(),
+  fileSize: integer("file_size"),
+  uploadedBy: uuid("uploaded_by").references(() => users.id).notNull(),
+  versionNotes: text("version_notes"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+// Document Analytics/Access Log
+export const documentAccessLog = pgTable("document_access_log", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  documentId: uuid("document_id").notNull(),
+  userId: uuid("user_id").references(() => users.id).notNull(),
+  action: text("action").notNull(), // view, download, edit, comment, share
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  duration: integer("duration"), // Time spent viewing (seconds)
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 export type InsertMeeting = z.infer<typeof insertMeetingSchema>;
 export type Meeting = typeof meetings.$inferSelect;
 
@@ -1522,6 +1610,65 @@ export type InsertSalesTarget = z.infer<typeof insertSalesTargetSchema>;
 export type SalesTarget = typeof salesTargets.$inferSelect;
 
 export type InsertAchievement = z.infer<typeof insertAchievementSchema>;
+
+// Deal Documents Types
+export type DealDocument = typeof dealDocuments.$inferSelect;
+export type InsertDealDocument = typeof dealDocuments.$inferInsert;
+export type DocumentComment = typeof documentComments.$inferSelect;
+export type InsertDocumentComment = typeof documentComments.$inferInsert;
+export type DocumentVersion = typeof documentVersions.$inferSelect;
+export type InsertDocumentVersion = typeof documentVersions.$inferInsert;
+export type DocumentAccessLog = typeof documentAccessLog.$inferSelect;
+export type InsertDocumentAccessLog = typeof documentAccessLog.$inferInsert;
+
+// Deal Documents Insert Schemas
+export const insertDealDocumentSchema = createInsertSchema(dealDocuments).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertDocumentCommentSchema = createInsertSchema(documentComments).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertDocumentVersionSchema = createInsertSchema(documentVersions).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertDocumentAccessLogSchema = createInsertSchema(documentAccessLog).omit({
+  id: true,
+  createdAt: true,
+});
+
+// Deal Documents Relations (added at end to avoid initialization issues)
+export const dealDocumentsRelations = relations(dealDocuments, ({ one, many }) => ({
+  deal: one(deals, { fields: [dealDocuments.dealId], references: [deals.id] }),
+  uploadedByUser: one(users, { fields: [dealDocuments.uploadedBy], references: [users.id] }),
+  signedByUser: one(users, { fields: [dealDocuments.signedBy], references: [users.id] }),
+  comments: many(documentComments),
+  versions: many(documentVersions),
+  accessLogs: many(documentAccessLog),
+}));
+
+export const documentCommentsRelations = relations(documentComments, ({ one }) => ({
+  document: one(dealDocuments, { fields: [documentComments.documentId], references: [dealDocuments.id] }),
+  user: one(users, { fields: [documentComments.userId], references: [users.id] }),
+}));
+
+export const documentVersionsRelations = relations(documentVersions, ({ one }) => ({
+  document: one(dealDocuments, { fields: [documentVersions.documentId], references: [dealDocuments.id] }),
+  uploadedByUser: one(users, { fields: [documentVersions.uploadedBy], references: [users.id] }),
+}));
+
+export const documentAccessLogRelations = relations(documentAccessLog, ({ one }) => ({
+  document: one(dealDocuments, { fields: [documentAccessLog.documentId], references: [dealDocuments.id] }),
+  user: one(users, { fields: [documentAccessLog.userId], references: [users.id] }),
+}));
+
 export type Achievement = typeof achievements.$inferSelect;
 
 // Enhanced Lead Types

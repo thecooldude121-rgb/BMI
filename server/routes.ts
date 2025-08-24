@@ -7,6 +7,9 @@ import { aiInsightsService } from "./aiService";
 import { meetingIntelligenceService } from "./meetingIntelligence";
 import { aiGrowthService, AccountAnalysisData } from "./services/aiGrowthService";
 import { generateContextualInsights, type ContextualHelpRequest } from "./ai-insights";
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 
 // Note: HRMS schemas will be added when HRMS module is implemented
 
@@ -4186,6 +4189,110 @@ export async function registerRoutes(app: Express): Promise<Server> {
           latestIntelligence: intelligence.length
         }
       });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Configure multer for file uploads
+  const storage_multer = multer.diskStorage({
+    destination: (req, file, cb) => {
+      const uploadDir = 'uploads/documents';
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+      cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+  });
+
+  const upload = multer({ 
+    storage: storage_multer,
+    limits: {
+      fileSize: 50 * 1024 * 1024 // 50MB limit
+    },
+    fileFilter: (req, file, cb) => {
+      // Allow common document and image types
+      const allowedTypes = /\\.(pdf|doc|docx|xls|xlsx|ppt|pptx|txt|jpg|jpeg|png|gif|bmp|svg)$/i;
+      if (allowedTypes.test(file.originalname)) {
+        cb(null, true);
+      } else {
+        cb(new Error('Invalid file type. Only documents and images are allowed.'));
+      }
+    }
+  });
+
+  // Deal Documents API Routes
+  
+  // Get all documents for a deal
+  app.get("/api/deal-documents/:dealId", async (req, res) => {
+    try {
+      // Mock data for now - replace with actual storage call when implemented
+      const mockDocuments = [
+        {
+          id: '1',
+          name: 'Contract.pdf',
+          mimeType: 'application/pdf',
+          fileSize: 1024000,
+          version: 1,
+          uploadedBy: 'John Doe',
+          uploadedAt: new Date().toISOString(),
+          category: 'legal',
+          tags: ['contract', 'important']
+        }
+      ];
+      res.json(mockDocuments);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Upload new document
+  app.post("/api/deal-documents/upload", upload.single('file'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "No file uploaded" });
+      }
+
+      // Mock response for now
+      const mockDocument = {
+        id: Date.now().toString(),
+        name: req.body.name || req.file.originalname,
+        fileName: req.file.filename,
+        originalName: req.file.originalname,
+        mimeType: req.file.mimetype,
+        fileSize: req.file.size,
+        version: 1,
+        uploadedBy: 'Current User',
+        uploadedAt: new Date().toISOString(),
+        category: req.body.category || 'general',
+        tags: req.body.tags ? JSON.parse(req.body.tags) : []
+      };
+
+      res.status(201).json(mockDocument);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Delete document
+  app.delete("/api/deal-documents/:id", async (req, res) => {
+    try {
+      // Mock deletion for now
+      res.json({ success: true });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Download document
+  app.get("/api/deal-documents/download/:id", async (req, res) => {
+    try {
+      // Mock download for now
+      res.json({ downloadUrl: `/api/files/${req.params.id}` });
     } catch (error) {
       handleError(error, res);
     }
