@@ -174,6 +174,18 @@ const EnterpriseAnalytics: React.FC = () => {
   const [mlModelPerformance, setMlModelPerformance] = useState<any>({});
   const [optimizationSuggestions, setOptimizationSuggestions] = useState<any[]>([]);
   
+  // Filter Modal State - CRITICAL FIX
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [newFilter, setNewFilter] = useState({
+    category: 'Account',
+    field: '',
+    operator: 'equals',
+    value: '',
+    logicOperator: 'AND'
+  });
+  const [appliedFilters, setAppliedFilters] = useState<any[]>([]);
+  const [filterResultsCount, setFilterResultsCount] = useState<number | null>(null);
+  
   // Refs for advanced interactions
   const voiceRecognitionRef = useRef<any>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -932,6 +944,354 @@ const EnterpriseAnalytics: React.FC = () => {
     return `${(value || 0).toFixed(1)}%`;
   };
 
+  // Filter Management Functions - CRITICAL FIX
+  const handleAddFilter = () => {
+    setShowFilterModal(true);
+  };
+
+  const getFieldsForCategory = (category: string) => {
+    const fieldMaps: { [key: string]: { value: string; label: string; type: string }[] } = {
+      'Account': [
+        { value: 'name', label: 'Account Name', type: 'text' },
+        { value: 'industry', label: 'Industry', type: 'text' },
+        { value: 'size', label: 'Company Size', type: 'number' },
+        { value: 'revenue', label: 'Annual Revenue', type: 'number' },
+        { value: 'health_score', label: 'Health Score', type: 'number' }
+      ],
+      'Deal': [
+        { value: 'name', label: 'Deal Name', type: 'text' },
+        { value: 'value', label: 'Deal Value', type: 'number' },
+        { value: 'stage', label: 'Deal Stage', type: 'select' },
+        { value: 'probability', label: 'Win Probability', type: 'number' },
+        { value: 'close_date', label: 'Close Date', type: 'date' }
+      ],
+      'Rep': [
+        { value: 'name', label: 'Rep Name', type: 'text' },
+        { value: 'team', label: 'Team', type: 'text' },
+        { value: 'quota_attainment', label: 'Quota Attainment %', type: 'number' },
+        { value: 'deals_closed', label: 'Deals Closed', type: 'number' }
+      ],
+      'Time': [
+        { value: 'created_at', label: 'Created Date', type: 'date' },
+        { value: 'updated_at', label: 'Updated Date', type: 'date' },
+        { value: 'quarter', label: 'Quarter', type: 'select' },
+        { value: 'month', label: 'Month', type: 'select' }
+      ]
+    };
+    return fieldMaps[category] || [];
+  };
+
+  const getOperatorsForFieldType = (fieldType: string) => {
+    const operatorMaps: { [key: string]: { value: string; label: string }[] } = {
+      'text': [
+        { value: 'equals', label: 'Equals' },
+        { value: 'contains', label: 'Contains' },
+        { value: 'starts_with', label: 'Starts with' },
+        { value: 'not_equals', label: 'Not equals' }
+      ],
+      'number': [
+        { value: 'equals', label: 'Equals' },
+        { value: 'greater_than', label: 'Greater than' },
+        { value: 'less_than', label: 'Less than' },
+        { value: 'between', label: 'Between' }
+      ],
+      'date': [
+        { value: 'equals', label: 'On' },
+        { value: 'after', label: 'After' },
+        { value: 'before', label: 'Before' },
+        { value: 'between', label: 'Between' }
+      ],
+      'select': [
+        { value: 'equals', label: 'Is' },
+        { value: 'not_equals', label: 'Is not' },
+        { value: 'in', label: 'Is one of' }
+      ]
+    };
+    return operatorMaps[fieldType] || operatorMaps['text'];
+  };
+
+  const calculateFilterPreview = useCallback((filters: any[]) => {
+    if (filters.length === 0) return null;
+    
+    let filteredData = [...(deals || []), ...(accounts || []), ...(leads || [])];
+    
+    filters.forEach(filter => {
+      if (filter.category === 'Deal' && deals) {
+        filteredData = filteredData.filter((item: any) => {
+          const value = item[filter.field];
+          switch (filter.operator) {
+            case 'equals': return value === filter.value;
+            case 'contains': return String(value).toLowerCase().includes(filter.value.toLowerCase());
+            case 'greater_than': return Number(value) > Number(filter.value);
+            case 'less_than': return Number(value) < Number(filter.value);
+            default: return true;
+          }
+        });
+      }
+    });
+    
+    return filteredData.length;
+  }, [deals, accounts, leads]);
+
+  // FilterModal Component - CRITICAL FIX
+  const FilterModal = () => {
+    const selectedFields = getFieldsForCategory(newFilter.category);
+    const selectedField = selectedFields.find(f => f.value === newFilter.field);
+    const availableOperators = selectedField ? getOperatorsForFieldType(selectedField.type) : [];
+
+    const handlePreviewUpdate = () => {
+      if (newFilter.field && newFilter.operator && newFilter.value) {
+        const previewFilters = [...appliedFilters, { ...newFilter, id: Date.now() }];
+        const count = calculateFilterPreview(previewFilters);
+        setFilterResultsCount(count);
+      }
+    };
+
+    useEffect(() => {
+      handlePreviewUpdate();
+    }, [newFilter.field, newFilter.operator, newFilter.value]);
+
+    return (
+      <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${showFilterModal ? 'block' : 'hidden'}`}>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
+              <Filter className="w-6 h-6 mr-2 text-blue-500" />
+              Add Filter
+            </h3>
+            <button 
+              onClick={() => setShowFilterModal(false)}
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              data-testid="button-close-filter-modal"
+            >
+              <XCircle className="w-6 h-6" />
+            </button>
+          </div>
+
+          <div className="space-y-6">
+            {/* Filter Category */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Filter Category
+              </label>
+              <select
+                value={newFilter.category}
+                onChange={(e) => setNewFilter({ ...newFilter, category: e.target.value, field: '', value: '' })}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                data-testid="select-filter-category"
+              >
+                <option value="Account">Account</option>
+                <option value="Deal">Deal</option>
+                <option value="Rep">Rep</option>
+                <option value="Time">Time</option>
+              </select>
+            </div>
+
+            {/* Field Selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Field
+              </label>
+              <select
+                value={newFilter.field}
+                onChange={(e) => setNewFilter({ ...newFilter, field: e.target.value, operator: 'equals', value: '' })}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                data-testid="select-filter-field"
+              >
+                <option value="">Select a field</option>
+                {selectedFields.map(field => (
+                  <option key={field.value} value={field.value}>
+                    {field.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Operator Selection */}
+            {newFilter.field && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Operator
+                </label>
+                <select
+                  value={newFilter.operator}
+                  onChange={(e) => setNewFilter({ ...newFilter, operator: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                  data-testid="select-filter-operator"
+                >
+                  {availableOperators.map(op => (
+                    <option key={op.value} value={op.value}>
+                      {op.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* Value Input */}
+            {newFilter.field && newFilter.operator && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Value
+                </label>
+                {selectedField?.type === 'number' ? (
+                  <input
+                    type="number"
+                    value={newFilter.value}
+                    onChange={(e) => setNewFilter({ ...newFilter, value: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter numeric value"
+                    data-testid="input-filter-value"
+                  />
+                ) : selectedField?.type === 'date' ? (
+                  <input
+                    type="date"
+                    value={newFilter.value}
+                    onChange={(e) => setNewFilter({ ...newFilter, value: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                    data-testid="input-filter-date"
+                  />
+                ) : selectedField?.type === 'select' && selectedField.value === 'stage' ? (
+                  <select
+                    value={newFilter.value}
+                    onChange={(e) => setNewFilter({ ...newFilter, value: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                    data-testid="select-filter-stage"
+                  >
+                    <option value="">Select stage</option>
+                    <option value="discovery">Discovery</option>
+                    <option value="qualification">Qualification</option>
+                    <option value="proposal">Proposal</option>
+                    <option value="negotiation">Negotiation</option>
+                    <option value="closed_won">Closed Won</option>
+                    <option value="closed_lost">Closed Lost</option>
+                  </select>
+                ) : (
+                  <input
+                    type="text"
+                    value={newFilter.value}
+                    onChange={(e) => setNewFilter({ ...newFilter, value: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter value"
+                    data-testid="input-filter-text"
+                  />
+                )}
+              </div>
+            )}
+
+            {/* Logic Operator for Multiple Filters */}
+            {appliedFilters.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Combine with existing filters using
+                </label>
+                <div className="flex space-x-4">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="logic"
+                      value="AND"
+                      checked={newFilter.logicOperator === 'AND'}
+                      onChange={(e) => setNewFilter({ ...newFilter, logicOperator: e.target.value })}
+                      className="mr-2"
+                      data-testid="radio-logic-and"
+                    />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">AND</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="logic"
+                      value="OR"
+                      checked={newFilter.logicOperator === 'OR'}
+                      onChange={(e) => setNewFilter({ ...newFilter, logicOperator: e.target.value })}
+                      className="mr-2"
+                      data-testid="radio-logic-or"
+                    />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">OR</span>
+                  </label>
+                </div>
+              </div>
+            )}
+
+            {/* Filter Preview */}
+            {filterResultsCount !== null && (
+              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+                <div className="flex items-center">
+                  <Eye className="w-5 h-5 text-blue-500 mr-2" />
+                  <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                    Preview: {filterResultsCount} records will match this filter
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="flex justify-between pt-4">
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setShowFilterModal(false)}
+                  className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white transition-colors"
+                  data-testid="button-cancel-filter"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={clearAllFilters}
+                  className="px-4 py-2 text-red-600 hover:text-red-700 transition-colors"
+                  data-testid="button-clear-filters"
+                >
+                  Clear All
+                </button>
+              </div>
+              <button
+                onClick={applyFilter}
+                disabled={!newFilter.field || !newFilter.operator || !newFilter.value}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                data-testid="button-apply-filter"
+              >
+                Apply Filter
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const applyFilter = () => {
+    const newAppliedFilter = { ...newFilter, id: Date.now() };
+    const updatedFilters = [...appliedFilters, newAppliedFilter];
+    setAppliedFilters(updatedFilters);
+    
+    // Update preview count
+    const previewCount = calculateFilterPreview(updatedFilters);
+    setFilterResultsCount(previewCount);
+    
+    // Reset new filter
+    setNewFilter({
+      category: 'Account',
+      field: '',
+      operator: 'equals',
+      value: '',
+      logicOperator: 'AND'
+    });
+    
+    setShowFilterModal(false);
+  };
+
+  const removeFilter = (filterId: number) => {
+    const updatedFilters = appliedFilters.filter(f => f.id !== filterId);
+    setAppliedFilters(updatedFilters);
+    const previewCount = calculateFilterPreview(updatedFilters);
+    setFilterResultsCount(previewCount);
+  };
+
+  const clearAllFilters = () => {
+    setAppliedFilters([]);
+    setFilterResultsCount(null);
+  };
+
   // Premium Visualization Renderers
   const renderWidget = (widget: DashboardWidget) => {
     const baseProps = {
@@ -1650,10 +2010,51 @@ const EnterpriseAnalytics: React.FC = () => {
                 <option value="enterprise">Enterprise Accounts</option>
                 <option value="at-risk">At Risk Customers</option>
               </select>
-              <button className="px-3 py-1 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">
+              <button 
+                onClick={() => setShowFilterModal(true)}
+                className="px-3 py-1 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors"
+                data-testid="button-add-filter"
+              >
                 + Add Filter
               </button>
             </div>
+            
+            {/* Applied Filters Display */}
+            {appliedFilters.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {appliedFilters.map((filter) => (
+                  <div key={filter.id} className="inline-flex items-center bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm">
+                    <span className="font-medium">{filter.category}</span>
+                    <span className="mx-1">•</span>
+                    <span>{filter.field}</span>
+                    <span className="mx-1">{filter.operator}</span>
+                    <span className="font-medium">{filter.value}</span>
+                    <button
+                      onClick={() => removeFilter(filter.id)}
+                      className="ml-2 text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100"
+                      data-testid={`button-remove-filter-${filter.id}`}
+                    >
+                      <XCircle className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+                {appliedFilters.length > 1 && (
+                  <button
+                    onClick={clearAllFilters}
+                    className="inline-flex items-center text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 px-2 py-1 text-sm"
+                    data-testid="button-clear-all-filters"
+                  >
+                    Clear All
+                  </button>
+                )}
+                {filterResultsCount !== null && (
+                  <div className="inline-flex items-center text-gray-600 dark:text-gray-400 px-2 py-1 text-sm">
+                    <Eye className="w-4 h-4 mr-1" />
+                    {filterResultsCount} results
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -2206,6 +2607,8 @@ const EnterpriseAnalytics: React.FC = () => {
           ))}
         </div>
       )}
+      {/* CRITICAL FIX: FilterModal Component */}
+      <FilterModal />
     </div>
   );
 };
