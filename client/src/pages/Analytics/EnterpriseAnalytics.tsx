@@ -2202,11 +2202,11 @@ const EnterpriseAnalytics: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Content - Enhanced positioning for Intelligence section */}
-      <div className="pl-6 pr-8 pb-8">
-        {/* AI Intelligence Section - Positioned immediately below header with proper spacing */}
+      {/* Main Content - Proper spacing below fixed header */}
+      <div className="pl-6 pr-8 pb-8" style={{ paddingTop: '180px' }}>
+        {/* AI Intelligence Section - Positioned immediately below header */}
         {aiInsights.length > 0 && !isLoading && (
-          <div className="mt-6 mb-8" style={{ paddingTop: '200px' }}>
+          <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
                 <Brain className="w-7 h-7 mr-3 text-purple-600" />
