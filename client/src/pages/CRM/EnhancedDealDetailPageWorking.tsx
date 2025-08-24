@@ -760,7 +760,7 @@ const EnhancedDealDetailPageWorking = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="px-4 py-6 max-w-none">
+      <div className="px-3 py-6 max-w-none">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
@@ -770,7 +770,7 @@ const EnhancedDealDetailPageWorking = () => {
             transition={{ duration: 0.2 }}
           >
             {activeTab === 'overview' && (
-              <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
+              <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
                 {/* Left Column - Deal Information */}
                 <div className="xl:col-span-3 space-y-8">
                   {/* Enhanced Deal Details Card */}

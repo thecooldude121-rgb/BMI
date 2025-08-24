@@ -777,14 +777,14 @@ const DeepAIInsightsPanel: React.FC<{
   return (
     <div className="space-y-4">
       {/* AI Insight Tabs */}
-      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+      <div className="flex flex-wrap gap-1 bg-gray-100 p-1 rounded-lg">
         {insightTabs.map((tab) => {
           const Icon = tab.icon;
           return (
             <button
               key={tab.id}
               onClick={() => setActiveInsightTab(tab.id)}
-              className={`flex-1 flex items-center justify-center px-3 py-2 text-xs font-medium rounded-md transition-colors ${
+              className={`flex-none flex items-center justify-center px-3 py-2 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
                 activeInsightTab === tab.id
                   ? `bg-${tab.color}-600 text-white`
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
