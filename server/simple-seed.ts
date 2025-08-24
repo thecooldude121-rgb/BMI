@@ -8,7 +8,7 @@ export async function seedVariedCRMData() {
 
     // Check if data already exists to prevent duplication
     const existingAccounts = await db.select().from(schema.accounts);
-    if (existingAccounts.length > 2) {
+    if (existingAccounts.length > 5) {
       console.log("📊 CRM data already exists, skipping seeding to prevent duplicates");
       return { accounts: 0, contacts: 0, leads: 0, deals: 0, activities: 0, message: "Data already exists" };
     }
