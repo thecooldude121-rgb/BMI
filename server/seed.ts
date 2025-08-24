@@ -19,21 +19,21 @@ async function seedMinimalActivities(userId: string, accountIds: string[], conta
       description: "Initial discovery call to understand requirements",
       outcome: "Identified key needs and budget parameters",
       duration: 45,
-      scheduledAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-      completedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000 + 45 * 60 * 1000).toISOString(),
+      scheduledAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      completedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000 + 45 * 60 * 1000),
       relatedToType: "deal",
       relatedToId: dealIds[0]
     },
     {
       subject: "Proposal presentation delivered",
-      type: "presentation",
+      type: "demo",
       status: "completed",
       priority: "medium",
       description: "Presented comprehensive solution proposal to stakeholders",
       outcome: "Positive feedback received, next steps discussed",
       duration: 60,
-      scheduledAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-      completedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000 + 60 * 60 * 1000).toISOString(),
+      scheduledAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+      completedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000 + 60 * 60 * 1000),
       relatedToType: "account",
       relatedToId: accountIds[0]
     },
@@ -44,8 +44,8 @@ async function seedMinimalActivities(userId: string, accountIds: string[], conta
       status: "open",
       priority: "high",
       description: "Negotiate final contract terms and pricing details",
-      scheduledAt: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(),
-      dueDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(),
+      scheduledAt: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+      dueDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
       relatedToType: "deal",
       relatedToId: dealIds[1] || dealIds[0]
     },
@@ -55,8 +55,8 @@ async function seedMinimalActivities(userId: string, accountIds: string[], conta
       status: "open",
       priority: "medium",
       description: "Send follow-up materials and schedule next steps",
-      scheduledAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-      dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+      scheduledAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+      dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
       relatedToType: "account",
       relatedToId: accountIds[1] || accountIds[0]
     }
@@ -218,14 +218,14 @@ export async function seedDatabase() {
     const deals = await db.insert(schema.deals).values(sampleDeals).returning();
     console.log(`Created ${deals.length} deals`);
 
-    // Seed minimal activities
-    await seedMinimalActivities(
-      userId,
-      accounts.map(a => a.id),
-      contacts.map(c => c.id), 
-      leads.map(l => l.id),
-      deals.map(d => d.id)
-    );
+    // Seed minimal activities - temporarily disabled due to schema sync issues
+    // await seedMinimalActivities(
+    //   userId,
+    //   accounts.map(a => a.id),
+    //   contacts.map(c => c.id), 
+    //   leads.map(l => l.id),
+    //   deals.map(d => d.id)
+    // );
 
     console.log("✅ Database seeded successfully!");
     return {
@@ -234,7 +234,7 @@ export async function seedDatabase() {
       contacts: contacts.length,
       leads: leads.length,
       deals: deals.length,
-      activities: 4
+      activities: 0
     };
 
   } catch (error) {
