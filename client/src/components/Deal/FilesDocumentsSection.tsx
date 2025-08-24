@@ -213,9 +213,10 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, isOpen, onC
   const [showSignature, setShowSignature] = useState(false);
   const [signatureCanvas, setSignatureCanvas] = useState<SignatureCanvas | null>(null);
 
-  const { data: documentComments } = useQuery({
+  const { data: documentComments = [] } = useQuery({
     queryKey: [`/api/document-comments/${document.id}`],
     enabled: isOpen,
+    select: (data) => Array.isArray(data) ? data : [],
   });
 
   const addCommentMutation = useMutation({
@@ -345,26 +346,32 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, isOpen, onC
             </div>
             
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {documentComments?.map((comment: DocumentComment) => (
-                <div key={comment.id} className="bg-gray-50 rounded-lg p-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-900">
-                      {comment.userId}
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {(() => {
-                        try {
-                          const date = new Date(comment.createdAt || Date.now());
-                          return isNaN(date.getTime()) ? 'Just now' : format(date, 'MMM dd, h:mm a');
-                        } catch {
-                          return 'Just now';
-                        }
-                      })()}
-                    </span>
+              {Array.isArray(documentComments) && documentComments.length > 0 ? (
+                documentComments.map((comment: DocumentComment) => (
+                  <div key={comment.id} className="bg-gray-50 rounded-lg p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-900">
+                        {comment.userId}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {(() => {
+                          try {
+                            const date = new Date(comment.createdAt || Date.now());
+                            return isNaN(date.getTime()) ? 'Just now' : format(date, 'MMM dd, h:mm a');
+                          } catch {
+                            return 'Just now';
+                          }
+                        })()}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-700">{comment.comment}</p>
                   </div>
-                  <p className="text-sm text-gray-700">{comment.comment}</p>
+                ))
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">No comments yet</p>
                 </div>
-              ))}
+              )}
             </div>
             
             <div className="p-4 border-t border-gray-200">

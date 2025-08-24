@@ -4269,6 +4269,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get comments for a specific document
+  app.get("/api/document-comments/:documentId", async (req, res) => {
+    try {
+      // Mock data for now - replace with actual storage call when implemented
+      const mockComments = [
+        {
+          id: '1',
+          documentId: req.params.documentId,
+          userId: 'John Doe',
+          comment: 'Please review section 3.2 for accuracy.',
+          createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
+        },
+        {
+          id: '2',
+          documentId: req.params.documentId,
+          userId: 'Jane Smith',
+          comment: 'The pricing looks good to me. Ready to proceed.',
+          createdAt: new Date(Date.now() - 30 * 60 * 1000).toISOString()
+        }
+      ];
+      res.json(mockComments);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Add a comment to a document
+  app.post("/api/document-comments", async (req, res) => {
+    try {
+      const { documentId, comment, userId } = req.body;
+      
+      // Mock response - replace with actual storage call when implemented
+      const newComment = {
+        id: Math.random().toString(36).substr(2, 9),
+        documentId,
+        userId: userId || 'Current User',
+        comment,
+        createdAt: new Date().toISOString()
+      };
+      
+      res.json(newComment);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
   // Upload new document
   app.post("/api/deal-documents/upload", upload.single('file'), async (req, res) => {
     try {
