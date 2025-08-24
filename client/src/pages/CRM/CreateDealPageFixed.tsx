@@ -228,7 +228,7 @@ const CreateDealPageFixed: React.FC = () => {
     };
   }, [formData.name, formData.amount, formData.closingDate]);
 
-  // Filter accounts and contacts based on search
+  // Filter accounts and contacts based on search - Fixed dependencies
   useEffect(() => {
     if (accounts && accountSearch) {
       const filtered = accounts.filter((account: any) =>
@@ -239,7 +239,7 @@ const CreateDealPageFixed: React.FC = () => {
     } else {
       setFilteredAccounts(accounts || []);
     }
-  }, [accounts, accountSearch]);
+  }, [accounts.length, accountSearch]);
 
   useEffect(() => {
     if (contacts && contactSearch) {
@@ -251,7 +251,7 @@ const CreateDealPageFixed: React.FC = () => {
     } else {
       setFilteredContacts(contacts || []);
     }
-  }, [contacts, contactSearch]);
+  }, [contacts.length, contactSearch]);
 
   const DEAL_STAGES = [
     { id: 'discovery', title: 'Discovery', probability: 10, color: 'bg-blue-500' },
@@ -465,9 +465,9 @@ const CreateDealPageFixed: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/20">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200 px-8 py-5 shadow-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
@@ -525,12 +525,12 @@ const CreateDealPageFixed: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex">
-        {/* Main Form Content */}
-        <div className="flex-1 max-w-4xl mx-auto p-6">
+      <div className="flex gap-8 max-w-full px-8 pb-8">
+        {/* Main Form Content - Full Width */}
+        <div className="flex-1 min-w-0">
           {/* Section Navigation */}
-          <div className="mb-6">
-            <div className="flex items-center space-x-1 overflow-x-auto pb-2">
+          <div className="mb-8">
+            <div className="flex items-center space-x-2 overflow-x-auto pb-3 border-b border-gray-200/50">
               {FORM_SECTIONS.map((section, index) => {
                 const Icon = section.icon;
                 const isActive = currentSection === section.id;
@@ -544,12 +544,12 @@ const CreateDealPageFixed: React.FC = () => {
                   <button
                     key={section.id}
                     onClick={() => navigateToSection(section.id)}
-                    className={`flex items-center space-x-2 px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${
+                    className={`flex items-center space-x-3 px-6 py-3 rounded-xl whitespace-nowrap transition-all duration-200 font-medium ${
                       isActive 
-                        ? 'bg-blue-500 text-white' 
+                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/25 scale-105' 
                         : isCompleted
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        ? 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 border border-green-200'
+                        : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200 hover:border-gray-300 hover:shadow-md'
                     }`}
                     data-testid={`section-nav-${section.id}`}
                   >
@@ -563,7 +563,7 @@ const CreateDealPageFixed: React.FC = () => {
           </div>
 
           {/* Form Sections */}
-          <div className="space-y-6">
+          <div className="space-y-8">
             {FORM_SECTIONS.map((section) => {
               const Icon = section.icon;
               const isExpanded = expandedSections.includes(section.id);
@@ -573,19 +573,21 @@ const CreateDealPageFixed: React.FC = () => {
                   key={section.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+                  className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden hover:shadow-xl transition-all duration-300"
                 >
                   {/* Section Header */}
                   <button
                     type="button"
                     onClick={() => toggleSection(section.id)}
-                    className={`w-full px-6 py-4 flex items-center justify-between transition-colors ${
-                      isExpanded ? 'bg-gray-50' : 'hover:bg-gray-50'
+                    className={`w-full px-8 py-6 flex items-center justify-between transition-all duration-200 ${
+                      isExpanded ? 'bg-gradient-to-r from-blue-50 to-indigo-50' : 'hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/30'
                     }`}
                     data-testid={`section-header-${section.id}`}
                   >
                     <div className="flex items-center space-x-3">
-                      <Icon className="w-5 h-5 text-blue-600" />
+                      <div className="p-2 rounded-lg bg-blue-100">
+                        <Icon className="w-5 h-5 text-blue-600" />
+                      </div>
                       <div className="text-left">
                         <h3 className="text-lg font-semibold text-gray-900">{section.title}</h3>
                         <p className="text-sm text-gray-600">{section.description}</p>
@@ -613,7 +615,7 @@ const CreateDealPageFixed: React.FC = () => {
                         transition={{ duration: 0.3, ease: 'easeInOut' }}
                         className="border-t border-gray-200"
                       >
-                        <div className="p-6">
+                        <div className="p-8">
                           {section.id === 'basic' && renderBasicSection()}
                           {section.id === 'ownership' && renderOwnershipSection()}
                           {section.id === 'details' && renderDetailsSection()}
@@ -628,8 +630,8 @@ const CreateDealPageFixed: React.FC = () => {
           </div>
         </div>
 
-        {/* Sticky Summary Sidebar */}
-        <div className="w-80 pl-6">
+        {/* Enhanced Summary Sidebar */}
+        <div className="w-96 flex-shrink-0">
           <div className="sticky top-6">
             <DealSummaryCard 
               formData={formData}
@@ -727,90 +729,96 @@ const CreateDealPageFixed: React.FC = () => {
   // Render section components
   function renderBasicSection() {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
         {/* Deal Name */}
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+        <div className="md:col-span-2 xl:col-span-3">
+          <label className="block text-sm font-semibold text-gray-800 mb-3">
             Deal Name *
-            <Info className="w-4 h-4 inline ml-1 text-gray-400" title="A descriptive name for this deal opportunity" />
+            <Info className="w-4 h-4 inline ml-2 text-gray-400" title="A descriptive name for this deal opportunity" />
           </label>
           <input
             type="text"
             value={formData.name}
             onChange={(e) => handleFieldChange('name', e.target.value)}
             placeholder="e.g. Acme Corp - Enterprise License"
-            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-              errors.name ? 'border-red-500' : 'border-gray-300'
+            className={`w-full px-4 py-3 border-2 rounded-xl text-lg focus:ring-3 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 ${
+              errors.name ? 'border-red-400 bg-red-50/50' : 'border-gray-200 bg-white hover:border-gray-300'
             }`}
             data-testid="deal-name"
           />
-          {errors.name && <p className="text-sm text-red-600 mt-1">{errors.name}</p>}
+          {errors.name && <p className="text-sm text-red-600 mt-2 flex items-center"><span className="w-4 h-4 bg-red-500 rounded-full mr-2"></span>{errors.name}</p>}
         </div>
 
         {/* Pipeline */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-gray-800 mb-3">
             Pipeline *
           </label>
-          <select
-            value={formData.pipeline}
-            onChange={(e) => handleFieldChange('pipeline', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            data-testid="pipeline-select"
-          >
-            {PIPELINES.map(pipeline => (
-              <option key={pipeline.id} value={pipeline.id}>
-                {pipeline.name}
-              </option>
-            ))}
-          </select>
+          <div className="relative">
+            <select
+              value={formData.pipeline}
+              onChange={(e) => handleFieldChange('pipeline', e.target.value)}
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-3 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 appearance-none bg-white hover:border-gray-300"
+              data-testid="pipeline-select"
+            >
+              {PIPELINES.map(pipeline => (
+                <option key={pipeline.id} value={pipeline.id}>
+                  {pipeline.name}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+          </div>
         </div>
 
         {/* Deal Stage */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-gray-800 mb-3">
             Deal Stage *
           </label>
-          <select
-            value={formData.stage}
-            onChange={(e) => {
-              handleFieldChange('stage', e.target.value);
-              const stage = DEAL_STAGES.find(s => s.id === e.target.value);
-              if (stage) {
-                handleFieldChange('probability', stage.probability);
-              }
-            }}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            data-testid="deal-stage"
-          >
-            {DEAL_STAGES.map(stage => (
-              <option key={stage.id} value={stage.id}>
-                {stage.title} ({stage.probability}% probability)
-              </option>
-            ))}
-          </select>
+          <div className="relative">
+            <select
+              value={formData.stage}
+              onChange={(e) => {
+                handleFieldChange('stage', e.target.value);
+                const stage = DEAL_STAGES.find(s => s.id === e.target.value);
+                if (stage) {
+                  handleFieldChange('probability', stage.probability);
+                }
+              }}
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-3 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 appearance-none bg-white hover:border-gray-300"
+              data-testid="deal-stage"
+            >
+              {DEAL_STAGES.map(stage => (
+                <option key={stage.id} value={stage.id}>
+                  {stage.title} ({stage.probability}% probability)
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+          </div>
         </div>
 
         {/* Account Search */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+        <div className="xl:col-span-1">
+          <label className="block text-sm font-semibold text-gray-800 mb-3">
             Account *
           </label>
           <div className="relative">
-            <div className="flex items-center border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent">
-              <Search className="w-4 h-4 text-gray-400 ml-3" />
+            <div className="flex items-center border-2 border-gray-200 rounded-xl focus-within:ring-3 focus-within:ring-blue-500/20 focus-within:border-blue-500 hover:border-gray-300 transition-all duration-200 bg-white">
+              <Search className="w-5 h-5 text-gray-400 ml-4" />
               <input
                 type="text"
                 value={accountSearch}
                 onChange={(e) => setAccountSearch(e.target.value)}
                 placeholder="Search for an account..."
-                className="flex-1 px-3 py-2 outline-none"
+                className="flex-1 px-3 py-3 outline-none"
                 data-testid="account-search"
               />
             </div>
             
             {accountSearch && filteredAccounts.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-60 overflow-y-auto">
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-200 rounded-xl shadow-2xl z-20 max-h-64 overflow-y-auto">
                 {filteredAccounts.map((account) => (
                   <button
                     key={account.id}
@@ -820,14 +828,14 @@ const CreateDealPageFixed: React.FC = () => {
                       handleFieldChange('accountName', account.name);
                       setAccountSearch(account.name);
                     }}
-                    className="w-full px-4 py-3 text-left hover:bg-gray-50 border-b border-gray-100 last:border-0"
+                    className="w-full px-5 py-4 text-left hover:bg-blue-50 border-b border-gray-100 last:border-0 transition-colors duration-150"
                   >
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <Building className="w-4 h-4 text-blue-600" />
+                    <div className="flex items-center space-x-4">
+                      <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center">
+                        <Building className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <div className="font-medium text-gray-900">{account.name}</div>
+                        <div className="font-semibold text-gray-900">{account.name}</div>
                         <div className="text-sm text-gray-500">{account.industry || 'No industry'}</div>
                       </div>
                     </div>
@@ -836,23 +844,23 @@ const CreateDealPageFixed: React.FC = () => {
               </div>
             )}
           </div>
-          {errors.accountId && <p className="text-sm text-red-600 mt-1">{errors.accountId}</p>}
+          {errors.accountId && <p className="text-sm text-red-600 mt-2 flex items-center"><span className="w-4 h-4 bg-red-500 rounded-full mr-2"></span>{errors.accountId}</p>}
         </div>
 
         {/* Contact Search */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+        <div className="xl:col-span-1">
+          <label className="block text-sm font-semibold text-gray-800 mb-3">
             Primary Contact
           </label>
           <div className="relative">
-            <div className="flex items-center border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent">
-              <Search className="w-4 h-4 text-gray-400 ml-3" />
+            <div className="flex items-center border-2 border-gray-200 rounded-xl focus-within:ring-3 focus-within:ring-blue-500/20 focus-within:border-blue-500 hover:border-gray-300 transition-all duration-200 bg-white">
+              <Search className="w-5 h-5 text-gray-400 ml-4" />
               <input
                 type="text"
                 value={contactSearch}
                 onChange={(e) => setContactSearch(e.target.value)}
                 placeholder="Search for a contact..."
-                className="flex-1 px-3 py-2 outline-none"
+                className="flex-1 px-3 py-3 outline-none"
                 data-testid="contact-search"
               />
             </div>
@@ -889,71 +897,88 @@ const CreateDealPageFixed: React.FC = () => {
         </div>
 
         {/* Deal Value */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+        <div className="xl:col-span-1">
+          <label className="block text-sm font-semibold text-gray-800 mb-3">
             Deal Value *
           </label>
-          <div className="flex space-x-2">
-            <select
-              value={formData.currency}
-              onChange={(e) => handleFieldChange('currency', e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              {CURRENCIES.map(currency => (
-                <option key={currency.code} value={currency.code}>
-                  {currency.symbol} {currency.code}
-                </option>
-              ))}
-            </select>
+          <div className="flex space-x-3">
+            <div className="relative">
+              <select
+                value={formData.currency}
+                onChange={(e) => handleFieldChange('currency', e.target.value)}
+                className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-3 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 appearance-none bg-white hover:border-gray-300 pr-10"
+              >
+                {CURRENCIES.map(currency => (
+                  <option key={currency.code} value={currency.code}>
+                    {currency.symbol} {currency.code}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+            </div>
             <input
               type="number"
               value={formData.amount}
               onChange={(e) => handleFieldChange('amount', e.target.value)}
               placeholder="0.00"
-              className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                errors.amount ? 'border-red-500' : 'border-gray-300'
+              className={`flex-1 px-4 py-3 border-2 rounded-xl focus:ring-3 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 ${
+                errors.amount ? 'border-red-400 bg-red-50/50' : 'border-gray-200 bg-white hover:border-gray-300'
               }`}
               min="0"
               step="0.01"
             />
           </div>
-          {errors.amount && <p className="text-sm text-red-600 mt-1">{errors.amount}</p>}
+          {errors.amount && <p className="text-sm text-red-600 mt-2 flex items-center"><span className="w-4 h-4 bg-red-500 rounded-full mr-2"></span>{errors.amount}</p>}
         </div>
 
         {/* Closing Date */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+        <div className="xl:col-span-1">
+          <label className="block text-sm font-semibold text-gray-800 mb-3">
             Expected Closing Date *
           </label>
-          <input
-            type="date"
-            value={formData.closingDate}
-            onChange={(e) => handleFieldChange('closingDate', e.target.value)}
-            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-              errors.closingDate ? 'border-red-500' : 'border-gray-300'
-            }`}
-          />
-          {errors.closingDate && <p className="text-sm text-red-600 mt-1">{errors.closingDate}</p>}
+          <div className="relative">
+            <input
+              type="date"
+              value={formData.closingDate}
+              onChange={(e) => handleFieldChange('closingDate', e.target.value)}
+              className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-3 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 ${
+                errors.closingDate ? 'border-red-400 bg-red-50/50' : 'border-gray-200 bg-white hover:border-gray-300'
+              }`}
+            />
+            <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+          </div>
+          {errors.closingDate && <p className="text-sm text-red-600 mt-2 flex items-center"><span className="w-4 h-4 bg-red-500 rounded-full mr-2"></span>{errors.closingDate}</p>}
         </div>
 
         {/* Win Probability */}
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Win Probability: {formData.probability}%
+        <div className="md:col-span-2 xl:col-span-3">
+          <label className="block text-sm font-semibold text-gray-800 mb-4">
+            Win Probability: <span className="text-lg font-bold text-blue-600">{formData.probability}%</span>
           </label>
-          <div className="space-y-2">
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={formData.probability}
-              onChange={(e) => handleFieldChange('probability', parseInt(e.target.value))}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-            />
-            <div className="flex justify-between text-sm text-gray-500">
-              <span>0%</span>
-              <span className="font-medium text-gray-900">{formData.probability}%</span>
-              <span>100%</span>
+          <div className="space-y-4">
+            <div className="relative">
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={formData.probability}
+                onChange={(e) => handleFieldChange('probability', parseInt(e.target.value))}
+                className="w-full h-3 bg-gradient-to-r from-red-200 via-yellow-200 to-green-200 rounded-full appearance-none cursor-pointer slider-thumb"
+                style={{
+                  background: `linear-gradient(to right, #ef4444 0%, #f59e0b 50%, #10b981 100%)`
+                }}
+              />
+              <div className="absolute top-0 left-0 w-full h-3 rounded-full pointer-events-none">
+                <div 
+                  className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-300"
+                  style={{ width: `${formData.probability}%` }}
+                ></div>
+              </div>
+            </div>
+            <div className="flex justify-between text-sm font-medium">
+              <span className="text-red-600">0% Low</span>
+              <span className="text-orange-600">50% Medium</span>
+              <span className="text-green-600">100% High</span>
             </div>
           </div>
         </div>
@@ -963,41 +988,61 @@ const CreateDealPageFixed: React.FC = () => {
 
   function renderOwnershipSection() {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Deal Owner</label>
-          <input
-            type="text"
-            value={formData.ownerId}
-            onChange={(e) => handleFieldChange('ownerId', e.target.value)}
-            placeholder="Select deal owner..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-          />
+          <label className="block text-sm font-semibold text-gray-800 mb-3 flex items-center">
+            <User className="w-4 h-4 mr-2 text-blue-600" />
+            Deal Owner
+          </label>
+          <div className="relative">
+            <input
+              type="text"
+              value={formData.ownerId}
+              onChange={(e) => handleFieldChange('ownerId', e.target.value)}
+              placeholder="Select deal owner..."
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-3 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white hover:border-gray-300"
+            />
+            <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+          </div>
         </div>
+        
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Deal Type</label>
-          <select
-            value={formData.dealType}
-            onChange={(e) => handleFieldChange('dealType', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-          >
-            {DEAL_TYPES.map(type => (
-              <option key={type.value} value={type.value}>{type.label}</option>
-            ))}
-          </select>
+          <label className="block text-sm font-semibold text-gray-800 mb-3 flex items-center">
+            <Package className="w-4 h-4 mr-2 text-green-600" />
+            Deal Type
+          </label>
+          <div className="relative">
+            <select
+              value={formData.dealType}
+              onChange={(e) => handleFieldChange('dealType', e.target.value)}
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-3 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 appearance-none bg-white hover:border-gray-300"
+            >
+              {DEAL_TYPES.map(type => (
+                <option key={type.value} value={type.value}>{type.label}</option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+          </div>
         </div>
+        
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Country</label>
-          <select
-            value={formData.country}
-            onChange={(e) => handleFieldChange('country', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-          >
-            <option value="">Select country...</option>
-            {COUNTRIES.map(country => (
-              <option key={country.code} value={country.code}>{country.name}</option>
-            ))}
-          </select>
+          <label className="block text-sm font-semibold text-gray-800 mb-3 flex items-center">
+            <Globe className="w-4 h-4 mr-2 text-purple-600" />
+            Country
+          </label>
+          <div className="relative">
+            <select
+              value={formData.country}
+              onChange={(e) => handleFieldChange('country', e.target.value)}
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-3 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 appearance-none bg-white hover:border-gray-300"
+            >
+              <option value="">Select country...</option>
+              {COUNTRIES.map(country => (
+                <option key={country.code} value={country.code}>{country.name}</option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+          </div>
         </div>
       </div>
     );
@@ -1005,26 +1050,132 @@ const CreateDealPageFixed: React.FC = () => {
 
   function renderDetailsSection() {
     return (
-      <div className="space-y-6">
+      <div className="space-y-8">
+        {/* Description */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+          <label className="block text-sm font-semibold text-gray-800 mb-3 flex items-center">
+            <FileText className="w-4 h-4 mr-2 text-blue-600" />
+            Description
+          </label>
           <textarea
             value={formData.description}
             onChange={(e) => handleFieldChange('description', e.target.value)}
-            placeholder="Describe the deal opportunity..."
-            rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg resize-none"
+            placeholder="Describe the deal opportunity, key stakeholders, and business value..."
+            rows={5}
+            className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-3 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 resize-none bg-white hover:border-gray-300 text-base"
           />
         </div>
+        
+        {/* Next Step & Products Grid */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+          <div>
+            <label className="block text-sm font-semibold text-gray-800 mb-3 flex items-center">
+              <Target className="w-4 h-4 mr-2 text-green-600" />
+              Next Step
+            </label>
+            <input
+              type="text"
+              value={formData.nextStep}
+              onChange={(e) => handleFieldChange('nextStep', e.target.value)}
+              placeholder="e.g., Schedule discovery call, Send proposal, Contract negotiation..."
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-3 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white hover:border-gray-300"
+            />
+          </div>
+          
+          {/* Priority & Source */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-800 mb-3">Priority</label>
+              <div className="relative">
+                <select
+                  value={formData.priority}
+                  onChange={(e) => handleFieldChange('priority', e.target.value)}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-3 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 appearance-none bg-white hover:border-gray-300"
+                >
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-semibold text-gray-800 mb-3">Source</label>
+              <div className="relative">
+                <select
+                  value={formData.source}
+                  onChange={(e) => handleFieldChange('source', e.target.value)}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-3 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 appearance-none bg-white hover:border-gray-300"
+                >
+                  <option value="inbound">Inbound</option>
+                  <option value="outbound">Outbound</option>
+                  <option value="referral">Referral</option>
+                  <option value="marketing">Marketing</option>
+                  <option value="partner">Partner</option>
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Fee Structure */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Next Step</label>
-          <input
-            type="text"
-            value={formData.nextStep}
-            onChange={(e) => handleFieldChange('nextStep', e.target.value)}
-            placeholder="What's the next action?"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-          />
+          <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <DollarSign className="w-5 h-5 mr-2 text-green-600" />
+            Fee Structure
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Platform Fee</label>
+              <input
+                type="number"
+                value={formData.platformFee}
+                onChange={(e) => handleFieldChange('platformFee', e.target.value)}
+                placeholder="0.00"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-3 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white hover:border-gray-300"
+                min="0"
+                step="0.01"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Custom Fee</label>
+              <input
+                type="number"
+                value={formData.customFee}
+                onChange={(e) => handleFieldChange('customFee', e.target.value)}
+                placeholder="0.00"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-3 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white hover:border-gray-300"
+                min="0"
+                step="0.01"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">License Fee</label>
+              <input
+                type="number"
+                value={formData.licenseFee}
+                onChange={(e) => handleFieldChange('licenseFee', e.target.value)}
+                placeholder="0.00"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-3 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white hover:border-gray-300"
+                min="0"
+                step="0.01"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Onboarding Fee</label>
+              <input
+                type="number"
+                value={formData.onboardingFee}
+                onChange={(e) => handleFieldChange('onboardingFee', e.target.value)}
+                placeholder="0.00"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-3 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white hover:border-gray-300"
+                min="0"
+                step="0.01"
+              />
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -1032,34 +1183,65 @@ const CreateDealPageFixed: React.FC = () => {
 
   function renderActivitiesSection() {
     return (
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div className="flex items-center justify-between">
-          <h4 className="text-sm font-medium text-gray-700">Quick Add Activities</h4>
-          <div className="flex items-center space-x-2">
+          <h4 className="text-lg font-semibold text-gray-900 flex items-center">
+            <Activity className="w-5 h-5 mr-2 text-blue-600" />
+            Activity Planning
+          </h4>
+          <div className="flex items-center space-x-3">
             <button
               type="button"
               onClick={() => addActivity('call')}
-              className="px-3 py-1 bg-green-600 text-white rounded-lg text-sm flex items-center space-x-1"
+              className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-xl text-sm font-medium flex items-center space-x-2 hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
             >
               <Phone className="w-4 h-4" />
-              <span>Call</span>
+              <span>Add Call</span>
             </button>
             <button
               type="button"
               onClick={() => addActivity('meeting')}
-              className="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm flex items-center space-x-1"
+              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl text-sm font-medium flex items-center space-x-2 hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
             >
               <CalendarIcon className="w-4 h-4" />
-              <span>Meeting</span>
+              <span>Add Meeting</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => addActivity('email')}
+              className="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-xl text-sm font-medium flex items-center space-x-2 hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+            >
+              <Mail className="w-4 h-4" />
+              <span>Add Email</span>
             </button>
           </div>
         </div>
 
         {formData.activities.length > 0 ? (
-          <div className="space-y-3">
+          <div className="grid gap-6">
             {formData.activities.map((activity, index) => (
-              <div key={index} className="bg-gray-50 rounded-lg p-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <motion.div 
+                key={index} 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-2xl p-6 shadow-lg"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <span className="px-3 py-1 bg-blue-600 text-white text-xs font-semibold rounded-full uppercase tracking-wide">
+                    {activity.type}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newActivities = formData.activities.filter((_, i) => i !== index);
+                      handleFieldChange('activities', newActivities);
+                    }}
+                    className="text-red-500 hover:text-red-700 hover:scale-110 transition-all duration-200"
+                  >
+                    ×
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                   <input
                     type="text"
                     value={activity.title}
@@ -1069,7 +1251,7 @@ const CreateDealPageFixed: React.FC = () => {
                       handleFieldChange('activities', newActivities);
                     }}
                     placeholder="Activity title"
-                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-3 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white hover:border-gray-300"
                   />
                   <input
                     type="date"
@@ -1079,29 +1261,33 @@ const CreateDealPageFixed: React.FC = () => {
                       newActivities[index].dueDate = e.target.value;
                       handleFieldChange('activities', newActivities);
                     }}
-                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-3 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white hover:border-gray-300"
                   />
-                  <select
-                    value={activity.priority}
-                    onChange={(e) => {
-                      const newActivities = [...formData.activities];
-                      newActivities[index].priority = e.target.value;
-                      handleFieldChange('activities', newActivities);
-                    }}
-                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                  >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                  </select>
+                  <div className="relative">
+                    <select
+                      value={activity.priority}
+                      onChange={(e) => {
+                        const newActivities = [...formData.activities];
+                        newActivities[index].priority = e.target.value;
+                        handleFieldChange('activities', newActivities);
+                      }}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-3 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 appearance-none bg-white hover:border-gray-300"
+                    >
+                      <option value="low">Low Priority</option>
+                      <option value="medium">Medium Priority</option>
+                      <option value="high">High Priority</option>
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                  </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         ) : (
-          <div className="text-center py-6 bg-gray-50 rounded-lg">
-            <Activity className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-            <p className="text-sm text-gray-600">No activities scheduled yet</p>
+          <div className="text-center py-12 bg-gradient-to-r from-gray-50 to-blue-50 rounded-2xl border-2 border-dashed border-gray-300">
+            <Activity className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <h5 className="text-lg font-semibold text-gray-600 mb-2">No activities scheduled yet</h5>
+            <p className="text-sm text-gray-500">Add activities to keep track of your deal progress</p>
           </div>
         )}
       </div>
