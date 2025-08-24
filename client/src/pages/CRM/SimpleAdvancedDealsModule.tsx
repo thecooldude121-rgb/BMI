@@ -1000,38 +1000,35 @@ export default function SimpleAdvancedDealsModule() {
         </div>
       </div>
 
-      {/* Scrollable Content */}
-      <div className="flex-1 min-h-0 overflow-y-auto">
+      {/* Scrollable Content Section */}
+      <div className="flex-1 overflow-auto">
         {/* AI-Powered Quick Insights */}
         <div className="px-6 py-4">
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 mb-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <TrendingUp className="w-5 h-5 text-blue-600" />
-              <div>
-                <h3 className="font-semibold text-gray-900">AI Pipeline Insights</h3>
-                <p className="text-sm text-gray-600">
-                  {deals.filter((d: any) => d.dealHealth === 'at_risk').length > 0 && 
-                    `⚠️ ${deals.filter((d: any) => d.dealHealth === 'at_risk').length} deals need attention. `
-                  }
-                  📈 Pipeline velocity: {Math.round(Math.random() * 20 + 15)} days avg. 
-                  🎯 Next month forecast: ${Math.round(deals.reduce((sum: number, deal: any) => sum + (parseFloat(deal.value) * deal.probability / 100), 0) * 1.2).toLocaleString()}
-                  💡 Top opportunity: {deals.length > 0 ? deals.sort((a: any, b: any) => parseFloat(b.value) - parseFloat(a.value))[0].name : 'None'}
-                </p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <TrendingUp className="w-5 h-5 text-blue-600" />
+                <div>
+                  <h3 className="font-semibold text-gray-900">AI Pipeline Insights</h3>
+                  <p className="text-sm text-gray-600">
+                    {deals.filter((d: any) => d.dealHealth === 'at_risk').length > 0 && 
+                      `⚠️ ${deals.filter((d: any) => d.dealHealth === 'at_risk').length} deals need attention. `
+                    }
+                    📈 Pipeline velocity: {Math.round(Math.random() * 20 + 15)} days avg. 
+                    🎯 Next month forecast: ${Math.round(deals.reduce((sum: number, deal: any) => sum + (parseFloat(deal.value) * deal.probability / 100), 0) * 1.2).toLocaleString()}
+                    💡 Top opportunity: {deals.length > 0 ? deals.sort((a: any, b: any) => parseFloat(b.value) - parseFloat(a.value))[0].name : 'None'}
+                  </p>
+                </div>
               </div>
+              <button 
+                className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                onClick={() => alert('AI Insights Dashboard - Coming Soon!\n\n• Pipeline health analysis\n• Deal velocity predictions\n• Revenue forecasting\n• Risk assessments\n• Recommended actions')}
+              >
+                View Details →
+              </button>
             </div>
-            <button 
-              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-              onClick={() => alert('AI Insights Dashboard - Coming Soon!\n\n• Pipeline health analysis\n• Deal velocity predictions\n• Revenue forecasting\n• Risk assessments\n• Recommended actions')}
-            >
-              View Details →
-            </button>
           </div>
         </div>
-      </div>
-
-      {/* Scrollable Content Section */}
-      <div className="flex-1 overflow-auto">
         <div className="px-6 py-4">
           {/* Search and Filters */}
           <div className="flex items-center justify-between">
