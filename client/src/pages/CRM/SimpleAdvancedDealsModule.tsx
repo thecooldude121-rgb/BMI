@@ -778,9 +778,15 @@ export default function SimpleAdvancedDealsModule() {
         {/* Header */}
         <div className="border-b px-6 py-4 shadow-sm">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold">Advanced Deals Pipeline</h1>
-              <p className="text-gray-600">Next-generation deal management</p>
+            <div className="flex items-center space-x-4">
+              <div>
+                <h1 className="text-2xl font-bold">Advanced Deals Pipeline</h1>
+                <p className="text-gray-600">Next-generation deal management</p>
+              </div>
+              <button className="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 flex items-center space-x-2">
+                <Filter className="w-4 h-4" />
+                <span>Filters</span>
+              </button>
             </div>
             <div className="flex items-center space-x-3">
               <button 
@@ -1127,10 +1133,6 @@ export default function SimpleAdvancedDealsModule() {
                 </div>
               )}
             </div>
-            <button className="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
-              <Filter className="w-4 h-4 mr-2 inline" />
-              Filters
-            </button>
             {selectedDeals.length > 0 && (
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-gray-600 bg-blue-50 px-3 py-1 rounded-full">
