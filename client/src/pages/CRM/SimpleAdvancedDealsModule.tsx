@@ -851,9 +851,9 @@ export default function SimpleAdvancedDealsModule() {
   );
 
   return (
-    <div className="h-full bg-white overflow-hidden">
+    <div className="h-full bg-white relative">
       {/* Header */}
-      <div className="bg-white border-b px-6 py-4 shadow-sm" style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 }}>
+      <div className="sticky top-0 bg-white border-b px-6 py-4 shadow-sm z-10">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">Advanced Deals Pipeline</h1>
@@ -941,7 +941,7 @@ export default function SimpleAdvancedDealsModule() {
       </div>
 
       {/* Scrollable Content */}
-      <div className="h-full overflow-auto" style={{ paddingTop: '100px' }}>
+      <div className="overflow-auto">
         {/* Advanced Analytics Dashboard */}
         <div className="px-6 py-4 border-b border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
