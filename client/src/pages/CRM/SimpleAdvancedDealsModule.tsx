@@ -1187,7 +1187,7 @@ export default function SimpleAdvancedDealsModule() {
 
 
           {/* Content */}
-          <div className="p-6">
+          <div className="p-6 min-h-screen">
             {isLoading ? (
               <div className="flex items-center justify-center h-64">
                 <div className="text-center">
