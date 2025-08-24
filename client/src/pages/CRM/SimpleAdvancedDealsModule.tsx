@@ -772,9 +772,9 @@ export default function SimpleAdvancedDealsModule() {
   );
 
   return (
-    <div className="h-full bg-white relative">
+    <div className="h-full bg-white">
       {/* Completely Frozen Header and Analytics Section */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white shadow-lg">
         {/* Header */}
         <div className="border-b px-6 py-4 shadow-sm">
           <div className="flex items-center justify-between">
@@ -1055,7 +1055,7 @@ export default function SimpleAdvancedDealsModule() {
       </div>
 
       {/* Scrollable Content Section - Add top padding to account for fixed header */}
-      <div className="flex-1 overflow-auto" style={{ paddingTop: '380px' }}>
+      <div className="overflow-auto" style={{ paddingTop: '280px', height: '100vh' }}>
         {/* AI-Powered Quick Insights */}
         <div className="px-6 py-4">
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 mb-4">
