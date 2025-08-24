@@ -852,99 +852,99 @@ export default function SimpleAdvancedDealsModule() {
 
   return (
     <div className="h-full bg-white flex flex-col">
-      {/* Header */}
-      <div className="flex-shrink-0 bg-white border-b px-6 py-4 shadow-sm">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Advanced Deals Pipeline</h1>
-            <p className="text-gray-600">Next-generation deal management</p>
-          </div>
-          <div className="flex items-center space-x-3">
-            <button 
-              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium flex items-center space-x-2"
-              onClick={() => alert('Advanced Analytics Dashboard - Coming Soon!\n\n• Deal Velocity Analysis\n• Revenue Forecasting\n• Conversion Funnel\n• Performance Trends\n• AI Insights')}
-            >
-              <BarChart3 className="w-4 h-4" />
-              <span>Analytics</span>
-            </button>
-            <button 
-              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium flex items-center space-x-2"
-              onClick={() => alert('Pipeline Configuration - Coming Soon!\n\n• Custom Deal Stages\n• Probability Settings\n• Health Score Rules\n• Automation Triggers\n• Field Mapping')}
-            >
-              <Settings className="w-4 h-4" />
-              <span>Configure</span>
-            </button>
-            
-            {/* Actions Dropdown */}
-            <div className="relative">
+      {/* Fixed Header and Analytics Section */}
+      <div className="flex-shrink-0 bg-white">
+        {/* Header */}
+        <div className="border-b px-6 py-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold">Advanced Deals Pipeline</h1>
+              <p className="text-gray-600">Next-generation deal management</p>
+            </div>
+            <div className="flex items-center space-x-3">
               <button 
                 className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium flex items-center space-x-2"
-                onClick={() => setShowActionsDropdown(!showActionsDropdown)}
+                onClick={() => alert('Advanced Analytics Dashboard - Coming Soon!\n\n• Deal Velocity Analysis\n• Revenue Forecasting\n• Conversion Funnel\n• Performance Trends\n• AI Insights')}
               >
-                <span>Actions</span>
-                <ChevronDown className="w-4 h-4" />
+                <BarChart3 className="w-4 h-4" />
+                <span>Analytics</span>
+              </button>
+              <button 
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium flex items-center space-x-2"
+                onClick={() => alert('Pipeline Configuration - Coming Soon!\n\n• Custom Deal Stages\n• Probability Settings\n• Health Score Rules\n• Automation Triggers\n• Field Mapping')}
+              >
+                <Settings className="w-4 h-4" />
+                <span>Configure</span>
               </button>
               
-              {showActionsDropdown && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-50">
-                  <div className="py-1">
-                    <button 
-                      className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-50"
-                      onClick={() => {
-                        setShowActionsDropdown(false);
-                        alert('Import Deals feature coming soon!');
-                      }}
-                    >
-                      Import Deals
-                    </button>
-                    <button 
-                      className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-50"
-                      onClick={() => {
-                        setShowActionsDropdown(false);
-                        alert('Export Deals feature coming soon!');
-                      }}
-                    >
-                      Export Deals
-                    </button>
-                    <button 
-                      className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-50"
-                      onClick={() => {
-                        setShowActionsDropdown(false);
-                        alert('Mass Update feature coming soon!');
-                      }}
-                    >
-                      Mass Update
-                    </button>
-                    <button 
-                      className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-50"
-                      onClick={() => {
-                        setShowActionsDropdown(false);
-                        alert('Duplicate Detection feature coming soon!');
-                      }}
-                    >
-                      Find Duplicates
-                    </button>
+              {/* Actions Dropdown */}
+              <div className="relative">
+                <button 
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium flex items-center space-x-2"
+                  onClick={() => setShowActionsDropdown(!showActionsDropdown)}
+                >
+                  <span>Actions</span>
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+                
+                {showActionsDropdown && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-50">
+                    <div className="py-1">
+                      <button 
+                        className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-50"
+                        onClick={() => {
+                          setShowActionsDropdown(false);
+                          alert('Import Deals feature coming soon!');
+                        }}
+                      >
+                        Import Deals
+                      </button>
+                      <button 
+                        className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-50"
+                        onClick={() => {
+                          setShowActionsDropdown(false);
+                          alert('Export Deals feature coming soon!');
+                        }}
+                      >
+                        Export Deals
+                      </button>
+                      <button 
+                        className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-50"
+                        onClick={() => {
+                          setShowActionsDropdown(false);
+                          alert('Mass Update feature coming soon!');
+                        }}
+                      >
+                        Mass Update
+                      </button>
+                      <button 
+                        className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-50"
+                        onClick={() => {
+                          setShowActionsDropdown(false);
+                          alert('Duplicate Detection feature coming soon!');
+                        }}
+                      >
+                        Find Duplicates
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
 
-            <button 
-              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium flex items-center"
-              onClick={() => window.location.href = '/crm/deals/new'}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              New Deal
-            </button>
+              <button 
+                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium flex items-center"
+                onClick={() => window.location.href = '/crm/deals/new'}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                New Deal
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Scrollable Content */}
-      <div className="flex-1 min-h-0 overflow-y-auto">
-        {/* Advanced Analytics Dashboard */}
+        {/* Fixed Analytics Dashboard */}
         <div className="px-6 py-4 border-b border-gray-200">
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
           <div className="bg-blue-50 p-4 rounded-lg">
             <div className="text-2xl font-bold text-blue-600">{deals.length}</div>
             <div className="text-sm text-blue-600">Total Deals</div>
@@ -998,9 +998,13 @@ export default function SimpleAdvancedDealsModule() {
             </div>
           </div>
         </div>
+      </div>
 
+      {/* Scrollable Content */}
+      <div className="flex-1 min-h-0 overflow-y-auto">
         {/* AI-Powered Quick Insights */}
-        <div className="mt-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 mb-4">
+        <div className="px-6 py-4">
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 mb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <TrendingUp className="w-5 h-5 text-blue-600" />
@@ -1025,9 +1029,9 @@ export default function SimpleAdvancedDealsModule() {
           </div>
         </div>
 
-        {/* Search and Filters */}
-        <div className="flex items-center justify-between mt-4">
-          <div className="flex items-center space-x-3">
+          {/* Search and Filters */}
+          <div className="flex items-center justify-between mt-4">
+            <div className="flex items-center space-x-3">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
@@ -1169,45 +1173,44 @@ export default function SimpleAdvancedDealsModule() {
               </button>
             </div>
           </div>
-        </div>
-      </div>
 
-        {/* Content */}
-        <div className="p-6">
-        {isLoading ? (
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading deals...</p>
-            </div>
+          {/* Content */}
+          <div className="p-6">
+            {isLoading ? (
+              <div className="flex items-center justify-center h-64">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                  <p className="text-gray-600">Loading deals...</p>
+                </div>
+              </div>
+            ) : error ? (
+              <div className="flex items-center justify-center h-64">
+                <div className="text-center">
+                  <div className="text-red-500 mb-4">⚠️ Error loading deals</div>
+                  <p className="text-gray-600">{error?.toString()}</p>
+                </div>
+              </div>
+            ) : deals.length === 0 ? (
+              <div className="flex items-center justify-center h-64">
+                <div className="text-center">
+                  <div className="text-gray-400 mb-4">📋 No deals found</div>
+                  <p className="text-gray-600">Create your first deal to get started</p>
+                  <button 
+                    className="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
+                    onClick={() => window.location.href = '/crm/deals/new'}
+                  >
+                    Create Deal
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                {viewMode === 'kanban' && renderKanbanView()}
+                {viewMode === 'list' && renderListView()}
+                {viewMode === 'table' && renderTableView()}
+              </>
+            )}
           </div>
-        ) : error ? (
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <div className="text-red-500 mb-4">⚠️ Error loading deals</div>
-              <p className="text-gray-600">{error?.toString()}</p>
-            </div>
-          </div>
-        ) : deals.length === 0 ? (
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <div className="text-gray-400 mb-4">📋 No deals found</div>
-              <p className="text-gray-600">Create your first deal to get started</p>
-              <button 
-                className="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
-                onClick={() => window.location.href = '/crm/deals/new'}
-              >
-                Create Deal
-              </button>
-            </div>
-          </div>
-        ) : (
-          <>
-            {viewMode === 'kanban' && renderKanbanView()}
-            {viewMode === 'list' && renderListView()}
-            {viewMode === 'table' && renderTableView()}
-          </>
-        )}
         </div>
       </div>
     </div>
