@@ -851,9 +851,9 @@ export default function SimpleAdvancedDealsModule() {
   );
 
   return (
-    <div className="h-full bg-white">
+    <div className="h-full bg-white flex flex-col">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-white border-b px-6 py-4 shadow-sm">
+      <div className="flex-shrink-0 bg-white border-b px-6 py-4 shadow-sm" style={{ position: 'sticky', top: 0, zIndex: 10 }}>
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">Advanced Deals Pipeline</h1>
@@ -940,8 +940,10 @@ export default function SimpleAdvancedDealsModule() {
         </div>
       </div>
 
-      {/* Advanced Analytics Dashboard */}
-      <div className="px-6 py-4 border-b border-gray-200">
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-auto">
+        {/* Advanced Analytics Dashboard */}
+        <div className="px-6 py-4 border-b border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
           <div className="bg-blue-50 p-4 rounded-lg">
             <div className="text-2xl font-bold text-blue-600">{deals.length}</div>
@@ -1170,8 +1172,8 @@ export default function SimpleAdvancedDealsModule() {
         </div>
       </div>
 
-      {/* Content */}
-      <div className="p-6 h-full overflow-auto">
+        {/* Content */}
+        <div className="p-6">
         {isLoading ? (
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
@@ -1206,6 +1208,7 @@ export default function SimpleAdvancedDealsModule() {
             {viewMode === 'table' && renderTableView()}
           </>
         )}
+        </div>
       </div>
     </div>
   );
