@@ -968,8 +968,23 @@ const CreateDealPageFixed: React.FC = () => {
 
         {/* Win Probability */}
         <div className="md:col-span-2 xl:col-span-3">
-          <label className="block text-sm font-semibold text-gray-800 mb-4">
-            Win Probability
+          <label className="block text-sm font-semibold text-gray-800 mb-4 flex items-center space-x-3">
+            <span>Win Probability:</span>
+            <div className="flex items-center space-x-1">
+              <input
+                type="number"
+                min="0"
+                max="100"
+                value={formData.probability}
+                onChange={(e) => {
+                  const value = Math.min(100, Math.max(0, parseInt(e.target.value) || 0));
+                  handleFieldChange('probability', value);
+                }}
+                className="w-16 px-2 py-1 border-2 border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-200 text-center font-bold text-blue-600 bg-blue-50"
+                data-testid="probability-label-input"
+              />
+              <span className="font-bold text-blue-600">%</span>
+            </div>
           </label>
           <div className="space-y-4">
             {/* Text Input and Slider Row */}
