@@ -2203,7 +2203,7 @@ const EnterpriseAnalytics: React.FC = () => {
       </div>
 
       {/* Main Content - Enhanced positioning for Intelligence section */}
-      <div className="pt-40 pl-6 pr-8 pb-8">
+      <div className="pt-52 pl-6 pr-8 pb-8">
         {/* AI Intelligence Section - Positioned immediately below header */}
         {aiInsights.length > 0 && !isLoading && (
           <div className="mb-8">
