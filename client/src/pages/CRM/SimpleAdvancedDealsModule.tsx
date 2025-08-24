@@ -22,7 +22,13 @@ import {
   AlertTriangle,
   MoreVertical,
   Minimize2,
-  Maximize2
+  Maximize2,
+  List,
+  LayoutGrid,
+  Table,
+  PieChart,
+  Layers,
+  Grid3x3
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import DealProgressSparkline from '../../components/Deal/DealProgressSparkline';
@@ -73,6 +79,7 @@ export default function SimpleAdvancedDealsModule() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDeals, setSelectedDeals] = useState<string[]>([]);
   const [showActionsDropdown, setShowActionsDropdown] = useState(false);
+  const [showViewDropdown, setShowViewDropdown] = useState(false);
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
   const [searchSuggestions, setSearchSuggestions] = useState<any[]>([]);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
@@ -83,6 +90,7 @@ export default function SimpleAdvancedDealsModule() {
   const [dragPreview, setDragPreview] = useState<{x: number, y: number}>({x: 0, y: 0});
   const searchInputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
+  const viewDropdownRef = useRef<HTMLDivElement>(null);
 
   const queryClient = useQueryClient();
 
@@ -346,9 +354,10 @@ export default function SimpleAdvancedDealsModule() {
     setSelectedSuggestionIndex(-1);
   };
 
-  // Close suggestions when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      // Close search suggestions
       if (
         searchInputRef.current && 
         !searchInputRef.current.contains(event.target as Node) &&
@@ -357,6 +366,14 @@ export default function SimpleAdvancedDealsModule() {
       ) {
         setShowSearchSuggestions(false);
         setSelectedSuggestionIndex(-1);
+      }
+      
+      // Close view dropdown
+      if (
+        viewDropdownRef.current &&
+        !viewDropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowViewDropdown(false);
       }
     };
 
@@ -1155,25 +1172,95 @@ export default function SimpleAdvancedDealsModule() {
               </div>
             )}
             
-            <div className="flex items-center space-x-1 border rounded-lg p-1">
+            {/* View Mode Dropdown */}
+            <div className="relative" ref={viewDropdownRef}>
               <button
-                className={`px-3 py-1 text-sm rounded ${viewMode === 'kanban' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
-                onClick={() => setViewMode('kanban')}
+                className="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onClick={() => setShowViewDropdown(!showViewDropdown)}
               >
-                Kanban
+                {viewMode === 'kanban' && <LayoutGrid className="w-4 h-4" />}
+                {viewMode === 'list' && <Grid3x3 className="w-4 h-4" />}
+                {viewMode === 'table' && <Table className="w-4 h-4" />}
+                <span>
+                  {viewMode === 'kanban' && 'Kanban View'}
+                  {viewMode === 'list' && 'Cards View'}
+                  {viewMode === 'table' && 'Table View'}
+                </span>
+                <ChevronDown className="w-4 h-4" />
               </button>
-              <button
-                className={`px-3 py-1 text-sm rounded ${viewMode === 'list' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
-                onClick={() => setViewMode('list')}
-              >
-                Cards
-              </button>
-              <button
-                className={`px-3 py-1 text-sm rounded ${viewMode === 'table' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
-                onClick={() => setViewMode('table')}
-              >
-                Table
-              </button>
+
+              {showViewDropdown && (
+                <div className="absolute right-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                  <div className="py-2">
+                    <button
+                      className={`w-full px-4 py-3 text-left flex items-center space-x-3 hover:bg-gray-50 transition-colors ${
+                        viewMode === 'list' ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
+                      }`}
+                      onClick={() => {
+                        setViewMode('list');
+                        setShowViewDropdown(false);
+                      }}
+                    >
+                      <List className="w-4 h-4" />
+                      <span className="font-medium">List View</span>
+                    </button>
+                    
+                    <button
+                      className={`w-full px-4 py-3 text-left flex items-center space-x-3 hover:bg-gray-50 transition-colors ${
+                        viewMode === 'kanban' ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
+                      }`}
+                      onClick={() => {
+                        setViewMode('kanban');
+                        setShowViewDropdown(false);
+                      }}
+                    >
+                      <LayoutGrid className="w-4 h-4" />
+                      <span className="font-medium">Kanban View</span>
+                    </button>
+
+                    <button
+                      className="w-full px-4 py-3 text-left flex items-center space-x-3 hover:bg-gray-50 transition-colors text-gray-400 cursor-not-allowed"
+                      disabled
+                    >
+                      <PieChart className="w-4 h-4" />
+                      <span className="font-medium">Chart View</span>
+                    </button>
+
+                    <div className="px-4 py-2 border-t border-gray-100 mt-2">
+                      <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                        Canvas View
+                      </div>
+                      <button
+                        className="w-full px-4 py-2 text-left flex items-center space-x-3 hover:bg-gray-50 transition-colors text-gray-400 cursor-not-allowed"
+                        disabled
+                      >
+                        <Layers className="w-4 h-4" />
+                        <span className="font-medium">Custom List View</span>
+                      </button>
+                      <button
+                        className="w-full px-4 py-2 text-left flex items-center space-x-3 hover:bg-gray-50 transition-colors text-gray-400 cursor-not-allowed"
+                        disabled
+                      >
+                        <Grid3x3 className="w-4 h-4" />
+                        <span className="font-medium">Tile View</span>
+                      </button>
+                    </div>
+
+                    <button
+                      className={`w-full px-4 py-3 text-left flex items-center space-x-3 hover:bg-gray-50 transition-colors border-t border-gray-100 ${
+                        viewMode === 'table' ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
+                      }`}
+                      onClick={() => {
+                        setViewMode('table');
+                        setShowViewDropdown(false);
+                      }}
+                    >
+                      <Table className="w-4 h-4" />
+                      <span className="font-medium">Table View</span>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
