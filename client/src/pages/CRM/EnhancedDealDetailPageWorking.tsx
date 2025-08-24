@@ -10,7 +10,6 @@ import {
   ArrowRight, ArrowLeft, Maximize2, Minimize2, Eye, EyeOff,
   Users, Paperclip, Video, Shield, Zap, BarChart3
 } from 'lucide-react';
-import { ObjectUploader } from '../../components/Deal/ObjectUploader';
 
 // Enhanced Types
 interface DealScorecard {
@@ -63,7 +62,7 @@ interface DealFile {
   accessLevel: string;
 }
 
-const EnhancedDealDetailPage = () => {
+const EnhancedDealDetailPageWorking = () => {
   const [match, params] = useRoute('/crm/deals/enhanced/:id');
   const dealId = params?.id;
   const queryClient = useQueryClient();
@@ -301,12 +300,12 @@ const EnhancedDealDetailPage = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <h1 className="text-2xl font-bold text-gray-900 truncate max-w-md">
-                {deal.name}
+                {(deal as any)?.name || 'Deal'}
               </h1>
               {getHealthBadge(dealScorecard.healthStatus)}
               <div className="flex items-center space-x-2 text-sm text-gray-600">
                 <DollarSign className="w-4 h-4" />
-                <span className="font-semibold">${parseInt(deal.value).toLocaleString()}</span>
+                <span className="font-semibold">${parseInt((deal as any)?.value || '0').toLocaleString()}</span>
               </div>
             </div>
             
@@ -394,12 +393,12 @@ const EnhancedDealDetailPage = () => {
                     isCollapsed={isSectionCollapsed('deal-info')}
                   >
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <InfoField label="Deal Name" value={deal.name || ''} editable={isEditMode} />
+                      <InfoField label="Deal Name" value={(deal as any)?.name || ''} editable={isEditMode} />
                       <InfoField label="Account" value={account?.name || 'N/A'} />
-                      <InfoField label="Value" value={`$${parseInt(deal.value || '0').toLocaleString()}`} editable={isEditMode} />
-                      <InfoField label="Stage" value={deal.stage || ''} editable={isEditMode} />
-                      <InfoField label="Probability" value={`${deal.probability || 0}%`} editable={isEditMode} />
-                      <InfoField label="Expected Close" value={deal.expectedCloseDate ? new Date(deal.expectedCloseDate).toLocaleDateString() : 'Not set'} editable={isEditMode} />
+                      <InfoField label="Value" value={`$${parseInt((deal as any)?.value || '0').toLocaleString()}`} editable={isEditMode} />
+                      <InfoField label="Stage" value={(deal as any)?.stage || ''} editable={isEditMode} />
+                      <InfoField label="Probability" value={`${(deal as any)?.probability || 0}%`} editable={isEditMode} />
+                      <InfoField label="Expected Close" value={(deal as any)?.expectedCloseDate ? new Date((deal as any).expectedCloseDate).toLocaleDateString() : 'Not set'} editable={isEditMode} />
                     </div>
                   </CollapsibleCard>
 
@@ -416,7 +415,7 @@ const EnhancedDealDetailPage = () => {
                     }
                   >
                     <div className="space-y-3">
-                      {activities.slice(0, 5).map((activity: any) => (
+                      {Array.isArray(activities) && activities.slice(0, 5).map((activity: any) => (
                         <ActivityItem key={activity.id} activity={activity} />
                       ))}
                     </div>
@@ -483,17 +482,17 @@ const EnhancedDealDetailPage = () => {
                         type="Account" 
                         name={account?.name || 'N/A'}
                         icon={Building}
-                        link={`/crm/accounts/${deal.accountId}`}
+                        link={`/crm/accounts/${(deal as any)?.accountId}`}
                       />
                       <RelatedEntityItem 
                         type="Primary Contact" 
-                        name={contacts[0]?.name || 'N/A'}
+                        name={Array.isArray(contacts) && contacts[0] ? (contacts[0] as any).name : 'N/A'}
                         icon={User}
-                        link={`/crm/contacts/${contacts[0]?.id}`}
+                        link={`/crm/contacts/${Array.isArray(contacts) && contacts[0] ? (contacts[0] as any).id : ''}`}
                       />
                       <RelatedEntityItem 
                         type="Activities" 
-                        name={`${activities.length} items`}
+                        name={`${Array.isArray(activities) ? activities.length : 0} items`}
                         icon={Activity}
                         link={`/crm/activities?dealId=${dealId}`}
                       />
@@ -542,7 +541,27 @@ const EnhancedDealDetailPage = () => {
               />
             )}
 
-            {/* Other tab content would go here */}
+            {/* Other tabs show placeholder content */}
+            {activeTab === 'timeline' && (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Deal Timeline</h3>
+                <p className="text-gray-600">Timeline functionality coming soon...</p>
+              </div>
+            )}
+
+            {activeTab === 'related' && (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Related Entities</h3>
+                <p className="text-gray-600">Related entities management coming soon...</p>
+              </div>
+            )}
+
+            {activeTab === 'automation' && (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Workflow Automation</h3>
+                <p className="text-gray-600">Workflow automation coming soon...</p>
+              </div>
+            )}
           </motion.div>
         </AnimatePresence>
       </div>
@@ -616,10 +635,10 @@ const ActivityItem = ({ activity }: { activity: any }) => (
       <Activity className="w-4 h-4 text-blue-600" />
     </div>
     <div className="flex-1 min-w-0">
-      <p className="text-sm font-medium text-gray-900">{activity.subject}</p>
-      <p className="text-sm text-gray-600 truncate">{activity.description}</p>
+      <p className="text-sm font-medium text-gray-900">{activity.subject || 'Activity'}</p>
+      <p className="text-sm text-gray-600 truncate">{activity.description || 'No description'}</p>
       <p className="text-xs text-gray-500 mt-1">
-        {new Date(activity.scheduledAt).toLocaleDateString()}
+        {activity.scheduledAt ? new Date(activity.scheduledAt).toLocaleDateString() : 'No date'}
       </p>
     </div>
   </div>
@@ -669,7 +688,7 @@ const DealScorecardView = ({ scorecard }: { scorecard: DealScorecard }) => (
     {/* Score Overview */}
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
       <h3 className="text-lg font-semibold text-gray-900 mb-6">Deal Health Analysis</h3>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
         <ScoreCircle score={scorecard.engagementScore} label="Engagement" />
         <ScoreCircle score={scorecard.fitScore} label="Product Fit" />
         <ScoreCircle score={scorecard.urgencyScore} label="Urgency" />
@@ -850,16 +869,12 @@ const FilesView = ({
               className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+          <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+            <Upload className="w-4 h-4 mr-2 inline" />
+            Upload File
+          </button>
         </div>
       </div>
-      
-      <ObjectUploader 
-        dealId={dealId}
-        onUploadComplete={(file) => {
-          console.log('File uploaded:', file);
-          // Refresh files list
-        }}
-      />
     </div>
 
     {/* Files Grid */}
@@ -899,4 +914,4 @@ const FileCard = ({ file }: { file: DealFile }) => (
   </div>
 );
 
-export default EnhancedDealDetailPage;
+export default EnhancedDealDetailPageWorking;
