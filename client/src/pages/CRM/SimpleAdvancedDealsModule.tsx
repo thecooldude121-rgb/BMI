@@ -773,8 +773,8 @@ export default function SimpleAdvancedDealsModule() {
 
   return (
     <div className="h-full bg-white flex flex-col">
-      {/* Fixed Header and Analytics Section */}
-      <div className="flex-shrink-0 bg-white">
+      {/* Completely Frozen Header and Analytics Section */}
+      <div className="sticky top-0 z-40 bg-white shadow-sm">
         {/* Header */}
         <div className="border-b px-6 py-4 shadow-sm">
           <div className="flex items-center justify-between">
@@ -996,7 +996,7 @@ export default function SimpleAdvancedDealsModule() {
         </div>
 
         {/* Fixed Analytics Dashboard */}
-        <div className="px-6 py-4 border-b border-gray-200">
+        <div className="px-6 py-4 border-b border-gray-200 bg-white">
           <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
           <div className="bg-blue-50 p-4 rounded-lg">
             <div className="text-2xl font-bold text-blue-600">{deals.length}</div>
