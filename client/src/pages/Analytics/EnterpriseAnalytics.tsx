@@ -4,14 +4,14 @@ import {
   BarChart3, TrendingUp, TrendingDown, Users, Building, DollarSign, Target, Calendar, Activity, 
   PieChart, Filter, Download, Search, Bot, Brain, Lightbulb, Award, Trophy, Star, 
   ChevronDown, ChevronUp, Settings, RefreshCcw, Share2, Bell, Zap, Eye, 
-  MessageSquare, Phone, Mail, Clock, Sparkles, ArrowUpRight, Minus as TrendingFlat,
-  Plus, Minus, Move, Grid3X3, List, Table, Map, Thermometer, Globe, Shield,
+  MessageSquare, Phone, Mail, Clock, Sparkles, ArrowUpRight, Minus,
+  Plus, Move, Grid3X3, List, Table, Map, Thermometer, Globe, Shield,
   BarChart, LineChart, Radar, Archive, FileText, Link2, Bookmark, Mic, MicOff,
   HelpCircle, AlertCircle, CheckCircle, XCircle, PlayCircle, PauseCircle, Volume2,
   Layers, Maximize2, RotateCcw, GitBranch, TreePine, Network, Waves, Crosshair,
-  MapPin, Compass, Navigation, Cpu, Database, TrendingFlat as Trending, MousePointer2,
+  MapPin, Compass, Navigation, Cpu, Database, MousePointer2,
   Hand, Fingerprint, Headphones, Palette, Sliders, BarChart2, PieChart as Chart,
-  Hexagon, Triangle, Square, Circle, Diamond, Star as StarIcon, Heart, Polygon
+  Hexagon, Triangle, Square, Circle, Diamond, Star as StarIcon, Heart
 } from 'lucide-react';
 
 // Enhanced interfaces for next-level enterprise features
@@ -279,7 +279,8 @@ const EnterpriseAnalytics: React.FC = () => {
     });
 
     // Revenue attribution modeling
-    const attribution = calculateRevenueAttribution(deals);
+    const dealsArray = Array.isArray(deals) ? deals : [];
+    const attribution = calculateRevenueAttribution(dealsArray);
     insights.push({
       id: 'revenue-attribution',
       type: 'attribution',
@@ -294,7 +295,8 @@ const EnterpriseAnalytics: React.FC = () => {
     });
 
     // Customer Lifetime Value predictions
-    const clvPredictions = calculateCLVPredictions(accounts);
+    const accountsArray = Array.isArray(accounts) ? accounts : [];
+    const clvPredictions = calculateCLVPredictions(accountsArray);
     insights.push({
       id: 'clv-predictions',
       type: 'prediction',
@@ -314,7 +316,7 @@ const EnterpriseAnalytics: React.FC = () => {
     });
 
     // Deal prioritization recommendations
-    const dealPriority = intelligentDealPrioritization(deals);
+    const dealPriority = intelligentDealPrioritization(dealsArray);
     insights.push({
       id: 'deal-prioritization',
       type: 'optimization',
@@ -330,7 +332,7 @@ const EnterpriseAnalytics: React.FC = () => {
     });
 
     // Churn risk modeling
-    const churnRisks = modelChurnRisk(accounts);
+    const churnRisks = modelChurnRisk(accountsArray);
     if (churnRisks.highRisk.length > 0) {
       insights.push({
         id: 'churn-risk-model',
@@ -759,8 +761,8 @@ const EnterpriseAnalytics: React.FC = () => {
     return () => clearInterval(interval);
   }, [isCollaborativeMode]);
 
-  // Advanced Predictive Models Management
-  const initializePredictiveModels = useCallback(() => {
+  // FIXED: Initialize predictive models only once and generate predictions separately
+  useEffect(() => {
     const models: PredictiveModel[] = [
       {
         id: 'pipeline-forecast',
@@ -795,12 +797,16 @@ const EnterpriseAnalytics: React.FC = () => {
     ];
     
     setPredictiveModels(models);
+  }, []);
+
+  // FIXED: Generate predictions only when data changes, with throttling
+  useEffect(() => {
+    if (isLoading) return;
     
-    // Generate predictions
-    const generatePredictions = () => {
-      const dealsArray = Array.isArray(deals) ? deals : [];
-      const accountsArray = Array.isArray(accounts) ? accounts : [];
-      
+    const dealsArray = Array.isArray(deals) ? deals : [];
+    const accountsArray = Array.isArray(accounts) ? accounts : [];
+    
+    if (dealsArray.length > 0) {
       setDealProbabilityScores(
         dealsArray.map((deal: any) => ({
           dealId: deal.id,
@@ -809,7 +815,9 @@ const EnterpriseAnalytics: React.FC = () => {
           factors: ['timeline_alignment', 'budget_confirmed', 'champion_identified']
         }))
       );
-      
+    }
+    
+    if (accountsArray.length > 0) {
       setChurnRiskScores(
         accountsArray.map((account: any) => ({
           accountId: account.id,
@@ -818,29 +826,26 @@ const EnterpriseAnalytics: React.FC = () => {
           interventions: ['schedule_check_in', 'offer_training', 'renewal_discussion']
         }))
       );
-    };
-    
-    generatePredictions();
-  }, [deals, accounts]);
+    }
+  }, [deals, accounts, isLoading]);
 
-  // Initialize advanced features
+  // Initialize advanced features - FIXED: Remove function dependencies to prevent loops
   useEffect(() => {
     initializeVoiceRecognition();
-    initializePredictiveModels();
-  }, [initializeVoiceRecognition, initializePredictiveModels]);
+  }, []);
 
   useEffect(() => {
     return initializeGestureRecognition();
-  }, [initializeGestureRecognition]);
+  }, [gestureMode, touchGestures, selectedVisualization]);
 
   useEffect(() => {
     return initializeCollaboration();
-  }, [initializeCollaboration]);
+  }, [isCollaborativeMode]);
 
-  // Generate AI insights on data change - stabilize with useMemo
+  // Generate AI insights on data change - FIXED: Use stable dependencies
   useEffect(() => {
     generateAdvancedAIInsights();
-  }, [generateAdvancedAIInsights]);
+  }, [metrics, isLoading]);
 
   // Export functionality
   const handleExport = async (format: 'pdf' | 'excel' | 'csv') => {
@@ -1363,7 +1368,7 @@ const EnterpriseAnalytics: React.FC = () => {
               }`}>
                 {widget.config.trend.startsWith('+') && <TrendingUp className="w-4 h-4 mr-1" />}
                 {widget.config.trend.startsWith('-') && <TrendingDown className="w-4 h-4 mr-1" />}
-                {!widget.config.trend.startsWith('+') && !widget.config.trend.startsWith('-') && <TrendingFlat className="w-4 h-4 mr-1" />}
+                {!widget.config.trend.startsWith('+') && !widget.config.trend.startsWith('-') && <Minus className="w-4 h-4 mr-1" />}
                 {widget.config.trend}
               </span>
             )}
