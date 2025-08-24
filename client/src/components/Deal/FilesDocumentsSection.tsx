@@ -352,7 +352,14 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, isOpen, onC
                       {comment.userId}
                     </span>
                     <span className="text-xs text-gray-500">
-                      {format(new Date(comment.createdAt), 'MMM dd, h:mm a')}
+                      {(() => {
+                        try {
+                          const date = new Date(comment.createdAt || Date.now());
+                          return isNaN(date.getTime()) ? 'Just now' : format(date, 'MMM dd, h:mm a');
+                        } catch {
+                          return 'Just now';
+                        }
+                      })()}
                     </span>
                   </div>
                   <p className="text-sm text-gray-700">{comment.comment}</p>
@@ -590,7 +597,16 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
           </div>
           <div className="flex items-center space-x-1">
             <Calendar className="h-3 w-3" />
-            <span>{format(new Date(document.createdAt), 'MMM dd')}</span>
+            <span>
+              {(() => {
+                try {
+                  const date = new Date(document.createdAt || document.uploadedAt || Date.now());
+                  return isNaN(date.getTime()) ? 'Today' : format(date, 'MMM dd');
+                } catch {
+                  return 'Today';
+                }
+              })()}
+            </span>
           </div>
         </div>
       </div>
