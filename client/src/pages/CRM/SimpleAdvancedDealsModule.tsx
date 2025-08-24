@@ -780,7 +780,7 @@ export default function SimpleAdvancedDealsModule() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div>
-                <h1 className="text-2xl font-bold">Advanced Deals Pipeline</h1>
+                <h1 className="text-lg font-bold">Advanced Deals Pipeline</h1>
                 <p className="text-gray-600">Next-generation deal management</p>
               </div>
               <button className="p-3 rounded-lg text-sm flex items-center justify-center transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]" 
