@@ -92,7 +92,7 @@ export default function SimpleAdvancedDealsModule() {
   const queryClient = useQueryClient();
 
   // Fetch deals data
-  const { data: deals = [], isLoading, error } = useQuery({
+  const { data: deals = [], isLoading, error } = useQuery<Deal[]>({
     queryKey: ['/api/deals'],
     retry: 2,
     retryDelay: 500,
