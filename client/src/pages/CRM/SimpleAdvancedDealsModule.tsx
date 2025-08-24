@@ -1028,9 +1028,13 @@ export default function SimpleAdvancedDealsModule() {
             </button>
           </div>
         </div>
+      </div>
 
+      {/* Scrollable Content Section */}
+      <div className="flex-1 overflow-auto">
+        <div className="px-6 py-4">
           {/* Search and Filters */}
-          <div className="flex items-center justify-between mt-4">
+          <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -1213,6 +1217,7 @@ export default function SimpleAdvancedDealsModule() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }
