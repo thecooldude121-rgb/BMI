@@ -695,7 +695,7 @@ const EnhancedDealDetailPageWorking = () => {
           
           {/* Enhanced Tab Navigation with Modern Design */}
           <div className="mt-6">
-            <nav className="flex space-x-1 bg-gray-100/80 backdrop-blur-sm rounded-xl p-1">
+            <nav className="flex flex-wrap gap-1 bg-gray-100/80 backdrop-blur-sm rounded-xl p-1">
               {[
                 { id: 'overview', label: 'Overview', icon: Eye },
                 { id: 'scorecard', label: 'Scorecard', icon: BarChart3 },
@@ -711,7 +711,7 @@ const EnhancedDealDetailPageWorking = () => {
                   <motion.button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`relative inline-flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${
+                    className={`relative inline-flex items-center px-3 py-2 rounded-lg font-medium text-sm transition-all duration-200 whitespace-nowrap ${
                       isActive
                         ? 'text-blue-700 bg-white shadow-md'
                         : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
@@ -720,8 +720,9 @@ const EnhancedDealDetailPageWorking = () => {
                     whileTap={{ scale: 0.98 }}
                     data-testid={`tab-${tab.id}`}
                   >
-                    <Icon className={`w-4 h-4 mr-2 ${isActive ? 'text-blue-600' : ''}`} />
-                    {tab.label}
+                    <Icon className={`w-4 h-4 mr-1.5 ${isActive ? 'text-blue-600' : ''}`} />
+                    <span className="hidden sm:inline">{tab.label}</span>
+                    <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
                     {isActive && (
                       <motion.div
                         className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-full"
@@ -759,7 +760,7 @@ const EnhancedDealDetailPageWorking = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="px-6 py-6">
+      <div className="px-4 py-6 max-w-none">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
@@ -769,9 +770,9 @@ const EnhancedDealDetailPageWorking = () => {
             transition={{ duration: 0.2 }}
           >
             {activeTab === 'overview' && (
-              <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
                 {/* Left Column - Deal Information */}
-                <div className="xl:col-span-2 space-y-8">
+                <div className="xl:col-span-3 space-y-8">
                   {/* Enhanced Deal Details Card */}
                   <motion.div 
                     className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 hover:shadow-xl transition-all duration-300"
@@ -890,7 +891,7 @@ const EnhancedDealDetailPageWorking = () => {
                 </div>
 
                 {/* Right Column - Sidebar */}
-                <div className="space-y-6">
+                <div className="xl:col-span-2 space-y-6">
                   {/* Deal Health Score */}
                   <CollapsibleCard 
                     title="Deal Health" 
