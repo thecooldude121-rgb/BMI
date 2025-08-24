@@ -7,6 +7,7 @@ import { aiInsightsService } from "./aiService";
 import { meetingIntelligenceService } from "./meetingIntelligence";
 import { aiGrowthService, AccountAnalysisData } from "./services/aiGrowthService";
 import { generateContextualInsights, type ContextualHelpRequest } from "./ai-insights";
+import dealRoutes from "./routes/dealRoutes";
 
 // Note: HRMS schemas will be added when HRMS module is implemented
 
@@ -17,6 +18,9 @@ const handleError = (error: unknown, res: any) => {
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Enhanced Deal Routes
+  app.use('/api', dealRoutes);
+  
   // User routes
   app.get("/api/users/:id", async (req, res) => {
     try {

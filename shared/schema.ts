@@ -524,6 +524,197 @@ export const dealStageHistory = pgTable("deal_stage_history", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+// Enhanced Deal Features Tables
+
+// Deal Notes & Timeline
+export const dealNotes = pgTable("deal_notes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  dealId: uuid("deal_id").references(() => deals.id).notNull(),
+  content: text("content").notNull(),
+  noteType: text("note_type").default('internal'), // 'internal', 'external', 'meeting', 'call'
+  isPrivate: boolean("is_private").default(false),
+  authorId: uuid("author_id").references(() => users.id).notNull(),
+  mentions: jsonb("mentions").default('[]'), // Array of user IDs mentioned
+  attachments: jsonb("attachments").default('[]'), // Array of file references
+  metadata: jsonb("metadata").default('{}'), // Additional context
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Deal Files & Documents
+export const dealFiles = pgTable("deal_files", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  dealId: uuid("deal_id").references(() => deals.id).notNull(),
+  fileName: text("file_name").notNull(),
+  originalName: text("original_name").notNull(),
+  fileSize: integer("file_size").notNull(), // bytes
+  mimeType: text("mime_type").notNull(),
+  fileUrl: text("file_url").notNull(), // Object storage URL
+  documentType: text("document_type"), // 'proposal', 'contract', 'nda', 'presentation', 'other'
+  version: integer("version").default(1),
+  isLatestVersion: boolean("is_latest_version").default(true),
+  accessLevel: text("access_level").default('team'), // 'private', 'team', 'account', 'public'
+  uploadedBy: uuid("uploaded_by").references(() => users.id).notNull(),
+  tags: jsonb("tags").default('[]'),
+  metadata: jsonb("metadata").default('{}'),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+// Deal Communications (Emails & Calls)
+export const dealCommunications = pgTable("deal_communications", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  dealId: uuid("deal_id").references(() => deals.id).notNull(),
+  contactId: uuid("contact_id").references(() => contacts.id),
+  communicationType: text("communication_type").notNull(), // 'email', 'call', 'sms', 'meeting'
+  direction: text("direction").notNull(), // 'inbound', 'outbound'
+  subject: text("subject"),
+  content: text("content"),
+  duration: integer("duration"), // minutes for calls/meetings
+  outcome: text("outcome"), // 'successful', 'no_answer', 'voicemail', etc.
+  participants: jsonb("participants").default('[]'), // Array of participant details
+  scheduledAt: timestamp("scheduled_at"),
+  occurredAt: timestamp("occurred_at"),
+  recordingUrl: text("recording_url"), // Link to call recording
+  transcription: text("transcription"),
+  sentiment: text("sentiment"), // 'positive', 'neutral', 'negative'
+  actionItems: jsonb("action_items").default('[]'),
+  followUpRequired: boolean("follow_up_required").default(false),
+  followUpDate: timestamp("follow_up_date"),
+  integrationId: text("integration_id"), // External system ID (e.g., calendar event ID)
+  metadata: jsonb("metadata").default('{}'),
+  createdBy: uuid("created_by").references(() => users.id).notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+// Deal Workflows & Automations
+export const dealWorkflows = pgTable("deal_workflows", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  description: text("description"),
+  triggerEvent: text("trigger_event").notNull(), // 'stage_change', 'value_change', 'time_based', etc.
+  triggerConditions: jsonb("trigger_conditions").notNull(),
+  actions: jsonb("actions").notNull(), // Array of automated actions
+  isActive: boolean("is_active").default(true),
+  dealStages: jsonb("deal_stages").default('[]'), // Which stages this applies to
+  dealTypes: jsonb("deal_types").default('[]'), // Which deal types this applies to
+  createdBy: uuid("created_by").references(() => users.id).notNull(),
+  lastExecuted: timestamp("last_executed"),
+  executionCount: integer("execution_count").default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Deal Workflow Executions (Audit Trail)
+export const dealWorkflowExecutions = pgTable("deal_workflow_executions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  workflowId: uuid("workflow_id").references(() => dealWorkflows.id).notNull(),
+  dealId: uuid("deal_id").references(() => deals.id).notNull(),
+  triggerEvent: text("trigger_event").notNull(),
+  triggerData: jsonb("trigger_data").default('{}'),
+  actionsExecuted: jsonb("actions_executed").default('[]'),
+  status: text("status").default('pending'), // 'pending', 'executing', 'completed', 'failed'
+  errorMessage: text("error_message"),
+  executionTime: integer("execution_time"), // milliseconds
+  executedAt: timestamp("executed_at").notNull().defaultNow(),
+});
+
+// Deal Audit Trail
+export const dealAuditLog = pgTable("deal_audit_log", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  dealId: uuid("deal_id").references(() => deals.id).notNull(),
+  action: text("action").notNull(), // 'created', 'updated', 'deleted', 'stage_changed', etc.
+  fieldChanged: text("field_changed"), // Specific field that was changed
+  oldValue: text("old_value"),
+  newValue: text("new_value"),
+  changeReason: text("change_reason"),
+  performedBy: uuid("performed_by").references(() => users.id).notNull(),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  sessionId: text("session_id"),
+  metadata: jsonb("metadata").default('{}'),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+// Deal Scorecards & Health Analysis
+export const dealScorecards = pgTable("deal_scorecards", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  dealId: uuid("deal_id").references(() => deals.id).notNull(),
+  overallScore: integer("overall_score").notNull(), // 0-100
+  healthStatus: dealHealthEnum("health_status").default('healthy'),
+  riskFactors: jsonb("risk_factors").default('[]'), // Array of identified risks
+  opportunities: jsonb("opportunities").default('[]'), // Array of opportunities
+  strengths: jsonb("strengths").default('[]'), // Array of deal strengths
+  
+  // Score components
+  engagementScore: integer("engagement_score").default(0), // Customer engagement level
+  fitScore: integer("fit_score").default(0), // Product-market fit
+  urgencyScore: integer("urgency_score").default(0), // Buying urgency
+  budgetScore: integer("budget_score").default(0), // Budget alignment
+  authorityScore: integer("authority_score").default(0), // Decision maker involvement
+  timelineScore: integer("timeline_score").default(0), // Timeline realism
+  competitionScore: integer("competition_score").default(0), // Competitive position
+  
+  // AI Analysis
+  aiInsights: jsonb("ai_insights").default('{}'),
+  recommendations: jsonb("recommendations").default('[]'), // AI recommendations
+  nextBestActions: jsonb("next_best_actions").default('[]'),
+  
+  // Calculated fields
+  winProbability: integer("win_probability").default(0), // AI-calculated win probability
+  forecastCategory: text("forecast_category"), // 'commit', 'best_case', 'pipeline', 'omitted'
+  riskLevel: dealRiskLevelEnum("risk_level").default('low'),
+  
+  lastCalculated: timestamp("last_calculated").notNull().defaultNow(),
+  calculatedBy: text("calculated_by").default('system'), // 'system', 'manual'
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+// Deal Configuration & Settings
+export const dealConfiguration = pgTable("deal_configuration", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  description: text("description"),
+  configurationType: text("configuration_type").notNull(), // 'pipeline', 'stage', 'field_mapping', 'automation'
+  
+  // Pipeline configuration
+  pipelineStages: jsonb("pipeline_stages").default('[]'), // Custom pipeline stages
+  stageRequirements: jsonb("stage_requirements").default('{}'), // Required fields per stage
+  stageTransitionRules: jsonb("stage_transition_rules").default('{}'),
+  
+  // Field mappings and custom fields
+  fieldMappings: jsonb("field_mappings").default('{}'),
+  customFields: jsonb("custom_fields").default('[]'),
+  fieldValidationRules: jsonb("field_validation_rules").default('{}'),
+  
+  // Automation settings
+  automationRules: jsonb("automation_rules").default('[]'),
+  notificationSettings: jsonb("notification_settings").default('{}'),
+  integrationSettings: jsonb("integration_settings").default('{}'),
+  
+  // Access control
+  accessLevel: text("access_level").default('team'), // 'global', 'team', 'user'
+  allowedRoles: jsonb("allowed_roles").default('[]'),
+  allowedUsers: jsonb("allowed_users").default('[]'),
+  
+  isActive: boolean("is_active").default(true),
+  isDefault: boolean("is_default").default(false),
+  createdBy: uuid("created_by").references(() => users.id).notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Deal Related Entities (Quick Links)
+export const dealRelatedEntities = pgTable("deal_related_entities", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  dealId: uuid("deal_id").references(() => deals.id).notNull(),
+  entityType: text("entity_type").notNull(), // 'contact', 'account', 'lead', 'opportunity', 'project'
+  entityId: uuid("entity_id").notNull(), // Reference to the related entity
+  relationshipType: text("relationship_type").default('related'), // 'primary', 'secondary', 'influencer', 'decision_maker'
+  notes: text("notes"),
+  createdBy: uuid("created_by").references(() => users.id).notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 // Deal Comments for collaboration
 export const dealComments: any = pgTable("deal_comments", {
   id: uuid("id").primaryKey().defaultRandom(),
