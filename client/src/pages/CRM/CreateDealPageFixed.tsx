@@ -323,17 +323,20 @@ const CreateDealPageFixed: React.FC = () => {
       toggleSection(sectionId);
     }
     
-    // Smooth scroll to the section
+    // Enhanced scroll to section with proper offset
     setTimeout(() => {
       const sectionElement = document.querySelector(`[data-section-id="${sectionId}"]`);
       if (sectionElement) {
-        sectionElement.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'start',
-          inline: 'nearest'
+        const headerOffset = 200; // Account for sticky headers (main header + section nav)
+        const elementPosition = sectionElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
         });
       }
-    }, 100); // Small delay to allow section to expand
+    }, 300); // Longer delay to ensure section fully expands
   };
 
   // Calculate completion percentage
