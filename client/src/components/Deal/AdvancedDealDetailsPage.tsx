@@ -9,7 +9,7 @@ import {
   ArrowLeft, Edit2, Save, X, Plus, Mail, Phone, Globe, Building,
   Calendar, DollarSign, User, Target, Clock, FileText, Paperclip,
   Activity, Users, MessageSquare, Briefcase, TrendingUp, CheckCircle,
-  CheckSquare, Eye, History, ChevronRight, Award, Zap, ChevronDown, ChevronUp,
+  CheckSquare, Eye, History, ChevronRight, ChevronLeft, Award, Zap, ChevronDown, ChevronUp,
   Upload, Download, Search, Filter, MoreVertical, Star, Flag,
   AlertTriangle, ThumbsUp, Send, Reply, Forward, Archive, Trash2,
   ExternalLink, Copy, Share2, Bell, BellOff, UserPlus, Settings,
@@ -1004,6 +1004,7 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
   const [viewMode, setViewMode] = useState<'blocks' | 'timeline'>('blocks');
   const [expandedInsights, setExpandedInsights] = useState(true);
   const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   
   const queryClient = useQueryClient();
 
@@ -1208,9 +1209,24 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
       <div className="w-full px-0 py-0">
         <div className="flex gap-0">
           {/* Left Sidebar Navigation */}
-          <div className="w-64 flex-shrink-0">
+          <div className={`${isSidebarCollapsed ? 'w-16' : 'w-64'} flex-shrink-0 transition-all duration-300`}>
             <div className="bg-white shadow-sm border-r border-gray-200 p-4 sticky top-0 h-screen overflow-y-auto">
-              <h3 className="text-sm font-semibold text-gray-900 mb-4">Deal Functions</h3>
+              <div className="flex items-center justify-between mb-4">
+                {!isSidebarCollapsed && (
+                  <h3 className="text-sm font-semibold text-gray-900">Deal Functions</h3>
+                )}
+                <button
+                  onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                  className="p-1.5 rounded-md hover:bg-gray-100 transition-colors"
+                  title={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+                >
+                  {isSidebarCollapsed ? (
+                    <ChevronRight className="h-4 w-4 text-gray-500" />
+                  ) : (
+                    <ChevronLeft className="h-4 w-4 text-gray-500" />
+                  )}
+                </button>
+              </div>
               <StaggeredContainer className="space-y-2">
                 {[
                   { id: 'overview', label: 'Overview & Summary', icon: Eye, description: 'Deal details and progress' },
@@ -1223,27 +1239,33 @@ const AdvancedDealDetailsPage: React.FC<AdvancedDealDetailsPageProps> = ({ dealI
                   return (
                     <AnimatedListItem
                       key={tab.id}
-                      className={`w-full flex items-start space-x-3 px-3 py-3 rounded-lg text-left transition-all duration-200 cursor-pointer ${
+                      className={`w-full flex items-start ${isSidebarCollapsed ? 'justify-center px-2' : 'space-x-3 px-3'} py-3 rounded-lg text-left transition-all duration-200 cursor-pointer ${
                         activeTab === tab.id
                           ? 'bg-blue-50 border border-blue-200 text-blue-700'
                           : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                       }`}
                       index={index}
                     >
-                      <div onClick={() => setActiveTab(tab.id)} className="w-full flex items-start space-x-3">
-                      <Icon className={`h-5 w-5 mt-0.5 flex-shrink-0 ${
+                      <div 
+                        onClick={() => setActiveTab(tab.id)} 
+                        className={`w-full flex items-start ${isSidebarCollapsed ? 'justify-center' : 'space-x-3'}`}
+                        title={isSidebarCollapsed ? tab.label : ''}
+                      >
+                      <Icon className={`h-5 w-5 ${isSidebarCollapsed ? '' : 'mt-0.5'} flex-shrink-0 ${
                         activeTab === tab.id ? 'text-blue-600' : 'text-gray-400'
                       }`} />
-                      <div className="flex-1 min-w-0">
-                        <p className={`text-sm font-medium ${
-                          activeTab === tab.id ? 'text-blue-900' : 'text-gray-900'
-                        }`}>
-                          {tab.label}
-                        </p>
-                        <p className="text-xs text-gray-500 mt-0.5">
-                          {tab.description}
-                        </p>
+                      {!isSidebarCollapsed && (
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-sm font-medium ${
+                            activeTab === tab.id ? 'text-blue-900' : 'text-gray-900'
+                          }`}>
+                            {tab.label}
+                          </p>
+                          <p className="text-xs text-gray-500 mt-0.5">
+                            {tab.description}
+                          </p>
                         </div>
+                      )}
                       </div>
                     </AnimatedListItem>
                   );
