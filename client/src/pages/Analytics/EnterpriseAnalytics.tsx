@@ -2159,10 +2159,11 @@ const EnterpriseAnalytics: React.FC = () => {
               </select>
               <button 
                 onClick={() => setShowFilterModal(true)}
-                className="px-3 py-1 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors"
+                className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm hover:shadow-md transition-all duration-200 transform hover:scale-105 active:scale-95 embossed-button"
                 data-testid="button-add-filter"
+                title="Add Filter"
               >
-                + Add Filter
+                <Filter className="w-4 h-4" />
               </button>
             </div>
             
