@@ -322,6 +322,18 @@ const CreateDealPageFixed: React.FC = () => {
     if (!expandedSections.includes(sectionId)) {
       toggleSection(sectionId);
     }
+    
+    // Smooth scroll to the section
+    setTimeout(() => {
+      const sectionElement = document.querySelector(`[data-section-id="${sectionId}"]`);
+      if (sectionElement) {
+        sectionElement.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start',
+          inline: 'nearest'
+        });
+      }
+    }, 100); // Small delay to allow section to expand
   };
 
   // Calculate completion percentage
@@ -529,8 +541,8 @@ const CreateDealPageFixed: React.FC = () => {
         {/* Main Form Content - Full Width */}
         <div className="flex-1 min-w-0">
           {/* Section Navigation */}
-          <div className="mb-8">
-            <div className="flex items-center space-x-2 overflow-x-auto pb-3 border-b border-gray-200/50">
+          <div className="sticky top-32 bg-white/95 backdrop-blur-md border border-gray-200/50 rounded-xl shadow-lg mb-8 p-4 z-30">
+            <div className="flex items-center space-x-2 overflow-x-auto">
               {FORM_SECTIONS.map((section, index) => {
                 const Icon = section.icon;
                 const isActive = currentSection === section.id;
@@ -574,6 +586,7 @@ const CreateDealPageFixed: React.FC = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden hover:shadow-xl transition-all duration-300"
+                  data-section-id={section.id}
                 >
                   {/* Section Header */}
                   <button
