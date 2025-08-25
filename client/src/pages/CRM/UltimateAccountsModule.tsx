@@ -174,7 +174,7 @@ const UltimateAccountsModule: React.FC = () => {
     >
       {/* Header Section */}
       <div className="bg-white border-b border-gray-200 px-6 py-3">
-        <div className="max-w-5xl flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+        <div className="max-w-5xl flex flex-col lg:flex-row lg:items-center gap-3">
           {/* Title and Stats */}
           <div className="flex items-center space-x-4">
             <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg text-white">
@@ -194,7 +194,7 @@ const UltimateAccountsModule: React.FC = () => {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3 ml-auto">
             <button
               onClick={() => setShowFilters(!showFilters)}
               className="w-10 h-10 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl bg-white border border-gray-200 hover:border-gray-300"
