@@ -167,13 +167,9 @@ const UltimateAccountsModule: React.FC = () => {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="flex-1 bg-gray-50"
-    >
+    <div className="flex-1 bg-gray-50 relative">
       {/* Header Section */}
-      <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-6 py-3">
+      <div className="fixed top-16 left-0 right-0 z-50 bg-white border-b border-gray-200 px-6 py-3">
         <div className="flex flex-col lg:flex-row lg:items-center gap-3">
           {/* Title and Stats */}
           <div className="flex items-center space-x-4">
@@ -331,7 +327,7 @@ const UltimateAccountsModule: React.FC = () => {
       </div>
 
       {/* Search Bar */}
-      <div className="bg-white border-b border-gray-200 px-6 py-3">
+      <div className="fixed left-0 right-0 z-40 bg-white border-b border-gray-200 px-6 py-3" style={{top: '120px'}}>
         <div className="relative max-w-xl">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
@@ -346,7 +342,7 @@ const UltimateAccountsModule: React.FC = () => {
       </div>
 
       {/* Accounts Grid */}
-      <div className="px-6 py-4">
+      <div className="px-6 py-4" style={{marginTop: '180px'}}>
         {filteredAccounts.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -549,7 +545,7 @@ const UltimateAccountsModule: React.FC = () => {
           queryClient.invalidateQueries({ queryKey: ['/api/accounts/duplicates'] });
         }}
       />
-    </motion.div>
+    </div>
   );
 };
 
