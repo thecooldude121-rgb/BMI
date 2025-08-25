@@ -183,7 +183,6 @@ const UltimateAccountsModule: React.FC = () => {
             <div>
               <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
                 Accounts
-                <span className="text-2xl">🏢</span>
               </h1>
               <div className="flex items-center space-x-6 mt-2 text-sm text-gray-600">
                 <div className="flex items-center space-x-1">
@@ -337,7 +336,7 @@ const UltimateAccountsModule: React.FC = () => {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
             type="text"
-            placeholder="🔍 Search accounts..."
+            placeholder="Search accounts..."
             value={filters.searchTerm}
             onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
             className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 shadow-md hover:shadow-lg bg-white"
