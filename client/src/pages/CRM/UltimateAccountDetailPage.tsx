@@ -125,6 +125,14 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
   // Data Fetching
   const { data: account, isLoading, error, refetch } = useQuery<Account>({
     queryKey: ['/api/accounts', accountId],
+    queryFn: async () => {
+      if (!accountId) throw new Error('No account ID provided');
+      const response = await fetch(`/api/accounts/${accountId}`);
+      if (!response.ok) throw new Error('Failed to fetch account');
+      const data = await response.json();
+      console.log('Loaded account data:', data);
+      return data;
+    },
     enabled: !!accountId,
   });
 
@@ -159,6 +167,7 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
       const response = await fetch(`/api/accounts/${accountId}/activities`);
       if (!response.ok) return [];
       const data = await response.json();
+      console.log('Loaded activities for account:', accountId, 'Count:', data?.length || 0);
       return Array.isArray(data) ? data : [];
     },
     enabled: !!accountId,
@@ -174,6 +183,7 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
         const response = await fetch(`/api/notes/by-account/${accountId}`);
         if (response.ok) {
           const data = await response.json();
+          console.log('Loaded notes for account:', accountId, 'Count:', data?.length || 0);
           return Array.isArray(data) ? data : [];
         }
       } catch (error) {
@@ -647,7 +657,7 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
                         <div className="space-y-4">
                           <h3 className="text-lg font-semibold text-gray-900 mb-4">Company Information</h3>
                           
-                          {account.description && (
+                          {account?.description && (
                             <div>
                               <label className="text-sm font-medium text-gray-700">Description</label>
                               <p className="text-gray-900 mt-1">{account.description}</p>
@@ -655,14 +665,14 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
                           )}
                           
                           <div className="grid grid-cols-2 gap-4">
-                            {account.foundedYear && (
+                            {account?.foundedYear && (
                               <div>
                                 <label className="text-sm font-medium text-gray-700">Founded</label>
                                 <p className="text-gray-900 mt-1">{account.foundedYear}</p>
                               </div>
                             )}
                             
-                            {account.companySize && (
+                            {account?.companySize && (
                               <div>
                                 <label className="text-sm font-medium text-gray-700">Company Size</label>
                                 <p className="text-gray-900 mt-1">{account.companySize}</p>
@@ -690,7 +700,7 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
                         <div className="space-y-4">
                           <h3 className="text-lg font-semibold text-gray-900 mb-4">Contact Information</h3>
                           
-                          {account.website && (
+                          {account?.website && (
                             <div className="flex items-center space-x-3">
                               <Globe className="w-5 h-5 text-gray-400" />
                               <div>
@@ -707,7 +717,7 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
                             </div>
                           )}
                           
-                          {account.phone && (
+                          {account?.phone && (
                             <div className="flex items-center space-x-3">
                               <Phone className="w-5 h-5 text-gray-400" />
                               <div>
@@ -717,7 +727,7 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
                             </div>
                           )}
                           
-                          {account.email && (
+                          {account?.email && (
                             <div className="flex items-center space-x-3">
                               <Mail className="w-5 h-5 text-gray-400" />
                               <div>
@@ -727,7 +737,7 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
                             </div>
                           )}
                           
-                          {account.address && (
+                          {account?.address && (
                             <div className="flex items-center space-x-3">
                               <MapPin className="w-5 h-5 text-gray-400" />
                               <div>
@@ -742,7 +752,7 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
                             </div>
                           )}
                           
-                          {account.owner && (
+                          {account?.owner && (
                             <div className="flex items-center space-x-3">
                               <Users className="w-5 h-5 text-gray-400" />
                               <div>
