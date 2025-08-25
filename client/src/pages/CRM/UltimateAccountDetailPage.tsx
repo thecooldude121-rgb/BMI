@@ -198,6 +198,19 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
     enabled: !!accountId,
   });
 
+  // Debug logging
+  useEffect(() => {
+    console.log('Account Detail Page - Current activeTab:', activeTab);
+    console.log('Account Detail Page - Data loaded:', {
+      accountId,
+      account: !!account,
+      contacts: contacts?.length || 0,
+      deals: deals?.length || 0,
+      activities: activities?.length || 0,
+      notes: notes?.length || 0
+    });
+  }, [activeTab, accountId, account, contacts, deals, activities, notes]);
+
   // Mutations
   const createNoteMutation = useMutation({
     mutationFn: async (noteData: { content: string; accountId: string }) => {
@@ -577,7 +590,10 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
                   return (
                     <button
                       key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
+                      onClick={() => {
+                        console.log('Switching to tab:', tab.id);
+                        setActiveTab(tab.id);
+                      }}
                       className={`flex items-center space-x-2 py-4 border-b-2 font-medium text-sm transition-colors ${
                         activeTab === tab.id
                           ? 'border-blue-500 text-blue-600'
@@ -746,7 +762,7 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
                   {activeTab === 'contacts' && (
                     <div>
                       <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-lg font-semibold text-gray-900">Contacts ({contacts.length})</h3>
+                        <h3 className="text-lg font-semibold text-gray-900">Contacts ({Array.isArray(contacts) ? contacts.length : 0})</h3>
                         <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
                           <Plus className="w-4 h-4" />
                           Add Contact
@@ -825,7 +841,7 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
                   {activeTab === 'deals' && (
                     <div>
                       <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-lg font-semibold text-gray-900">Deals ({deals.length})</h3>
+                        <h3 className="text-lg font-semibold text-gray-900">Deals ({Array.isArray(deals) ? deals.length : 0})</h3>
                         <button 
                           onClick={() => setLocation('/crm/deals/create')}
                           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
@@ -899,7 +915,7 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
                   {activeTab === 'activities' && (
                     <div>
                       <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-lg font-semibold text-gray-900">Activities ({activities.length})</h3>
+                        <h3 className="text-lg font-semibold text-gray-900">Activities ({Array.isArray(activities) ? activities.length : 0})</h3>
                         <button 
                           onClick={() => setShowActivityModal(true)}
                           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
@@ -968,7 +984,7 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
                   {activeTab === 'notes' && (
                     <div>
                       <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-lg font-semibold text-gray-900">Notes ({notes.length})</h3>
+                        <h3 className="text-lg font-semibold text-gray-900">Notes ({Array.isArray(notes) ? notes.length : 0})</h3>
                         <button 
                           onClick={() => setShowNoteModal(true)}
                           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
