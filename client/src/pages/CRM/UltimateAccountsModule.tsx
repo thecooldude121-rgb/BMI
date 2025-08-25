@@ -263,10 +263,10 @@ const UltimateAccountsModule: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 bg-gray-50 relative">
+    <div className="flex-1 bg-gray-50">
       {/* Header Section */}
-      <div className="fixed top-16 left-0 right-0 z-50 bg-white border-b border-gray-200 px-6 py-3">
-        <div className="flex flex-col lg:flex-row lg:items-center gap-3">
+      <div className="bg-white border-b border-gray-200 px-6 py-4 sticky top-16 z-50">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           {/* Title and Stats */}
           <div className="flex items-center space-x-4">
             <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg text-white">
@@ -286,7 +286,7 @@ const UltimateAccountsModule: React.FC = () => {
           </div>
 
           {/* Action Buttons */}
-          <div className="absolute right-6 top-1/2 transform -translate-y-1/2 flex items-center space-x-3">
+          <div className="flex items-center space-x-3">
             <button
               onClick={() => setShowFilters(!showFilters)}
               className="w-10 h-10 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl bg-white border border-gray-200 hover:border-gray-300"
@@ -422,11 +422,11 @@ const UltimateAccountsModule: React.FC = () => {
         )}
       </div>
 
-      {/* Analytics Content Container - Not Fixed */}
-      <div className="bg-white" style={{ marginTop: '120px' }}>
+      {/* Analytics Content Container */}
+      <div className="bg-white">
         
         {/* Compact Analytics Header */}
-        <div className="bg-white border-b border-gray-200 px-6 py-3 shadow-sm sticky top-16 z-40">
+        <div className="bg-white border-b border-gray-200 px-6 py-3 shadow-sm sticky top-24 z-40">
           <div className="flex items-center justify-between">
             {/* Compact Analytics Summary */}
             <div className="flex items-center gap-8">
@@ -876,7 +876,7 @@ const UltimateAccountsModule: React.FC = () => {
       </div>
 
       {/* Search Bar */}
-      <div className="sticky top-16 z-30 bg-white border-b border-gray-200 px-6 py-3 shadow-sm">
+      <div className="bg-white border-b border-gray-200 px-6 py-3 shadow-sm">
         <div className="relative max-w-xl">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
