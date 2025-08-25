@@ -88,6 +88,8 @@ const UltimateAccountsModule: React.FC = () => {
     density: 'comfortable',
     columns: ['name', 'industry', 'revenue', 'deals', 'health', 'lastActivity']
   });
+  
+  const [currentView, setCurrentView] = useState<'card' | 'list'>('card');
 
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
@@ -202,6 +204,34 @@ const UltimateAccountsModule: React.FC = () => {
               Filters
             </button>
 
+            {/* View Toggle */}
+            <div className="flex bg-gray-100 rounded-lg p-1">
+              <button
+                onClick={() => setCurrentView('card')}
+                className={`px-3 py-1 rounded-md text-sm font-medium transition-colors flex items-center gap-1 ${
+                  currentView === 'card' 
+                    ? 'bg-white text-blue-600 shadow-sm' 
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+                data-testid="button-view-card"
+              >
+                <Grid3X3 className="w-4 h-4" />
+                Card
+              </button>
+              <button
+                onClick={() => setCurrentView('list')}
+                className={`px-3 py-1 rounded-md text-sm font-medium transition-colors flex items-center gap-1 ${
+                  currentView === 'list' 
+                    ? 'bg-white text-blue-600 shadow-sm' 
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+                data-testid="button-view-list"
+              >
+                <List className="w-4 h-4" />
+                List
+              </button>
+            </div>
+
             <button
               onClick={handleCreateAccount}
               className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl"
@@ -314,7 +344,7 @@ const UltimateAccountsModule: React.FC = () => {
               </button>
             </div>
           </motion.div>
-        ) : (
+        ) : currentView === 'card' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredAccounts.map((account) => (
               <motion.div
@@ -396,6 +426,86 @@ const UltimateAccountsModule: React.FC = () => {
                 </div>
               </motion.div>
             ))}
+          </div>
+        ) : (
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-900">Account</th>
+                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-900">Industry</th>
+                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-900">Revenue</th>
+                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-900">Deals</th>
+                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-900">Created</th>
+                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-900">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {filteredAccounts.map((account) => (
+                    <motion.tr
+                      key={account.id}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="hover:bg-gray-50 transition-colors cursor-pointer"
+                      onClick={() => handleAccountClick(account.id)}
+                      data-testid={`row-account-${account.id}`}
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-center space-x-3">
+                          <div className="p-2 bg-blue-100 rounded-lg">
+                            <Building className="w-5 h-5 text-blue-600" />
+                          </div>
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">{account.name}</div>
+                            <div className="text-sm text-gray-500">{account.website || 'No website'}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900 capitalize">
+                        {account.industry || 'N/A'}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center space-x-1 text-green-600">
+                          <DollarSign className="w-4 h-4" />
+                          <span className="text-sm font-medium">${account.totalRevenue?.toLocaleString() || '0'}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center space-x-1">
+                          <Users className="w-4 h-4 text-gray-400" />
+                          <span className="text-sm text-gray-600">{account.totalDeals || 0}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-500">
+                        {new Date(account.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleAccountClick(account.id);
+                            }}
+                            className="text-blue-600 hover:text-blue-700 transition-colors"
+                            data-testid={`button-table-view-${account.id}`}
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={(e) => e.stopPropagation()}
+                            className="text-gray-400 hover:text-gray-600 transition-colors"
+                            data-testid={`button-table-edit-${account.id}`}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </motion.tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>
