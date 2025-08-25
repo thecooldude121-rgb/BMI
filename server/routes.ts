@@ -51,6 +51,201 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Duplicate Management Routes - Must come BEFORE parameterized routes
+  app.get("/api/accounts/duplicates", async (req, res) => {
+    try {
+      const accounts = await storage.getAccounts();
+      const duplicateGroups: any[] = [];
+      const processed = new Set();
+
+      // Helper function to determine duplicate criteria
+      function getDuplicateCriteria(group: any[]): string[] {
+        const criteria = [];
+        if (group.every(acc => acc.name)) criteria.push('name');
+        if (group.every(acc => acc.website)) criteria.push('website');
+        if (group.every(acc => acc.domain)) criteria.push('domain');
+        if (group.every(acc => acc.phone)) criteria.push('phone');
+        return criteria;
+      }
+
+      accounts.forEach((account: any, index: number) => {
+        if (processed.has(account.id)) return;
+
+        const duplicates = accounts.filter((other: any, otherIndex: number) => {
+          if (index === otherIndex || processed.has(other.id)) return false;
+
+          // Check for exact name match (case-insensitive)
+          if (account.name && other.name && 
+              account.name.toLowerCase().trim() === other.name.toLowerCase().trim()) {
+            return true;
+          }
+          
+          // Check for website match
+          if (account.website && other.website && 
+              account.website.toLowerCase().trim() === other.website.toLowerCase().trim()) {
+            return true;
+          }
+          
+          // Check for domain match
+          if (account.domain && other.domain && 
+              account.domain.toLowerCase().trim() === other.domain.toLowerCase().trim()) {
+            return true;
+          }
+          
+          // Check for phone match (normalize phone numbers)
+          if (account.phone && other.phone && 
+              account.phone.replace(/\D/g, '') === other.phone.replace(/\D/g, '')) {
+            return true;
+          }
+          
+          return false;
+        });
+
+        if (duplicates.length > 0) {
+          const group = [account, ...duplicates];
+          duplicateGroups.push({
+            id: `group-${duplicateGroups.length + 1}`,
+            accounts: group,
+            duplicateCount: group.length,
+            criteria: getDuplicateCriteria(group)
+          });
+
+          // Mark all accounts in this group as processed
+          group.forEach((acc: any) => processed.add(acc.id));
+        }
+      });
+
+      res.json({
+        totalDuplicateGroups: duplicateGroups.length,
+        totalDuplicateAccounts: duplicateGroups.reduce((sum, group) => sum + group.duplicateCount, 0),
+        duplicateGroups
+      });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/accounts/duplicates/cleanup", async (req, res) => {
+    try {
+      const { keepAccountIds, removeAccountIds, autoCleanup = false } = req.body;
+      const results = {
+        kept: 0,
+        removed: 0,
+        errors: [] as string[]
+      };
+
+      if (autoCleanup) {
+        // Auto-cleanup: Keep the oldest account, remove newer duplicates
+        const accounts = await storage.getAccounts();
+        const duplicateGroups: any[] = [];
+        const processed = new Set();
+
+        accounts.forEach((account: any, index: number) => {
+          if (processed.has(account.id)) return;
+
+          const duplicates = accounts.filter((other: any, otherIndex: number) => {
+            if (index === otherIndex || processed.has(other.id)) return false;
+            return (
+              (account.name && other.name && 
+               account.name.toLowerCase().trim() === other.name.toLowerCase().trim()) ||
+              (account.website && other.website && 
+               account.website.toLowerCase().trim() === other.website.toLowerCase().trim()) ||
+              (account.domain && other.domain && 
+               account.domain.toLowerCase().trim() === other.domain.toLowerCase().trim()) ||
+              (account.phone && other.phone && 
+               account.phone.replace(/\D/g, '') === other.phone.replace(/\D/g, ''))
+            );
+          });
+
+          if (duplicates.length > 0) {
+            const group = [account, ...duplicates];
+            duplicateGroups.push(group);
+            group.forEach((acc: any) => processed.add(acc.id));
+          }
+        });
+
+        // Process each duplicate group
+        for (const group of duplicateGroups) {
+          // Sort by creation date (keep oldest)
+          group.sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+          const keepAccount = group[0];
+          const removeAccounts = group.slice(1);
+
+          results.kept += 1;
+          for (const removeAccount of removeAccounts) {
+            try {
+              // Transfer relationships to the kept account before deletion
+              await transferAccountRelationships(removeAccount.id, keepAccount.id);
+              await storage.deleteAccount(removeAccount.id);
+              results.removed += 1;
+            } catch (error) {
+              results.errors.push(`Failed to remove account ${removeAccount.name}: ${error}`);
+            }
+          }
+        }
+      } else {
+        // Manual cleanup with specified IDs
+        if (removeAccountIds && Array.isArray(removeAccountIds)) {
+          for (const accountId of removeAccountIds) {
+            try {
+              // For manual cleanup, we need to specify which account to keep
+              const keepId = keepAccountIds && keepAccountIds.length > 0 ? keepAccountIds[0] : null;
+              if (keepId) {
+                await transferAccountRelationships(accountId, keepId);
+              }
+              await storage.deleteAccount(accountId);
+              results.removed += 1;
+            } catch (error) {
+              results.errors.push(`Failed to remove account ${accountId}: ${error}`);
+            }
+          }
+        }
+
+        if (keepAccountIds && Array.isArray(keepAccountIds)) {
+          results.kept = keepAccountIds.length;
+        }
+      }
+
+      res.json({
+        success: true,
+        message: `Cleanup completed: ${results.kept} accounts kept, ${results.removed} accounts removed`,
+        results
+      });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Helper function to transfer account relationships
+  async function transferAccountRelationships(fromAccountId: string, toAccountId: string) {
+    try {
+      // Get all related data and then update to the kept account
+      const accountWithRelations = await storage.getAccountWithRelations(fromAccountId);
+      
+      if (accountWithRelations) {
+        // Transfer contacts
+        for (const contact of accountWithRelations.contacts) {
+          await storage.updateContact(contact.id, { accountId: toAccountId });
+        }
+
+        // Transfer deals
+        for (const deal of accountWithRelations.deals) {
+          await storage.updateDeal(deal.id, { accountId: toAccountId });
+        }
+
+        // Transfer activities (get activities for this account)
+        const activities = await storage.getActivitiesByAccount(fromAccountId);
+        for (const activity of activities) {
+          await storage.updateActivity(activity.id, { accountId: toAccountId });
+        }
+      }
+
+    } catch (error) {
+      console.error(`Error transferring relationships from ${fromAccountId} to ${toAccountId}:`, error);
+      throw error;
+    }
+  }
+
   app.get("/api/accounts/:id", async (req, res) => {
     try {
       const account = await storage.getAccount(req.params.id);
@@ -67,6 +262,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!result.success) {
         return res.status(400).json({ error: "Invalid account data", details: result.error });
       }
+
+      // Check for duplicates before creating
+      const existingAccounts = await storage.getAccounts();
+      const duplicateCheck = existingAccounts.find((existing: any) => {
+        // Check for exact name match (case-insensitive)
+        if (result.data.name && existing.name && 
+            result.data.name.toLowerCase().trim() === existing.name.toLowerCase().trim()) {
+          return true;
+        }
+        
+        // Check for website/domain match (if provided)
+        if (result.data.website && existing.website && 
+            result.data.website.toLowerCase().trim() === existing.website.toLowerCase().trim()) {
+          return true;
+        }
+        
+        // Check for domain match (if provided)
+        if (result.data.domain && existing.domain && 
+            result.data.domain.toLowerCase().trim() === existing.domain.toLowerCase().trim()) {
+          return true;
+        }
+        
+        // Check for phone match (if provided)
+        if (result.data.phone && existing.phone && 
+            result.data.phone.replace(/\D/g, '') === existing.phone.replace(/\D/g, '')) {
+          return true;
+        }
+        
+        return false;
+      });
+
+      if (duplicateCheck) {
+        return res.status(409).json({ 
+          error: "Duplicate account detected", 
+          message: `An account with similar details already exists: ${duplicateCheck.name}`,
+          existingAccount: {
+            id: duplicateCheck.id,
+            name: duplicateCheck.name,
+            website: duplicateCheck.website,
+            domain: duplicateCheck.domain
+          }
+        });
+      }
+
       const account = await storage.createAccount(result.data);
       res.status(201).json(account);
     } catch (error) {
