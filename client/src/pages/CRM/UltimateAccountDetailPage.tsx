@@ -129,22 +129,72 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
   });
 
   const { data: deals = [] } = useQuery<Deal[]>({
-    queryKey: ['/api/deals', { accountId }],
+    queryKey: ['/api/deals', 'by-account', accountId],
+    queryFn: async () => {
+      if (!accountId) return [];
+      const response = await fetch(`/api/deals/by-account/${accountId}`);
+      if (!response.ok) return [];
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
+    },
     enabled: !!accountId,
   });
 
   const { data: contacts = [] } = useQuery<Contact[]>({
-    queryKey: ['/api/contacts', { accountId }],
+    queryKey: ['/api/contacts', 'by-account', accountId],
+    queryFn: async () => {
+      if (!accountId) return [];
+      const response = await fetch(`/api/contacts/by-account/${accountId}`);
+      if (!response.ok) return [];
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
+    },
     enabled: !!accountId,
   });
 
   const { data: activities = [] } = useQuery<Activity[]>({
-    queryKey: ['/api/activities', { accountId }],
+    queryKey: ['/api/accounts', accountId, 'activities'],
+    queryFn: async () => {
+      if (!accountId) return [];
+      const response = await fetch(`/api/accounts/${accountId}/activities`);
+      if (!response.ok) return [];
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
+    },
     enabled: !!accountId,
   });
 
   const { data: notes = [] } = useQuery<Note[]>({
-    queryKey: ['/api/notes', { accountId }],
+    queryKey: ['/api/notes', 'by-account', accountId],
+    queryFn: async () => {
+      if (!accountId) return [];
+      
+      // Try account-specific endpoint first, fallback to filtering all notes
+      try {
+        const response = await fetch(`/api/notes/by-account/${accountId}`);
+        if (response.ok) {
+          const data = await response.json();
+          return Array.isArray(data) ? data : [];
+        }
+      } catch (error) {
+        console.warn('Account-specific notes endpoint not available, using fallback');
+      }
+      
+      // Fallback: get all notes and filter by accountId
+      try {
+        const response = await fetch('/api/notes');
+        if (response.ok) {
+          const allNotes = await response.json();
+          if (Array.isArray(allNotes)) {
+            return allNotes.filter((note: any) => note.accountId === accountId);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch notes:', error);
+      }
+      
+      return [];
+    },
     enabled: !!accountId,
   });
 
@@ -537,22 +587,22 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
                     >
                       <Icon className="w-4 h-4" />
                       <span>{tab.label}</span>
-                      {tab.id === 'contacts' && contacts.length > 0 && (
+                      {tab.id === 'contacts' && Array.isArray(contacts) && contacts.length > 0 && (
                         <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full">
                           {contacts.length}
                         </span>
                       )}
-                      {tab.id === 'deals' && deals.length > 0 && (
+                      {tab.id === 'deals' && Array.isArray(deals) && deals.length > 0 && (
                         <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full">
                           {deals.length}
                         </span>
                       )}
-                      {tab.id === 'activities' && activities.length > 0 && (
+                      {tab.id === 'activities' && Array.isArray(activities) && activities.length > 0 && (
                         <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full">
                           {activities.length}
                         </span>
                       )}
-                      {tab.id === 'notes' && notes.length > 0 && (
+                      {tab.id === 'notes' && Array.isArray(notes) && notes.length > 0 && (
                         <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full">
                           {notes.length}
                         </span>
@@ -703,7 +753,7 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
                         </button>
                       </div>
                       
-                      {contacts.length > 0 ? (
+                      {Array.isArray(contacts) && contacts.length > 0 ? (
                         <div className="space-y-4">
                           {contacts.map(contact => (
                             <div
@@ -785,7 +835,7 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
                         </button>
                       </div>
                       
-                      {deals.length > 0 ? (
+                      {Array.isArray(deals) && deals.length > 0 ? (
                         <div className="space-y-4">
                           {deals.map(deal => (
                             <div
@@ -859,7 +909,7 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
                         </button>
                       </div>
                       
-                      {activities.length > 0 ? (
+                      {Array.isArray(activities) && activities.length > 0 ? (
                         <div className="space-y-4">
                           {activities.map(activity => {
                             const ActivityIcon = getActivityIcon(activity.type);
@@ -928,7 +978,7 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
                         </button>
                       </div>
                       
-                      {notes.length > 0 ? (
+                      {Array.isArray(notes) && notes.length > 0 ? (
                         <div className="space-y-4">
                           {notes.map(note => (
                             <div
