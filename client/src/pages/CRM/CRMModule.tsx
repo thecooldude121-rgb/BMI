@@ -5,6 +5,7 @@ import LeadDetailPage from './LeadDetailPage';
 import EnterpriseContactsModule from './EnterpriseContactsModule';
 import NextGenAccountModule from './NextGenAccountModule';
 import NextGenAccountsModule from './NextGenAccountsModule';
+import UltimateAccountsModule from './UltimateAccountsModule';
 import NextGenContactsModule from './NextGenContactsModule';
 import BasicAccountsPage from './BasicAccountsPage';
 import TestAccountDetailPage from './TestAccountDetailPage';
@@ -38,7 +39,7 @@ const CRMModule = () => {
         <Route path="/crm/accounts/health" component={AccountHealthDashboard} />
         <Route path="/crm/accounts/test" component={SimpleTestPage} />
         <Route path="/crm/accounts">
-          <NextGenAccountsModule />
+          <UltimateAccountsModule />
         </Route>
         <Route path="/crm/deals/enhanced/:id" component={EnhancedDealDetailPageWorking} />
         <Route path="/crm/deals/:id" component={DealDetailView} />

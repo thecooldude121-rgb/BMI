@@ -7,6 +7,7 @@ import CRMModule from './pages/CRM/CRMModule';
 import EnhancedLeadsPage from './pages/CRM/EnhancedLeadsPage';
 import ContactsPage from './pages/CRM/ContactsPage';
 import EnhancedAccountsPage from './pages/CRM/EnhancedAccountsPage';
+import UltimateAccountsModule from './pages/CRM/UltimateAccountsModule';
 import UnifiedDealsPage from './pages/CRM/UnifiedDealsPage';
 import PipelinePage from './pages/CRM/PipelinePage';
 import ActivitiesPage from './pages/CRM/ActivitiesPage';
@@ -26,6 +27,8 @@ import Login from './pages/Auth/Login';
 import MeetingIntelligencePage from './pages/MeetingIntelligencePage';
 import MeetingDashboard from './pages/MeetingDashboard';
 import SimpleRealAccountDetail from './pages/CRM/SimpleRealAccountDetail';
+import UltimateAccountDetailPage from './pages/CRM/UltimateAccountDetailPage';
+import UltimateCreateAccountPage from './pages/CRM/UltimateCreateAccountPage';
 import ContactDetailPage from './pages/CRM/ContactDetailPage';
 import GamificationModule from './pages/CRM/GamificationModuleNextGen';
 import CompanyDetailPageBMI from './pages/LeadGeneration/CompanyDetailPageBMI';
@@ -55,7 +58,8 @@ const App = () => {
               <Route path="/crm/deals/create" component={CreateDealPageWrapper} />
               <Route path="/crm/deals/create-wizard" component={CreateDealWrapper} />
               <Route path="/crm/deals/:id" component={DealDetailWrapper} />
-              <Route path="/crm/accounts/:id" component={SimpleRealAccountDetail} />
+              <Route path="/crm/accounts/create" component={UltimateCreateAccountPage} />
+              <Route path="/crm/accounts/:id" component={UltimateAccountDetailPage} />
               <Route path="/crm/contacts/:id" component={ContactDetailPage} />
               <Route path="/lead-generation/company/:id" component={CompanyDetailPageBMI} />
               <Route path="/lead-generation/people/:id" component={PersonDetails} />
