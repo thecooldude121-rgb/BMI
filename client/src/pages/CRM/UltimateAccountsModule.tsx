@@ -422,67 +422,69 @@ const UltimateAccountsModule: React.FC = () => {
         )}
       </div>
 
-      {/* Enhanced Analytics Header Bar */}
-      <div className="fixed left-0 right-0 z-30 bg-white border-b border-gray-200 px-6 py-3 shadow-sm" style={{top: '120px'}}>
-        <div className="flex items-center justify-between">
-          {/* Compact Analytics Summary */}
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-sm font-medium text-gray-700">Live Analytics</span>
+      {/* Analytics Content Container - Not Fixed */}
+      <div className="bg-white" style={{ marginTop: '120px' }}>
+        
+        {/* Compact Analytics Header */}
+        <div className="bg-white border-b border-gray-200 px-6 py-3 shadow-sm sticky top-16 z-40">
+          <div className="flex items-center justify-between">
+            {/* Compact Analytics Summary */}
+            <div className="flex items-center gap-8">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-sm font-medium text-gray-700">Live Analytics</span>
+              </div>
+              
+              {/* Compact KPIs */}
+              <div className="hidden lg:flex items-center gap-6">
+                <div className="text-center">
+                  <div className="text-lg font-bold text-gray-900">{analytics.totalAccounts}</div>
+                  <div className="text-xs text-gray-600">Accounts</div>
+                </div>
+                <div className="w-px h-8 bg-gray-200"></div>
+                <div className="text-center">
+                  <div className="text-lg font-bold text-green-600">{formatCurrency(analytics.totalRevenue)}</div>
+                  <div className="text-xs text-gray-600">Revenue</div>
+                </div>
+                <div className="w-px h-8 bg-gray-200"></div>
+                <div className="text-center">
+                  <div className="text-lg font-bold text-purple-600">{Math.round(analytics.avgHealthScore)}</div>
+                  <div className="text-xs text-gray-600">Avg Health</div>
+                </div>
+                <div className="w-px h-8 bg-gray-200"></div>
+                <div className="text-center">
+                  <div className="text-lg font-bold text-blue-600">{analytics.totalDeals}</div>
+                  <div className="text-xs text-gray-600">Active Deals</div>
+                </div>
+              </div>
             </div>
-            
-            {/* Compact KPIs */}
-            <div className="hidden lg:flex items-center gap-6">
-              <div className="text-center">
-                <div className="text-lg font-bold text-gray-900">{analytics.totalAccounts}</div>
-                <div className="text-xs text-gray-600">Accounts</div>
-              </div>
-              <div className="w-px h-8 bg-gray-200"></div>
-              <div className="text-center">
-                <div className="text-lg font-bold text-green-600">{formatCurrency(analytics.totalRevenue)}</div>
-                <div className="text-xs text-gray-600">Revenue</div>
-              </div>
-              <div className="w-px h-8 bg-gray-200"></div>
-              <div className="text-center">
-                <div className="text-lg font-bold text-purple-600">{Math.round(analytics.avgHealthScore)}</div>
-                <div className="text-xs text-gray-600">Avg Health</div>
-              </div>
-              <div className="w-px h-8 bg-gray-200"></div>
-              <div className="text-center">
-                <div className="text-lg font-bold text-blue-600">{analytics.totalDeals}</div>
-                <div className="text-xs text-gray-600">Active Deals</div>
-              </div>
-            </div>
-          </div>
 
-          {/* Dashboard Toggle & Insights */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setShowDashboard(!showDashboard)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
-                showDashboard 
-                  ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              <BarChart3 className="w-4 h-4" />
-              {showDashboard ? 'Hide Insights' : 'Show Insights'}
-            </button>
+            {/* Dashboard Toggle & Insights */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowDashboard(!showDashboard)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
+                  showDashboard 
+                    ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                <BarChart3 className="w-4 h-4" />
+                {showDashboard ? 'Hide Insights' : 'Show Insights'}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Enhanced Dashboard Insights Panel */}
-      <AnimatePresence>
-        {showDashboard && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed left-0 right-0 z-25 bg-gradient-to-br from-slate-50 via-white to-blue-50 border-b border-gray-200 px-6 py-6 shadow-lg"
-            style={{top: '170px'}}
-          >
+        {/* Enhanced Dashboard Insights Panel */}
+        <AnimatePresence>
+          {showDashboard && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="bg-gradient-to-br from-slate-50 via-white to-blue-50 border-b border-gray-200 px-6 py-6 shadow-lg"
+            >
             {/* Advanced Insights Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               
@@ -870,11 +872,11 @@ const UltimateAccountsModule: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
+      
+      </div>
 
       {/* Search Bar */}
-      <div className="fixed left-0 right-0 z-20 bg-white border-b border-gray-200 px-6 py-3" style={{
-        top: showDashboard ? '540px' : '170px'
-      }}>
+      <div className="sticky top-16 z-30 bg-white border-b border-gray-200 px-6 py-3 shadow-sm">
         <div className="relative max-w-xl">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
@@ -889,7 +891,7 @@ const UltimateAccountsModule: React.FC = () => {
       </div>
 
       {/* Accounts Grid */}
-      <div className="px-6 py-4" style={{marginTop: showDashboard ? '600px' : '230px'}}>
+      <div className="px-6 py-4">
         {filteredAccounts.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
