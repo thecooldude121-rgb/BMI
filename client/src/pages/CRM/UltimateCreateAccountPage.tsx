@@ -6,7 +6,8 @@ import {
   Building, ArrowLeft, ArrowRight, Check, AlertTriangle, 
   Globe, Phone, Mail, MapPin, Users, DollarSign, Brain,
   Sparkles, Search, ExternalLink, Loader, X, Plus,
-  Target, Calendar, FileText, Tag, Shield, Award
+  Target, Calendar, FileText, Tag, Shield, Award,
+  Linkedin, Twitter, TrendingUp, Image, Link
 } from 'lucide-react';
 import { apiRequest } from '../../lib/queryClient';
 
@@ -26,6 +27,15 @@ interface CreateAccountData {
   accountSegment?: string;
   employees?: number;
   foundedYear?: number;
+  
+  // Enhanced contact and social fields
+  linkedinUrl?: string;
+  twitterHandle?: string;
+  faxNumber?: string;
+  stockSymbol?: string;
+  logoUrl?: string;
+  
+  // Address fields
   address?: {
     street?: string;
     city?: string;
@@ -33,7 +43,36 @@ interface CreateAccountData {
     zipCode?: string;
     country?: string;
   };
+  billingAddress?: {
+    street?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+    country?: string;
+  };
+  shippingAddress?: {
+    street?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+    country?: string;
+  };
+  
+  // Business intelligence fields
+  healthScore?: number;
+  customerSince?: string;
+  parentAccountId?: string;
+  
+  // Technology and competitor data
+  technologies?: string[];
+  competitors?: string[];
+  
+  // Compliance and custom data
+  customFields?: Record<string, any>;
   tags?: string[];
+  gdprConsent?: boolean;
+  
+  // Assignment
   ownerId?: string;
 }
 
@@ -67,7 +106,14 @@ const UltimateCreateAccountPage: React.FC = () => {
     accountStatus: 'active',
     accountSegment: 'smb',
     address: {},
-    tags: []
+    billingAddress: {},
+    shippingAddress: {},
+    tags: [],
+    technologies: [],
+    competitors: [],
+    customFields: {},
+    healthScore: 50,
+    gdprConsent: false
   });
 
   // Steps Configuration
@@ -77,31 +123,52 @@ const UltimateCreateAccountPage: React.FC = () => {
       title: 'Basic Information',
       description: 'Essential company details',
       icon: Building,
-      fields: ['name', 'domain', 'website', 'accountType']
+      fields: ['name', 'domain', 'website', 'accountType', 'logoUrl']
     },
     {
       id: 2,
-      title: 'Company Details',
-      description: 'Industry and size information',
+      title: 'Company Profile',
+      description: 'Industry and financial information',
       icon: Users,
-      fields: ['industry', 'companySize', 'employees', 'foundedYear', 'annualRevenue']
+      fields: ['industry', 'companySize', 'employees', 'foundedYear', 'annualRevenue', 'stockSymbol']
     },
     {
       id: 3,
-      title: 'Contact Information',
-      description: 'Address and contact details',
+      title: 'Contact & Social',
+      description: 'Communication channels',
       icon: Phone,
-      fields: ['phone', 'email', 'address']
+      fields: ['phone', 'email', 'faxNumber', 'linkedinUrl', 'twitterHandle']
     },
     {
       id: 4,
-      title: 'Classification',
-      description: 'Account type and segmentation',
-      icon: Target,
-      fields: ['accountSegment', 'accountStatus', 'description', 'tags']
+      title: 'Address Information',
+      description: 'Physical and billing addresses',
+      icon: MapPin,
+      fields: ['address', 'billingAddress', 'shippingAddress']
     },
     {
       id: 5,
+      title: 'Business Intelligence',
+      description: 'Classification and relationships',
+      icon: Target,
+      fields: ['accountSegment', 'accountStatus', 'healthScore', 'parentAccountId', 'customerSince']
+    },
+    {
+      id: 6,
+      title: 'Technology & Competition',
+      description: 'Tech stack and competitors',
+      icon: Brain,
+      fields: ['technologies', 'competitors', 'description']
+    },
+    {
+      id: 7,
+      title: 'Tags & Compliance',
+      description: 'Tags and data processing consent',
+      icon: Shield,
+      fields: ['tags', 'gdprConsent', 'customFields']
+    },
+    {
+      id: 8,
       title: 'Review & Create',
       description: 'Confirm and create account',
       icon: Check,
@@ -132,7 +199,7 @@ const UltimateCreateAccountPage: React.FC = () => {
     const newErrors: Record<string, string> = {};
     
     switch (step) {
-      case 1:
+      case 1: // Basic Information
         if (!formData.name?.trim()) {
           newErrors.name = 'Company name is required';
         }
@@ -140,23 +207,35 @@ const UltimateCreateAccountPage: React.FC = () => {
           newErrors.accountType = 'Account type is required';
         }
         break;
-      case 2:
-        // Optional validations for step 2
+      case 2: // Company Profile
         if (formData.employees && formData.employees < 0) {
           newErrors.employees = 'Employee count must be positive';
         }
         if (formData.foundedYear && (formData.foundedYear < 1800 || formData.foundedYear > new Date().getFullYear())) {
           newErrors.foundedYear = 'Please enter a valid founding year';
         }
+        if (formData.annualRevenue && formData.annualRevenue < 0) {
+          newErrors.annualRevenue = 'Annual revenue must be positive';
+        }
         break;
-      case 3:
-        // Optional validations for step 3
+      case 3: // Contact & Social
         if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
           newErrors.email = 'Please enter a valid email address';
         }
+        if (formData.linkedinUrl && !formData.linkedinUrl.includes('linkedin.com')) {
+          newErrors.linkedinUrl = 'Please enter a valid LinkedIn URL';
+        }
         break;
-      case 4:
-        // Optional validations for step 4
+      case 4: // Address Information - No required fields
+        break;
+      case 5: // Business Intelligence
+        if (formData.healthScore && (formData.healthScore < 0 || formData.healthScore > 100)) {
+          newErrors.healthScore = 'Health score must be between 0 and 100';
+        }
+        break;
+      case 6: // Technology & Competition - No required fields
+        break;
+      case 7: // Tags & Compliance - No required fields
         break;
     }
 
@@ -180,7 +259,7 @@ const UltimateCreateAccountPage: React.FC = () => {
       setFormData(prev => ({
         ...prev,
         [parent]: {
-          ...prev[parent as keyof CreateAccountData],
+          ...(prev[parent as keyof CreateAccountData] as any || {}),
           [child]: value
         }
       }));
@@ -207,6 +286,23 @@ const UltimateCreateAccountPage: React.FC = () => {
     setFormData(prev => ({
       ...prev,
       tags: prev.tags?.filter(tag => tag !== tagToRemove) || []
+    }));
+  };
+
+  // Array management utilities for technologies and competitors
+  const handleArrayAdd = (field: 'technologies' | 'competitors', value: string) => {
+    if (value.trim() && !formData[field]?.includes(value.trim())) {
+      setFormData(prev => ({
+        ...prev,
+        [field]: [...(prev[field] || []), value.trim()]
+      }));
+    }
+  };
+
+  const handleArrayRemove = (field: 'technologies' | 'competitors', valueToRemove: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: prev[field]?.filter(item => item !== valueToRemove) || []
     }));
   };
 
@@ -260,7 +356,7 @@ const UltimateCreateAccountPage: React.FC = () => {
   };
 
   const handleSubmit = () => {
-    if (validateStep(4)) {
+    if (validateStep(7)) {
       createAccountMutation.mutate(formData);
     }
   };
@@ -445,7 +541,24 @@ const UltimateCreateAccountPage: React.FC = () => {
                       />
                     </div>
 
-                    <div className="md:col-span-2">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Logo URL
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="url"
+                          value={formData.logoUrl || ''}
+                          onChange={(e) => handleInputChange('logoUrl', e.target.value)}
+                          placeholder="https://example.com/logo.png"
+                          className="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="input-logo-url"
+                        />
+                        <Image className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      </div>
+                    </div>
+
+                    <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Account Type *
                       </label>
@@ -471,12 +584,12 @@ const UltimateCreateAccountPage: React.FC = () => {
                 </div>
               )}
 
-              {/* Step 2: Company Details */}
+              {/* Step 2: Company Profile */}
               {currentStep === 2 && (
                 <div className="space-y-6">
                   <div>
-                    <h2 className="text-xl font-semibold text-gray-900 mb-4">Company Details</h2>
-                    <p className="text-gray-600 mb-6">Tell us more about the company's industry and size</p>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-4">Company Profile</h2>
+                    <p className="text-gray-600 mb-6">Industry and financial information about the company</p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -559,7 +672,7 @@ const UltimateCreateAccountPage: React.FC = () => {
                       )}
                     </div>
 
-                    <div className="md:col-span-2">
+                    <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Annual Revenue
                       </label>
@@ -569,21 +682,45 @@ const UltimateCreateAccountPage: React.FC = () => {
                         onChange={(e) => handleInputChange('annualRevenue', parseInt(e.target.value) || undefined)}
                         placeholder="1000000"
                         min="0"
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                          errors.annualRevenue ? 'border-red-500' : 'border-gray-300'
+                        }`}
                         data-testid="input-annual-revenue"
                       />
+                      {errors.annualRevenue && (
+                        <p className="text-red-600 text-sm mt-1">{errors.annualRevenue}</p>
+                      )}
                       <p className="text-sm text-gray-500 mt-1">Enter the annual revenue in USD</p>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Stock Symbol
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={formData.stockSymbol || ''}
+                          onChange={(e) => handleInputChange('stockSymbol', e.target.value.toUpperCase())}
+                          placeholder="AAPL"
+                          maxLength={10}
+                          className="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent uppercase"
+                          data-testid="input-stock-symbol"
+                        />
+                        <TrendingUp className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      </div>
+                      <p className="text-sm text-gray-500 mt-1">Ticker symbol if publicly traded</p>
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* Step 3: Contact Information */}
+              {/* Step 3: Contact & Social */}
               {currentStep === 3 && (
                 <div className="space-y-6">
                   <div>
-                    <h2 className="text-xl font-semibold text-gray-900 mb-4">Contact Information</h2>
-                    <p className="text-gray-600 mb-6">How can we reach this company?</p>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-4">Contact & Social</h2>
+                    <p className="text-gray-600 mb-6">Contact information and social media presence</p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -591,89 +728,295 @@ const UltimateCreateAccountPage: React.FC = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Phone Number
                       </label>
-                      <input
-                        type="tel"
-                        value={formData.phone || ''}
-                        onChange={(e) => handleInputChange('phone', e.target.value)}
-                        placeholder="+1 (555) 123-4567"
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        data-testid="input-phone"
-                      />
+                      <div className="relative">
+                        <input
+                          type="tel"
+                          value={formData.phone || ''}
+                          onChange={(e) => handleInputChange('phone', e.target.value)}
+                          placeholder="+1 (555) 123-4567"
+                          className="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="input-phone"
+                        />
+                        <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      </div>
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Email Address
                       </label>
-                      <input
-                        type="email"
-                        value={formData.email || ''}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
-                        placeholder="contact@company.com"
-                        className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                          errors.email ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                        data-testid="input-email"
-                      />
+                      <div className="relative">
+                        <input
+                          type="email"
+                          value={formData.email || ''}
+                          onChange={(e) => handleInputChange('email', e.target.value)}
+                          placeholder="contact@company.com"
+                          className={`w-full p-3 pl-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                            errors.email ? 'border-red-500' : 'border-gray-300'
+                          }`}
+                          data-testid="input-email"
+                        />
+                        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      </div>
                       {errors.email && (
                         <p className="text-red-600 text-sm mt-1">{errors.email}</p>
                       )}
                     </div>
 
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-4">
-                        Address
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        LinkedIn URL
                       </label>
-                      <div className="space-y-4">
+                      <div className="relative">
                         <input
-                          type="text"
-                          value={formData.address?.street || ''}
-                          onChange={(e) => handleInputChange('address.street', e.target.value)}
-                          placeholder="Street Address"
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          data-testid="input-street"
+                          type="url"
+                          value={formData.linkedinUrl || ''}
+                          onChange={(e) => handleInputChange('linkedinUrl', e.target.value)}
+                          placeholder="https://linkedin.com/company/example"
+                          className={`w-full p-3 pl-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                            errors.linkedinUrl ? 'border-red-500' : 'border-gray-300'
+                          }`}
+                          data-testid="input-linkedin-url"
                         />
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <input
-                            type="text"
-                            value={formData.address?.city || ''}
-                            onChange={(e) => handleInputChange('address.city', e.target.value)}
-                            placeholder="City"
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            data-testid="input-city"
-                          />
-                          <input
-                            type="text"
-                            value={formData.address?.state || ''}
-                            onChange={(e) => handleInputChange('address.state', e.target.value)}
-                            placeholder="State"
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            data-testid="input-state"
-                          />
-                          <input
-                            type="text"
-                            value={formData.address?.zipCode || ''}
-                            onChange={(e) => handleInputChange('address.zipCode', e.target.value)}
-                            placeholder="ZIP Code"
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            data-testid="input-zip"
-                          />
-                        </div>
+                        <Linkedin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-600 w-4 h-4" />
+                      </div>
+                      {errors.linkedinUrl && (
+                        <p className="text-red-600 text-sm mt-1">{errors.linkedinUrl}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Twitter URL
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="url"
+                          value={formData.twitterUrl || ''}
+                          onChange={(e) => handleInputChange('twitterUrl', e.target.value)}
+                          placeholder="https://twitter.com/company"
+                          className="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="input-twitter-url"
+                        />
+                        <Twitter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400 w-4 h-4" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Fax Number
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="tel"
+                          value={formData.fax || ''}
+                          onChange={(e) => handleInputChange('fax', e.target.value)}
+                          placeholder="+1 (555) 123-4568"
+                          className="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="input-fax"
+                        />
+                        <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Secondary Website
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="url"
+                          value={formData.secondaryWebsite || ''}
+                          onChange={(e) => handleInputChange('secondaryWebsite', e.target.value)}
+                          placeholder="https://blog.example.com"
+                          className="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="input-secondary-website"
+                        />
+                        <Link className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                       </div>
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* Step 4: Classification */}
+              {/* Step 4: Address Information */}
               {currentStep === 4 && (
+                <div className="space-y-8">
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-4">Address Information</h2>
+                    <p className="text-gray-600 mb-6">Primary and billing addresses for the company</p>
+                  </div>
+
+                  {/* Primary Address */}
+                  <div className="bg-gray-50 rounded-lg p-6">
+                    <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
+                      <MapPin className="w-5 h-5 text-blue-600" />
+                      Primary Address
+                    </h3>
+                    
+                    <div className="space-y-4">
+                      <input
+                        type="text"
+                        value={formData.address?.street || ''}
+                        onChange={(e) => handleInputChange('address.street', e.target.value)}
+                        placeholder="Street Address"
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        data-testid="input-primary-street"
+                      />
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <input
+                          type="text"
+                          value={formData.address?.city || ''}
+                          onChange={(e) => handleInputChange('address.city', e.target.value)}
+                          placeholder="City"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="input-primary-city"
+                        />
+                        <input
+                          type="text"
+                          value={formData.address?.state || ''}
+                          onChange={(e) => handleInputChange('address.state', e.target.value)}
+                          placeholder="State"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="input-primary-state"
+                        />
+                        <input
+                          type="text"
+                          value={formData.address?.zipCode || ''}
+                          onChange={(e) => handleInputChange('address.zipCode', e.target.value)}
+                          placeholder="ZIP Code"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="input-primary-zip"
+                        />
+                      </div>
+                      <input
+                        type="text"
+                        value={formData.address?.country || ''}
+                        onChange={(e) => handleInputChange('address.country', e.target.value)}
+                        placeholder="Country"
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        data-testid="input-primary-country"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Billing Address */}
+                  <div className="bg-gray-50 rounded-lg p-6">
+                    <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
+                      <DollarSign className="w-5 h-5 text-green-600" />
+                      Billing Address
+                    </h3>
+                    <label className="flex items-center gap-2 mb-4">
+                      <input
+                        type="checkbox"
+                        checked={formData.billingAddressSameAsPrimary || false}
+                        onChange={(e) => handleInputChange('billingAddressSameAsPrimary', e.target.checked)}
+                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        data-testid="checkbox-same-billing"
+                      />
+                      <span className="text-sm text-gray-700">Same as primary address</span>
+                    </label>
+                    
+                    {!formData.billingAddressSameAsPrimary && (
+                      <div className="space-y-4">
+                        <input
+                          type="text"
+                          value={formData.billingAddress?.street || ''}
+                          onChange={(e) => handleInputChange('billingAddress.street', e.target.value)}
+                          placeholder="Billing Street Address"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="input-billing-street"
+                        />
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <input
+                            type="text"
+                            value={formData.billingAddress?.city || ''}
+                            onChange={(e) => handleInputChange('billingAddress.city', e.target.value)}
+                            placeholder="City"
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            data-testid="input-billing-city"
+                          />
+                          <input
+                            type="text"
+                            value={formData.billingAddress?.state || ''}
+                            onChange={(e) => handleInputChange('billingAddress.state', e.target.value)}
+                            placeholder="State"
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            data-testid="input-billing-state"
+                          />
+                          <input
+                            type="text"
+                            value={formData.billingAddress?.zipCode || ''}
+                            onChange={(e) => handleInputChange('billingAddress.zipCode', e.target.value)}
+                            placeholder="ZIP Code"
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            data-testid="input-billing-zip"
+                          />
+                        </div>
+                        <input
+                          type="text"
+                          value={formData.billingAddress?.country || ''}
+                          onChange={(e) => handleInputChange('billingAddress.country', e.target.value)}
+                          placeholder="Country"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="input-billing-country"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Step 5: Business Intelligence */}
+              {currentStep === 5 && (
                 <div className="space-y-6">
                   <div>
-                    <h2 className="text-xl font-semibold text-gray-900 mb-4">Classification</h2>
-                    <p className="text-gray-600 mb-6">Categorize this account for better management</p>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-4">Business Intelligence</h2>
+                    <p className="text-gray-600 mb-6">Account health, relationships, and business metrics</p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Health Score
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="number"
+                          min="0"
+                          max="100"
+                          value={formData.healthScore || ''}
+                          onChange={(e) => handleInputChange('healthScore', parseInt(e.target.value) || undefined)}
+                          placeholder="85"
+                          className={`w-full p-3 pl-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                            errors.healthScore ? 'border-red-500' : 'border-gray-300'
+                          }`}
+                          data-testid="input-health-score"
+                        />
+                        <Target className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      </div>
+                      {errors.healthScore && (
+                        <p className="text-red-600 text-sm mt-1">{errors.healthScore}</p>
+                      )}
+                      <p className="text-sm text-gray-500 mt-1">Score from 0-100</p>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Customer Since
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="date"
+                          value={formData.customerSince || ''}
+                          onChange={(e) => handleInputChange('customerSince', e.target.value)}
+                          className="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="input-customer-since"
+                        />
+                        <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      </div>
+                    </div>
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Account Segment
@@ -684,6 +1027,7 @@ const UltimateCreateAccountPage: React.FC = () => {
                         className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         data-testid="select-account-segment"
                       >
+                        <option value="">Select segment...</option>
                         {accountSegments.map(segment => (
                           <option key={segment} value={segment}>
                             {segment.charAt(0).toUpperCase() + segment.slice(1).replace('_', ' ')}
@@ -702,12 +1046,43 @@ const UltimateCreateAccountPage: React.FC = () => {
                         className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         data-testid="select-account-status"
                       >
+                        <option value="">Select status...</option>
                         {accountStatuses.map(status => (
                           <option key={status} value={status}>
                             {status.charAt(0).toUpperCase() + status.slice(1)}
                           </option>
                         ))}
                       </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Parent Account ID
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.parentAccountId || ''}
+                        onChange={(e) => handleInputChange('parentAccountId', e.target.value)}
+                        placeholder="UUID of parent account"
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        data-testid="input-parent-account"
+                      />
+                      <p className="text-sm text-gray-500 mt-1">For subsidiary companies</p>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Sister Account ID
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.sisterAccountId || ''}
+                        onChange={(e) => handleInputChange('sisterAccountId', e.target.value)}
+                        placeholder="UUID of sister account"
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        data-testid="input-sister-account"
+                      />
+                      <p className="text-sm text-gray-500 mt-1">For related companies</p>
                     </div>
 
                     <div className="md:col-span-2">
@@ -723,8 +1098,150 @@ const UltimateCreateAccountPage: React.FC = () => {
                         data-testid="textarea-description"
                       />
                     </div>
+                  </div>
+                </div>
+              )}
 
-                    <div className="md:col-span-2">
+              {/* Step 6: Technology & Competition */}
+              {currentStep === 6 && (
+                <div className="space-y-6">
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-4">Technology & Competition</h2>
+                    <p className="text-gray-600 mb-6">Tech stack, competitors, and market positioning</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-6">
+                    {/* Technologies */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Technologies Used
+                      </label>
+                      <div className="space-y-3">
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            placeholder="Add technology (e.g., React, AWS, Salesforce)"
+                            className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter') {
+                                const value = (e.target as HTMLInputElement).value;
+                                if (value.trim()) {
+                                  handleArrayAdd('technologies', value);
+                                  (e.target as HTMLInputElement).value = '';
+                                }
+                              }
+                            }}
+                            data-testid="input-technology"
+                          />
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              const input = e.currentTarget.previousElementSibling as HTMLInputElement;
+                              if (input.value.trim()) {
+                                handleArrayAdd('technologies', input.value);
+                                input.value = '';
+                              }
+                            }}
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                            data-testid="button-add-technology"
+                          >
+                            <Plus className="w-4 h-4" />
+                          </button>
+                        </div>
+                        {formData.technologies && formData.technologies.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {formData.technologies.map((tech, index) => (
+                              <span
+                                key={index}
+                                className="bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full flex items-center gap-1"
+                              >
+                                {tech}
+                                <button
+                                  onClick={() => handleArrayRemove('technologies', tech)}
+                                  className="text-blue-600 hover:text-blue-800"
+                                  data-testid={`remove-technology-${index}`}
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Competitors */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Main Competitors
+                      </label>
+                      <div className="space-y-3">
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            placeholder="Add competitor company name"
+                            className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter') {
+                                const value = (e.target as HTMLInputElement).value;
+                                if (value.trim()) {
+                                  handleArrayAdd('competitors', value);
+                                  (e.target as HTMLInputElement).value = '';
+                                }
+                              }
+                            }}
+                            data-testid="input-competitor"
+                          />
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              const input = e.currentTarget.previousElementSibling as HTMLInputElement;
+                              if (input.value.trim()) {
+                                handleArrayAdd('competitors', input.value);
+                                input.value = '';
+                              }
+                            }}
+                            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                            data-testid="button-add-competitor"
+                          >
+                            <Plus className="w-4 h-4" />
+                          </button>
+                        </div>
+                        {formData.competitors && formData.competitors.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {formData.competitors.map((competitor, index) => (
+                              <span
+                                key={index}
+                                className="bg-red-100 text-red-800 text-sm px-3 py-1 rounded-full flex items-center gap-1"
+                              >
+                                {competitor}
+                                <button
+                                  onClick={() => handleArrayRemove('competitors', competitor)}
+                                  className="text-red-600 hover:text-red-800"
+                                  data-testid={`remove-competitor-${index}`}
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 7: Tags & Compliance */}
+              {currentStep === 7 && (
+                <div className="space-y-6">
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-4">Tags & Compliance</h2>
+                    <p className="text-gray-600 mb-6">Categorization tags and compliance information</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-6">
+                    <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Tags
                       </label>
@@ -734,12 +1251,95 @@ const UltimateCreateAccountPage: React.FC = () => {
                         onRemove={handleTagRemove}
                       />
                     </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          VAT Number
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.vatNumber || ''}
+                          onChange={(e) => handleInputChange('vatNumber', e.target.value)}
+                          placeholder="GB123456789"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="input-vat-number"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          GST Number
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.gstNumber || ''}
+                          onChange={(e) => handleInputChange('gstNumber', e.target.value)}
+                          placeholder="22AAAAA0000A1Z5"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="input-gst-number"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          D-U-N-S Number
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.dunsNumber || ''}
+                          onChange={(e) => handleInputChange('dunsNumber', e.target.value)}
+                          placeholder="123456789"
+                          maxLength={9}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="input-duns-number"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Region
+                        </label>
+                        <select
+                          value={formData.region || ''}
+                          onChange={(e) => handleInputChange('region', e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          data-testid="select-region"
+                        >
+                          <option value="">Select region...</option>
+                          <option value="north_america">North America</option>
+                          <option value="europe">Europe</option>
+                          <option value="asia_pacific">Asia Pacific</option>
+                          <option value="latin_america">Latin America</option>
+                          <option value="middle_east_africa">Middle East & Africa</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="bg-gray-50 rounded-lg p-6">
+                      <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
+                        <Shield className="w-5 h-5 text-green-600" />
+                        GDPR Compliance
+                      </h3>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={formData.gdprConsent || false}
+                          onChange={(e) => handleInputChange('gdprConsent', e.target.checked)}
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          data-testid="checkbox-gdpr-consent"
+                        />
+                        <span className="text-sm text-gray-700">
+                          Company has provided GDPR consent for data processing
+                        </span>
+                      </label>
+                    </div>
                   </div>
                 </div>
               )}
 
-              {/* Step 5: Review & Create */}
-              {currentStep === 5 && (
+              {/* Step 8: Review & Create */}
+              {currentStep === 8 && (
                 <div className="space-y-6">
                   <div>
                     <h2 className="text-xl font-semibold text-gray-900 mb-4">Review & Create</h2>
