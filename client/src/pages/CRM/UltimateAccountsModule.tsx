@@ -90,6 +90,7 @@ const UltimateAccountsModule: React.FC = () => {
   });
   
   const [currentView, setCurrentView] = useState<'card' | 'list'>('card');
+  const [viewDropdownOpen, setViewDropdownOpen] = useState(false);
 
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
@@ -204,32 +205,62 @@ const UltimateAccountsModule: React.FC = () => {
               Filters
             </button>
 
-            {/* View Toggle */}
-            <div className="flex bg-gray-100 rounded-lg p-1">
+            {/* View Dropdown */}
+            <div className="relative">
               <button
-                onClick={() => setCurrentView('card')}
-                className={`px-3 py-1 rounded-md text-sm font-medium transition-colors flex items-center gap-1 ${
-                  currentView === 'card' 
-                    ? 'bg-white text-blue-600 shadow-sm' 
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-                data-testid="button-view-card"
+                onClick={() => setViewDropdownOpen(!viewDropdownOpen)}
+                className="flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-sm"
+                data-testid="button-view-dropdown"
               >
-                <Grid3X3 className="w-4 h-4" />
-                Card
+                {currentView === 'card' ? (
+                  <Grid3X3 className="w-4 h-4" />
+                ) : (
+                  <List className="w-4 h-4" />
+                )}
+                <ChevronDown className="ml-1 h-4 w-4" />
               </button>
-              <button
-                onClick={() => setCurrentView('list')}
-                className={`px-3 py-1 rounded-md text-sm font-medium transition-colors flex items-center gap-1 ${
-                  currentView === 'list' 
-                    ? 'bg-white text-blue-600 shadow-sm' 
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-                data-testid="button-view-list"
-              >
-                <List className="w-4 h-4" />
-                List
-              </button>
+
+              {viewDropdownOpen && (
+                <>
+                  {/* Backdrop */}
+                  <div 
+                    className="fixed inset-0 z-10" 
+                    onClick={() => setViewDropdownOpen(false)}
+                  />
+                  
+                  {/* Dropdown */}
+                  <div className="absolute right-0 z-20 mt-2 w-48 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                    <div className="py-1">
+                      <button
+                        onClick={() => {
+                          setCurrentView('card');
+                          setViewDropdownOpen(false);
+                        }}
+                        className={`w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors flex items-center space-x-3 ${
+                          currentView === 'card' ? 'bg-blue-50 text-blue-700' : 'text-gray-900'
+                        }`}
+                        data-testid="option-view-card"
+                      >
+                        <Grid3X3 className="w-4 h-4" />
+                        <span className="text-sm font-medium">Card View</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          setCurrentView('list');
+                          setViewDropdownOpen(false);
+                        }}
+                        className={`w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors flex items-center space-x-3 ${
+                          currentView === 'list' ? 'bg-blue-50 text-blue-700' : 'text-gray-900'
+                        }`}
+                        data-testid="option-view-list"
+                      >
+                        <List className="w-4 h-4" />
+                        <span className="text-sm font-medium">List View</span>
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
             <button
