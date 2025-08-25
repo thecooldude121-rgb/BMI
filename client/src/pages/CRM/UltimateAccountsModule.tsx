@@ -194,15 +194,6 @@ const UltimateAccountsModule: React.FC = () => {
           {/* Action Buttons */}
           <div className="flex items-center space-x-3">
             <button
-              onClick={() => refetch()}
-              className="px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2"
-              data-testid="button-refresh"
-            >
-              <RefreshCw className="w-4 h-4" />
-              Refresh
-            </button>
-
-            <button
               onClick={() => setShowFilters(!showFilters)}
               className="px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2"
               data-testid="button-filters"
