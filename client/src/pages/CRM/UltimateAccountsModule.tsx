@@ -198,18 +198,17 @@ const UltimateAccountsModule: React.FC = () => {
           <div className="flex items-center space-x-3">
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2"
+              className="w-10 h-10 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl bg-white border border-gray-200 hover:border-gray-300"
               data-testid="button-filters"
             >
               <SlidersHorizontal className="w-4 h-4" />
-              Filters
             </button>
 
             {/* View Dropdown */}
             <div className="relative">
               <button
                 onClick={() => setViewDropdownOpen(!viewDropdownOpen)}
-                className="flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-sm"
+                className="flex items-center px-3 py-2 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-lg hover:shadow-xl transition-all duration-200"
                 data-testid="button-view-dropdown"
               >
                 {currentView === 'card' ? (
@@ -229,7 +228,7 @@ const UltimateAccountsModule: React.FC = () => {
                   />
                   
                   {/* Dropdown */}
-                  <div className="absolute right-0 z-20 mt-2 w-48 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                  <div className="absolute right-0 z-20 mt-2 w-48 rounded-xl shadow-xl bg-white ring-1 ring-black ring-opacity-5">
                     <div className="py-1">
                       <button
                         onClick={() => {
@@ -265,7 +264,7 @@ const UltimateAccountsModule: React.FC = () => {
 
             <button
               onClick={handleCreateAccount}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105"
               data-testid="button-create-account"
             >
               <Plus className="w-4 h-4" />
@@ -276,7 +275,7 @@ const UltimateAccountsModule: React.FC = () => {
         
         {/* Duplicate Management Alert */}
         {duplicatesData && duplicatesData.totalDuplicateGroups > 0 && (
-          <div className="mt-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-4">
+          <div className="mt-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 shadow-lg">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-amber-100 rounded-full">
@@ -294,7 +293,7 @@ const UltimateAccountsModule: React.FC = () => {
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => queryClient.invalidateQueries({ queryKey: ['/api/accounts/duplicates'] })}
-                  className="px-3 py-1 text-xs bg-amber-100 text-amber-700 rounded-md hover:bg-amber-200 transition-colors flex items-center gap-1"
+                  className="px-3 py-1 text-xs bg-amber-100 text-amber-700 rounded-xl hover:bg-amber-200 transition-all duration-200 flex items-center gap-1 shadow-md hover:shadow-lg transform hover:scale-105"
                   data-testid="button-refresh-duplicates"
                 >
                   <RefreshCw className="w-3 h-3" />
@@ -302,7 +301,7 @@ const UltimateAccountsModule: React.FC = () => {
                 </button>
                 <button
                   onClick={() => setShowMergeWizard(true)}
-                  className="px-3 py-1 text-xs bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors flex items-center gap-1"
+                  className="px-3 py-1 text-xs bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-all duration-200 flex items-center gap-1 shadow-md hover:shadow-lg transform hover:scale-105"
                   data-testid="button-merge-wizard"
                 >
                   <GitMerge className="w-3 h-3" />
@@ -311,7 +310,7 @@ const UltimateAccountsModule: React.FC = () => {
                 <button
                   onClick={() => cleanupDuplicates.mutate()}
                   disabled={cleanupDuplicates.isPending}
-                  className="px-3 py-1 text-xs bg-amber-600 text-white rounded-md hover:bg-amber-700 transition-colors flex items-center gap-1 disabled:opacity-50"
+                  className="px-3 py-1 text-xs bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-all duration-200 flex items-center gap-1 disabled:opacity-50 shadow-md hover:shadow-lg transform hover:scale-105 disabled:transform-none"
                   data-testid="button-cleanup-duplicates"
                 >
                   {cleanupDuplicates.isPending ? (
@@ -341,7 +340,7 @@ const UltimateAccountsModule: React.FC = () => {
             placeholder="🔍 Search accounts..."
             value={filters.searchTerm}
             onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 shadow-md hover:shadow-lg bg-white"
             data-testid="input-search"
           />
         </div>
@@ -368,7 +367,7 @@ const UltimateAccountsModule: React.FC = () => {
               </p>
               <button
                 onClick={handleCreateAccount}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center gap-2 mx-auto shadow-lg hover:shadow-xl"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center gap-2 mx-auto shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 <Plus className="w-5 h-5" />
                 Create Account
@@ -383,7 +382,7 @@ const UltimateAccountsModule: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 whileHover={{ y: -5, shadow: "0 10px 25px rgba(0,0,0,0.1)" }}
-                className="bg-white rounded-xl border-2 border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200 cursor-pointer group"
+                className="bg-white rounded-xl border-2 border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all duration-200 cursor-pointer group shadow-md hover:shadow-xl"
                 onClick={() => handleAccountClick(account.id)}
                 data-testid={`card-account-${account.id}`}
               >
@@ -447,7 +446,7 @@ const UltimateAccountsModule: React.FC = () => {
                           e.stopPropagation();
                           handleAccountClick(account.id);
                         }}
-                        className="text-blue-600 hover:text-blue-700 transition-colors"
+                        className="text-blue-600 hover:text-blue-700 transition-all duration-200 p-2 rounded-xl hover:bg-blue-50 shadow-sm hover:shadow-md transform hover:scale-110"
                         data-testid={`button-view-${account.id}`}
                       >
                         <Eye className="w-4 h-4" />
@@ -459,7 +458,7 @@ const UltimateAccountsModule: React.FC = () => {
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-lg">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50 border-b border-gray-200">
@@ -518,14 +517,14 @@ const UltimateAccountsModule: React.FC = () => {
                               e.stopPropagation();
                               handleAccountClick(account.id);
                             }}
-                            className="text-blue-600 hover:text-blue-700 transition-colors"
+                            className="text-blue-600 hover:text-blue-700 transition-all duration-200 p-2 rounded-xl hover:bg-blue-50 shadow-sm hover:shadow-md transform hover:scale-110"
                             data-testid={`button-table-view-${account.id}`}
                           >
                             <Eye className="w-4 h-4" />
                           </button>
                           <button
                             onClick={(e) => e.stopPropagation()}
-                            className="text-gray-400 hover:text-gray-600 transition-colors"
+                            className="text-gray-400 hover:text-gray-600 transition-all duration-200 p-2 rounded-xl hover:bg-gray-50 shadow-sm hover:shadow-md transform hover:scale-110"
                             data-testid={`button-table-edit-${account.id}`}
                           >
                             <Edit className="w-4 h-4" />
