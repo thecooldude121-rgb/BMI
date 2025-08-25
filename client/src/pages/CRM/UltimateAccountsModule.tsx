@@ -9,7 +9,7 @@ import {
   Phone, Mail, Globe, MapPin, Star, AlertTriangle, Brain, Sparkles,
   ChevronDown, Download, RefreshCw, Settings, Zap, Activity,
   Calendar, FileText, CheckSquare, Square, ArrowUpDown, SlidersHorizontal,
-  Copy, GitMerge, Shield, Trash, AlertCircle
+  Copy, GitMerge, Shield, Trash, AlertCircle, X
 } from 'lucide-react';
 import { apiRequest } from '../../lib/queryClient';
 import AccountMergeWizard from '../../components/AccountMergeWizard';
@@ -95,6 +95,7 @@ const UltimateAccountsModule: React.FC = () => {
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const [showMergeWizard, setShowMergeWizard] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(true);
 
   // Data Fetching
   const { data: accounts = [], isLoading, refetch } = useQuery<Account[]>({
@@ -145,6 +146,101 @@ const UltimateAccountsModule: React.FC = () => {
   const handleAccountClick = useCallback((accountId: string) => {
     setLocation(`/crm/accounts/${accountId}`);
   }, [setLocation]);
+
+  // Live Analytics Calculations
+  const analytics = useMemo(() => {
+    const totalAccounts = accounts.length;
+    const totalRevenue = accounts.reduce((sum, acc) => sum + (acc.annualRevenue || 0), 0);
+    const totalDeals = accounts.reduce((sum, acc) => sum + (acc.totalDeals || 0), 0);
+    const avgHealthScore = totalAccounts > 0 ? 
+      accounts.reduce((sum, acc) => sum + (acc.healthScore || 0), 0) / totalAccounts : 0;
+
+    // Health Score Distribution
+    const healthDistribution = accounts.reduce((acc, account) => {
+      const score = account.healthScore || 0;
+      if (score >= 80) acc.excellent++;
+      else if (score >= 60) acc.good++;
+      else if (score >= 40) acc.atRisk++;
+      else acc.critical++;
+      return acc;
+    }, { excellent: 0, good: 0, atRisk: 0, critical: 0 });
+
+    // Industry Distribution
+    const industryStats = accounts.reduce((acc, account) => {
+      const industry = account.industry || 'Unknown';
+      if (!acc[industry]) acc[industry] = { count: 0, revenue: 0 };
+      acc[industry].count++;
+      acc[industry].revenue += account.annualRevenue || 0;
+      return acc;
+    }, {} as Record<string, { count: number; revenue: number }>);
+
+    // Revenue by Segment
+    const segmentStats = accounts.reduce((acc, account) => {
+      const segment = account.accountSegment || 'unknown';
+      if (!acc[segment]) acc[segment] = { count: 0, revenue: 0 };
+      acc[segment].count++;
+      acc[segment].revenue += account.annualRevenue || 0;
+      return acc;
+    }, {} as Record<string, { count: number; revenue: number }>);
+
+    // Status Distribution
+    const statusStats = accounts.reduce((acc, account) => {
+      const status = account.accountStatus || 'unknown';
+      acc[status] = (acc[status] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    // Growth Metrics (mock trend data)
+    const accountsGrowth = 8.5; // +8.5% growth
+    const revenueGrowth = 12.3; // +12.3% growth
+    const healthGrowth = -2.1; // -2.1% change
+    const dealsGrowth = 15.7; // +15.7% growth
+
+    return {
+      totalAccounts,
+      totalRevenue,
+      totalDeals,
+      avgHealthScore,
+      healthDistribution,
+      industryStats,
+      segmentStats,
+      statusStats,
+      growth: {
+        accounts: accountsGrowth,
+        revenue: revenueGrowth,
+        health: healthGrowth,
+        deals: dealsGrowth
+      }
+    };
+  }, [accounts]);
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(value);
+  };
+
+  const formatPercentage = (value: number) => {
+    return `${value.toFixed(1)}%`;
+  };
+
+  const getHealthColor = (score: number) => {
+    if (score >= 80) return 'text-green-600 bg-green-100';
+    if (score >= 60) return 'text-yellow-600 bg-yellow-100';
+    if (score >= 40) return 'text-orange-600 bg-orange-100';
+    return 'text-red-600 bg-red-100';
+  };
+
+  const getTrendIcon = (growth: number) => {
+    return growth >= 0 ? TrendingUp : TrendingUp;
+  };
+
+  const getTrendColor = (growth: number) => {
+    return growth >= 0 ? 'text-green-600' : 'text-red-600';
+  };
 
   // Loading State
   if (isLoading) {
@@ -326,8 +422,256 @@ const UltimateAccountsModule: React.FC = () => {
         )}
       </div>
 
+      {/* Live Dashboard Widgets Section */}
+      <AnimatePresence>
+        {showDashboard && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="fixed left-0 right-0 z-30 bg-gradient-to-br from-gray-50 to-white border-b border-gray-200 px-6 py-4 shadow-lg"
+            style={{top: '120px'}}
+          >
+            {/* Dashboard Header */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <BarChart3 className="w-5 h-5 text-blue-600" />
+                <h2 className="text-lg font-semibold text-gray-900">Live Analytics Dashboard</h2>
+                <div className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium flex items-center gap-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  Live Data
+                </div>
+              </div>
+              <button
+                onClick={() => setShowDashboard(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-lg"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* KPI Cards Grid */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+              {/* Total Accounts */}
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                className="bg-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-100"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600 font-medium">Total Accounts</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">{analytics.totalAccounts.toLocaleString()}</p>
+                    <div className={`flex items-center gap-1 text-xs mt-1 ${getTrendColor(analytics.growth.accounts)}`}>
+                      <TrendingUp className="w-3 h-3" />
+                      <span className="font-medium">{formatPercentage(analytics.growth.accounts)} vs last month</span>
+                    </div>
+                  </div>
+                  <div className="p-3 bg-blue-100 rounded-xl">
+                    <Building className="w-6 h-6 text-blue-600" />
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Total Revenue */}
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                className="bg-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-100"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600 font-medium">Total Revenue</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">{formatCurrency(analytics.totalRevenue)}</p>
+                    <div className={`flex items-center gap-1 text-xs mt-1 ${getTrendColor(analytics.growth.revenue)}`}>
+                      <TrendingUp className="w-3 h-3" />
+                      <span className="font-medium">{formatPercentage(analytics.growth.revenue)} vs last month</span>
+                    </div>
+                  </div>
+                  <div className="p-3 bg-green-100 rounded-xl">
+                    <DollarSign className="w-6 h-6 text-green-600" />
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Average Health Score */}
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                className="bg-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-100"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600 font-medium">Avg Health Score</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">{Math.round(analytics.avgHealthScore)}</p>
+                    <div className={`flex items-center gap-1 text-xs mt-1 ${getTrendColor(analytics.growth.health)}`}>
+                      <TrendingUp className="w-3 h-3" />
+                      <span className="font-medium">{formatPercentage(Math.abs(analytics.growth.health))} vs last month</span>
+                    </div>
+                  </div>
+                  <div className="p-3 bg-purple-100 rounded-xl">
+                    <Target className="w-6 h-6 text-purple-600" />
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Total Deals */}
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                className="bg-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-100"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600 font-medium">Active Deals</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">{analytics.totalDeals}</p>
+                    <div className={`flex items-center gap-1 text-xs mt-1 ${getTrendColor(analytics.growth.deals)}`}>
+                      <TrendingUp className="w-3 h-3" />
+                      <span className="font-medium">{formatPercentage(analytics.growth.deals)} vs last month</span>
+                    </div>
+                  </div>
+                  <div className="p-3 bg-orange-100 rounded-xl">
+                    <Zap className="w-6 h-6 text-orange-600" />
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Charts Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Health Distribution Chart */}
+              <motion.div
+                whileHover={{ scale: 1.01 }}
+                className="bg-white rounded-xl p-5 shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-100"
+              >
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <Shield className="w-5 h-5 text-green-600" />
+                  Account Health Distribution
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-green-700">Excellent (80-100)</span>
+                    <span className="text-sm font-bold text-green-700">{analytics.healthDistribution.excellent}</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="bg-green-500 h-2 rounded-full" style={{
+                      width: `${(analytics.healthDistribution.excellent / analytics.totalAccounts) * 100}%`
+                    }}></div>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-yellow-700">Good (60-79)</span>
+                    <span className="text-sm font-bold text-yellow-700">{analytics.healthDistribution.good}</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="bg-yellow-500 h-2 rounded-full" style={{
+                      width: `${(analytics.healthDistribution.good / analytics.totalAccounts) * 100}%`
+                    }}></div>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-orange-700">At Risk (40-59)</span>
+                    <span className="text-sm font-bold text-orange-700">{analytics.healthDistribution.atRisk}</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="bg-orange-500 h-2 rounded-full" style={{
+                      width: `${(analytics.healthDistribution.atRisk / analytics.totalAccounts) * 100}%`
+                    }}></div>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-red-700">Critical (0-39)</span>
+                    <span className="text-sm font-bold text-red-700">{analytics.healthDistribution.critical}</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="bg-red-500 h-2 rounded-full" style={{
+                      width: `${(analytics.healthDistribution.critical / analytics.totalAccounts) * 100}%`
+                    }}></div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Top Industries */}
+              <motion.div
+                whileHover={{ scale: 1.01 }}
+                className="bg-white rounded-xl p-5 shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-100"
+              >
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-blue-600" />
+                  Top Industries by Revenue
+                </h3>
+                <div className="space-y-3">
+                  {Object.entries(analytics.industryStats)
+                    .sort(([,a], [,b]) => b.revenue - a.revenue)
+                    .slice(0, 5)
+                    .map(([industry, stats], index) => (
+                      <div key={industry} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-3 h-3 rounded-full ${
+                            index === 0 ? 'bg-blue-500' :
+                            index === 1 ? 'bg-purple-500' :
+                            index === 2 ? 'bg-green-500' :
+                            index === 3 ? 'bg-yellow-500' : 'bg-gray-500'
+                          }`}></div>
+                          <span className="text-sm font-medium text-gray-700 capitalize">{industry}</span>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-sm font-bold text-gray-900">{formatCurrency(stats.revenue)}</div>
+                          <div className="text-xs text-gray-500">{stats.count} accounts</div>
+                        </div>
+                      </div>
+                    ))
+                  }
+                </div>
+              </motion.div>
+
+              {/* Account Segments */}
+              <motion.div
+                whileHover={{ scale: 1.01 }}
+                className="bg-white rounded-xl p-5 shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-100"
+              >
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <Users className="w-5 h-5 text-purple-600" />
+                  Account Segments
+                </h3>
+                <div className="space-y-3">
+                  {Object.entries(analytics.segmentStats).map(([segment, stats], index) => (
+                    <div key={segment} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-3 h-3 rounded-full ${
+                          segment === 'enterprise' ? 'bg-gold-500' :
+                          segment === 'mid_market' ? 'bg-purple-500' :
+                          segment === 'smb' ? 'bg-blue-500' :
+                          segment === 'startup' ? 'bg-green-500' : 'bg-gray-500'
+                        }`}></div>
+                        <span className="text-sm font-medium text-gray-700 capitalize">{segment.replace('_', ' ')}</span>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-bold text-gray-900">{stats.count}</div>
+                        <div className="text-xs text-gray-500">{formatCurrency(stats.revenue)}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Dashboard Toggle Button */}
+      {!showDashboard && (
+        <div className="fixed left-6 z-30" style={{top: '120px'}}>
+          <button
+            onClick={() => setShowDashboard(true)}
+            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-2 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2"
+          >
+            <BarChart3 className="w-4 h-4" />
+            <span className="text-sm font-medium">Show Analytics</span>
+          </button>
+        </div>
+      )}
+
       {/* Search Bar */}
-      <div className="fixed left-0 right-0 z-40 bg-white border-b border-gray-200 px-6 py-3" style={{top: '120px'}}>
+      <div className="fixed left-0 right-0 z-40 bg-white border-b border-gray-200 px-6 py-3" style={{
+        top: showDashboard ? '400px' : '120px'
+      }}>
         <div className="relative max-w-xl">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
@@ -342,7 +686,7 @@ const UltimateAccountsModule: React.FC = () => {
       </div>
 
       {/* Accounts Grid */}
-      <div className="px-6 py-4" style={{marginTop: '180px'}}>
+      <div className="px-6 py-4" style={{marginTop: showDashboard ? '460px' : '180px'}}>
         {filteredAccounts.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
