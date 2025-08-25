@@ -106,6 +106,33 @@ const UltimateAccountsModule: React.FC = () => {
     staleTime: 1000 * 60 * 10, // 10 minutes
   });
 
+  // Helper Functions (moved before usage)
+  const getNestedValue = (obj: any, path: string): any => {
+    return path.split('.').reduce((current, key) => current?.[key], obj) || '';
+  };
+
+  const matchesHealthScore = (score: number | undefined, filter: string): boolean => {
+    if (!score) return filter === 'unknown';
+    switch (filter) {
+      case 'excellent': return score >= 80;
+      case 'good': return score >= 60 && score < 80;
+      case 'at_risk': return score >= 40 && score < 60;
+      case 'critical': return score < 40;
+      default: return true;
+    }
+  };
+
+  const matchesRevenueRange = (revenue: number | undefined, filter: string): boolean => {
+    if (!revenue) return filter === 'unknown';
+    switch (filter) {
+      case 'startup': return revenue < 1000000;
+      case 'small': return revenue >= 1000000 && revenue < 10000000;
+      case 'medium': return revenue >= 10000000 && revenue < 100000000;
+      case 'large': return revenue >= 100000000;
+      default: return true;
+    }
+  };
+
   // AI-Powered Fuzzy Search Setup
   const fuse = useMemo(() => {
     if (!accounts.length) return null;
@@ -163,33 +190,6 @@ const UltimateAccountsModule: React.FC = () => {
 
     return filtered;
   }, [accounts, filters, sortBy, fuse]);
-
-  // Helper Functions
-  const matchesHealthScore = (score: number | undefined, filter: string): boolean => {
-    if (!score) return filter === 'unknown';
-    switch (filter) {
-      case 'excellent': return score >= 80;
-      case 'good': return score >= 60 && score < 80;
-      case 'at_risk': return score >= 40 && score < 60;
-      case 'critical': return score < 40;
-      default: return true;
-    }
-  };
-
-  const matchesRevenueRange = (revenue: number | undefined, filter: string): boolean => {
-    if (!revenue) return filter === 'unknown';
-    switch (filter) {
-      case 'startup': return revenue < 1000000;
-      case 'small': return revenue >= 1000000 && revenue < 10000000;
-      case 'medium': return revenue >= 10000000 && revenue < 100000000;
-      case 'large': return revenue >= 100000000;
-      default: return true;
-    }
-  };
-
-  const getNestedValue = (obj: any, path: string): any => {
-    return path.split('.').reduce((current, key) => current?.[key], obj) || '';
-  };
 
   const formatCurrency = (amount: number | undefined): string => {
     if (!amount) return 'N/A';
