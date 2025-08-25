@@ -10,7 +10,8 @@ import {
   ExternalLink, RefreshCw, Share, Bookmark, Tag, Settings, Bell,
   ChevronDown, ChevronRight, Grid3X3, List, X, Send, Paperclip,
   ThumbsUp, ThumbsDown, Heart, Flag, Archive, Trash2, Copy,
-  Camera, Video, Headphones, Map, Shield, Award, Briefcase
+  Camera, Video, Headphones, Map, Shield, Award, Briefcase,
+  ArrowRightLeft, Database, Bot, Link, Linkedin, Twitter
 } from 'lucide-react';
 import { apiRequest } from '../../lib/queryClient';
 
@@ -105,6 +106,42 @@ interface Document {
   owner?: { firstName: string; lastName: string };
 }
 
+interface CompanyEnrichmentData {
+  website?: string;
+  linkedinUrl?: string;
+  industry?: string;
+  employees?: number;
+  annualRevenue?: number;
+  foundedYear?: number;
+  headquarters?: string;
+  phone?: string;
+  description?: string;
+  technologies?: string[];
+  techStack?: string[];
+  competitors?: string[];
+  fundingStage?: string;
+  keyExecutives?: Array<{
+    name: string;
+    title: string;
+    linkedinUrl?: string;
+  }>;
+  healthScore?: number;
+  growthIndicators?: string[];
+  marketPresence?: string;
+  riskFactors?: string[];
+  dataSources?: string[];
+  confidence?: number;
+  lastEnriched?: Date;
+}
+
+interface SyncStatus {
+  lastSync?: Date;
+  syncHealth: 'healthy' | 'warning' | 'error';
+  conflicts?: number;
+  pendingUpdates?: number;
+  autoSyncEnabled: boolean;
+}
+
 const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ params }) => {
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
@@ -121,6 +158,8 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
   const [activityType, setActivityType] = useState('call');
   const [activitySubject, setActivitySubject] = useState('');
   const [activityDescription, setActivityDescription] = useState('');
+  const [showLeadGenSync, setShowLeadGenSync] = useState(true);
+  const [syncInProgress, setSyncInProgress] = useState(false);
 
   // Data Fetching
   const { data: account, isLoading, error, refetch } = useQuery<Account>({
@@ -205,6 +244,28 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
     enabled: !!accountId,
   });
 
+  // Sync Status Query
+  const { data: syncStatus } = useQuery<SyncStatus>({
+    queryKey: ['/api/accounts', accountId, 'sync-status'],
+    queryFn: async () => {
+      const response = await fetch(`/api/accounts/${accountId}/sync-status`);
+      if (!response.ok) throw new Error('Failed to fetch sync status');
+      return response.json();
+    },
+    enabled: !!accountId,
+    refetchInterval: 30000, // Refresh every 30 seconds
+  });
+
+  // Enrichment Data Query
+  const { data: enrichmentData } = useQuery<CompanyEnrichmentData>({
+    queryKey: ['/api/accounts', accountId, 'enrichment'],
+    queryFn: async () => {
+      const response = await fetch(`/api/accounts/${accountId}/enrichment`);
+      if (!response.ok) return null;
+      return response.json();
+    },
+    enabled: !!accountId,
+  });
 
   // Mutations
   const createNoteMutation = useMutation({
@@ -235,6 +296,58 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
       setActivitySubject('');
       setActivityDescription('');
       setShowActivityModal(false);
+    }
+  });
+
+  // Sync Mutations
+  const enrichAccountMutation = useMutation({
+    mutationFn: async () => {
+      setSyncInProgress(true);
+      return apiRequest(`/api/accounts/${accountId}/enrich`, {
+        method: 'POST'
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/accounts', accountId, 'enrichment'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/accounts', accountId, 'sync-status'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/accounts', accountId] });
+      setSyncInProgress(false);
+    },
+    onError: () => {
+      setSyncInProgress(false);
+    }
+  });
+
+  const syncToLeadGenMutation = useMutation({
+    mutationFn: async () => {
+      setSyncInProgress(true);
+      return apiRequest(`/api/accounts/${accountId}/sync-to-leadgen`, {
+        method: 'POST'
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/accounts', accountId, 'sync-status'] });
+      setSyncInProgress(false);
+    },
+    onError: () => {
+      setSyncInProgress(false);
+    }
+  });
+
+  const syncActivitiesMutation = useMutation({
+    mutationFn: async () => {
+      setSyncInProgress(true);
+      return apiRequest(`/api/accounts/${accountId}/sync-activities`, {
+        method: 'POST'
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/accounts', accountId, 'activities'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/accounts', accountId, 'sync-status'] });
+      setSyncInProgress(false);
+    },
+    onError: () => {
+      setSyncInProgress(false);
     }
   });
 
@@ -575,6 +688,7 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
               <nav className="flex space-x-8 px-6">
                 {[
                   { id: 'overview', label: 'Overview', icon: Building },
+                  { id: 'leadgen-sync', label: 'LeadGen Sync', icon: ArrowRightLeft },
                   { id: 'contacts', label: 'Contacts', icon: Users },
                   { id: 'deals', label: 'Deals', icon: Target },
                   { id: 'activities', label: 'Activities', icon: Activity },
@@ -613,6 +727,16 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
                       {tab.id === 'notes' && Array.isArray(notes) && notes.length > 0 && (
                         <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full">
                           {notes.length}
+                        </span>
+                      )}
+                      {tab.id === 'leadgen-sync' && syncStatus?.syncHealth === 'error' && (
+                        <span className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full">
+                          Error
+                        </span>
+                      )}
+                      {tab.id === 'leadgen-sync' && syncStatus?.pendingUpdates && syncStatus.pendingUpdates > 0 && (
+                        <span className="bg-orange-100 text-orange-600 text-xs px-2 py-1 rounded-full">
+                          {syncStatus.pendingUpdates} Pending
                         </span>
                       )}
                     </button>
@@ -745,6 +869,251 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
                               </div>
                             </div>
                           )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* LeadGen Sync Tab */}
+                  {activeTab === 'leadgen-sync' && (
+                    <div className="space-y-6">
+                      {/* Sync Status Overview */}
+                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                            <ArrowRightLeft className="w-5 h-5 text-blue-600" />
+                            LeadGen Synchronization
+                          </h3>
+                          <div className={`px-3 py-1.5 rounded-full text-sm font-medium ${
+                            syncStatus?.syncHealth === 'healthy' ? 'bg-green-100 text-green-700' :
+                            syncStatus?.syncHealth === 'warning' ? 'bg-yellow-100 text-yellow-700' :
+                            'bg-red-100 text-red-700'
+                          }`}>
+                            {syncStatus?.syncHealth === 'healthy' ? '✓ Healthy' :
+                             syncStatus?.syncHealth === 'warning' ? '⚠ Warning' : '✗ Error'}
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div className="bg-white rounded-lg p-4 border border-blue-100">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Clock className="w-4 h-4 text-blue-600" />
+                              <span className="text-sm font-medium text-gray-700">Last Sync</span>
+                            </div>
+                            <p className="text-lg font-semibold text-gray-900">
+                              {syncStatus?.lastSync ? 
+                                new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(
+                                  Math.floor((new Date(syncStatus.lastSync).getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
+                                  'day'
+                                ) : 'Never'}
+                            </p>
+                          </div>
+                          
+                          <div className="bg-white rounded-lg p-4 border border-blue-100">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Database className="w-4 h-4 text-blue-600" />
+                              <span className="text-sm font-medium text-gray-700">Data Quality</span>
+                            </div>
+                            <p className="text-lg font-semibold text-gray-900">
+                              {enrichmentData?.confidence || 75}% Confident
+                            </p>
+                          </div>
+                          
+                          <div className="bg-white rounded-lg p-4 border border-blue-100">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Bot className="w-4 h-4 text-blue-600" />
+                              <span className="text-sm font-medium text-gray-700">AI Enhancement</span>
+                            </div>
+                            <p className="text-lg font-semibold text-gray-900">
+                              {enrichmentData ? 'Active' : 'Available'}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Sync Actions */}
+                      <div className="bg-white rounded-xl border border-gray-200 p-6">
+                        <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                          <RefreshCw className="w-5 h-5 text-indigo-600" />
+                          Sync Actions
+                        </h4>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <button
+                            onClick={() => enrichAccountMutation.mutate()}
+                            disabled={syncInProgress || enrichAccountMutation.isPending}
+                            className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+                          >
+                            {syncInProgress || enrichAccountMutation.isPending ? (
+                              <RefreshCw className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Sparkles className="w-4 h-4" />
+                            )}
+                            Enrich Data
+                          </button>
+                          
+                          <button
+                            onClick={() => syncToLeadGenMutation.mutate()}
+                            disabled={syncInProgress || syncToLeadGenMutation.isPending}
+                            className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-lg hover:from-emerald-600 hover:to-teal-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+                          >
+                            {syncInProgress || syncToLeadGenMutation.isPending ? (
+                              <RefreshCw className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <ArrowRightLeft className="w-4 h-4" />
+                            )}
+                            Sync to LeadGen
+                          </button>
+                          
+                          <button
+                            onClick={() => syncActivitiesMutation.mutate()}
+                            disabled={syncInProgress || syncActivitiesMutation.isPending}
+                            className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-lg hover:from-purple-600 hover:to-pink-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+                          >
+                            {syncInProgress || syncActivitiesMutation.isPending ? (
+                              <RefreshCw className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Activity className="w-4 h-4" />
+                            )}
+                            Sync Activities
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Enrichment Data Display */}
+                      {enrichmentData && (
+                        <div className="space-y-4">
+                          <h4 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                            <Database className="w-5 h-5 text-green-600" />
+                            Enhanced Company Intelligence
+                          </h4>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Company Details */}
+                            <div className="bg-white rounded-xl border border-gray-200 p-6">
+                              <h5 className="font-medium text-gray-900 mb-4 flex items-center gap-2">
+                                <Building className="w-4 h-4 text-blue-600" />
+                                Company Details
+                              </h5>
+                              <div className="space-y-3">
+                                {enrichmentData.industry && (
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-600">Industry:</span>
+                                    <span className="font-medium">{enrichmentData.industry}</span>
+                                  </div>
+                                )}
+                                {enrichmentData.employees && (
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-600">Employees:</span>
+                                    <span className="font-medium">{formatNumber(enrichmentData.employees)}</span>
+                                  </div>
+                                )}
+                                {enrichmentData.annualRevenue && (
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-600">Revenue:</span>
+                                    <span className="font-medium">{formatCurrency(enrichmentData.annualRevenue)}</span>
+                                  </div>
+                                )}
+                                {enrichmentData.foundedYear && (
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-600">Founded:</span>
+                                    <span className="font-medium">{enrichmentData.foundedYear}</span>
+                                  </div>
+                                )}
+                                {enrichmentData.headquarters && (
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-600">HQ:</span>
+                                    <span className="font-medium text-right">{enrichmentData.headquarters}</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Technology Stack */}
+                            <div className="bg-white rounded-xl border border-gray-200 p-6">
+                              <h5 className="font-medium text-gray-900 mb-4 flex items-center gap-2">
+                                <Zap className="w-4 h-4 text-purple-600" />
+                                Technology Stack
+                              </h5>
+                              {enrichmentData.techStack && enrichmentData.techStack.length > 0 ? (
+                                <div className="flex flex-wrap gap-2">
+                                  {enrichmentData.techStack.map((tech, index) => (
+                                    <span
+                                      key={index}
+                                      className="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full"
+                                    >
+                                      {tech}
+                                    </span>
+                                  ))}
+                                </div>
+                              ) : (
+                                <p className="text-gray-500 text-sm">No technology stack data available</p>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Growth Indicators */}
+                          {enrichmentData.growthIndicators && enrichmentData.growthIndicators.length > 0 && (
+                            <div className="bg-white rounded-xl border border-gray-200 p-6">
+                              <h5 className="font-medium text-gray-900 mb-4 flex items-center gap-2">
+                                <TrendingUp className="w-4 h-4 text-green-600" />
+                                Growth Indicators
+                              </h5>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                {enrichmentData.growthIndicators.map((indicator, index) => (
+                                  <div key={index} className="flex items-center gap-2 p-3 bg-green-50 rounded-lg">
+                                    <CheckCircle className="w-4 h-4 text-green-600" />
+                                    <span className="text-sm text-gray-700">{indicator}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Data Sources */}
+                          <div className="bg-gray-50 rounded-xl p-4">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <Shield className="w-4 h-4 text-gray-600" />
+                                <span className="text-sm text-gray-600">Data Sources:</span>
+                                <div className="flex gap-1">
+                                  {enrichmentData.dataSources?.map((source, index) => (
+                                    <span key={index} className="px-2 py-1 bg-white text-gray-700 text-xs rounded border">
+                                      {source}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                              <span className="text-xs text-gray-500">
+                                Last updated: {enrichmentData.lastEnriched ? 
+                                  new Date(enrichmentData.lastEnriched).toLocaleDateString() : 'Unknown'}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Quick Links to LeadGen */}
+                      <div className="bg-white rounded-xl border border-gray-200 p-6">
+                        <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                          <Link className="w-5 h-5 text-indigo-600" />
+                          Related LeadGen Actions
+                        </h4>
+                        <div className="flex flex-wrap gap-3">
+                          <button
+                            onClick={() => setLocation('/lead-generation')}
+                            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                            View in LeadGen Module
+                          </button>
+                          <button
+                            onClick={() => setLocation(`/lead-generation/companies/${account?.domain}`)}
+                            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                          >
+                            <Building className="w-4 h-4" />
+                            Company Detail Page
+                          </button>
                         </div>
                       </div>
                     </div>
