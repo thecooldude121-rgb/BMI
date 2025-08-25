@@ -8,7 +8,8 @@ import {
   TrendingUp, Target, Grid3X3, List, BarChart3, Eye, Edit, Trash2,
   Phone, Mail, Globe, MapPin, Star, AlertTriangle, Brain, Sparkles,
   ChevronDown, Download, RefreshCw, Settings, Zap, Activity,
-  Calendar, FileText, CheckSquare, Square, ArrowUpDown, SlidersHorizontal
+  Calendar, FileText, CheckSquare, Square, ArrowUpDown, SlidersHorizontal,
+  Copy, GitMerge, Shield, Trash, AlertCircle
 } from 'lucide-react';
 import { apiRequest } from '../../lib/queryClient';
 
@@ -104,6 +105,23 @@ const UltimateAccountsModule: React.FC = () => {
   const { data: users = [] } = useQuery<any[]>({
     queryKey: ['/api/users'],
     staleTime: 1000 * 60 * 10, // 10 minutes
+  });
+
+  // Duplicate Management Data
+  const { data: duplicatesData } = useQuery<any>({
+    queryKey: ['/api/accounts/duplicates'],
+    staleTime: 1000 * 60 * 2, // 2 minutes
+  });
+
+  const cleanupDuplicates = useMutation({
+    mutationFn: () => apiRequest('/api/accounts/duplicates/cleanup', {
+      method: 'POST',
+      body: { autoCleanup: true }
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/accounts'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/accounts/duplicates'] });
+    }
   });
 
   // Helper Functions (moved before usage)
@@ -382,6 +400,55 @@ const UltimateAccountsModule: React.FC = () => {
             </button>
           </div>
         </div>
+        
+        {/* Duplicate Management Alert */}
+        {duplicatesData && duplicatesData.totalDuplicateGroups > 0 && (
+          <div className="mt-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-amber-100 rounded-full">
+                  <AlertCircle className="w-5 h-5 text-amber-600" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-amber-900">
+                    Duplicate Accounts Detected
+                  </h3>
+                  <p className="text-sm text-amber-700">
+                    Found {duplicatesData.totalDuplicateGroups} duplicate groups with {duplicatesData.totalDuplicateAccounts} total duplicate accounts
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => queryClient.invalidateQueries({ queryKey: ['/api/accounts/duplicates'] })}
+                  className="px-3 py-1 text-xs bg-amber-100 text-amber-700 rounded-md hover:bg-amber-200 transition-colors flex items-center gap-1"
+                  data-testid="button-refresh-duplicates"
+                >
+                  <RefreshCw className="w-3 h-3" />
+                  Refresh
+                </button>
+                <button
+                  onClick={() => cleanupDuplicates.mutate()}
+                  disabled={cleanupDuplicates.isPending}
+                  className="px-3 py-1 text-xs bg-amber-600 text-white rounded-md hover:bg-amber-700 transition-colors flex items-center gap-1 disabled:opacity-50"
+                  data-testid="button-cleanup-duplicates"
+                >
+                  {cleanupDuplicates.isPending ? (
+                    <>
+                      <RefreshCw className="w-3 h-3 animate-spin" />
+                      Cleaning...
+                    </>
+                  ) : (
+                    <>
+                      <GitMerge className="w-3 h-3" />
+                      Auto-Cleanup
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Advanced Search Bar */}
