@@ -130,7 +130,6 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
       const response = await fetch(`/api/accounts/${accountId}`);
       if (!response.ok) throw new Error('Failed to fetch account');
       const data = await response.json();
-      console.log('Loaded account data:', data);
       return data;
     },
     enabled: !!accountId,
@@ -167,7 +166,6 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
       const response = await fetch(`/api/accounts/${accountId}/activities`);
       if (!response.ok) return [];
       const data = await response.json();
-      console.log('Loaded activities for account:', accountId, 'Count:', data?.length || 0);
       return Array.isArray(data) ? data : [];
     },
     enabled: !!accountId,
@@ -183,7 +181,6 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
         const response = await fetch(`/api/notes/by-account/${accountId}`);
         if (response.ok) {
           const data = await response.json();
-          console.log('Loaded notes for account:', accountId, 'Count:', data?.length || 0);
           return Array.isArray(data) ? data : [];
         }
       } catch (error) {
@@ -208,18 +205,6 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
     enabled: !!accountId,
   });
 
-  // Debug logging
-  useEffect(() => {
-    console.log('Account Detail Page - Current activeTab:', activeTab);
-    console.log('Account Detail Page - Data loaded:', {
-      accountId,
-      account: !!account,
-      contacts: contacts?.length || 0,
-      deals: deals?.length || 0,
-      activities: activities?.length || 0,
-      notes: notes?.length || 0
-    });
-  }, [activeTab, accountId, account, contacts, deals, activities, notes]);
 
   // Mutations
   const createNoteMutation = useMutation({
@@ -600,10 +585,7 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
                   return (
                     <button
                       key={tab.id}
-                      onClick={() => {
-                        console.log('Switching to tab:', tab.id);
-                        setActiveTab(tab.id);
-                      }}
+                      onClick={() => setActiveTab(tab.id)}
                       className={`flex items-center space-x-2 py-4 border-b-2 font-medium text-sm transition-colors ${
                         activeTab === tab.id
                           ? 'border-blue-500 text-blue-600'
