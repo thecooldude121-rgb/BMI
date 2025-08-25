@@ -125,6 +125,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Account Merge Endpoint
+  app.post("/api/accounts/merge", async (req, res) => {
+    try {
+      const { primaryAccountId, secondaryAccountIds, fieldDecisions, preserveRelationships = true } = req.body;
+      
+      if (!primaryAccountId || !secondaryAccountIds || !Array.isArray(secondaryAccountIds)) {
+        return res.status(400).json({ error: "Invalid merge data" });
+      }
+
+      // Get the primary account
+      const primaryAccount = await storage.getAccount(primaryAccountId);
+      if (!primaryAccount) {
+        return res.status(404).json({ error: "Primary account not found" });
+      }
+
+      // Prepare merged data based on field decisions
+      const mergedData: any = { ...primaryAccount };
+      if (fieldDecisions && Array.isArray(fieldDecisions)) {
+        for (const decision of fieldDecisions) {
+          if (decision.selectedValue !== undefined) {
+            mergedData[decision.field] = decision.selectedValue;
+          }
+        }
+      }
+
+      // Transfer relationships if requested
+      if (preserveRelationships) {
+        for (const secondaryAccountId of secondaryAccountIds) {
+          await transferAccountRelationships(secondaryAccountId, primaryAccountId);
+        }
+      }
+
+      // Update the primary account with merged data
+      await storage.updateAccount(primaryAccountId, mergedData);
+
+      // Delete secondary accounts
+      const deleteResults = [];
+      for (const secondaryAccountId of secondaryAccountIds) {
+        try {
+          await storage.deleteAccount(secondaryAccountId);
+          deleteResults.push({ id: secondaryAccountId, success: true });
+        } catch (error) {
+          deleteResults.push({ id: secondaryAccountId, success: false, error: String(error) });
+        }
+      }
+
+      res.json({
+        success: true,
+        message: `Successfully merged ${secondaryAccountIds.length} accounts into ${primaryAccount.name}`,
+        mergedAccount: await storage.getAccount(primaryAccountId),
+        deleteResults
+      });
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
   app.post("/api/accounts/duplicates/cleanup", async (req, res) => {
     try {
       const { keepAccountIds, removeAccountIds, autoCleanup = false } = req.body;
