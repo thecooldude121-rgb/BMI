@@ -174,7 +174,7 @@ const UltimateAccountsModule: React.FC = () => {
     >
       {/* Header Section */}
       <div className="bg-white border-b border-gray-200 px-6 py-3">
-        <div className="max-w-5xl flex flex-col lg:flex-row lg:items-center gap-3">
+        <div className="flex flex-col lg:flex-row lg:items-center gap-3">
           {/* Title and Stats */}
           <div className="flex items-center space-x-4">
             <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg text-white">
@@ -274,7 +274,7 @@ const UltimateAccountsModule: React.FC = () => {
         
         {/* Duplicate Management Alert */}
         {duplicatesData && duplicatesData.totalDuplicateGroups > 0 && (
-          <div className="mt-3 max-w-5xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-3 shadow-lg">
+          <div className="mt-3 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-3 shadow-lg">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-amber-100 rounded-full">
