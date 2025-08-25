@@ -170,21 +170,21 @@ const UltimateAccountsModule: React.FC = () => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="h-full bg-gray-50"
+      className="flex-1 bg-gray-50"
     >
       {/* Header Section */}
-      <div className="bg-white border-b border-gray-200 p-6">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div className="bg-white border-b border-gray-200 px-6 py-3">
+        <div className="max-w-5xl flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
           {/* Title and Stats */}
           <div className="flex items-center space-x-4">
-            <div className="p-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white">
-              <Building className="w-8 h-8" />
+            <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg text-white">
+              <Building className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+              <h1 className="text-2xl font-bold text-gray-900">
                 Accounts
               </h1>
-              <div className="flex items-center space-x-6 mt-2 text-sm text-gray-600">
+              <div className="flex items-center mt-1 text-sm text-gray-600">
                 <div className="flex items-center space-x-1">
                   <Users className="w-4 h-4" />
                   <span>{filteredAccounts.length} accounts</span>
@@ -274,7 +274,7 @@ const UltimateAccountsModule: React.FC = () => {
         
         {/* Duplicate Management Alert */}
         {duplicatesData && duplicatesData.totalDuplicateGroups > 0 && (
-          <div className="mt-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 shadow-lg">
+          <div className="mt-3 max-w-5xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-3 shadow-lg">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-amber-100 rounded-full">
@@ -331,22 +331,22 @@ const UltimateAccountsModule: React.FC = () => {
       </div>
 
       {/* Search Bar */}
-      <div className="bg-white border-b border-gray-200 p-4">
-        <div className="relative max-w-2xl">
+      <div className="bg-white border-b border-gray-200 px-6 py-3">
+        <div className="relative max-w-xl">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
             type="text"
             placeholder="Search accounts..."
             value={filters.searchTerm}
             onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 shadow-md hover:shadow-lg bg-white"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 shadow-md hover:shadow-lg bg-white"
             data-testid="input-search"
           />
         </div>
       </div>
 
       {/* Accounts Grid */}
-      <div className="p-6">
+      <div className="px-6 py-4">
         {filteredAccounts.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
