@@ -173,7 +173,7 @@ const UltimateAccountsModule: React.FC = () => {
       className="flex-1 bg-gray-50"
     >
       {/* Header Section */}
-      <div className="bg-white border-b border-gray-200 px-6 py-3">
+      <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-6 py-3">
         <div className="flex flex-col lg:flex-row lg:items-center gap-3">
           {/* Title and Stats */}
           <div className="flex items-center space-x-4">
