@@ -265,7 +265,7 @@ const UltimateAccountsModule: React.FC = () => {
   return (
     <div className="flex-1 bg-gray-50">
       {/* Header Section */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-white border-b border-gray-200 px-6 py-4 sticky top-16 z-50">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           {/* Title and Stats */}
           <div className="flex items-center space-x-4">
@@ -426,7 +426,7 @@ const UltimateAccountsModule: React.FC = () => {
       <div className="bg-white">
         
         {/* Compact Analytics Header */}
-        <div className="bg-white border-b border-gray-200 px-6 py-3 shadow-sm">
+        <div className="bg-white border-b border-gray-200 px-6 py-3 shadow-sm sticky top-28 z-40">
           <div className="flex items-center justify-between">
             {/* Compact Analytics Summary */}
             <div className="flex items-center gap-8">
@@ -876,7 +876,7 @@ const UltimateAccountsModule: React.FC = () => {
       </div>
 
       {/* Search Bar */}
-      <div className="bg-white border-b border-gray-200 px-6 py-3 shadow-sm">
+      <div className="bg-white border-b border-gray-200 px-6 py-3 shadow-sm sticky z-30" style={{ top: showDashboard ? '460px' : '100px' }}>
         <div className="relative max-w-xl">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
