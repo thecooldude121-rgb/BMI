@@ -3615,6 +3615,74 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Account-LeadGen Bidirectional Sync Endpoints
+  app.post("/api/accounts/:id/enrich", async (req, res) => {
+    try {
+      const { accountLeadGenSyncService } = await import('./account-leadgen-sync');
+      const enrichmentData = await accountLeadGenSyncService.enrichAccountData(req.params.id);
+      res.json(enrichmentData);
+    } catch (error) {
+      console.error("Account enrichment error:", error);
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/accounts/:id/sync-to-leadgen", async (req, res) => {
+    try {
+      const { accountLeadGenSyncService } = await import('./account-leadgen-sync');
+      await accountLeadGenSyncService.syncAccountToLeadGen(req.params.id);
+      res.json({ success: true, message: "Account synced to LeadGen successfully" });
+    } catch (error) {
+      console.error("Account to LeadGen sync error:", error);
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/accounts/:id/sync-from-leadgen", async (req, res) => {
+    try {
+      const { accountLeadGenSyncService } = await import('./account-leadgen-sync');
+      const { leadGenData } = req.body;
+      await accountLeadGenSyncService.syncLeadGenToAccount(req.params.id, leadGenData);
+      res.json({ success: true, message: "LeadGen data synced to Account successfully" });
+    } catch (error) {
+      console.error("LeadGen to Account sync error:", error);
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/accounts/:id/sync-activities", async (req, res) => {
+    try {
+      const { accountLeadGenSyncService } = await import('./account-leadgen-sync');
+      await accountLeadGenSyncService.syncActivitiesAcrossModules(req.params.id);
+      res.json({ success: true, message: "Activities synced across modules successfully" });
+    } catch (error) {
+      console.error("Activity sync error:", error);
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/accounts/:id/sync-status", async (req, res) => {
+    try {
+      const { accountLeadGenSyncService } = await import('./account-leadgen-sync');
+      const syncStatus = await accountLeadGenSyncService.getSyncStatus(req.params.id);
+      res.json(syncStatus);
+    } catch (error) {
+      console.error("Sync status error:", error);
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/accounts/auto-fill", async (req, res) => {
+    try {
+      const { accountLeadGenSyncService } = await import('./account-leadgen-sync');
+      const autoFillData = await accountLeadGenSyncService.autoFillAccountData(req.body);
+      res.json(autoFillData);
+    } catch (error) {
+      console.error("Auto-fill error:", error);
+      handleError(error, res);
+    }
+  });
+
   // A/B Test Campaign endpoints
   app.post("/api/lead-generation/ab-tests", async (req, res) => {
     try {
