@@ -190,7 +190,7 @@ const UltimateAccountsModule: React.FC = () => {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center space-x-3 ml-auto">
+          <div className="absolute right-6 top-1/2 transform -translate-y-1/2 flex items-center space-x-3">
             <button
               onClick={() => setShowFilters(!showFilters)}
               className="w-10 h-10 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl bg-white border border-gray-200 hover:border-gray-300"
