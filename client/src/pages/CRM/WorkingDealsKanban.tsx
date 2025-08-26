@@ -48,6 +48,7 @@ const DEAL_HEALTH_COLORS = {
 };
 
 const WorkingDealsKanban: React.FC = () => {
+  console.log('WorkingDealsKanban component rendering');
   const [deals, setDeals] = useState<Deal[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -104,7 +105,7 @@ const WorkingDealsKanban: React.FC = () => {
     <div key={deal.id} className="mb-3 bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
       <div className="flex items-start justify-between mb-2">
         <h4 className="font-medium text-sm text-gray-900 leading-tight">{deal.name}</h4>
-        <span className={`px-2 py-1 text-xs rounded-full ${DEAL_HEALTH_COLORS[deal.dealHealth] || 'bg-gray-100 text-gray-800'}`}>
+        <span className={`px-2 py-1 text-xs rounded-full ${DEAL_HEALTH_COLORS[deal.dealHealth as keyof typeof DEAL_HEALTH_COLORS] || 'bg-gray-100 text-gray-800'}`}>
           {deal.dealHealth?.replace('_', ' ')}
         </span>
       </div>
