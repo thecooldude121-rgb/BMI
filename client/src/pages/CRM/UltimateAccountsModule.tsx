@@ -760,7 +760,7 @@ const UltimateAccountsModule: React.FC = () => {
       )}
 
       {/* Scrollable Content Area - Positioned below fixed header */}
-      <div className="absolute left-0 right-0 bottom-0 top-32 overflow-y-auto bg-gray-50">
+      <div className="absolute left-0 right-0 bottom-0 top-40 overflow-y-auto bg-gray-50">
         <div className="px-6 py-4">
         {filteredAccounts.length === 0 ? (
           <motion.div
