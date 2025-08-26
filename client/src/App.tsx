@@ -45,6 +45,7 @@ import SimpleNavigation from './components/SimpleNavigation';
 import WorkingNavigation from './components/WorkingNavigation';
 import PermanentSidebar from './components/PermanentSidebar';
 import RouterDebug from './components/RouterDebug';
+import ClickTest from './components/ClickTest';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
@@ -110,6 +111,7 @@ const App = () => {
           <SimpleNavigation />
           <WorkingNavigation />
           {import.meta.env.DEV && <RouterDebug />}
+          <ClickTest />
         </div>
       </DataProvider>
     </AuthProvider>
