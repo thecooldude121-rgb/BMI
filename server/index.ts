@@ -38,12 +38,13 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Database seeding disabled to prevent automatic account creation
   // Seed database if empty
-  try {
-    await seedDatabase();
-  } catch (error: any) {
-    console.log("Database already seeded or error occurred:", error.message);
-  }
+  // try {
+  //   await seedDatabase();
+  // } catch (error: any) {
+  //   console.log("Database already seeded or error occurred:", error.message);
+  // }
 
   // Seed gamification data
   try {
