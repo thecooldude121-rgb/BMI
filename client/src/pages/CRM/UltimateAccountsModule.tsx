@@ -397,7 +397,7 @@ const UltimateAccountsModule: React.FC = () => {
 
       {/* Analytics Content Container - Only show when dashboard is enabled */}
       {showDashboard && (
-        <div className="bg-white border-b border-gray-200">
+        <div className="bg-white border-b border-gray-200 absolute top-32 left-0 right-0 z-40">
           {/* Compact Analytics Header */}
           <div className="px-6 py-3">
             <div className="flex items-center justify-between">
@@ -840,7 +840,7 @@ const UltimateAccountsModule: React.FC = () => {
       )}
 
       {/* Scrollable Content Area - Positioned below fixed header */}
-      <div className="absolute top-32 left-0 right-0 bottom-0 overflow-y-auto bg-gray-50">
+      <div className={`absolute left-0 right-0 bottom-0 overflow-y-auto bg-gray-50 ${showDashboard ? 'top-48' : 'top-32'}`}>
         <div className="px-6 py-4">
         {filteredAccounts.length === 0 ? (
           <motion.div
