@@ -1,19 +1,18 @@
 // Direct navigation utilities that bypass router issues completely
 export const navigateTo = (path: string) => {
+  console.log(`🚀 DIRECT NAVIGATION ATTEMPT: ${path}`);
+  console.log(`🌍 Current location: ${window.location.href}`);
+  
   try {
-    console.log(`🔄 Attempting navigation to: ${path}`);
-    
-    // Method 1: Force complete page reload - most reliable
+    // Force immediate navigation
     window.location.href = path;
-    console.log(`✅ Navigation initiated to: ${path}`);
+    console.log(`✅ Navigation command executed for: ${path}`);
     return true;
     
   } catch (error) {
-    console.error('Navigation failed:', error);
-    // Fallback: Try again with a slight delay
-    setTimeout(() => {
-      window.location.href = path;
-    }, 100);
+    console.error(`❌ Navigation error:`, error);
+    // Emergency fallback
+    window.location.replace(path);
     return false;
   }
 };

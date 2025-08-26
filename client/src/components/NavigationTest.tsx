@@ -3,15 +3,23 @@ import { navigateTo, testNavigation } from '../utils/navigation';
 const NavigationTest = () => {
   const handleNavigation = (path: string) => {
     console.log(`🔄 Navigation test button clicked for: ${path}`);
-    const success = navigateTo(path);
-    if (!success) {
-      alert(`Navigation to ${path} failed. Check console for details.`);
+    console.log(`Current location: ${window.location.pathname}`);
+    
+    // Try multiple navigation approaches
+    try {
+      // Method 1: Direct window navigation (most reliable)
+      console.log(`Attempting direct navigation to: ${path}`);
+      window.location.href = path;
+    } catch (error) {
+      console.error(`Navigation failed:`, error);
+      alert(`Navigation to ${path} failed. Error: ${error}`);
     }
   };
 
   return (
-    <div className="fixed bottom-16 right-4 z-50 bg-white border border-gray-300 rounded-lg p-4 shadow-lg">
-      <h4 className="text-sm font-semibold mb-2">Navigation Test</h4>
+    <div className="fixed bottom-16 right-4 z-50 bg-white border-2 border-red-500 rounded-lg p-4 shadow-lg">
+      <h4 className="text-sm font-semibold mb-2 text-red-600">🧪 Navigation Test Panel</h4>
+      <p className="text-xs text-gray-500 mb-2">Click buttons to test navigation</p>
       <div className="space-y-2">
         <button
           onClick={() => handleNavigation('/crm/deals')}
