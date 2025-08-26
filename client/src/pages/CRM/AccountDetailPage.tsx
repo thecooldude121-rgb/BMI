@@ -85,6 +85,20 @@ const AccountDetailPage: React.FC = () => {
     enabled: !!id,
   });
 
+  // Fetch Lead Generation company data for synchronization
+  const { data: leadGenData } = useQuery({
+    queryKey: ['/api/leadgen/companies', account?.domain],
+    queryFn: () => apiRequest(`/api/leadgen/companies/by-domain/${account?.domain}`),
+    enabled: !!account?.domain,
+  });
+
+  // Fetch enriched company insights from Lead Generation
+  const { data: companyInsights } = useQuery({
+    queryKey: ['/api/leadgen/insights', account?.domain],
+    queryFn: () => apiRequest(`/api/leadgen/insights/${account?.domain}`),
+    enabled: !!account?.domain,
+  });
+
   // Update account mutation
   const updateAccountMutation = useMutation({
     mutationFn: (data: Partial<Account>) => apiRequest(`/api/accounts/${id}`, {
@@ -95,6 +109,17 @@ const AccountDetailPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['/api/accounts'] });
       setIsEditing(false);
       setEditedAccount({});
+    },
+  });
+
+  // Lead Generation sync mutation
+  const syncToLeadGenMutation = useMutation({
+    mutationFn: () => apiRequest(`/api/accounts/${id}/sync-to-leadgen`, {
+      method: 'POST'
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/leadgen/companies'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/leadgen/insights'] });
     },
   });
 
@@ -259,6 +284,18 @@ const AccountDetailPage: React.FC = () => {
             ) : (
               <>
                 <button
+                  onClick={() => syncToLeadGenMutation.mutate()}
+                  disabled={syncToLeadGenMutation.isPending}
+                  className="border border-blue-300 text-blue-700 px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors flex items-center disabled:opacity-50"
+                >
+                  {syncToLeadGenMutation.isPending ? (
+                    <Brain className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <Brain className="w-4 h-4 mr-2" />
+                  )}
+                  {syncToLeadGenMutation.isPending ? 'Syncing...' : 'Sync Lead Gen'}
+                </button>
+                <button
                   onClick={() => setIsEditing(true)}
                   className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors flex items-center"
                 >
@@ -312,12 +349,18 @@ const AccountDetailPage: React.FC = () => {
           <div className="bg-orange-50 p-4 rounded-lg">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-orange-700 font-medium text-sm">Last Activity</p>
-                <p className="text-orange-900 text-sm font-medium">
-                  {metrics?.lastActivity ? new Date(metrics.lastActivity).toLocaleDateString() : 'No activity'}
+                <p className="text-orange-700 font-medium text-sm">Employees</p>
+                <p className="text-orange-900 text-xl font-bold">
+                  {leadGenData?.employeeCount || account?.employees || 'Unknown'}
                 </p>
+                {leadGenData && (
+                  <div className="flex items-center mt-1">
+                    <Brain className="w-3 h-3 text-orange-600 mr-1" />
+                    <span className="text-xs text-orange-600">Lead Gen Data</span>
+                  </div>
+                )}
               </div>
-              <Activity className="w-6 h-6 text-orange-600" />
+              <Users className="w-6 h-6 text-orange-600" />
             </div>
           </div>
         </div>
@@ -486,6 +529,108 @@ const AccountDetailPage: React.FC = () => {
                   </button>
                 </div>
               </div>
+
+              {/* Lead Generation Insights */}
+              {leadGenData && (
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <Brain className="w-5 h-5 mr-2 text-blue-600" />
+                    Lead Intelligence
+                  </h3>
+                  
+                  {leadGenData.industry && (
+                    <div className="mb-3">
+                      <span className="text-sm font-medium text-gray-700">Industry:</span>
+                      <span className="text-sm text-gray-600 ml-2">{leadGenData.industry}</span>
+                    </div>
+                  )}
+                  
+                  {leadGenData.employeeCount && (
+                    <div className="mb-3">
+                      <span className="text-sm font-medium text-gray-700">Employee Range:</span>
+                      <span className="text-sm text-gray-600 ml-2">{leadGenData.employeeCount}</span>
+                    </div>
+                  )}
+                  
+                  {leadGenData.revenue && (
+                    <div className="mb-3">
+                      <span className="text-sm font-medium text-gray-700">Revenue:</span>
+                      <span className="text-sm text-gray-600 ml-2">{leadGenData.revenue}</span>
+                    </div>
+                  )}
+                  
+                  {leadGenData.technologies && leadGenData.technologies.length > 0 && (
+                    <div className="mb-3">
+                      <span className="text-sm font-medium text-gray-700 block mb-1">Technologies:</span>
+                      <div className="flex flex-wrap gap-1">
+                        {leadGenData.technologies.slice(0, 3).map((tech: string, index: number) => (
+                          <span key={index} className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">
+                            {tech}
+                          </span>
+                        ))}
+                        {leadGenData.technologies.length > 3 && (
+                          <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
+                            +{leadGenData.technologies.length - 3} more
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {leadGenData.lastSynced && (
+                    <div className="text-xs text-gray-500 border-t pt-2 mt-3">
+                      Last synced: {new Date(leadGenData.lastSynced).toLocaleDateString()}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Company Insights */}
+              {companyInsights && (
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border border-green-200 p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <TrendingUp className="w-5 h-5 mr-2 text-green-600" />
+                    Market Intelligence
+                  </h3>
+                  
+                  {companyInsights.confidence && (
+                    <div className="mb-3">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium text-gray-700">Data Confidence</span>
+                        <span className="text-sm text-gray-600">{companyInsights.confidence}%</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                          className="bg-green-600 h-2 rounded-full transition-all duration-500" 
+                          style={{ width: `${companyInsights.confidence}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {companyInsights.growth && companyInsights.growth.length > 0 && (
+                    <div className="mb-3">
+                      <span className="text-sm font-medium text-gray-700 block mb-1">Growth Signals:</span>
+                      <div className="space-y-1">
+                        {companyInsights.growth.slice(0, 2).map((signal: string, index: number) => (
+                          <div key={index} className="text-xs text-green-700 bg-green-100 px-2 py-1 rounded">
+                            {signal}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {companyInsights.funding && companyInsights.funding.length > 0 && (
+                    <div className="mb-3">
+                      <span className="text-sm font-medium text-gray-700 block mb-1">Funding:</span>
+                      <div className="text-xs text-gray-600">
+                        {companyInsights.funding[0].round} - {companyInsights.funding[0].amount}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Tags */}
               {account.tags && account.tags.length > 0 && (
