@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Reset potential interaction blockers */
+* {
+  pointer-events: auto !important;
+}
+
+html, body {
+  overflow: auto !important;
+  position: static !important;
+}
+
+a {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+button {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
 /* Custom animations for enhanced Deal Progress Bar */
 @keyframes fadeIn {
   from {
