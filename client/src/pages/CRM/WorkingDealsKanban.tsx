@@ -187,9 +187,9 @@ const WorkingDealsKanban: React.FC = () => {
       </div>
 
       {/* Kanban Board - 8 Columns with proper scrolling */}
-      <div className="w-full">
-        <div className="overflow-x-auto pb-4">
-          <div className="flex gap-4" style={{ width: '2400px' }}>
+      <div className="w-full overflow-hidden">
+        <div className="overflow-x-scroll pb-4" style={{ scrollbarWidth: 'thin' }}>
+          <div className="flex gap-4" style={{ width: '2400px', minWidth: '2400px' }}>
             {dealColumns.map((column) => (
               <div key={column.id} className="bg-gray-50 rounded-lg p-3 w-[280px] flex-shrink-0">
                 <div className="flex items-center justify-between mb-4">
