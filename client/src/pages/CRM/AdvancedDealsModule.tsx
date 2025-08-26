@@ -81,6 +81,8 @@ const DEAL_STAGES = [
   { id: 'discovery', title: 'Discovery', color: 'bg-blue-500' },
   { id: 'qualification', title: 'Qualification', color: 'bg-purple-500' },
   { id: 'proposal', title: 'Proposal', color: 'bg-yellow-500' },
+  { id: 'demo', title: 'Demo', color: 'bg-indigo-500' },
+  { id: 'trial', title: 'Trial', color: 'bg-teal-500' },
   { id: 'negotiation', title: 'Negotiation', color: 'bg-orange-500' },
   { id: 'closed-won', title: 'Closed Won', color: 'bg-green-500' },
   { id: 'closed-lost', title: 'Closed Lost', color: 'bg-red-500' }
