@@ -1406,6 +1406,83 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI-Powered Activity Suggestions - MUST BE BEFORE /:id route
+  app.get("/api/activities/ai-suggestions", async (req, res) => {
+    try {
+      console.log('🤖 AI suggestions API called');
+      
+      // Return mock suggestions for now to demonstrate functionality
+      const suggestions = [
+        {
+          id: 'ai-lead-followup-1',
+          type: 'email',
+          priority: 'high',
+          title: 'Follow up with Sarah Johnson from TechCorp',
+          description: 'Lead has been inactive for 12 days. High lead score (85/100) indicates strong conversion potential.',
+          suggestedDate: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+          estimatedDuration: 15,
+          relatedToType: 'lead',
+          relatedToId: 'lead-1',
+          relatedToName: 'Sarah Johnson',
+          reasoning: 'High-value lead with extended inactivity requires immediate re-engagement',
+          confidence: 92,
+          tags: ['follow-up', 'high-value', 'conversion-ready'],
+          context: {
+            trigger: 'Inactive high-scoring lead detection',
+            dataPoints: ['12 days since last activity', 'Lead score: 85/100', 'Company size: 500+ employees'],
+            expectedOutcome: 'Re-engage lead and schedule conversion call'
+          }
+        },
+        {
+          id: 'ai-deal-stalled-1',
+          type: 'call',
+          priority: 'urgent',
+          title: 'Revive stalled deal: Enterprise Software License',
+          description: 'Deal worth $125,000 has been inactive for 8 days. Risk of deal slippage.',
+          suggestedDate: new Date(Date.now() + 1 * 60 * 60 * 1000).toISOString(),
+          estimatedDuration: 45,
+          relatedToType: 'deal',
+          relatedToId: 'deal-1',
+          relatedToName: 'Enterprise Software License',
+          reasoning: 'High-value deal requires immediate intervention to prevent loss',
+          confidence: 95,
+          tags: ['deal-rescue', 'high-value', 'urgent'],
+          context: {
+            trigger: 'Stalled high-value deal detection',
+            dataPoints: ['8 days inactive', 'Value: $125,000', 'Stage: Negotiation'],
+            expectedOutcome: 'Re-engage stakeholders and advance to closing'
+          }
+        },
+        {
+          id: 'ai-account-health-1',
+          type: 'meeting',
+          priority: 'critical',
+          title: 'Account rescue meeting: GlobalTech Solutions',
+          description: 'Account health score dropped to 35/100. Immediate intervention required.',
+          suggestedDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+          estimatedDuration: 90,
+          relatedToType: 'account',
+          relatedToId: 'account-1',
+          relatedToName: 'GlobalTech Solutions',
+          reasoning: 'Critical account health decline indicates churn risk',
+          confidence: 98,
+          tags: ['account-rescue', 'churn-risk', 'critical'],
+          context: {
+            trigger: 'Critical account health decline',
+            dataPoints: ['Health score: 35/100', 'No activity in 15 days', 'Contract renewal in 60 days'],
+            expectedOutcome: 'Identify issues and create recovery plan'
+          }
+        }
+      ];
+      
+      console.log(`✨ Returning ${suggestions.length} AI suggestions`);
+      res.json(suggestions);
+    } catch (error) {
+      console.error('❌ Error generating AI suggestions:', error);
+      res.json([]);
+    }
+  });
+
   app.get("/api/activities/:id", async (req, res) => {
     try {
       const activity = await storage.getActivity(req.params.id);
@@ -1592,82 +1669,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // AI-Powered Activity Suggestions
-  app.get("/api/activities/ai-suggestions", async (req, res) => {
-    try {
-      console.log('🤖 AI suggestions API called');
-      
-      // Return mock suggestions for now to demonstrate functionality
-      const suggestions = [
-        {
-          id: 'ai-lead-followup-1',
-          type: 'email',
-          priority: 'high',
-          title: 'Follow up with Sarah Johnson from TechCorp',
-          description: 'Lead has been inactive for 12 days. High lead score (85/100) indicates strong conversion potential.',
-          suggestedDate: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-          estimatedDuration: 15,
-          relatedToType: 'lead',
-          relatedToId: 'lead-1',
-          relatedToName: 'Sarah Johnson',
-          reasoning: 'High-value lead with extended inactivity requires immediate re-engagement',
-          confidence: 92,
-          tags: ['follow-up', 'high-value', 'conversion-ready'],
-          context: {
-            trigger: 'Inactive high-scoring lead detection',
-            dataPoints: ['12 days since last activity', 'Lead score: 85/100', 'Company size: 500+ employees'],
-            expectedOutcome: 'Re-engage lead and schedule conversion call'
-          }
-        },
-        {
-          id: 'ai-deal-stalled-1',
-          type: 'call',
-          priority: 'urgent',
-          title: 'Revive stalled deal: Enterprise Software License',
-          description: 'Deal worth $125,000 has been inactive for 8 days. Risk of deal slippage.',
-          suggestedDate: new Date(Date.now() + 1 * 60 * 60 * 1000).toISOString(),
-          estimatedDuration: 45,
-          relatedToType: 'deal',
-          relatedToId: 'deal-1',
-          relatedToName: 'Enterprise Software License',
-          reasoning: 'High-value deal requires immediate intervention to prevent loss',
-          confidence: 95,
-          tags: ['deal-rescue', 'high-value', 'urgent'],
-          context: {
-            trigger: 'Stalled high-value deal detection',
-            dataPoints: ['8 days inactive', 'Value: $125,000', 'Stage: Negotiation'],
-            expectedOutcome: 'Re-engage stakeholders and advance to closing'
-          }
-        },
-        {
-          id: 'ai-account-health-1',
-          type: 'meeting',
-          priority: 'critical',
-          title: 'Account rescue meeting: GlobalTech Solutions',
-          description: 'Account health score dropped to 35/100. Immediate intervention required.',
-          suggestedDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-          estimatedDuration: 90,
-          relatedToType: 'account',
-          relatedToId: 'account-1',
-          relatedToName: 'GlobalTech Solutions',
-          reasoning: 'Critical account health decline indicates churn risk',
-          confidence: 98,
-          tags: ['account-rescue', 'churn-risk', 'critical'],
-          context: {
-            trigger: 'Critical account health decline',
-            dataPoints: ['Health score: 35/100', 'No activity in 15 days', 'Contract renewal in 60 days'],
-            expectedOutcome: 'Identify issues and create recovery plan'
-          }
-        }
-      ];
-      
-      console.log(`✨ Returning ${suggestions.length} AI suggestions`);
-      res.json(suggestions);
-    } catch (error) {
-      console.error('❌ Error generating AI suggestions:', error);
-      res.json([]);
-    }
-  });
+
 
   app.post("/api/activities/ai-suggestions/accept", async (req, res) => {
     try {
