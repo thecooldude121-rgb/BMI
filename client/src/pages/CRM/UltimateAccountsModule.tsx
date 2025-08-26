@@ -358,11 +358,11 @@ const UltimateAccountsModule: React.FC = () => {
               {/* Show AI Insights button when dashboard is hidden */}
               <button
                 onClick={() => setShowDashboard(true)}
-                className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 bg-blue-100 text-blue-700 hover:bg-blue-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105"
                 data-testid="button-show-insights"
               >
-                <BarChart3 className="w-4 h-4" />
-                Analytics Dashboard
+                <Brain className="w-4 h-4" />
+                AI Insights
               </button>
 
               <button
