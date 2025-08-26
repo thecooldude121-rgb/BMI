@@ -46,6 +46,7 @@ import WorkingNavigation from './components/WorkingNavigation';
 import PermanentSidebar from './components/PermanentSidebar';
 import RouterDebug from './components/RouterDebug';
 import ClickTest from './components/ClickTest';
+import VanillaJSTest from './components/VanillaJSTest';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
@@ -112,6 +113,7 @@ const App = () => {
           <WorkingNavigation />
           {import.meta.env.DEV && <RouterDebug />}
           <ClickTest />
+          <VanillaJSTest />
         </div>
       </DataProvider>
     </AuthProvider>
