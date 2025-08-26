@@ -533,15 +533,18 @@ const UltimateAccountsModule: React.FC = () => {
                     Revenue by Industry
                   </h3>
                   <div className="space-y-3">
-                    {analytics.industryBreakdown.slice(0, 3).map((industry, index) => (
-                      <div key={industry.name} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    {Object.entries(analytics.industryStats)
+                      .sort(([,a], [,b]) => b.revenue - a.revenue)
+                      .slice(0, 3)
+                      .map(([industry, stats], index) => (
+                      <div key={industry} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                         <div className="flex items-center gap-3">
                           <div className={`w-3 h-3 rounded-full ${index === 0 ? 'bg-blue-500' : index === 1 ? 'bg-purple-500' : 'bg-green-500'}`}></div>
-                          <span className="font-medium text-gray-700">{industry.name}</span>
+                          <span className="font-medium text-gray-700 capitalize">{industry}</span>
                         </div>
                         <div className="text-right">
-                          <div className="font-bold text-gray-900">{formatCurrency(industry.revenue)}</div>
-                          <div className="text-xs text-gray-500">{industry.accounts} accounts</div>
+                          <div className="font-bold text-gray-900">{formatCurrency(stats.revenue)}</div>
+                          <div className="text-xs text-gray-500">{stats.count} accounts</div>
                         </div>
                       </div>
                     ))}
@@ -549,42 +552,206 @@ const UltimateAccountsModule: React.FC = () => {
                 </div>
               </div>
 
-              {/* AI Business Insights */}
-              <div className="mt-6 bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                  <Brain className="w-5 h-5 text-blue-600" />
-                  AI Business Insights
-                </h3>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 p-3 bg-green-50 rounded-lg border border-green-100">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <div>
-                      <span className="font-medium text-green-900">Portfolio Health Status:</span>
-                      <span className="text-green-700 ml-1">
-                        {Math.round((analytics.healthDistribution.excellent / analytics.totalAccounts) * 100)}% of accounts are healthy. Focus on moving good accounts to excellent tier.
-                      </span>
+              {/* AI Business Insights & Advanced Analytics */}
+              <div className="mt-6 space-y-6">
+                {/* AI Business Insights */}
+                <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-6 shadow-lg border border-blue-100">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <Brain className="w-6 h-6 text-blue-600" />
+                    AI-Powered Business Intelligence
+                  </h3>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                      <motion.div 
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 1.0 }}
+                        className="flex items-start gap-3 p-4 bg-green-50 rounded-lg border border-green-200 hover:shadow-md transition-shadow"
+                      >
+                        <div className="w-3 h-3 bg-green-500 rounded-full mt-1 flex-shrink-0"></div>
+                        <div>
+                          <div className="font-semibold text-green-900 mb-1">Portfolio Health Status</div>
+                          <div className="text-sm text-green-700">
+                            {Math.round((analytics.healthDistribution.excellent / analytics.totalAccounts) * 100)}% of accounts are in excellent condition. 
+                            {analytics.healthDistribution.excellent > analytics.healthDistribution.good ? 
+                              " Your account management strategy is performing exceptionally well." : 
+                              " Focus on moving good accounts to excellent tier through targeted engagement."}
+                          </div>
+                        </div>
+                      </motion.div>
+                      
+                      <motion.div 
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 1.1 }}
+                        className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200 hover:shadow-md transition-shadow"
+                      >
+                        <div className="w-3 h-3 bg-blue-500 rounded-full mt-1 flex-shrink-0"></div>
+                        <div>
+                          <div className="font-semibold text-blue-900 mb-1">Revenue Diversification</div>
+                          <div className="text-sm text-blue-700">
+                            {(() => {
+                              const topIndustryRevenue = Math.max(...Object.values(analytics.industryStats).map(s => s.revenue));
+                              const percentage = Math.round((topIndustryRevenue / analytics.totalRevenue) * 100);
+                              return `${percentage}% of revenue comes from your top industry. ${percentage > 50 ? 'High concentration risk - consider expanding into new sectors.' : percentage > 30 ? 'Moderate diversification - opportunity for strategic expansion.' : 'Excellent industry diversification reducing portfolio risk.'}`;
+                            })()}
+                          </div>
+                        </div>
+                      </motion.div>
+
+                      <motion.div 
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 1.2 }}
+                        className="flex items-start gap-3 p-4 bg-purple-50 rounded-lg border border-purple-200 hover:shadow-md transition-shadow"
+                      >
+                        <div className="w-3 h-3 bg-purple-500 rounded-full mt-1 flex-shrink-0"></div>
+                        <div>
+                          <div className="font-semibold text-purple-900 mb-1">Growth Trajectory</div>
+                          <div className="text-sm text-purple-700">
+                            Revenue is {analytics.growth.revenue > 0 ? 'growing' : 'declining'} at {formatPercentage(Math.abs(analytics.growth.revenue))} rate. 
+                            {analytics.growth.revenue > 10 ? " Exceptional growth momentum." : 
+                             analytics.growth.revenue > 5 ? " Healthy growth rate." : 
+                             analytics.growth.revenue > 0 ? " Steady positive growth." : " Requires immediate attention and strategic intervention."}
+                          </div>
+                        </div>
+                      </motion.div>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      {analytics.healthDistribution.critical > 0 && (
+                        <motion.div 
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 1.3 }}
+                          className="flex items-start gap-3 p-4 bg-red-50 rounded-lg border border-red-200 hover:shadow-md transition-shadow"
+                        >
+                          <div className="w-3 h-3 bg-red-500 rounded-full mt-1 flex-shrink-0"></div>
+                          <div>
+                            <div className="font-semibold text-red-900 mb-1">Critical Alert</div>
+                            <div className="text-sm text-red-700">
+                              {analytics.healthDistribution.critical} accounts are in critical condition requiring immediate intervention. 
+                              Estimated revenue at risk: {formatCurrency(analytics.healthDistribution.critical * (analytics.totalRevenue / analytics.totalAccounts) * 0.8)}
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                      
+                      {analytics.healthDistribution.atRisk > 0 && (
+                        <motion.div 
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 1.4 }}
+                          className="flex items-start gap-3 p-4 bg-orange-50 rounded-lg border border-orange-200 hover:shadow-md transition-shadow"
+                        >
+                          <div className="w-3 h-3 bg-orange-500 rounded-full mt-1 flex-shrink-0"></div>
+                          <div>
+                            <div className="font-semibold text-orange-900 mb-1">Retention Opportunity</div>
+                            <div className="text-sm text-orange-700">
+                              {analytics.healthDistribution.atRisk} accounts are at risk. Proactive retention campaigns could recover up to 
+                              {formatCurrency(analytics.healthDistribution.atRisk * (analytics.totalRevenue / analytics.totalAccounts) * 0.6)} in potential revenue.
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+
+                      <motion.div 
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 1.5 }}
+                        className="flex items-start gap-3 p-4 bg-yellow-50 rounded-lg border border-yellow-200 hover:shadow-md transition-shadow"
+                      >
+                        <div className="w-3 h-3 bg-yellow-500 rounded-full mt-1 flex-shrink-0"></div>
+                        <div>
+                          <div className="font-semibold text-yellow-900 mb-1">Expansion Potential</div>
+                          <div className="text-sm text-yellow-700">
+                            {analytics.healthDistribution.excellent} top-performing accounts show expansion readiness. 
+                            Cross-selling initiatives could generate additional {formatCurrency(analytics.healthDistribution.excellent * 25000)} revenue.
+                          </div>
+                        </div>
+                      </motion.div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg border border-blue-100">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <div>
-                      <span className="font-medium text-blue-900">Revenue Concentration:</span>
-                      <span className="text-blue-700 ml-1">
-                        {Math.round((analytics.industryBreakdown[0]?.revenue || 0) / analytics.totalRevenue * 100)}% of revenue comes from top industry. Good industry diversification.
-                      </span>
+                </div>
+
+                {/* Performance Metrics Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Account Status Breakdown */}
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.6 }}
+                    className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
+                  >
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                      <Activity className="w-5 h-5 text-indigo-600" />
+                      Account Status Distribution
+                    </h3>
+                    <div className="space-y-3">
+                      {Object.entries(analytics.statusStats).map(([status, stats], index) => {
+                        const percentage = (stats.count / analytics.totalAccounts) * 100;
+                        const colors = ['bg-green-500', 'bg-blue-500', 'bg-yellow-500', 'bg-red-500'];
+                        return (
+                          <div key={status} className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <div className={`w-3 h-3 rounded-full ${colors[index % colors.length]}`}></div>
+                                <span className="text-sm font-medium text-gray-700 capitalize">{status}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-bold text-gray-900">{stats.count}</span>
+                                <span className="text-xs text-gray-500">({percentage.toFixed(1)}%)</span>
+                              </div>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-1.5">
+                              <motion.div 
+                                initial={{ width: 0 }}
+                                animate={{ width: `${percentage}%` }}
+                                transition={{ duration: 0.8, delay: 1.8 + index * 0.1 }}
+                                className={`${colors[index % colors.length]} h-1.5 rounded-full`}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
-                  </div>
-                  {analytics.healthDistribution.atRisk > 0 && (
-                    <div className="flex items-center gap-2 p-3 bg-orange-50 rounded-lg border border-orange-100">
-                      <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                      <div>
-                        <span className="font-medium text-orange-900">Focus:</span>
-                        <span className="text-orange-700 ml-1">
-                          Launch retention campaign for {analytics.healthDistribution.atRisk} at-risk accounts
-                        </span>
-                      </div>
+                  </motion.div>
+
+                  {/* Account Segments Analysis */}
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.7 }}
+                    className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
+                  >
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                      <Users className="w-5 h-5 text-purple-600" />
+                      Account Segment Analysis
+                    </h3>
+                    <div className="space-y-3">
+                      {Object.entries(analytics.segmentStats)
+                        .sort(([,a], [,b]) => b.revenue - a.revenue)
+                        .map(([segment, stats], index) => {
+                          const avgValue = stats.revenue / stats.count;
+                          const colors = ['bg-purple-500', 'bg-indigo-500', 'bg-blue-500', 'bg-teal-500'];
+                          return (
+                            <div key={segment} className="p-3 bg-gray-50 rounded-lg">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-2">
+                                  <div className={`w-3 h-3 rounded-full ${colors[index % colors.length]}`}></div>
+                                  <span className="text-sm font-medium text-gray-700 capitalize">{segment}</span>
+                                </div>
+                                <span className="text-xs text-gray-500">{stats.count} accounts</span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <div className="text-sm font-bold text-gray-900">{formatCurrency(stats.revenue)}</div>
+                                <div className="text-xs text-gray-600">Avg: {formatCurrency(avgValue)}</div>
+                              </div>
+                            </div>
+                          );
+                        })}
                     </div>
-                  )}
+                  </motion.div>
                 </div>
               </div>
             </div>
