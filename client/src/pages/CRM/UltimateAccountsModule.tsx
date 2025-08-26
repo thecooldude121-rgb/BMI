@@ -688,8 +688,8 @@ const UltimateAccountsModule: React.FC = () => {
                       Account Status Distribution
                     </h3>
                     <div className="space-y-3">
-                      {Object.entries(analytics.statusStats).map(([status, stats], index) => {
-                        const percentage = (stats.count / analytics.totalAccounts) * 100;
+                      {Object.entries(analytics.statusStats).map(([status, count], index) => {
+                        const percentage = (count / analytics.totalAccounts) * 100;
                         const colors = ['bg-green-500', 'bg-blue-500', 'bg-yellow-500', 'bg-red-500'];
                         return (
                           <div key={status} className="space-y-2">
@@ -699,7 +699,7 @@ const UltimateAccountsModule: React.FC = () => {
                                 <span className="text-sm font-medium text-gray-700 capitalize">{status}</span>
                               </div>
                               <div className="flex items-center gap-2">
-                                <span className="text-sm font-bold text-gray-900">{stats.count}</span>
+                                <span className="text-sm font-bold text-gray-900">{count}</span>
                                 <span className="text-xs text-gray-500">({percentage.toFixed(1)}%)</span>
                               </div>
                             </div>
