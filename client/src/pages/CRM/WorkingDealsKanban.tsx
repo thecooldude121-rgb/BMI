@@ -187,40 +187,54 @@ const WorkingDealsKanban: React.FC = () => {
       </div>
 
       {/* Kanban Board - 8 Columns with proper scrolling */}
-      <div style={{ 
-        width: '100%', 
-        border: '3px solid #8B5CF6', 
-        borderRadius: '12px',
+      <div style={{
+        width: '100%',
+        border: '2px solid #3b82f6',
+        borderRadius: '8px',
         backgroundColor: 'white',
-        overflow: 'hidden'
+        padding: '16px'
       }}>
-        <div style={{ 
-          overflowX: 'scroll',
-          overflowY: 'hidden',
-          padding: '20px'
+        <div style={{
+          overflowX: 'auto',
+          overflowY: 'hidden'
         }}>
-          <div style={{ 
-            display: 'flex', 
+          <div style={{
+            display: 'flex',
             gap: '16px',
-            width: '2560px',
-            minWidth: '2560px'
+            width: '2240px',
+            minWidth: '2240px'
           }}>
             {dealColumns.map((column) => (
-              <div key={column.id} className="bg-gray-50 rounded-lg p-3 w-[280px] flex-shrink-0">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center space-x-2">
-                    <div className={`w-3 h-3 rounded-full ${column.color}`} />
-                    <h3 className="font-semibold text-sm">{column.title}</h3>
-                    <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-xs">
-                      {column.deals.length}
-                    </span>
-                  </div>
-                  <button className="p-1 hover:bg-gray-200 rounded">
-                    <Plus className="w-3 h-3" />
-                  </button>
+              <div 
+                key={column.id} 
+                style={{
+                  width: '280px',
+                  minWidth: '280px',
+                  backgroundColor: '#f8fafc',
+                  borderRadius: '8px',
+                  border: '1px solid #e2e8f0',
+                  flexShrink: 0
+                }}
+              >
+                <div style={{
+                  backgroundColor: column.color,
+                  color: 'white',
+                  padding: '12px 16px',
+                  borderRadius: '8px 8px 0 0',
+                  textAlign: 'center'
+                }}>
+                  <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: '600' }}>
+                    {column.title}
+                  </h3>
+                  <p style={{ margin: '4px 0 0 0', fontSize: '0.8rem', opacity: 0.9 }}>
+                    {column.deals.length} deals
+                  </p>
                 </div>
 
-                <div className="min-h-[300px] space-y-3 max-h-[500px] overflow-y-auto">
+                <div style={{
+                  padding: '12px',
+                  minHeight: '300px'
+                }}>
                   {column.deals.length > 0 ? (
                     column.deals.map(renderDealCard)
                   ) : (
