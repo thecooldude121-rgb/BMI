@@ -34,15 +34,32 @@ export const forcePageReload = () => {
 
 export const fixNavigationIssues = () => {
   try {
-    // Clear any cached route data
+    // Force clear all browser storage
     clearBrowserCache();
     
-    // Reset any problematic window properties
+    // Clear any cached service workers
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(registrations => {
+        registrations.forEach(registration => registration.unregister());
+      });
+    }
+    
+    // Clear any cached modules by Vite
+    if ((window as any).__vite_plugin_react_preamble_installed__) {
+      delete (window as any).__vite_plugin_react_preamble_installed__;
+    }
+    
+    // Reset history state
     if (window.history && window.history.replaceState) {
       window.history.replaceState(null, '', window.location.pathname);
     }
     
-    console.log('Navigation issues fixed');
+    // Force garbage collection if available
+    if ((window as any).gc) {
+      (window as any).gc();
+    }
+    
+    console.log('Comprehensive navigation fix applied');
     return true;
   } catch (error) {
     console.error('Error fixing navigation:', error);

@@ -7,11 +7,23 @@ const BrowserNavFix = () => {
   const handleClearCache = () => {
     const success = clearBrowserCache();
     if (success) {
-      alert('Browser cache cleared! Please refresh the page.');
+      alert('Browser cache cleared! The page will reload automatically.');
+      // Force a hard reload with cache bypass
       window.location.reload();
     } else {
-      alert('Failed to clear cache. Please try manually clearing your browser cache.');
+      alert('Failed to clear cache. Please manually clear your browser cache using Ctrl+Shift+Delete.');
     }
+  };
+
+  const handleHardReload = () => {
+    // Force hard reload bypassing cache
+    window.location.href = window.location.href + '?v=' + Date.now();
+  };
+
+  const handleResetApp = () => {
+    // Clear everything and go to home
+    clearBrowserCache();
+    window.location.href = '/';
   };
 
   const handleDebugInfo = () => {
@@ -45,14 +57,28 @@ const BrowserNavFix = () => {
                 onClick={handleClearCache}
                 className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
               >
-                Clear Browser Cache & Reload
+                Clear Cache & Reload
+              </button>
+              
+              <button
+                onClick={handleHardReload}
+                className="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
+              >
+                Hard Reload (Bypass Cache)
+              </button>
+              
+              <button
+                onClick={handleResetApp}
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded"
+              >
+                Reset App & Go Home
               </button>
               
               <button
                 onClick={handleDebugInfo}
                 className="w-full bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded"
               >
-                Debug Navigation Info
+                Debug Info (Console)
               </button>
               
               <div className="text-sm text-gray-500 mt-4">
