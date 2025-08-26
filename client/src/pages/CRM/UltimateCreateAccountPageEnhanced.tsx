@@ -438,11 +438,11 @@ const UltimateCreateAccountPageEnhanced: React.FC = () => {
       </div>
 
       {/* Content with top padding to account for fixed header */}
-      <div className="pt-32 max-w-7xl mx-auto px-6 py-8">
+      <div className="pt-36 max-w-7xl mx-auto px-6 py-8">
         <div className="flex gap-8">
           {/* Sidebar Navigation */}
           <div className="w-80 flex-shrink-0">
-            <div className="sticky top-36">
+            <div className="sticky top-40">
               <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
                 <div className="p-6 border-b border-gray-100">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Form Sections</h3>
