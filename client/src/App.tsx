@@ -43,6 +43,7 @@ import LinkBasedNavigation from './components/LinkBasedNavigation';
 import BrowserFixPanel from './components/BrowserFixPanel';
 import SimpleNavigation from './components/SimpleNavigation';
 import WorkingNavigation from './components/WorkingNavigation';
+import PermanentSidebar from './components/PermanentSidebar';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
@@ -66,7 +67,8 @@ const App = () => {
       <DataProvider>
         <div className="min-h-screen bg-gray-50">
           <Header />
-          <main className="pt-14">
+          <PermanentSidebar />
+          <main className="pt-14 pl-64">
             <Switch>
               <Route path="/login" component={Login} />
               <Route path="/" component={Analytics} />
