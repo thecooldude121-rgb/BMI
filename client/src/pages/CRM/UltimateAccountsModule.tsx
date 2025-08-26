@@ -263,9 +263,9 @@ const UltimateAccountsModule: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 bg-gray-50">
-      {/* Sticky Header Section */}
-      <div className="bg-white border-b border-gray-200 sticky top-16 z-50">
+    <div className="flex-1 h-full flex flex-col bg-gray-50">
+      {/* Fixed Header Section */}
+      <div className="bg-white border-b border-gray-200 sticky top-16 z-50 flex-shrink-0">
         {/* Main Header */}
         <div className="px-6 py-4 border-b border-gray-100">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -839,8 +839,9 @@ const UltimateAccountsModule: React.FC = () => {
         </div>
       )}
 
-      {/* Accounts Grid */}
-      <div className="px-6 py-4">
+      {/* Scrollable Content Area */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-6 py-4">
         {filteredAccounts.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -1031,6 +1032,7 @@ const UltimateAccountsModule: React.FC = () => {
             </div>
           </div>
         )}
+        </div>
       </div>
 
       {/* Account Merge Wizard */}
