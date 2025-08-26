@@ -1165,6 +1165,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Add specific route handlers before the generic :id route
+  app.get("/api/deals/kanban", async (req, res) => {
+    try {
+      // Return deals in kanban format - same as regular deals for now
+      const deals = await storage.getDeals();
+      res.json(deals);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/deals/kanban/activities", async (req, res) => {
+    try {
+      const activities = await storage.getActivities();
+      res.json(activities);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
   app.get("/api/deals/:id", async (req, res) => {
     try {
       // Skip UUID validation for special routes like 'new'
