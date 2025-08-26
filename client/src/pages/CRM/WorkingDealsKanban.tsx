@@ -55,25 +55,11 @@ const WorkingDealsKanban: React.FC = () => {
   useEffect(() => {
     const fetchDeals = async () => {
       try {
-        console.log('🚀 Fetching deals for Kanban...');
         const response = await fetch('/api/deals');
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        console.log('✅ Deals loaded for Kanban:', data.length);
-        
-        // Debug: Log stage distribution
-        const stageDistribution = DEAL_STAGES.map(stage => ({
-          stage: stage.id,
-          title: stage.title,
-          count: data.filter((deal: any) => deal.stage === stage.id).length,
-          deals: data.filter((deal: any) => deal.stage === stage.id).map((d: any) => d.name)
-        }));
-        console.log('📊 Stage distribution:', stageDistribution);
-        console.log('🎯 Container will be:', `${DEAL_STAGES.length * 300}px wide for ${DEAL_STAGES.length} stages`);
-        
         setDeals(data);
       } catch (err) {
-        console.error('❌ Error:', err);
         setError(String(err));
       } finally {
         setLoading(false);
@@ -86,11 +72,12 @@ const WorkingDealsKanban: React.FC = () => {
   if (loading) {
     return (
       <div className="p-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">Deals Kanban</h1>
-        <div className="flex items-center justify-center h-64 bg-white rounded-lg border">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-2 text-gray-600">Loading deals...</p>
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+          <div className="flex gap-4">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+              <div key={i} className="w-72 h-96 bg-gray-200 rounded"></div>
+            ))}
           </div>
         </div>
       </div>
@@ -100,48 +87,42 @@ const WorkingDealsKanban: React.FC = () => {
   if (error) {
     return (
       <div className="p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <h3 className="text-red-800 font-medium">Error Loading Deals</h3>
-          <p className="text-red-600 mt-1">{error}</p>
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+          Error loading deals: {error}
         </div>
       </div>
     );
   }
 
-  // Group deals by stage - ensure all 8 stages are included
+  // Group deals by stage
   const dealColumns = DEAL_STAGES.map(stage => ({
     ...stage,
     deals: deals.filter(deal => deal.stage === stage.id)
   }));
-  
-  // Debug: Log which stages have deals
-  console.log('🎯 Deal columns:', dealColumns.map(col => `${col.title}: ${col.deals.length} deals`));
 
   const renderDealCard = (deal: Deal) => (
     <div key={deal.id} className="mb-3 bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
       <div className="flex items-start justify-between mb-2">
-        <div className="flex-1">
-          <h4 className="font-semibold text-sm mb-1 line-clamp-2">{deal.name}</h4>
-          <p className="text-xs text-gray-600 mb-2 line-clamp-1">{deal.title}</p>
-        </div>
-        <div className="flex items-center space-x-1 ml-2">
-          <span className={`px-2 py-1 rounded-full text-xs border ${DEAL_HEALTH_COLORS[deal.dealHealth as keyof typeof DEAL_HEALTH_COLORS] || 'bg-gray-100 text-gray-800'}`}>
-            {deal.dealHealth}
-          </span>
-        </div>
+        <h4 className="font-medium text-sm text-gray-900 leading-tight">{deal.name}</h4>
+        <span className={`px-2 py-1 text-xs rounded-full ${DEAL_HEALTH_COLORS[deal.dealHealth] || 'bg-gray-100 text-gray-800'}`}>
+          {deal.dealHealth?.replace('_', ' ')}
+        </span>
+      </div>
+
+      <div className="text-xs text-gray-600 mb-2">
+        {deal.account?.name}
       </div>
 
       <div className="flex items-center justify-between mb-3">
         <div className="text-lg font-bold text-green-600">
-          ${parseInt(deal.value).toLocaleString()}
+          {deal.value}
         </div>
-        <div className="flex items-center space-x-1">
-          <TrendingUp className="w-3 h-3" />
-          <span className="text-xs">{deal.probability}%</span>
+        <div className="text-xs text-gray-500">
+          {deal.probability}%
         </div>
       </div>
 
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between mb-2">
         <div className="flex items-center space-x-2">
           <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center">
             <span className="text-xs font-medium">
@@ -197,35 +178,37 @@ const WorkingDealsKanban: React.FC = () => {
         </div>
       </div>
 
-      {/* Kanban Board - 8 Columns */}
-      <div className="overflow-x-auto overflow-y-visible pb-4">
-        <div className="flex gap-4" style={{ minWidth: `${DEAL_STAGES.length * 300}px`, width: 'max-content' }}>
-          {dealColumns.map((column) => (
-            <div key={column.id} className="bg-gray-50 rounded-lg p-3 w-[280px] flex-shrink-0">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-2">
-                <div className={`w-3 h-3 rounded-full ${column.color}`} />
-                <h3 className="font-semibold text-sm">{column.title}</h3>
-                <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-xs">
-                  {column.deals.length}
-                </span>
-              </div>
-              <button className="p-1 hover:bg-gray-200 rounded">
-                <Plus className="w-3 h-3" />
-              </button>
-            </div>
-
-            <div className="min-h-[300px] space-y-3 max-h-[500px] overflow-y-auto">
-              {column.deals.length > 0 ? (
-                column.deals.map(renderDealCard)
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <p className="text-sm">No deals in this stage</p>
+      {/* Kanban Board - 8 Columns with proper scrolling */}
+      <div className="w-full">
+        <div className="overflow-x-auto pb-4">
+          <div className="flex gap-4" style={{ width: '2400px' }}>
+            {dealColumns.map((column) => (
+              <div key={column.id} className="bg-gray-50 rounded-lg p-3 w-[280px] flex-shrink-0">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center space-x-2">
+                    <div className={`w-3 h-3 rounded-full ${column.color}`} />
+                    <h3 className="font-semibold text-sm">{column.title}</h3>
+                    <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-xs">
+                      {column.deals.length}
+                    </span>
+                  </div>
+                  <button className="p-1 hover:bg-gray-200 rounded">
+                    <Plus className="w-3 h-3" />
+                  </button>
                 </div>
-              )}
-            </div>
-            </div>
-          ))}
+
+                <div className="min-h-[300px] space-y-3 max-h-[500px] overflow-y-auto">
+                  {column.deals.length > 0 ? (
+                    column.deals.map(renderDealCard)
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      <p className="text-sm">No deals in this stage</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -234,36 +217,47 @@ const WorkingDealsKanban: React.FC = () => {
         <div className="bg-white p-4 rounded-lg border">
           <div className="flex items-center space-x-2">
             <DollarSign className="w-5 h-5 text-green-600" />
-            <span className="text-sm font-medium">Total Pipeline</span>
+            <div>
+              <div className="text-sm text-gray-600">Pipeline Value</div>
+              <div className="text-xl font-bold text-gray-900">
+                ${deals.reduce((sum, deal) => sum + parseFloat(deal.value.replace(/[^0-9.-]+/g, '') || '0'), 0).toLocaleString()}
+              </div>
+            </div>
           </div>
-          <p className="text-2xl font-bold text-gray-900 mt-1">
-            ${deals.reduce((sum, deal) => sum + parseInt(deal.value), 0).toLocaleString()}
-          </p>
         </div>
+
         <div className="bg-white p-4 rounded-lg border">
           <div className="flex items-center space-x-2">
-            <Building className="w-5 h-5 text-blue-600" />
-            <span className="text-sm font-medium">Total Deals</span>
+            <TrendingUp className="w-5 h-5 text-blue-600" />
+            <div>
+              <div className="text-sm text-gray-600">Avg Probability</div>
+              <div className="text-xl font-bold text-gray-900">
+                {Math.round(deals.reduce((sum, deal) => sum + deal.probability, 0) / deals.length)}%
+              </div>
+            </div>
           </div>
-          <p className="text-2xl font-bold text-gray-900 mt-1">{deals.length}</p>
         </div>
+
         <div className="bg-white p-4 rounded-lg border">
           <div className="flex items-center space-x-2">
-            <TrendingUp className="w-5 h-5 text-yellow-600" />
-            <span className="text-sm font-medium">Avg Probability</span>
+            <Building className="w-5 h-5 text-purple-600" />
+            <div>
+              <div className="text-sm text-gray-600">Active Deals</div>
+              <div className="text-xl font-bold text-gray-900">{deals.length}</div>
+            </div>
           </div>
-          <p className="text-2xl font-bold text-gray-900 mt-1">
-            {deals.length > 0 ? Math.round(deals.reduce((sum, deal) => sum + deal.probability, 0) / deals.length) : 0}%
-          </p>
         </div>
+
         <div className="bg-white p-4 rounded-lg border">
           <div className="flex items-center space-x-2">
-            <Star className="w-5 h-5 text-purple-600" />
-            <span className="text-sm font-medium">Won Deals</span>
+            <User className="w-5 h-5 text-orange-600" />
+            <div>
+              <div className="text-sm text-gray-600">Healthy Deals</div>
+              <div className="text-xl font-bold text-gray-900">
+                {deals.filter(d => d.dealHealth === 'healthy').length}
+              </div>
+            </div>
           </div>
-          <p className="text-2xl font-bold text-gray-900 mt-1">
-            {deals.filter(deal => deal.stage === 'closed-won').length}
-          </p>
         </div>
       </div>
     </div>
