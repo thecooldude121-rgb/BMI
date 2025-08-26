@@ -3,14 +3,31 @@ import React from 'react';
 
 const DirectNavigationTest = () => {
   const navigate = (path: string) => {
-    console.log(`🚀 Direct navigation to: ${path}`);
-    console.log(`Current URL: ${window.location.href}`);
+    console.log(`🚀 YELLOW PANEL: Direct navigation attempt to: ${path}`);
+    console.log(`🌍 Current URL: ${window.location.href}`);
     
     const fullUrl = `${window.location.protocol}//${window.location.host}${path}`;
-    console.log(`Target URL: ${fullUrl}`);
+    console.log(`🎯 Target URL: ${fullUrl}`);
     
-    // Force immediate navigation
-    window.location.replace(fullUrl);
+    try {
+      console.log(`🔥 Method 1: window.location.replace`);
+      window.location.replace(fullUrl);
+    } catch (error) {
+      console.error(`❌ Replace failed:`, error);
+      try {
+        console.log(`🔥 Method 2: window.location.href`);
+        window.location.href = fullUrl;
+      } catch (error2) {
+        console.error(`❌ Href failed:`, error2);
+        try {
+          console.log(`🔥 Method 3: window.location.assign`);
+          window.location.assign(fullUrl);
+        } catch (error3) {
+          console.error(`❌ All methods failed:`, error3);
+          alert(`Navigation completely blocked: ${error3}`);
+        }
+      }
+    }
   };
 
   return (
@@ -20,19 +37,33 @@ const DirectNavigationTest = () => {
       
       <div className="space-y-2">
         <button
-          onClick={() => navigate('/crm/deals')}
-          className="block w-full px-3 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log(`🔵 BLUE BUTTON CLICKED: Going to deals`);
+            navigate('/crm/deals');
+          }}
+          onMouseDown={(e) => console.log(`🔵 Mouse down on deals button`)}
+          className="block w-full px-3 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer"
           data-testid="direct-nav-deals"
+          type="button"
         >
-          Go to Deals
+          🔵 Go to Deals
         </button>
         
         <button
-          onClick={() => navigate('/crm/accounts')}  
-          className="block w-full px-3 py-2 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log(`🟢 GREEN BUTTON CLICKED: Going to accounts`);
+            navigate('/crm/accounts');
+          }}
+          onMouseDown={(e) => console.log(`🟢 Mouse down on accounts button`)}
+          className="block w-full px-3 py-2 text-sm bg-green-600 text-white rounded hover:bg-green-700 cursor-pointer"
           data-testid="direct-nav-accounts"
+          type="button"
         >
-          Go to Accounts
+          🟢 Go to Accounts
         </button>
         
         <button
