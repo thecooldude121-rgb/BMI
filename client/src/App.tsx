@@ -58,7 +58,6 @@ const App = () => {
               <Route path="/crm/deals/new" component={CreateDealPageWrapper} />
               <Route path="/crm/deals/create" component={CreateDealPageWrapper} />
               <Route path="/crm/deals/create-wizard" component={CreateDealWrapper} />
-              <Route path="/crm/deals/kanban" component={WorkingDealsKanban} />
               <Route path="/crm/deals/:id" component={DealDetailWrapper} />
               <Route path="/crm/accounts/create" component={UltimateCreateAccountPageEnhanced} />
               <Route path="/crm/accounts/:id" component={UltimateAccountDetailPage} />
