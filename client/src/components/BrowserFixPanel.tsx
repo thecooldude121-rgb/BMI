@@ -18,7 +18,7 @@ const BrowserFixPanel = () => {
     
     // Force reload
     setTimeout(() => {
-      window.location.reload(true);
+      window.location.reload();
     }, 100);
   };
 
