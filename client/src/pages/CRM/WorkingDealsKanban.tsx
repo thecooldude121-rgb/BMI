@@ -165,65 +165,91 @@ const WorkingDealsKanban: React.FC = () => {
   );
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 max-w-full overflow-hidden">
       <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Deals Kanban</h1>
-          <p className="text-gray-600 mt-1">
-            {deals.length} deals • Total Pipeline Value: ${deals.reduce((sum, deal) => sum + parseInt(deal.value), 0).toLocaleString()}
+        <h1 className="text-2xl font-bold text-gray-900">Deals Kanban - All 8 Stages</h1>
+        <div className="flex items-center space-x-4">
+          <span className="text-sm text-gray-600">{deals.length} deals total</span>
+          <div className="flex items-center space-x-2 text-xs text-gray-500">
+            <span>Navigate:</span>
+            <a href="/crm/deals" className="text-blue-600 hover:underline">List View</a>
+            <span>•</span>
+            <span className="font-medium text-gray-900">Kanban View</span>
+          </div>
+          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2">
+            <Plus className="w-4 h-4" />
+            <span>Add Deal</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Kanban Board - 8 Columns */}
+      <div className="flex gap-4 overflow-x-auto pb-4">
+        {dealColumns.map((column) => (
+          <div key={column.id} className="bg-gray-50 rounded-lg p-3 min-w-[280px] flex-shrink-0">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-2">
+                <div className={`w-3 h-3 rounded-full ${column.color}`} />
+                <h3 className="font-semibold text-sm">{column.title}</h3>
+                <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-xs">
+                  {column.deals.length}
+                </span>
+              </div>
+              <button className="p-1 hover:bg-gray-200 rounded">
+                <Plus className="w-3 h-3" />
+              </button>
+            </div>
+
+            <div className="min-h-[300px] space-y-3 max-h-[600px] overflow-y-auto">
+              {column.deals.length > 0 ? (
+                column.deals.map(renderDealCard)
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <p className="text-sm">No deals in this stage</p>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Summary Stats */}
+      <div className="mt-6 grid grid-cols-4 gap-4">
+        <div className="bg-white p-4 rounded-lg border">
+          <div className="flex items-center space-x-2">
+            <DollarSign className="w-5 h-5 text-green-600" />
+            <span className="text-sm font-medium">Total Pipeline</span>
+          </div>
+          <p className="text-2xl font-bold text-gray-900 mt-1">
+            ${deals.reduce((sum, deal) => sum + parseInt(deal.value), 0).toLocaleString()}
           </p>
         </div>
-        <div className="flex items-center space-x-4">
-          <button className="flex items-center space-x-2 bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 hover:bg-gray-50">
-            <Filter className="w-4 h-4" />
-            <span>Filter</span>
-          </button>
-          <button className="flex items-center space-x-2 bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-700">
-            <Plus className="w-4 h-4" />
-            <span>New Deal</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Kanban Board with All 8 Stages */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <div className="flex" style={{ minWidth: `${DEAL_STAGES.length * 320}px` }}>
-            {dealColumns.map((column, index) => (
-              <div key={column.id} className="flex-shrink-0 w-80 border-r border-gray-200 last:border-r-0">
-                <div className="p-4 border-b border-gray-100 bg-gray-50">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <div className={`w-3 h-3 rounded-full ${column.color}`}></div>
-                      <h3 className="font-semibold text-gray-900 text-sm">{column.title}</h3>
-                      <span className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">
-                        {column.deals.length}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="p-4 space-y-3 min-h-96 max-h-screen overflow-y-auto">
-                  {column.deals.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">
-                      <div className="text-2xl mb-2">📋</div>
-                      <p className="text-sm">No deals in this stage</p>
-                    </div>
-                  ) : (
-                    column.deals.map(deal => renderDealCard(deal))
-                  )}
-                </div>
-              </div>
-            ))}
+        <div className="bg-white p-4 rounded-lg border">
+          <div className="flex items-center space-x-2">
+            <Building className="w-5 h-5 text-blue-600" />
+            <span className="text-sm font-medium">Total Deals</span>
           </div>
+          <p className="text-2xl font-bold text-gray-900 mt-1">{deals.length}</p>
         </div>
-        
-        {/* Scroll indicator */}
-        <div className="px-4 py-2 border-t border-gray-100 bg-gray-50 text-xs text-gray-500 text-center">
-          Scroll horizontally to view all {DEAL_STAGES.length} stages → Discovery • Qualification • Proposal • Demo • Trial • Negotiation • Closed Won • Closed Lost
+        <div className="bg-white p-4 rounded-lg border">
+          <div className="flex items-center space-x-2">
+            <TrendingUp className="w-5 h-5 text-yellow-600" />
+            <span className="text-sm font-medium">Avg Probability</span>
+          </div>
+          <p className="text-2xl font-bold text-gray-900 mt-1">
+            {deals.length > 0 ? Math.round(deals.reduce((sum, deal) => sum + deal.probability, 0) / deals.length) : 0}%
+          </p>
+        </div>
+        <div className="bg-white p-4 rounded-lg border">
+          <div className="flex items-center space-x-2">
+            <Star className="w-5 h-5 text-purple-600" />
+            <span className="text-sm font-medium">Won Deals</span>
+          </div>
+          <p className="text-2xl font-bold text-gray-900 mt-1">
+            {deals.filter(deal => deal.stage === 'closed-won').length}
+          </p>
         </div>
       </div>
-
     </div>
   );
 };
