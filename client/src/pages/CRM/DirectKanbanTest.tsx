@@ -25,11 +25,11 @@ const DirectKanbanTest: React.FC = () => {
       </div>
       
       <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+        display: 'flex',
         gap: '20px',
-        maxWidth: '1400px',
-        margin: '0 auto'
+        overflowX: 'auto',
+        paddingBottom: '20px',
+        minHeight: '500px'
       }}>
         {/* All 8 Stages */}
         {[
@@ -47,6 +47,9 @@ const DirectKanbanTest: React.FC = () => {
             borderRadius: '12px',
             padding: '20px',
             minHeight: '400px',
+            minWidth: '280px',
+            width: '280px',
+            flexShrink: 0,
             boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
             border: '1px solid rgba(255,255,255,0.2)'
           }}>
