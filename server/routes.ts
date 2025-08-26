@@ -1165,35 +1165,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Add specific route handlers before the generic :id route
-  app.get("/api/deals/kanban", async (req, res) => {
-    try {
-      // Return deals in kanban format - same as regular deals for now
-      const deals = await storage.getDeals();
-      res.json(deals);
-    } catch (error) {
-      handleError(error, res);
-    }
-  });
-
-  app.get("/api/deals/kanban-test", async (req, res) => {
-    try {
-      // Return empty array for test route - no API dependency
-      res.json([]);
-    } catch (error) {
-      handleError(error, res);
-    }
-  });
-
-  app.get("/api/deals/kanban/activities", async (req, res) => {
-    try {
-      const activities = await storage.getActivities();
-      res.json(activities);
-    } catch (error) {
-      handleError(error, res);
-    }
-  });
-
   app.get("/api/deals/:id", async (req, res) => {
     try {
       // Skip UUID validation for special routes like 'new'
@@ -1435,83 +1406,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // AI-Powered Activity Suggestions - MUST BE BEFORE /:id route
-  app.get("/api/activities/ai-suggestions", async (req, res) => {
-    try {
-      console.log('🤖 AI suggestions API called');
-      
-      // Return mock suggestions for now to demonstrate functionality
-      const suggestions = [
-        {
-          id: 'ai-lead-followup-1',
-          type: 'email',
-          priority: 'high',
-          title: 'Follow up with Sarah Johnson from TechCorp',
-          description: 'Lead has been inactive for 12 days. High lead score (85/100) indicates strong conversion potential.',
-          suggestedDate: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-          estimatedDuration: 15,
-          relatedToType: 'lead',
-          relatedToId: 'lead-1',
-          relatedToName: 'Sarah Johnson',
-          reasoning: 'High-value lead with extended inactivity requires immediate re-engagement',
-          confidence: 92,
-          tags: ['follow-up', 'high-value', 'conversion-ready'],
-          context: {
-            trigger: 'Inactive high-scoring lead detection',
-            dataPoints: ['12 days since last activity', 'Lead score: 85/100', 'Company size: 500+ employees'],
-            expectedOutcome: 'Re-engage lead and schedule conversion call'
-          }
-        },
-        {
-          id: 'ai-deal-stalled-1',
-          type: 'call',
-          priority: 'urgent',
-          title: 'Revive stalled deal: Enterprise Software License',
-          description: 'Deal worth $125,000 has been inactive for 8 days. Risk of deal slippage.',
-          suggestedDate: new Date(Date.now() + 1 * 60 * 60 * 1000).toISOString(),
-          estimatedDuration: 45,
-          relatedToType: 'deal',
-          relatedToId: 'deal-1',
-          relatedToName: 'Enterprise Software License',
-          reasoning: 'High-value deal requires immediate intervention to prevent loss',
-          confidence: 95,
-          tags: ['deal-rescue', 'high-value', 'urgent'],
-          context: {
-            trigger: 'Stalled high-value deal detection',
-            dataPoints: ['8 days inactive', 'Value: $125,000', 'Stage: Negotiation'],
-            expectedOutcome: 'Re-engage stakeholders and advance to closing'
-          }
-        },
-        {
-          id: 'ai-account-health-1',
-          type: 'meeting',
-          priority: 'critical',
-          title: 'Account rescue meeting: GlobalTech Solutions',
-          description: 'Account health score dropped to 35/100. Immediate intervention required.',
-          suggestedDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-          estimatedDuration: 90,
-          relatedToType: 'account',
-          relatedToId: 'account-1',
-          relatedToName: 'GlobalTech Solutions',
-          reasoning: 'Critical account health decline indicates churn risk',
-          confidence: 98,
-          tags: ['account-rescue', 'churn-risk', 'critical'],
-          context: {
-            trigger: 'Critical account health decline',
-            dataPoints: ['Health score: 35/100', 'No activity in 15 days', 'Contract renewal in 60 days'],
-            expectedOutcome: 'Identify issues and create recovery plan'
-          }
-        }
-      ];
-      
-      console.log(`✨ Returning ${suggestions.length} AI suggestions`);
-      res.json(suggestions);
-    } catch (error) {
-      console.error('❌ Error generating AI suggestions:', error);
-      res.json([]);
-    }
-  });
-
   app.get("/api/activities/:id", async (req, res) => {
     try {
       const activity = await storage.getActivity(req.params.id);
@@ -1698,37 +1592,105 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-
+  // AI-Powered Activity Suggestions
+  app.get("/api/activities/ai-suggestions", async (req, res) => {
+    try {
+      console.log('🤖 AI suggestions API called');
+      
+      // Return mock suggestions for now to demonstrate functionality
+      const suggestions = [
+        {
+          id: 'ai-lead-followup-1',
+          type: 'email',
+          priority: 'high',
+          title: 'Follow up with Sarah Johnson from TechCorp',
+          description: 'Lead has been inactive for 12 days. High lead score (85/100) indicates strong conversion potential.',
+          suggestedDate: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+          estimatedDuration: 15,
+          relatedToType: 'lead',
+          relatedToId: 'lead-1',
+          relatedToName: 'Sarah Johnson',
+          reasoning: 'High-value lead with extended inactivity requires immediate re-engagement',
+          confidence: 92,
+          tags: ['follow-up', 'high-value', 'conversion-ready'],
+          context: {
+            trigger: 'Inactive high-scoring lead detection',
+            dataPoints: ['12 days since last activity', 'Lead score: 85/100', 'Company size: 500+ employees'],
+            expectedOutcome: 'Re-engage lead and schedule conversion call'
+          }
+        },
+        {
+          id: 'ai-deal-stalled-1',
+          type: 'call',
+          priority: 'urgent',
+          title: 'Revive stalled deal: Enterprise Software License',
+          description: 'Deal worth $125,000 has been inactive for 8 days. Risk of deal slippage.',
+          suggestedDate: new Date(Date.now() + 1 * 60 * 60 * 1000).toISOString(),
+          estimatedDuration: 45,
+          relatedToType: 'deal',
+          relatedToId: 'deal-1',
+          relatedToName: 'Enterprise Software License',
+          reasoning: 'High-value deal requires immediate intervention to prevent loss',
+          confidence: 95,
+          tags: ['deal-rescue', 'high-value', 'urgent'],
+          context: {
+            trigger: 'Stalled high-value deal detection',
+            dataPoints: ['8 days inactive', 'Value: $125,000', 'Stage: Negotiation'],
+            expectedOutcome: 'Re-engage stakeholders and advance to closing'
+          }
+        },
+        {
+          id: 'ai-account-health-1',
+          type: 'meeting',
+          priority: 'critical',
+          title: 'Account rescue meeting: GlobalTech Solutions',
+          description: 'Account health score dropped to 35/100. Immediate intervention required.',
+          suggestedDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+          estimatedDuration: 90,
+          relatedToType: 'account',
+          relatedToId: 'account-1',
+          relatedToName: 'GlobalTech Solutions',
+          reasoning: 'Critical account health decline indicates churn risk',
+          confidence: 98,
+          tags: ['account-rescue', 'churn-risk', 'critical'],
+          context: {
+            trigger: 'Critical account health decline',
+            dataPoints: ['Health score: 35/100', 'No activity in 15 days', 'Contract renewal in 60 days'],
+            expectedOutcome: 'Identify issues and create recovery plan'
+          }
+        }
+      ];
+      
+      console.log(`✨ Returning ${suggestions.length} AI suggestions`);
+      res.json(suggestions);
+    } catch (error) {
+      console.error('❌ Error generating AI suggestions:', error);
+      res.json([]);
+    }
+  });
 
   app.post("/api/activities/ai-suggestions/accept", async (req, res) => {
     try {
       const { suggestionId, customizations } = req.body;
       
       // Extract activity data from suggestion and create activity
-      const baseActivityData: any = {
-        subject: customizations?.title || 'AI Suggested Activity',
-        type: customizations?.type || 'task',
-        priority: customizations?.priority || 'medium',
-        status: 'planned',
-        scheduledAt: customizations?.scheduledAt || new Date(),
-        duration: customizations?.duration || 30,
+      const activityData = {
+        subject: customizations.title || 'AI Suggested Activity',
+        type: customizations.type || 'task',
+        priority: customizations.priority || 'medium',
+        status: 'planned' as const,
+        scheduledAt: customizations.scheduledAt || new Date(),
+        duration: customizations.duration || 30,
         description: customizations?.description || '',
         assignedTo: req.body.userId || '1',
-        createdBy: req.body.userId || '1'
+        createdBy: req.body.userId || '1',
+        ...(customizations.relatedToType === 'lead' && { leadId: customizations.relatedToId }),
+        ...(customizations.relatedToType === 'deal' && { dealId: customizations.relatedToId }),
+        ...(customizations.relatedToType === 'contact' && { contactId: customizations.relatedToId }),
+        ...(customizations.relatedToType === 'account' && { accountId: customizations.relatedToId }),
       };
 
-      // Add related entity IDs conditionally
-      if (customizations?.relatedToType === 'lead') {
-        baseActivityData.leadId = customizations.relatedToId;
-      } else if (customizations?.relatedToType === 'deal') {
-        baseActivityData.dealId = customizations.relatedToId;
-      } else if (customizations?.relatedToType === 'contact') {
-        baseActivityData.contactId = customizations.relatedToId;
-      } else if (customizations?.relatedToType === 'account') {
-        baseActivityData.accountId = customizations.relatedToId;
-      }
-
-      const activity = await storage.createActivity(baseActivityData);
+      const activity = await storage.createActivity(activityData);
       
       console.log(`✅ Created activity from AI suggestion: ${suggestionId}`);
       res.status(201).json(activity);
@@ -3977,7 +3939,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Account-LeadGen Bidirectional Sync Endpoints
   app.post("/api/accounts/:id/enrich", async (req, res) => {
     try {
-      const enrichmentData = { enriched: true, id: req.params.id, timestamp: new Date() };
+      const { accountLeadGenSyncService } = await import('./account-leadgen-sync');
+      const enrichmentData = await accountLeadGenSyncService.enrichAccountData(req.params.id);
       res.json(enrichmentData);
     } catch (error) {
       console.error("Account enrichment error:", error);
@@ -4017,7 +3980,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/accounts/:id/sync-activities", async (req, res) => {
     try {
-      // Mock sync response for activities
+      const { accountLeadGenSyncService } = await import('./account-leadgen-sync');
+      await accountLeadGenSyncService.syncActivitiesAcrossModules(req.params.id);
       res.json({ success: true, message: "Activities synced across modules successfully" });
     } catch (error) {
       console.error("Activity sync error:", error);
@@ -4047,7 +4011,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/accounts/auto-fill", async (req, res) => {
     try {
-      const autoFillData = { autoFilled: true, data: req.body, timestamp: new Date() };
+      const { accountLeadGenSyncService } = await import('./account-leadgen-sync');
+      const autoFillData = await accountLeadGenSyncService.autoFillAccountData(req.body);
       res.json(autoFillData);
     } catch (error) {
       console.error("Auto-fill error:", error);
@@ -4058,8 +4023,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Lead Generation Company Data Endpoints for Account Sync
   app.get("/api/leadgen/companies/by-domain/:domain", async (req, res) => {
     try {
-      const companyData = { found: false, domain: req.params.domain };
-      res.json(companyData);
+      const { accountLeadGenSyncService } = await import('./account-leadgen-sync');
+      const companyData = await accountLeadGenSyncService.findLeadGenCompany({ domain: req.params.domain });
+      res.json(companyData || {});
     } catch (error) {
       console.error("LeadGen company fetch error:", error);
       handleError(error, res);
@@ -4086,7 +4052,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           date: new Date().toISOString().split('T')[0]
         }] : [],
         employees: enrichmentData.company?.employees || 0,
-        growth: enrichmentData.intent?.signals || [],
+        growth: enrichmentData.intent?.growthIndicators || [],
         confidence: enrichmentData.aiInsights?.leadScore || 75
       };
 

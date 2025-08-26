@@ -81,8 +81,6 @@ const DEAL_STAGES = [
   { id: 'discovery', title: 'Discovery', color: 'bg-blue-500' },
   { id: 'qualification', title: 'Qualification', color: 'bg-purple-500' },
   { id: 'proposal', title: 'Proposal', color: 'bg-yellow-500' },
-  { id: 'demo', title: 'Demo', color: 'bg-indigo-500' },
-  { id: 'trial', title: 'Trial', color: 'bg-teal-500' },
   { id: 'negotiation', title: 'Negotiation', color: 'bg-orange-500' },
   { id: 'closed-won', title: 'Closed Won', color: 'bg-green-500' },
   { id: 'closed-lost', title: 'Closed Lost', color: 'bg-red-500' }
@@ -239,7 +237,7 @@ export default function AdvancedDealsModule() {
 
   const renderKanbanView = () => (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="grid grid-cols-8 gap-2 h-full overflow-x-auto">
+      <div className="grid grid-cols-6 gap-4 h-full">
         {dealColumns.map((column) => (
           <div key={column.id} className="bg-gray-50 rounded-lg p-3">
             <div className="flex items-center justify-between mb-4">

@@ -21,14 +21,12 @@ import WorkingActivitiesPage from './WorkingActivitiesPage';
 import DiagnosticPage from './DiagnosticPage';
 import CRMAnalyticsDashboard from './CRMAnalyticsDashboard';
 import GamificationModule from './GamificationModuleNextGen';
-import WorkingDealsKanban from './WorkingDealsKanban';
-import SimpleKanbanTest from './SimpleKanbanTest';
 
 const CRMModule = () => {
-  console.log('CRMModule rendering - URL:', window.location.pathname);
+  console.log('CRMModule rendering');
   
   return (
-    <div className="min-h-screen w-full bg-white">
+    <div className="min-h-screen w-full overflow-auto">
 
 
       <Switch>
@@ -43,8 +41,6 @@ const CRMModule = () => {
         <Route path="/crm/accounts">
           <UltimateAccountsModule />
         </Route>
-        <Route path="/crm/deals/kanban-test" component={SimpleKanbanTest} />
-        <Route path="/crm/deals/kanban" component={WorkingDealsKanban} />
         <Route path="/crm/deals/enhanced/:id" component={EnhancedDealDetailPageWorking} />
         <Route path="/crm/deals/:id" component={DealDetailView} />
         <Route path="/crm/deals">
