@@ -268,18 +268,18 @@ export interface DealColumn {
 // Default pipeline stages
 export const DEFAULT_DEAL_STAGES: DealStage[] = [
   {
-    id: 'lead',
-    name: 'Lead',
-    color: '#6B7280',
+    id: 'discovery',
+    name: 'Discovery',
+    color: '#3B82F6',
     position: 1,
-    probability: 10,
+    probability: 15,
     isClosedWon: false,
     isClosedLost: false
   },
   {
-    id: 'qualified',
-    name: 'Qualified',
-    color: '#3B82F6',
+    id: 'qualification',
+    name: 'Qualification',
+    color: '#8B5CF6',
     position: 2,
     probability: 25,
     isClosedWon: false,
@@ -295,11 +295,29 @@ export const DEFAULT_DEAL_STAGES: DealStage[] = [
     isClosedLost: false
   },
   {
+    id: 'demo',
+    name: 'Demo',
+    color: '#6366F1',
+    position: 4,
+    probability: 60,
+    isClosedWon: false,
+    isClosedLost: false
+  },
+  {
+    id: 'trial',
+    name: 'Trial',
+    color: '#14B8A6',
+    position: 5,
+    probability: 70,
+    isClosedWon: false,
+    isClosedLost: false
+  },
+  {
     id: 'negotiation',
     name: 'Negotiation',
-    color: '#EF4444',
-    position: 4,
-    probability: 75,
+    color: '#F97316',
+    position: 6,
+    probability: 85,
     isClosedWon: false,
     isClosedLost: false
   },
@@ -307,7 +325,7 @@ export const DEFAULT_DEAL_STAGES: DealStage[] = [
     id: 'closed-won',
     name: 'Closed Won',
     color: '#10B981',
-    position: 5,
+    position: 7,
     probability: 100,
     isClosedWon: true,
     isClosedLost: false
@@ -315,8 +333,8 @@ export const DEFAULT_DEAL_STAGES: DealStage[] = [
   {
     id: 'closed-lost',
     name: 'Closed Lost',
-    color: '#6B7280',
-    position: 6,
+    color: '#EF4444',
+    position: 8,
     probability: 0,
     isClosedWon: false,
     isClosedLost: true
