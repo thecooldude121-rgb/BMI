@@ -239,7 +239,7 @@ export default function AdvancedDealsModule() {
 
   const renderKanbanView = () => (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="grid grid-cols-6 gap-4 h-full">
+      <div className="grid grid-cols-8 gap-2 h-full overflow-x-auto">
         {dealColumns.map((column) => (
           <div key={column.id} className="bg-gray-50 rounded-lg p-3">
             <div className="flex items-center justify-between mb-4">
