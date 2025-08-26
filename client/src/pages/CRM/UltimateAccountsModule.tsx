@@ -263,9 +263,9 @@ const UltimateAccountsModule: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 bg-gray-50">
+    <div className="flex-1 bg-gray-50 -mt-px">
       {/* Header Section with Integrated Search */}
-      <div className="bg-white border-b border-gray-200 sticky top-16 z-50">
+      <div className="bg-white border-b border-gray-200 -mb-px">
         {/* Main Header */}
         <div className="px-6 py-4 border-b border-gray-100">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -840,7 +840,7 @@ const UltimateAccountsModule: React.FC = () => {
       )}
 
       {/* Accounts Grid */}
-      <div className="px-6 py-4">
+      <div className="px-6 pt-0 pb-4">
         {filteredAccounts.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
