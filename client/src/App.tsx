@@ -36,6 +36,7 @@ import CompanyDetailPageBMI from './pages/LeadGeneration/CompanyDetailPageBMI';
 import PersonDetails from './components/LeadGeneration/PersonDetails';
 import IndustryTrendIndicator from './components/IndustryTrendIndicator';
 import BrowserNavFix from './components/BrowserNavFix';
+import AutoNavFix from './components/AutoNavFix';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
@@ -90,6 +91,7 @@ const App = () => {
               <Route path="/settings" component={Settings} />
             </Switch>
           </main>
+          <AutoNavFix />
           {import.meta.env.DEV && <BrowserNavFix />}
         </div>
       </DataProvider>
