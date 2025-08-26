@@ -49,6 +49,7 @@ import ClickTest from './components/ClickTest';
 import VanillaJSTest from './components/VanillaJSTest';
 import CSPTest from './components/CSPTest';
 import AdvancedClickTest from './components/AdvancedClickTest';
+import WindowNavigation from './components/WindowNavigation';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
@@ -118,6 +119,7 @@ const App = () => {
           <VanillaJSTest />
           <CSPTest />
           <AdvancedClickTest />
+          <WindowNavigation />
         </div>
       </DataProvider>
     </AuthProvider>
