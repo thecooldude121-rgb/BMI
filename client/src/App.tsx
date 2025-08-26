@@ -42,6 +42,7 @@ import DirectNavigationTest from './components/DirectNavigationTest';
 import LinkBasedNavigation from './components/LinkBasedNavigation';
 import BrowserFixPanel from './components/BrowserFixPanel';
 import SimpleNavigation from './components/SimpleNavigation';
+import WorkingNavigation from './components/WorkingNavigation';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
@@ -104,6 +105,7 @@ const App = () => {
           {import.meta.env.DEV && <LinkBasedNavigation />}
           {import.meta.env.DEV && <BrowserFixPanel />}
           <SimpleNavigation />
+          <WorkingNavigation />
         </div>
       </DataProvider>
     </AuthProvider>
