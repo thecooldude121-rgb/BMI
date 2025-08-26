@@ -44,6 +44,7 @@ import BrowserFixPanel from './components/BrowserFixPanel';
 import SimpleNavigation from './components/SimpleNavigation';
 import WorkingNavigation from './components/WorkingNavigation';
 import PermanentSidebar from './components/PermanentSidebar';
+import RouterDebug from './components/RouterDebug';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
@@ -108,6 +109,7 @@ const App = () => {
           {import.meta.env.DEV && <BrowserFixPanel />}
           <SimpleNavigation />
           <WorkingNavigation />
+          {import.meta.env.DEV && <RouterDebug />}
         </div>
       </DataProvider>
     </AuthProvider>
