@@ -56,18 +56,24 @@ const WorkingDealsKanban: React.FC = () => {
   useEffect(() => {
     const fetchDeals = async () => {
       try {
+        setLoading(true);
+        console.log('Fetching deals from /api/deals...');
         const response = await fetch('/api/deals');
+        console.log('Response status:', response.status);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
+        console.log('Deals data received:', data.length, 'deals');
         setDeals(data);
       } catch (err) {
+        console.error('Error fetching deals:', err);
         setError(String(err));
       } finally {
         setLoading(false);
       }
     };
 
-    fetchDeals();
+    // Add a small delay to ensure page is fully mounted
+    setTimeout(fetchDeals, 100);
   }, []);
 
   if (loading) {
@@ -164,7 +170,7 @@ const WorkingDealsKanban: React.FC = () => {
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">🎯 Deals Kanban - All 8 Stages</h1>
+        <h1 className="text-3xl font-bold text-purple-900">DEALS KANBAN - ALL 8 STAGES</h1>
         <div className="flex items-center space-x-4">
           <span className="text-sm text-gray-600">{deals.length} deals total</span>
           <div className="flex items-center space-x-2 text-xs text-gray-500">
