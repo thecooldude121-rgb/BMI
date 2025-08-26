@@ -21,6 +21,7 @@ import WorkingActivitiesPage from './WorkingActivitiesPage';
 import DiagnosticPage from './DiagnosticPage';
 import CRMAnalyticsDashboard from './CRMAnalyticsDashboard';
 import GamificationModule from './GamificationModuleNextGen';
+import WorkingDealsKanban from './WorkingDealsKanban';
 
 const CRMModule = () => {
   console.log('CRMModule rendering');
@@ -42,6 +43,7 @@ const CRMModule = () => {
           <UltimateAccountsModule />
         </Route>
         <Route path="/crm/deals/enhanced/:id" component={EnhancedDealDetailPageWorking} />
+        <Route path="/crm/deals/kanban" component={WorkingDealsKanban} />
         <Route path="/crm/deals/:id" component={DealDetailView} />
         <Route path="/crm/deals">
           <SimpleAdvancedDealsModule />
