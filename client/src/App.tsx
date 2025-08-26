@@ -92,8 +92,9 @@ const App = () => {
               <Route path="/settings" component={Settings} />
             </Switch>
           </main>
-          <AutoNavFix />
-          {import.meta.env.DEV && <BrowserNavFix />}
+          {/* Temporarily disabled auto fixes to prevent crashes */}
+          {/* <AutoNavFix /> */}
+          {/* {import.meta.env.DEV && <BrowserNavFix />} */}
           {import.meta.env.DEV && <NavigationTest />}
         </div>
       </DataProvider>
