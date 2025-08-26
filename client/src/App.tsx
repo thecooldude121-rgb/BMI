@@ -68,7 +68,7 @@ const App = () => {
         <div className="min-h-screen bg-gray-50">
           <Header />
           <PermanentSidebar />
-          <main className="pt-14 pl-64">
+          <main className="pt-14">
             <Switch>
               <Route path="/login" component={Login} />
               <Route path="/" component={Analytics} />

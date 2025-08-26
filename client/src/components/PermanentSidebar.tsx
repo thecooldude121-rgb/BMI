@@ -28,9 +28,9 @@ const PermanentSidebar = () => {
   };
 
   return (
-    <div className="fixed left-0 top-14 bottom-0 w-64 bg-white border-r border-gray-200 shadow-sm z-40 overflow-y-auto">
-      <div className="p-4">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">Navigation</h2>
+    <div className="fixed left-0 top-14 bottom-0 w-64 bg-white border-r-2 border-blue-500 shadow-lg z-[9999] overflow-y-auto">
+      <div className="p-4 bg-blue-50">
+        <h2 className="text-lg font-bold text-blue-800 mb-4">🧭 NAVIGATION PANEL</h2>
         
         <div className="space-y-2">
           {navigationItems.map((item) => {
