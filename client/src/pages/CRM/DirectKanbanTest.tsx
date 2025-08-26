@@ -8,7 +8,8 @@ const DirectKanbanTest: React.FC = () => {
     <div style={{ 
       minHeight: '100vh', 
       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      padding: '20px'
+      padding: '20px',
+      overflow: 'hidden'
     }}>
       <div style={{ textAlign: 'center', marginBottom: '30px' }}>
         <h1 style={{ 
@@ -27,9 +28,12 @@ const DirectKanbanTest: React.FC = () => {
       <div style={{ 
         display: 'flex',
         gap: '20px',
-        overflowX: 'auto',
+        overflowX: 'scroll',
+        overflowY: 'hidden',
         paddingBottom: '20px',
-        minHeight: '500px'
+        minHeight: '500px',
+        width: '100%',
+        scrollbarWidth: 'thin'
       }}>
         {/* All 8 Stages */}
         {[
