@@ -38,6 +38,7 @@ import WorkingDealsKanban from './pages/CRM/WorkingDealsKanban';
 import DirectKanbanTest from './pages/CRM/DirectKanbanTest';
 import SimpleNavigationTest from './pages/CRM/SimpleNavigationTest';
 import FixedKanbanPage from './pages/CRM/FixedKanbanPage';
+import BasicTestPage from './pages/CRM/BasicTestPage';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
@@ -67,6 +68,7 @@ const App = () => {
               <Route path="/crm/contacts/:id" component={ContactDetailPage} />
               <Route path="/lead-generation/company/:id" component={CompanyDetailPageBMI} />
               <Route path="/lead-generation/people/:id" component={PersonDetails} />
+              <Route path="/basic-test" component={BasicTestPage} />
               <Route path="/fixed-kanban" component={FixedKanbanPage} />
               <Route path="/navigation-test" component={SimpleNavigationTest} />
               <Route path="/direct-kanban-test" component={DirectKanbanTest} />
