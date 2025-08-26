@@ -179,7 +179,7 @@ const WorkingDealsKanban: React.FC = () => {
   );
 
   return (
-    <div className="p-6 max-w-full overflow-hidden">
+    <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Deals Kanban - All 8 Stages</h1>
         <div className="flex items-center space-x-4">
@@ -198,8 +198,8 @@ const WorkingDealsKanban: React.FC = () => {
       </div>
 
       {/* Kanban Board - 8 Columns */}
-      <div className="overflow-x-auto pb-4">
-        <div className="flex gap-4" style={{ minWidth: `${DEAL_STAGES.length * 300}px` }}>
+      <div className="overflow-x-auto overflow-y-visible pb-4">
+        <div className="flex gap-4" style={{ minWidth: `${DEAL_STAGES.length * 300}px`, width: 'max-content' }}>
           {dealColumns.map((column) => (
             <div key={column.id} className="bg-gray-50 rounded-lg p-3 w-[280px] flex-shrink-0">
             <div className="flex items-center justify-between mb-4">
@@ -215,7 +215,7 @@ const WorkingDealsKanban: React.FC = () => {
               </button>
             </div>
 
-            <div className="min-h-[300px] space-y-3 max-h-[600px] overflow-y-auto">
+            <div className="min-h-[300px] space-y-3 max-h-[500px] overflow-y-auto">
               {column.deals.length > 0 ? (
                 column.deals.map(renderDealCard)
               ) : (
