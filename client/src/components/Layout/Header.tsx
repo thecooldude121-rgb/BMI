@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, Link } from 'wouter';
+import { navigateTo, createNavigationHandler } from '../../utils/navigation';
 import { 
   Bell, Search, Settings, Menu, Plus, Mail, Building2, 
   Users, UserPlus, DollarSign, Phone, Activity, LayoutDashboard,
@@ -77,10 +78,10 @@ const Header: React.FC = () => {
               {crmNavigation.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <Link
+                  <button
                     key={item.name}
-                    href={item.href}
-                    className={`group inline-flex items-center py-2 px-3 rounded-lg font-medium text-sm transition-all duration-200 ${
+                    onClick={createNavigationHandler(item.href)}
+                    className={`group inline-flex items-center py-2 px-3 rounded-lg font-medium text-sm transition-all duration-200 cursor-pointer ${
                       location === item.href
                         ? 'bg-blue-50 text-blue-700 border border-blue-200'
                         : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
@@ -88,7 +89,7 @@ const Header: React.FC = () => {
                   >
                     <Icon className="mr-2 h-4 w-4" />
                     {item.name}
-                  </Link>
+                  </button>
                 );
               })}
               
@@ -113,15 +114,17 @@ const Header: React.FC = () => {
                     {moreNavigation.map((item) => {
                       const Icon = item.icon;
                       return (
-                        <Link
+                        <button
                           key={item.name}
-                          href={item.href}
-                          onClick={() => setShowMoreMenu(false)}
-                          className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+                          onClick={(e) => {
+                            setShowMoreMenu(false);
+                            createNavigationHandler(item.href)(e);
+                          }}
+                          className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors cursor-pointer"
                         >
                           <Icon className="mr-3 h-4 w-4 text-gray-400" />
                           {item.name}
-                        </Link>
+                        </button>
                       );
                     })}
                   </div>
@@ -197,7 +200,7 @@ const Header: React.FC = () => {
 
           {/* Settings */}
           <button 
-            onClick={() => setLocation('/settings')}
+            onClick={createNavigationHandler('/settings')}
             className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <Settings className="h-5 w-5" />
@@ -228,9 +231,9 @@ const Header: React.FC = () => {
                   <p className="text-xs text-gray-500">{user?.email}</p>
                 </div>
                 <button
-                  onClick={() => {
-                    setLocation('/settings');
+                  onClick={(e) => {
                     setShowProfileMenu(false);
+                    createNavigationHandler('/settings')(e);
                   }}
                   className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                 >
@@ -270,9 +273,9 @@ const Header: React.FC = () => {
                     return (
                       <button
                         key={module.name}
-                        onClick={() => {
-                          setLocation(module.href);
+                        onClick={(e) => {
                           setShowAppMenu(false);
+                          createNavigationHandler(module.href)(e);
                         }}
                         className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-md transition-colors"
                       >

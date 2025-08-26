@@ -37,6 +37,7 @@ import PersonDetails from './components/LeadGeneration/PersonDetails';
 import IndustryTrendIndicator from './components/IndustryTrendIndicator';
 import BrowserNavFix from './components/BrowserNavFix';
 import AutoNavFix from './components/AutoNavFix';
+import NavigationTest from './components/NavigationTest';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
@@ -93,6 +94,7 @@ const App = () => {
           </main>
           <AutoNavFix />
           {import.meta.env.DEV && <BrowserNavFix />}
+          {import.meta.env.DEV && <NavigationTest />}
         </div>
       </DataProvider>
     </AuthProvider>
