@@ -28,7 +28,7 @@ import MeetingIntelligencePage from './pages/MeetingIntelligencePage';
 import MeetingDashboard from './pages/MeetingDashboard';
 import SimpleRealAccountDetail from './pages/CRM/SimpleRealAccountDetail';
 import UltimateAccountDetailPage from './pages/CRM/UltimateAccountDetailPage';
-import UltimateCreateAccountPage from './pages/CRM/UltimateCreateAccountPage';
+import UltimateCreateAccountPageEnhanced from './pages/CRM/UltimateCreateAccountPageEnhanced';
 import ContactDetailPage from './pages/CRM/ContactDetailPage';
 import GamificationModule from './pages/CRM/GamificationModuleNextGen';
 import CompanyDetailPageBMI from './pages/LeadGeneration/CompanyDetailPageBMI';
@@ -58,7 +58,7 @@ const App = () => {
               <Route path="/crm/deals/create" component={CreateDealPageWrapper} />
               <Route path="/crm/deals/create-wizard" component={CreateDealWrapper} />
               <Route path="/crm/deals/:id" component={DealDetailWrapper} />
-              <Route path="/crm/accounts/create" component={UltimateCreateAccountPage} />
+              <Route path="/crm/accounts/create" component={UltimateCreateAccountPageEnhanced} />
               <Route path="/crm/accounts/:id" component={UltimateAccountDetailPage} />
               <Route path="/crm/contacts/:id" component={ContactDetailPage} />
               <Route path="/lead-generation/company/:id" component={CompanyDetailPageBMI} />
