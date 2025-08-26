@@ -353,9 +353,6 @@ export default function SimpleAdvancedDealsModule() {
 
   // Close dropdowns when clicking outside
   useEffect(() => {
-    // TEMPORARILY DISABLED - Testing interaction conflicts
-    return;
-    
     const handleClickOutside = (event: MouseEvent) => {
       // Close search suggestions
       if (

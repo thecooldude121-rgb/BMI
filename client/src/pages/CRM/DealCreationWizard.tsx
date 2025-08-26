@@ -75,7 +75,7 @@ const DEAL_SOURCES = [
 ];
 
 const DEAL_STAGES = [
-  'discovery', 'qualification', 'proposal', 'demo', 'trial', 'negotiation', 'closed-won', 'closed-lost'
+  'discovery', 'qualification', 'proposal', 'negotiation', 'demo', 'trial'
 ];
 
 export default function DealCreationWizard() {

@@ -129,9 +129,6 @@ export const useContextPreservation = (routeKey: string) => {
 
   // Auto-save scroll position on scroll
   const handleScroll = useCallback((event: React.UIEvent<HTMLDivElement>) => {
-    // TEMPORARILY DISABLED - Testing interaction conflicts
-    return;
-    
     const element = event.currentTarget;
     if (element) {
       // Debounce scroll saves

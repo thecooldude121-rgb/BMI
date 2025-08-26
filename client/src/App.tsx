@@ -34,13 +34,6 @@ import GamificationModule from './pages/CRM/GamificationModuleNextGen';
 import CompanyDetailPageBMI from './pages/LeadGeneration/CompanyDetailPageBMI';
 import PersonDetails from './components/LeadGeneration/PersonDetails';
 import IndustryTrendIndicator from './components/IndustryTrendIndicator';
-import WorkingDealsKanban from './pages/CRM/WorkingDealsKanban';
-import DirectKanbanTest from './pages/CRM/DirectKanbanTest';
-import SimpleNavigationTest from './pages/CRM/SimpleNavigationTest';
-import FixedKanbanPage from './pages/CRM/FixedKanbanPage';
-import BasicTestPage from './pages/CRM/BasicTestPage';
-import PureHTMLTest from './pages/CRM/PureHTMLTest';
-import EmergencyKanban from './pages/CRM/EmergencyKanban';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
@@ -70,18 +63,12 @@ const App = () => {
               <Route path="/crm/contacts/:id" component={ContactDetailPage} />
               <Route path="/lead-generation/company/:id" component={CompanyDetailPageBMI} />
               <Route path="/lead-generation/people/:id" component={PersonDetails} />
-              <Route path="/emergency-kanban" component={EmergencyKanban} />
-              <Route path="/pure-html-test" component={PureHTMLTest} />
-              <Route path="/basic-test" component={BasicTestPage} />
-              <Route path="/fixed-kanban" component={FixedKanbanPage} />
-              <Route path="/navigation-test" component={SimpleNavigationTest} />
-              <Route path="/direct-kanban-test" component={DirectKanbanTest} />
-              <Route path="/crm/:rest*" component={CRMModule} />
               <Route path="/crm" component={() => (
                 <div className="min-h-screen w-full">
                   <GamificationModule />
                 </div>
               )} />
+              <Route path="/crm/:rest*" component={CRMModule} />
               <Route path="/hrms" component={HRMSModule} />
               <Route path="/analytics" component={Analytics} />
               <Route path="/calendar" component={Calendar} />
