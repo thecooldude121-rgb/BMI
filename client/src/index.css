@@ -2,24 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Reset potential interaction blockers */
-* {
+/* Complete interaction reset - Force all elements to be interactive */
+*, *::before, *::after {
   pointer-events: auto !important;
+  user-select: auto !important;
+  touch-action: auto !important;
 }
 
-html, body {
+html {
   overflow: auto !important;
   position: static !important;
+  height: auto !important;
+  scroll-behavior: auto !important;
 }
 
-a {
-  pointer-events: auto !important;
-  cursor: pointer !important;
+body {
+  overflow: auto !important;
+  position: static !important;
+  height: auto !important;
+  transform: none !important;
 }
 
-button {
+a, button, input, select, textarea {
   pointer-events: auto !important;
   cursor: pointer !important;
+  user-select: auto !important;
+}
+
+/* Force scrollable containers to work */
+[style*="overflow-x"], 
+[style*="overflow-y"],
+.overflow-x-auto,
+.overflow-y-auto,
+.overflow-x-scroll,
+.overflow-y-scroll {
+  overflow: auto !important;
+  pointer-events: auto !important;
 }
 
 /* Custom animations for enhanced Deal Progress Bar */
