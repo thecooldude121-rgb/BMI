@@ -879,7 +879,7 @@ const UltimateAccountsModule: React.FC = () => {
       )}
 
       {/* Search Bar */}
-      <div className="bg-white border-b border-gray-200 px-6 py-3 shadow-sm sticky top-28 z-30">
+      <div className={`bg-white border-b border-gray-200 px-6 py-3 shadow-sm sticky z-30 ${showDashboard ? 'top-24' : 'top-16'}`}>
         <div className="relative max-w-xl">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
