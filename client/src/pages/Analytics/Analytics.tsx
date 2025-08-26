@@ -2,10 +2,10 @@
 // Keeping for backward compatibility
 
 import React from 'react';
-import EnterpriseAnalytics from './EnterpriseAnalytics';
+import SimpleAnalytics from './SimpleAnalytics';
 
 const Analytics: React.FC = () => {
-  return <EnterpriseAnalytics />;
+  return <SimpleAnalytics />;
 };
 
 export default Analytics;
