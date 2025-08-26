@@ -112,6 +112,26 @@ const AccountDetailPage: React.FC = () => {
     },
   });
 
+  // Fetch account-specific deals from CRM deals module
+  const { data: allDeals = [] } = useQuery({
+    queryKey: ['/api/deals'],
+  });
+
+  // Fetch account-specific contacts from CRM contacts module
+  const { data: allContacts = [] } = useQuery({
+    queryKey: ['/api/contacts'],
+  });
+
+  // Fetch account-specific activities
+  const { data: activities = [] } = useQuery({
+    queryKey: ['/api/activities'],
+  });
+
+  // Filter data specific to this account
+  const accountDeals = allDeals.filter((deal: any) => deal.accountId === id);
+  const accountContacts = allContacts.filter((contact: any) => contact.accountId === id);
+  const accountActivities = activities.filter((activity: any) => activity.accountId === id);
+
   // Lead Generation sync mutation
   const syncToLeadGenMutation = useMutation({
     mutationFn: () => apiRequest(`/api/accounts/${id}/sync-to-leadgen`, {
@@ -120,6 +140,9 @@ const AccountDetailPage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/leadgen/companies'] });
       queryClient.invalidateQueries({ queryKey: ['/api/leadgen/insights'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/deals'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/contacts'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/activities'] });
     },
   });
 
@@ -441,14 +464,19 @@ const AccountDetailPage: React.FC = () => {
               >
                 <Icon className="w-4 h-4 inline mr-2" />
                 {tab.label}
-                {tab.id === 'contacts' && account.contacts && (
+                {tab.id === 'contacts' && (
                   <span className="ml-2 bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">
-                    {account.contacts.length}
+                    {accountContacts.length}
                   </span>
                 )}
-                {tab.id === 'deals' && account.deals && (
+                {tab.id === 'deals' && (
                   <span className="ml-2 bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">
-                    {account.deals.length}
+                    {accountDeals.length}
+                  </span>
+                )}
+                {tab.id === 'activities' && (
+                  <span className="ml-2 bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">
+                    {accountActivities.length}
                   </span>
                 )}
               </button>
@@ -740,13 +768,123 @@ const AccountDetailPage: React.FC = () => {
         )}
 
         {/* Other tab content would go here */}
-        {activeTab !== 'overview' && activeTab !== 'growth' && (
+        {/* Deals Tab */}
+        {activeTab === 'deals' && (
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-medium text-gray-900">Account Deals</h3>
+              <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                {accountDeals.length} deals
+              </span>
+            </div>
+            
+            {accountDeals.length > 0 ? (
+              <div className="space-y-4">
+                {accountDeals.map((deal: any) => (
+                  <div key={deal.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-medium text-gray-900">{deal.name}</h4>
+                        <p className="text-sm text-gray-600">Stage: {deal.stage}</p>
+                        <p className="text-sm text-gray-500">Close Date: {new Date(deal.closeDate).toLocaleDateString()}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-semibold text-green-600">${deal.value?.toLocaleString()}</p>
+                        <p className="text-sm text-gray-500">{deal.probability}% probability</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <Target className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No Deals Found</h3>
+                <p className="text-gray-500">This account doesn't have any deals yet.</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Contacts Tab */}
+        {activeTab === 'contacts' && (
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-medium text-gray-900">Account Contacts</h3>
+              <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+                {accountContacts.length} contacts
+              </span>
+            </div>
+            
+            {accountContacts.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {accountContacts.map((contact: any) => (
+                  <div key={contact.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full flex items-center justify-center text-white font-medium">
+                        {contact.firstName?.[0]}{contact.lastName?.[0]}
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900">{contact.firstName} {contact.lastName}</h4>
+                        <p className="text-sm text-gray-600">{contact.title}</p>
+                        <p className="text-sm text-gray-500">{contact.email}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <Users className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No Contacts Found</h3>
+                <p className="text-gray-500">This account doesn't have any contacts yet.</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Activities Tab */}
+        {activeTab === 'activities' && (
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-medium text-gray-900">Account Activities</h3>
+              <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">
+                {accountActivities.length} activities
+              </span>
+            </div>
+            
+            {accountActivities.length > 0 ? (
+              <div className="space-y-4">
+                {accountActivities.slice(0, 10).map((activity: any) => (
+                  <div key={activity.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h4 className="font-medium text-gray-900">{activity.subject}</h4>
+                        <p className="text-sm text-gray-600">{activity.type}</p>
+                        <p className="text-sm text-gray-500 mt-1">{activity.description}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm text-gray-500">{new Date(activity.date).toLocaleDateString()}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <Activity className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No Activities Found</h3>
+                <p className="text-gray-500">This account doesn't have any activities yet.</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Other tabs placeholder */}
+        {(activeTab === 'documents' || activeTab === 'hierarchy') && (
           <div className="bg-white rounded-lg border border-gray-200 p-6 text-center">
             <div className="py-12">
               <div className="text-gray-400 mb-4">
-                {activeTab === 'contacts' && <Users className="w-12 h-12 mx-auto" />}
-                {activeTab === 'deals' && <Target className="w-12 h-12 mx-auto" />}
-                {activeTab === 'activities' && <Activity className="w-12 h-12 mx-auto" />}
                 {activeTab === 'documents' && <FileText className="w-12 h-12 mx-auto" />}
                 {activeTab === 'hierarchy' && <Link className="w-12 h-12 mx-auto" />}
               </div>
