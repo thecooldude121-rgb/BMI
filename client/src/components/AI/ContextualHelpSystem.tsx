@@ -39,6 +39,9 @@ export const ContextualHelpBubble: React.FC<HelpBubbleProps> = ({
 
   // Close on click outside
   useEffect(() => {
+    // TEMPORARILY DISABLED - Testing interaction conflicts
+    return;
+    
     const handleClickOutside = (event: MouseEvent) => {
       if (bubbleRef.current && !bubbleRef.current.contains(event.target as Node)) {
         setIsOpen(false);
