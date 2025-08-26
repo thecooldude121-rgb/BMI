@@ -42,8 +42,8 @@ const CRMModule = () => {
         <Route path="/crm/accounts">
           <UltimateAccountsModule />
         </Route>
-        <Route path="/crm/deals/enhanced/:id" component={EnhancedDealDetailPageWorking} />
         <Route path="/crm/deals/kanban" component={WorkingDealsKanban} />
+        <Route path="/crm/deals/enhanced/:id" component={EnhancedDealDetailPageWorking} />
         <Route path="/crm/deals/:id" component={DealDetailView} />
         <Route path="/crm/deals">
           <SimpleAdvancedDealsModule />

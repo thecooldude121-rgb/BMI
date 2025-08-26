@@ -161,9 +161,9 @@ const WorkingDealsKanban: React.FC = () => {
   );
 
   return (
-    <div className="p-6">
+    <div className="p-6 bg-gray-50 min-h-screen">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Deals Kanban - All 8 Stages</h1>
+        <h1 className="text-3xl font-bold text-gray-900">🎯 Deals Kanban - All 8 Stages</h1>
         <div className="flex items-center space-x-4">
           <span className="text-sm text-gray-600">{deals.length} deals total</span>
           <div className="flex items-center space-x-2 text-xs text-gray-500">
