@@ -3979,6 +3979,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Lead Generation Company Data Endpoints for Account Sync
+  app.get("/api/leadgen/companies/by-domain/:domain", async (req, res) => {
+    try {
+      const { accountLeadGenSyncService } = await import('./account-leadgen-sync');
+      const companyData = await accountLeadGenSyncService.findLeadGenCompany({ domain: req.params.domain });
+      res.json(companyData || {});
+    } catch (error) {
+      console.error("LeadGen company fetch error:", error);
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/leadgen/insights/:domain", async (req, res) => {
+    try {
+      const { aiLeadGenerationEngine } = await import('./ai-lead-generation');
+      
+      // Generate enriched insights for the company domain
+      const enrichmentData = await aiLeadGenerationEngine.enrichLeadData({
+        email: `info@${req.params.domain}`,
+        company: req.params.domain
+      });
+
+      // Extract company insights
+      const insights = {
+        news: enrichmentData.intent?.signals || [],
+        technologies: enrichmentData.company?.techStack || [],
+        funding: enrichmentData.company?.fundingStage ? [{
+          round: enrichmentData.company.fundingStage,
+          amount: 'N/A',
+          date: new Date().toISOString().split('T')[0]
+        }] : [],
+        employees: enrichmentData.company?.employees || 0,
+        growth: enrichmentData.intent?.growthIndicators || [],
+        confidence: enrichmentData.aiInsights?.leadScore || 75
+      };
+
+      res.json(insights);
+    } catch (error) {
+      console.error("LeadGen insights fetch error:", error);
+      handleError(error, res);
+    }
+  });
+
   // A/B Test Campaign endpoints
   app.post("/api/lead-generation/ab-tests", async (req, res) => {
     try {
