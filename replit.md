@@ -8,6 +8,8 @@ This is a comprehensive CRM and Business Management Intelligence platform design
 - Focus on robust, production-ready implementations
 - Emphasis on security and data integrity
 - Clean, maintainable code structure
+- **Browser Navigation Issue**: Normal browser mode navigation fails while incognito mode works - implemented automatic cache clearing and manual fix instructions (Aug 26, 2025)
+- **Data Integrity**: Stop all automatic creation of accounts, deals, activities, and contacts without explicit instruction (Aug 26, 2025)
 
 ## System Architecture
 The platform is built with a modern full-stack architecture:
