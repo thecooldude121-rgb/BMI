@@ -64,10 +64,10 @@ const AccountDetailPage: React.FC = () => {
 
   const queryClient = useQueryClient();
 
-  // Fetch account with relations
+  // Fetch account data
   const { data: account, isLoading, error } = useQuery({
-    queryKey: ['/api/accounts', id, 'with-relations'],
-    queryFn: () => apiRequest(`/api/accounts/${id}/with-relations`),
+    queryKey: ['/api/accounts', id],
+    queryFn: () => apiRequest(`/api/accounts/${id}`),
     enabled: !!id,
   });
 
@@ -135,7 +135,7 @@ const AccountDetailPage: React.FC = () => {
   }
 
   const getHealthStatus = () => {
-    const score = account.healthScore || 0;
+    const score = account?.healthScore || 0;
     if (score >= 80) return { status: 'excellent', color: 'text-green-600 bg-green-100', icon: CheckCircle };
     if (score >= 60) return { status: 'good', color: 'text-blue-600 bg-blue-100', icon: TrendingUp };
     if (score >= 40) return { status: 'at_risk', color: 'text-yellow-600 bg-yellow-100', icon: AlertTriangle };
@@ -209,7 +209,7 @@ const AccountDetailPage: React.FC = () => {
             </button>
             
             <div className="flex items-center space-x-4">
-              {account.logoUrl ? (
+              {account?.logoUrl ? (
                 <img src={account.logoUrl} alt={account.name} className="w-12 h-12 rounded-lg object-cover" />
               ) : (
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -218,19 +218,19 @@ const AccountDetailPage: React.FC = () => {
               )}
               
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{account.name}</h1>
+                <h1 className="text-2xl font-bold text-gray-900">{account?.name || 'Loading...'}</h1>
                 <div className="flex items-center space-x-3 mt-1">
-                  <span className="text-gray-600">{account.industry}</span>
+                  <span className="text-gray-600">{account?.industry || 'Unknown'}</span>
                   <div className={`px-2 py-1 rounded-full ${healthStatus.color} flex items-center space-x-1`}>
                     <HealthIcon className="w-4 h-4" />
-                    <span className="text-sm font-medium">{account.healthScore || 0}</span>
+                    <span className="text-sm font-medium">{account?.healthScore || 0}</span>
                   </div>
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    account.accountType === 'customer' ? 'bg-green-100 text-green-700' :
-                    account.accountType === 'prospect' ? 'bg-blue-100 text-blue-700' :
+                    account?.accountType === 'customer' ? 'bg-green-100 text-green-700' :
+                    account?.accountType === 'prospect' ? 'bg-blue-100 text-blue-700' :
                     'bg-gray-100 text-gray-700'
                   }`}>
-                    {account.accountType}
+                    {account?.accountType || 'Unknown'}
                   </span>
                 </div>
               </div>
