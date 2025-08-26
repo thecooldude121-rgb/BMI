@@ -356,16 +356,14 @@ const UltimateAccountsModule: React.FC = () => {
               </div>
 
               {/* Show AI Insights button when dashboard is hidden */}
-              {!showDashboard && (
-                <button
-                  onClick={() => setShowDashboard(true)}
-                  className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 bg-gray-100 text-gray-700 hover:bg-gray-200 shadow-lg hover:shadow-xl"
-                  data-testid="button-show-insights"
-                >
-                  <BarChart3 className="w-4 h-4" />
-                  Show Insights
-                </button>
-              )}
+              <button
+                onClick={() => setShowDashboard(true)}
+                className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 bg-blue-100 text-blue-700 hover:bg-blue-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                data-testid="button-show-insights"
+              >
+                <BarChart3 className="w-4 h-4" />
+                Analytics Dashboard
+              </button>
 
               <button
                 onClick={handleCreateAccount}
@@ -395,444 +393,199 @@ const UltimateAccountsModule: React.FC = () => {
         </div>
       </div>
 
-      {/* Analytics Content Container - Only show when dashboard is enabled */}
+      {/* Analytics Popup Modal */}
       {showDashboard && (
-        <div className="bg-white border-b border-gray-200 absolute top-32 left-0 right-0 z-30 mt-px">
-          {/* Compact Analytics Header */}
-          <div className="px-6 py-3">
-            <div className="flex items-center justify-between">
-              {/* Compact Analytics Summary */}
-              <div className="flex items-center gap-8">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-medium text-gray-700">Live Analytics</span>
-                </div>
-                
-                {/* Compact KPIs */}
-                <div className="hidden lg:flex items-center gap-6">
-                  <div className="text-center">
-                    <div className="text-lg font-bold text-gray-900">{analytics.totalAccounts}</div>
-                    <div className="text-xs text-gray-600">Accounts</div>
-                  </div>
-                  <div className="w-px h-8 bg-gray-200"></div>
-                  <div className="text-center">
-                    <div className="text-lg font-bold text-green-600">{formatCurrency(analytics.totalRevenue)}</div>
-                    <div className="text-xs text-gray-600">Revenue</div>
-                  </div>
-                  <div className="w-px h-8 bg-gray-200"></div>
-                  <div className="text-center">
-                    <div className="text-lg font-bold text-purple-600">{Math.round(analytics.avgHealthScore)}</div>
-                    <div className="text-xs text-gray-600">Avg Health</div>
-                  </div>
-                  <div className="w-px h-8 bg-gray-200"></div>
-                  <div className="text-center">
-                    <div className="text-lg font-bold text-blue-600">{analytics.totalDeals}</div>
-                    <div className="text-xs text-gray-600">Active Deals</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Dashboard Toggle & Insights */}
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setShowDashboard(!showDashboard)}
-                  className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 bg-blue-100 text-blue-700 hover:bg-blue-200"
-                >
-                  <BarChart3 className="w-4 h-4" />
-                  Hide Insights
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Enhanced Dashboard Insights Panel */}
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            className="bg-gradient-to-br from-slate-50 via-white to-blue-50 border-b border-gray-200 px-6 py-6 shadow-lg"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-white rounded-2xl shadow-2xl w-[80vw] h-[80vh] max-w-7xl overflow-hidden"
           >
-            {/* Advanced Insights Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              
-              {/* Left Column - Key Insights */}
-              <div className="lg:col-span-8 space-y-6">
-                
-                {/* Performance Overview Cards */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                  <motion.div
-                    whileHover={{ y: -2 }}
-                    className="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-200 border border-gray-100"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <div className="text-2xl font-bold text-gray-900 mb-1">{analytics.totalAccounts}</div>
-                        <div className="text-sm text-gray-600 mb-2">Total Accounts</div>
-                        <div className={`text-xs font-medium flex items-center gap-1 ${getTrendColor(analytics.growth.accounts)}`}>
-                          <TrendingUp className="w-3 h-3" />
-                          {formatPercentage(analytics.growth.accounts)}
-                        </div>
-                      </div>
-                      <div className="p-2 bg-blue-50 rounded-lg">
-                        <Building className="w-5 h-5 text-blue-600" />
-                      </div>
-                    </div>
-                  </motion.div>
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4 flex items-center justify-between text-white">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-white bg-opacity-20 rounded-lg">
+                  <BarChart3 className="w-6 h-6" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold">Analytics Dashboard</h2>
+                  <p className="text-blue-100 text-sm">Real-time account insights and performance metrics</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowDashboard(false)}
+                className="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
 
-                  <motion.div
-                    whileHover={{ y: -2 }}
-                    className="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-200 border border-gray-100"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <div className="text-xl font-bold text-green-600 mb-1">{formatCurrency(analytics.totalRevenue)}</div>
-                        <div className="text-sm text-gray-600 mb-2">Total Revenue</div>
-                        <div className={`text-xs font-medium flex items-center gap-1 ${getTrendColor(analytics.growth.revenue)}`}>
-                          <TrendingUp className="w-3 h-3" />
-                          {formatPercentage(analytics.growth.revenue)}
-                        </div>
-                      </div>
-                      <div className="p-2 bg-green-50 rounded-lg">
-                        <DollarSign className="w-5 h-5 text-green-600" />
+            {/* Modal Content - Scrollable */}
+            <div className="overflow-y-auto bg-gradient-to-br from-slate-50 via-white to-blue-50 p-6" style={{ height: 'calc(100% - 80px)' }}>
+              {/* Performance Overview Cards */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <motion.div
+                  whileHover={{ y: -2 }}
+                  className="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-200 border border-gray-100"
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="text-2xl font-bold text-gray-900 mb-1">{analytics.totalAccounts}</div>
+                      <div className="text-sm text-gray-600 mb-2">Total Accounts</div>
+                      <div className={`text-xs font-medium flex items-center gap-1 ${getTrendColor(analytics.growth.accounts)}`}>
+                        <TrendingUp className="w-3 h-3" />
+                        {formatPercentage(analytics.growth.accounts)}
                       </div>
                     </div>
-                  </motion.div>
+                    <div className="p-2 bg-blue-50 rounded-lg">
+                      <Building className="w-5 h-5 text-blue-600" />
+                    </div>
+                  </div>
+                </motion.div>
 
-                  <motion.div
-                    whileHover={{ y: -2 }}
-                    className="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-200 border border-gray-100"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <div className="text-2xl font-bold text-purple-600 mb-1">{Math.round(analytics.avgHealthScore)}</div>
-                        <div className="text-sm text-gray-600 mb-2">Avg Health</div>
-                        <div className={`text-xs font-medium flex items-center gap-1 ${getTrendColor(analytics.growth.health)}`}>
-                          <TrendingUp className="w-3 h-3" />
-                          {formatPercentage(Math.abs(analytics.growth.health))}
-                        </div>
-                      </div>
-                      <div className="p-2 bg-purple-50 rounded-lg">
-                        <Target className="w-5 h-5 text-purple-600" />
+                <motion.div
+                  whileHover={{ y: -2 }}
+                  className="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-200 border border-gray-100"
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="text-xl font-bold text-green-600 mb-1">{formatCurrency(analytics.totalRevenue)}</div>
+                      <div className="text-sm text-gray-600 mb-2">Total Revenue</div>
+                      <div className={`text-xs font-medium flex items-center gap-1 ${getTrendColor(analytics.growth.revenue)}`}>
+                        <TrendingUp className="w-3 h-3" />
+                        {formatPercentage(analytics.growth.revenue)}
                       </div>
                     </div>
-                  </motion.div>
+                    <div className="p-2 bg-green-50 rounded-lg">
+                      <DollarSign className="w-5 h-5 text-green-600" />
+                    </div>
+                  </div>
+                </motion.div>
 
-                  <motion.div
-                    whileHover={{ y: -2 }}
-                    className="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-200 border border-gray-100"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <div className="text-2xl font-bold text-orange-600 mb-1">{analytics.totalDeals}</div>
-                        <div className="text-sm text-gray-600 mb-2">Active Deals</div>
-                        <div className={`text-xs font-medium flex items-center gap-1 ${getTrendColor(analytics.growth.deals)}`}>
-                          <TrendingUp className="w-3 h-3" />
-                          {formatPercentage(analytics.growth.deals)}
-                        </div>
-                      </div>
-                      <div className="p-2 bg-orange-50 rounded-lg">
-                        <Zap className="w-5 h-5 text-orange-600" />
+                <motion.div
+                  whileHover={{ y: -2 }}
+                  className="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-200 border border-gray-100"
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="text-2xl font-bold text-purple-600 mb-1">{Math.round(analytics.avgHealthScore)}</div>
+                      <div className="text-sm text-gray-600 mb-2">Avg Health</div>
+                      <div className={`text-xs font-medium flex items-center gap-1 ${getTrendColor(analytics.growth.health)}`}>
+                        <TrendingUp className="w-3 h-3" />
+                        {formatPercentage(Math.abs(analytics.growth.health))}
                       </div>
                     </div>
-                  </motion.div>
+                    <div className="p-2 bg-purple-50 rounded-lg">
+                      <Target className="w-5 h-5 text-purple-600" />
+                    </div>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  whileHover={{ y: -2 }}
+                  className="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-200 border border-gray-100"
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="text-2xl font-bold text-blue-600 mb-1">{analytics.totalDeals}</div>
+                      <div className="text-sm text-gray-600 mb-2">Active Deals</div>
+                      <div className={`text-xs font-medium flex items-center gap-1 ${getTrendColor(analytics.growth.deals)}`}>
+                        <TrendingUp className="w-3 h-3" />
+                        {formatPercentage(analytics.growth.deals)}
+                      </div>
+                    </div>
+                    <div className="p-2 bg-orange-50 rounded-lg">
+                      <Zap className="w-5 h-5 text-orange-600" />
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Additional Analytics Sections */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Account Health Analysis */}
+                <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <Target className="w-5 h-5 text-purple-600" />
+                    Account Health Analysis
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-100">
+                      <span className="text-green-800 font-medium">Excellent (80-100)</span>
+                      <span className="text-2xl font-bold text-green-600">{analytics.healthDistribution.excellent}</span>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border border-yellow-100">
+                      <span className="text-yellow-800 font-medium">Good (60-79)</span>
+                      <span className="text-2xl font-bold text-yellow-600">{analytics.healthDistribution.good}</span>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-100">
+                      <span className="text-red-800 font-medium">At Risk (40-59)</span>
+                      <span className="text-2xl font-bold text-red-600">{analytics.healthDistribution.atRisk}</span>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Detailed Analytics Row */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  
-                  {/* Health Score Analysis */}
-                  <motion.div
-                    whileHover={{ y: -1 }}
-                    className="bg-white rounded-xl p-5 shadow-md hover:shadow-lg transition-all duration-200 border border-gray-100"
-                  >
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                        <Shield className="w-5 h-5 text-green-600" />
-                        Account Health Analysis
-                      </h3>
-                      <div className="text-sm text-gray-500">
-                        {analytics.totalAccounts} total
+                {/* Revenue by Industry */}
+                <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <DollarSign className="w-5 h-5 text-green-600" />
+                    Revenue by Industry
+                  </h3>
+                  <div className="space-y-3">
+                    {analytics.industryBreakdown.slice(0, 3).map((industry, index) => (
+                      <div key={industry.name} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-3 h-3 rounded-full ${index === 0 ? 'bg-blue-500' : index === 1 ? 'bg-purple-500' : 'bg-green-500'}`}></div>
+                          <span className="font-medium text-gray-700">{industry.name}</span>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-bold text-gray-900">{formatCurrency(industry.revenue)}</div>
+                          <div className="text-xs text-gray-500">{industry.accounts} accounts</div>
+                        </div>
                       </div>
-                    </div>
-                    
-                    <div className="space-y-4">
-                      {[
-                        { label: 'Excellent', range: '(80-100)', count: analytics.healthDistribution.excellent, color: 'green', bgColor: 'bg-green-500' },
-                        { label: 'Good', range: '(60-79)', count: analytics.healthDistribution.good, color: 'yellow', bgColor: 'bg-yellow-500' },
-                        { label: 'At Risk', range: '(40-59)', count: analytics.healthDistribution.atRisk, color: 'orange', bgColor: 'bg-orange-500' },
-                        { label: 'Critical', range: '(0-39)', count: analytics.healthDistribution.critical, color: 'red', bgColor: 'bg-red-500' }
-                      ].map((item) => {
-                        const percentage = (item.count / analytics.totalAccounts) * 100;
-                        return (
-                          <div key={item.label} className="space-y-2">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <div className={`w-3 h-3 rounded-full ${item.bgColor}`}></div>
-                                <span className="text-sm font-medium text-gray-700">
-                                  {item.label} {item.range}
-                                </span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <span className="text-sm font-bold text-gray-900">{item.count}</span>
-                                <span className="text-xs text-gray-500">({percentage.toFixed(1)}%)</span>
-                              </div>
-                            </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
-                              <motion.div 
-                                initial={{ width: 0 }}
-                                animate={{ width: `${percentage}%` }}
-                                transition={{ duration: 0.8, delay: 0.2 }}
-                                className={`${item.bgColor} h-2 rounded-full`}
-                              />
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </motion.div>
-
-                  {/* Revenue by Industry */}
-                  <motion.div
-                    whileHover={{ y: -1 }}
-                    className="bg-white rounded-xl p-5 shadow-md hover:shadow-lg transition-all duration-200 border border-gray-100"
-                  >
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                        <TrendingUp className="w-5 h-5 text-blue-600" />
-                        Revenue by Industry
-                      </h3>
-                      <div className="text-sm text-gray-500">
-                        Top performing
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-3">
-                      {Object.entries(analytics.industryStats)
-                        .sort(([,a], [,b]) => b.revenue - a.revenue)
-                        .slice(0, 5)
-                        .map(([industry, stats], index) => {
-                          const maxRevenue = Math.max(...Object.values(analytics.industryStats).map(s => s.revenue));
-                          const percentage = (stats.revenue / maxRevenue) * 100;
-                          
-                          return (
-                            <div key={industry} className="space-y-2">
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                  <div className={`w-3 h-3 rounded-full ${
-                                    index === 0 ? 'bg-blue-500' :
-                                    index === 1 ? 'bg-purple-500' :
-                                    index === 2 ? 'bg-green-500' :
-                                    index === 3 ? 'bg-yellow-500' : 'bg-gray-500'
-                                  }`}></div>
-                                  <span className="text-sm font-medium text-gray-700 capitalize">{industry}</span>
-                                </div>
-                                <div className="text-right">
-                                  <div className="text-sm font-bold text-gray-900">{formatCurrency(stats.revenue)}</div>
-                                  <div className="text-xs text-gray-500">{stats.count} accounts</div>
-                                </div>
-                              </div>
-                              <div className="w-full bg-gray-200 rounded-full h-1.5">
-                                <motion.div 
-                                  initial={{ width: 0 }}
-                                  animate={{ width: `${percentage}%` }}
-                                  transition={{ duration: 0.8, delay: index * 0.1 }}
-                                  className={`h-1.5 rounded-full ${
-                                    index === 0 ? 'bg-blue-500' :
-                                    index === 1 ? 'bg-purple-500' :
-                                    index === 2 ? 'bg-green-500' :
-                                    index === 3 ? 'bg-yellow-500' : 'bg-gray-500'
-                                  }`}
-                                />
-                              </div>
-                            </div>
-                          );
-                        })}
-                    </div>
-                  </motion.div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Right Column - Quick Actions & Insights */}
-              <div className="lg:col-span-4 space-y-4">
-                
-                {/* Account Segments Summary */}
-                <motion.div
-                  whileHover={{ y: -1 }}
-                  className="bg-white rounded-xl p-5 shadow-md hover:shadow-lg transition-all duration-200 border border-gray-100"
-                >
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <Users className="w-5 h-5 text-purple-600" />
-                    Account Segments
-                  </h3>
-                  
-                  <div className="space-y-3">
-                    {Object.entries(analytics.segmentStats)
-                      .sort(([,a], [,b]) => b.revenue - a.revenue)
-                      .map(([segment, stats]) => (
-                        <div key={segment} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
-                          <div className="flex items-center gap-3">
-                            <div className={`w-3 h-3 rounded-full ${
-                              segment === 'enterprise' ? 'bg-yellow-500' :
-                              segment === 'mid_market' ? 'bg-purple-500' :
-                              segment === 'smb' ? 'bg-blue-500' :
-                              segment === 'startup' ? 'bg-green-500' : 'bg-gray-500'
-                            }`}></div>
-                            <div>
-                              <div className="text-sm font-medium text-gray-900 capitalize">
-                                {segment.replace('_', ' ')}
-                              </div>
-                              <div className="text-xs text-gray-500">{stats.count} accounts</div>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-sm font-bold text-gray-900">{formatCurrency(stats.revenue)}</div>
-                            <div className="text-xs text-gray-500">
-                              {formatCurrency(stats.revenue / stats.count)} avg
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                </motion.div>
-
-                {/* AI-Powered Business Insights */}
-                <motion.div
-                  whileHover={{ y: -1 }}
-                  className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-5 border border-blue-100"
-                >
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                    <Brain className="w-5 h-5 text-blue-600" />
-                    AI Business Insights
-                  </h3>
-                  
-                  <div className="space-y-4 text-sm">
-                    {/* Portfolio Health Insight */}
-                    <div className="flex items-start gap-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <div>
-                        <div className="font-medium text-gray-900">Portfolio Health Status</div>
-                        <div className="text-gray-600">
-                          {((analytics.healthDistribution.excellent + analytics.healthDistribution.good) / analytics.totalAccounts * 100).toFixed(1)}% 
-                          of accounts are healthy. 
-                          {analytics.healthDistribution.excellent > analytics.healthDistribution.good ? 
-                            " Excellence-focused strategy is working well." : 
-                            " Focus on moving good accounts to excellent tier."}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Revenue Concentration Analysis */}
-                    <div className="flex items-start gap-2">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <div>
-                        <div className="font-medium text-gray-900">Revenue Concentration</div>
-                        <div className="text-gray-600">
-                          {(() => {
-                            const topIndustryRevenue = Math.max(...Object.values(analytics.industryStats).map(s => s.revenue));
-                            const concentrationPct = (topIndustryRevenue / analytics.totalRevenue * 100).toFixed(1);
-                            return `${concentrationPct}% of revenue comes from your top industry. ${parseFloat(concentrationPct) > 40 ? 'Consider diversification opportunities.' : 'Good industry diversification.'}`;
-                          })()}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Urgent Actions */}
-                    {analytics.healthDistribution.critical > 0 && (
-                      <div className="flex items-start gap-2">
-                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
-                        <div>
-                          <div className="font-medium text-gray-900">Urgent Action Required</div>
-                          <div className="text-gray-600">
-                            {analytics.healthDistribution.critical} accounts are in critical state. 
-                            Immediate intervention needed to prevent churn.
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    
-                    {/* Growth Opportunity */}
-                    {analytics.healthDistribution.atRisk > 0 && (
-                      <div className="flex items-start gap-2">
-                        <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
-                        <div>
-                          <div className="font-medium text-gray-900">Recovery Opportunity</div>
-                          <div className="text-gray-600">
-                            {analytics.healthDistribution.atRisk} at-risk accounts have 
-                            {formatCurrency(Object.values(analytics.segmentStats).reduce((sum, s) => sum + s.revenue, 0) / analytics.totalAccounts)} 
-                            average value. Recovery efforts could yield significant returns.
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    
-                    {/* Performance Trend */}
-                    <div className="flex items-start gap-2">
-                      <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
-                        analytics.growth.revenue > 10 ? 'bg-green-500' :
-                        analytics.growth.revenue > 0 ? 'bg-yellow-500' : 'bg-red-500'
-                      }`}></div>
-                      <div>
-                        <div className="font-medium text-gray-900">Performance Trajectory</div>
-                        <div className="text-gray-600">
-                          {analytics.growth.revenue > 10 ? 
-                            `Strong growth momentum with ${formatPercentage(analytics.growth.revenue)} revenue increase. Scale successful strategies.` :
-                            analytics.growth.revenue > 0 ?
-                            `Moderate growth at ${formatPercentage(analytics.growth.revenue)}. Identify acceleration opportunities.` :
-                            `Revenue decline of ${formatPercentage(Math.abs(analytics.growth.revenue))}. Review retention strategies immediately.`
-                          }
-                        </div>
-                      </div>
+              {/* AI Business Insights */}
+              <div className="mt-6 bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <Brain className="w-5 h-5 text-blue-600" />
+                  AI Business Insights
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 p-3 bg-green-50 rounded-lg border border-green-100">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <div>
+                      <span className="font-medium text-green-900">Portfolio Health Status:</span>
+                      <span className="text-green-700 ml-1">
+                        {Math.round((analytics.healthDistribution.excellent / analytics.totalAccounts) * 100)}% of accounts are healthy. Focus on moving good accounts to excellent tier.
+                      </span>
                     </div>
                   </div>
-                </motion.div>
-
-                {/* Quick Action Recommendations */}
-                <motion.div
-                  whileHover={{ y: -1 }}
-                  className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-100"
-                >
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-amber-600" />
-                    Recommended Actions
-                  </h3>
-                  
-                  <div className="space-y-3 text-sm">
-                    {analytics.healthDistribution.critical > 0 && (
-                      <div className="flex items-center gap-2 p-2 bg-red-50 rounded-lg border border-red-100">
-                        <AlertTriangle className="w-4 h-4 text-red-600 flex-shrink-0" />
-                        <div>
-                          <span className="font-medium text-red-900">Priority:</span>
-                          <span className="text-red-700 ml-1">Schedule urgent calls for {analytics.healthDistribution.critical} critical accounts</span>
-                        </div>
-                      </div>
-                    )}
-                    
-                    {analytics.healthDistribution.atRisk > 2 && (
-                      <div className="flex items-center gap-2 p-2 bg-orange-50 rounded-lg border border-orange-100">
-                        <Target className="w-4 h-4 text-orange-600 flex-shrink-0" />
-                        <div>
-                          <span className="font-medium text-orange-900">Focus:</span>
-                          <span className="text-orange-700 ml-1">Launch retention campaign for {analytics.healthDistribution.atRisk} at-risk accounts</span>
-                        </div>
-                      </div>
-                    )}
-                    
-                    <div className="flex items-center gap-2 p-2 bg-green-50 rounded-lg border border-green-100">
-                      <TrendingUp className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <div>
-                        <span className="font-medium text-green-900">Growth:</span>
-                        <span className="text-green-700 ml-1">Upsell opportunities with {analytics.healthDistribution.excellent} excellent accounts</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 p-2 bg-blue-50 rounded-lg border border-blue-100">
-                      <Users className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                      <div>
-                        <span className="font-medium text-blue-900">Expansion:</span>
-                        <span className="text-blue-700 ml-1">Target similar profiles in top-performing industries</span>
-                      </div>
+                  <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <div>
+                      <span className="font-medium text-blue-900">Revenue Concentration:</span>
+                      <span className="text-blue-700 ml-1">
+                        {Math.round((analytics.industryBreakdown[0]?.revenue || 0) / analytics.totalRevenue * 100)}% of revenue comes from top industry. Good industry diversification.
+                      </span>
                     </div>
                   </div>
-                </motion.div>
+                  {analytics.healthDistribution.atRisk > 0 && (
+                    <div className="flex items-center gap-2 p-3 bg-orange-50 rounded-lg border border-orange-100">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                      <div>
+                        <span className="font-medium text-orange-900">Focus:</span>
+                        <span className="text-orange-700 ml-1">
+                          Launch retention campaign for {analytics.healthDistribution.atRisk} at-risk accounts
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </motion.div>
@@ -840,7 +593,7 @@ const UltimateAccountsModule: React.FC = () => {
       )}
 
       {/* Scrollable Content Area - Positioned below fixed header */}
-      <div className={`absolute left-0 right-0 bottom-0 overflow-y-auto bg-gray-50 transition-all duration-300 ${showDashboard ? 'top-[600px]' : 'top-32'}`}>
+      <div className="absolute left-0 right-0 bottom-0 top-32 overflow-y-auto bg-gray-50">
         <div className="px-6 py-4">
         {filteredAccounts.length === 0 ? (
           <motion.div
