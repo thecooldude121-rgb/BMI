@@ -39,6 +39,7 @@ import BrowserNavFix from './components/BrowserNavFix';
 import AutoNavFix from './components/AutoNavFix';
 import NavigationTest from './components/NavigationTest';
 import DirectNavigationTest from './components/DirectNavigationTest';
+import LinkBasedNavigation from './components/LinkBasedNavigation';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
@@ -98,6 +99,7 @@ const App = () => {
           {/* {import.meta.env.DEV && <BrowserNavFix />} */}
           {import.meta.env.DEV && <NavigationTest />}
           {import.meta.env.DEV && <DirectNavigationTest />}
+          {import.meta.env.DEV && <LinkBasedNavigation />}
         </div>
       </DataProvider>
     </AuthProvider>
