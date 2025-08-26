@@ -1,5 +1,4 @@
-// Legacy Analytics - Replaced with EnterpriseAnalytics
-// Keeping for backward compatibility
+// Clean Analytics component without problematic dependencies
 
 import React from 'react';
 import SimpleAnalytics from './SimpleAnalytics';
