@@ -201,15 +201,15 @@ const WorkingDealsKanban: React.FC = () => {
           <div style={{
             display: 'flex',
             gap: '16px',
-            width: '2240px',
-            minWidth: '2240px'
+            width: '2400px',
+            minWidth: '2400px'
           }}>
             {dealColumns.map((column) => (
               <div 
                 key={column.id} 
                 style={{
-                  width: '280px',
-                  minWidth: '280px',
+                  width: '300px',
+                  minWidth: '300px',
                   backgroundColor: '#f8fafc',
                   borderRadius: '8px',
                   border: '1px solid #e2e8f0',
