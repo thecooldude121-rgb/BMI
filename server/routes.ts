@@ -1674,23 +1674,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { suggestionId, customizations } = req.body;
       
       // Extract activity data from suggestion and create activity
-      const activityData = {
-        subject: customizations.title || 'AI Suggested Activity',
-        type: customizations.type || 'task',
-        priority: customizations.priority || 'medium',
-        status: 'planned' as const,
-        scheduledAt: customizations.scheduledAt || new Date(),
-        duration: customizations.duration || 30,
+      const baseActivityData: any = {
+        subject: customizations?.title || 'AI Suggested Activity',
+        type: customizations?.type || 'task',
+        priority: customizations?.priority || 'medium',
+        status: 'planned',
+        scheduledAt: customizations?.scheduledAt || new Date(),
+        duration: customizations?.duration || 30,
         description: customizations?.description || '',
         assignedTo: req.body.userId || '1',
-        createdBy: req.body.userId || '1',
-        ...(customizations.relatedToType === 'lead' && { leadId: customizations.relatedToId }),
-        ...(customizations.relatedToType === 'deal' && { dealId: customizations.relatedToId }),
-        ...(customizations.relatedToType === 'contact' && { contactId: customizations.relatedToId }),
-        ...(customizations.relatedToType === 'account' && { accountId: customizations.relatedToId }),
+        createdBy: req.body.userId || '1'
       };
 
-      const activity = await storage.createActivity(activityData);
+      // Add related entity IDs conditionally
+      if (customizations?.relatedToType === 'lead') {
+        baseActivityData.leadId = customizations.relatedToId;
+      } else if (customizations?.relatedToType === 'deal') {
+        baseActivityData.dealId = customizations.relatedToId;
+      } else if (customizations?.relatedToType === 'contact') {
+        baseActivityData.contactId = customizations.relatedToId;
+      } else if (customizations?.relatedToType === 'account') {
+        baseActivityData.accountId = customizations.relatedToId;
+      }
+
+      const activity = await storage.createActivity(baseActivityData);
       
       console.log(`✅ Created activity from AI suggestion: ${suggestionId}`);
       res.status(201).json(activity);
