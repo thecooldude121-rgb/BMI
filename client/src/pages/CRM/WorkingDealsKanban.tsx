@@ -69,6 +69,7 @@ const WorkingDealsKanban: React.FC = () => {
           deals: data.filter((deal: any) => deal.stage === stage.id).map((d: any) => d.name)
         }));
         console.log('📊 Stage distribution:', stageDistribution);
+        console.log('🎯 Container will be:', `${DEAL_STAGES.length * 300}px wide for ${DEAL_STAGES.length} stages`);
         
         setDeals(data);
       } catch (err) {
@@ -197,9 +198,10 @@ const WorkingDealsKanban: React.FC = () => {
       </div>
 
       {/* Kanban Board - 8 Columns */}
-      <div className="flex gap-4 overflow-x-auto pb-4">
-        {dealColumns.map((column) => (
-          <div key={column.id} className="bg-gray-50 rounded-lg p-3 min-w-[280px] flex-shrink-0">
+      <div className="overflow-x-auto pb-4">
+        <div className="flex gap-4" style={{ minWidth: `${DEAL_STAGES.length * 300}px` }}>
+          {dealColumns.map((column) => (
+            <div key={column.id} className="bg-gray-50 rounded-lg p-3 w-[280px] flex-shrink-0">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
                 <div className={`w-3 h-3 rounded-full ${column.color}`} />
@@ -222,8 +224,9 @@ const WorkingDealsKanban: React.FC = () => {
                 </div>
               )}
             </div>
-          </div>
-        ))}
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Summary Stats */}
