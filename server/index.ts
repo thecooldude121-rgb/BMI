@@ -7,6 +7,33 @@ const app = express();
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false }));
 
+// Fix CSP and security headers to allow JavaScript events
+app.use((req, res, next) => {
+  // Remove restrictive CSP headers that block JavaScript events
+  res.removeHeader('Content-Security-Policy');
+  res.removeHeader('X-Content-Security-Policy');
+  res.removeHeader('X-WebKit-CSP');
+  
+  // Set permissive CSP for development
+  res.setHeader('Content-Security-Policy', 
+    "default-src 'self' 'unsafe-inline' 'unsafe-eval' *; " +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' *; " +
+    "style-src 'self' 'unsafe-inline' *; " +
+    "img-src 'self' data: *; " +
+    "connect-src 'self' *; " +
+    "font-src 'self' *; " +
+    "object-src 'none'; " +
+    "media-src 'self' *; " +
+    "frame-src 'self' *;"
+  );
+  
+  // Additional security headers to prevent event blocking
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  
+  next();
+});
+
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
