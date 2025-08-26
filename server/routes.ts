@@ -1176,6 +1176,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/deals/kanban-test", async (req, res) => {
+    try {
+      // Return empty array for test route - no API dependency
+      res.json([]);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
   app.get("/api/deals/kanban/activities", async (req, res) => {
     try {
       const activities = await storage.getActivities();
