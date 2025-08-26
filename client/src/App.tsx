@@ -1,3 +1,4 @@
+import React from 'react';
 import { Route, Switch } from 'wouter';
 import { AuthProvider } from './contexts/AuthContext';
 import { DataProvider } from './contexts/DataContext';
@@ -34,6 +35,7 @@ import GamificationModule from './pages/CRM/GamificationModuleNextGen';
 import CompanyDetailPageBMI from './pages/LeadGeneration/CompanyDetailPageBMI';
 import PersonDetails from './components/LeadGeneration/PersonDetails';
 import IndustryTrendIndicator from './components/IndustryTrendIndicator';
+import BrowserNavFix from './components/BrowserNavFix';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
@@ -44,6 +46,14 @@ const MeetingDashboardWrapper = ({ params }: { params: { id: string } }) => <Mee
 
 
 const App = () => {
+  // Debug navigation on app load
+  React.useEffect(() => {
+    // Only run debug in development
+    if (import.meta.env.DEV) {
+      console.log('App loaded successfully - navigation should work normally');
+    }
+  }, []);
+
   return (
     <AuthProvider>
       <DataProvider>
@@ -80,6 +90,7 @@ const App = () => {
               <Route path="/settings" component={Settings} />
             </Switch>
           </main>
+          {import.meta.env.DEV && <BrowserNavFix />}
         </div>
       </DataProvider>
     </AuthProvider>
