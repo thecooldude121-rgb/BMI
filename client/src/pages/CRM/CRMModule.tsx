@@ -27,7 +27,7 @@ const CRMModule = () => {
   console.log('CRMModule rendering');
   
   return (
-    <div className="min-h-screen w-full overflow-auto">
+    <div className="min-h-screen w-full">
 
 
       <Switch>
