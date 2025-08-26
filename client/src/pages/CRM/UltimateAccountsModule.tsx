@@ -263,189 +263,135 @@ const UltimateAccountsModule: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 bg-gray-50 min-h-screen">
-      {/* Header Section */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4 sticky top-16 z-50">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          {/* Title and Stats */}
-          <div className="flex items-center space-x-4">
-            <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg text-white">
-              <Building className="w-6 h-6" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Accounts
-              </h1>
-              <div className="flex items-center mt-1 text-sm text-gray-600">
-                <div className="flex items-center space-x-1">
-                  <Users className="w-4 h-4" />
-                  <span>{filteredAccounts.length} accounts</span>
+    <div className="flex-1 bg-gray-50">
+      {/* Header Section with Integrated Search */}
+      <div className="bg-white border-b border-gray-200 sticky top-16 z-50">
+        {/* Main Header */}
+        <div className="px-6 py-4 border-b border-gray-100">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            {/* Title and Stats */}
+            <div className="flex items-center space-x-4">
+              <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg text-white">
+                <Building className="w-6 h-6" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Accounts
+                </h1>
+                <div className="flex items-center mt-1 text-sm text-gray-600">
+                  <div className="flex items-center space-x-1">
+                    <Users className="w-4 h-4" />
+                    <span>{filteredAccounts.length} accounts</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center space-x-3">
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="w-10 h-10 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl bg-white border border-gray-200 hover:border-gray-300"
-              data-testid="button-filters"
-            >
-              <SlidersHorizontal className="w-4 h-4" />
-            </button>
-
-            {/* View Dropdown */}
-            <div className="relative">
+            {/* Action Buttons */}
+            <div className="flex items-center space-x-3">
               <button
-                onClick={() => setViewDropdownOpen(!viewDropdownOpen)}
-                className="flex items-center px-3 py-2 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-lg hover:shadow-xl transition-all duration-200"
-                data-testid="button-view-dropdown"
+                onClick={() => setShowFilters(!showFilters)}
+                className="w-10 h-10 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl bg-white border border-gray-200 hover:border-gray-300"
+                data-testid="button-filters"
               >
-                {currentView === 'card' ? (
-                  <Grid3X3 className="w-4 h-4" />
-                ) : (
-                  <List className="w-4 h-4" />
-                )}
-                <ChevronDown className="ml-1 h-4 w-4" />
+                <SlidersHorizontal className="w-4 h-4" />
               </button>
 
-              {viewDropdownOpen && (
-                <>
-                  {/* Backdrop */}
-                  <div 
-                    className="fixed inset-0 z-10" 
-                    onClick={() => setViewDropdownOpen(false)}
-                  />
-                  
-                  {/* Dropdown */}
-                  <div className="absolute right-0 z-20 mt-2 w-48 rounded-xl shadow-xl bg-white ring-1 ring-black ring-opacity-5">
-                    <div className="py-1">
-                      <button
-                        onClick={() => {
-                          setCurrentView('card');
-                          setViewDropdownOpen(false);
-                        }}
-                        className={`w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors flex items-center space-x-3 ${
-                          currentView === 'card' ? 'bg-blue-50 text-blue-700' : 'text-gray-900'
-                        }`}
-                        data-testid="option-view-card"
-                      >
-                        <Grid3X3 className="w-4 h-4" />
-                        <span className="text-sm font-medium">Card View</span>
-                      </button>
-                      <button
-                        onClick={() => {
-                          setCurrentView('list');
-                          setViewDropdownOpen(false);
-                        }}
-                        className={`w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors flex items-center space-x-3 ${
-                          currentView === 'list' ? 'bg-blue-50 text-blue-700' : 'text-gray-900'
-                        }`}
-                        data-testid="option-view-list"
-                      >
-                        <List className="w-4 h-4" />
-                        <span className="text-sm font-medium">List View</span>
-                      </button>
+              {/* View Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setViewDropdownOpen(!viewDropdownOpen)}
+                  className="flex items-center px-3 py-2 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-lg hover:shadow-xl transition-all duration-200"
+                  data-testid="button-view-dropdown"
+                >
+                  {currentView === 'card' ? (
+                    <Grid3X3 className="w-4 h-4" />
+                  ) : (
+                    <List className="w-4 h-4" />
+                  )}
+                  <ChevronDown className="ml-1 h-4 w-4" />
+                </button>
+
+                {viewDropdownOpen && (
+                  <>
+                    {/* Backdrop */}
+                    <div 
+                      className="fixed inset-0 z-10" 
+                      onClick={() => setViewDropdownOpen(false)}
+                    />
+                    
+                    {/* Dropdown */}
+                    <div className="absolute right-0 z-20 mt-2 w-48 rounded-xl shadow-xl bg-white ring-1 ring-black ring-opacity-5">
+                      <div className="py-1">
+                        <button
+                          onClick={() => {
+                            setCurrentView('card');
+                            setViewDropdownOpen(false);
+                          }}
+                          className={`w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors flex items-center space-x-3 ${
+                            currentView === 'card' ? 'bg-blue-50 text-blue-700' : 'text-gray-900'
+                          }`}
+                          data-testid="option-view-card"
+                        >
+                          <Grid3X3 className="w-4 h-4" />
+                          <span className="text-sm font-medium">Card View</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            setCurrentView('list');
+                            setViewDropdownOpen(false);
+                          }}
+                          className={`w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors flex items-center space-x-3 ${
+                            currentView === 'list' ? 'bg-blue-50 text-blue-700' : 'text-gray-900'
+                          }`}
+                          data-testid="option-view-list"
+                        >
+                          <List className="w-4 h-4" />
+                          <span className="text-sm font-medium">List View</span>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </>
+                  </>
+                )}
+              </div>
+
+              {/* Show AI Insights button when dashboard is hidden */}
+              {!showDashboard && (
+                <button
+                  onClick={() => setShowDashboard(true)}
+                  className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 bg-gray-100 text-gray-700 hover:bg-gray-200 shadow-lg hover:shadow-xl"
+                  data-testid="button-show-insights"
+                >
+                  <BarChart3 className="w-4 h-4" />
+                  Show Insights
+                </button>
               )}
-            </div>
 
-            {/* Show AI Insights button when dashboard is hidden */}
-            {!showDashboard && (
               <button
-                onClick={() => setShowDashboard(true)}
-                className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 bg-gray-100 text-gray-700 hover:bg-gray-200 shadow-lg hover:shadow-xl"
-                data-testid="button-show-insights"
+                onClick={handleCreateAccount}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105"
+                data-testid="button-create-account"
               >
-                <BarChart3 className="w-4 h-4" />
-                Show Insights
+                <Plus className="w-4 h-4" />
+                Create Account
               </button>
-            )}
-
-            <button
-              onClick={handleCreateAccount}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105"
-              data-testid="button-create-account"
-            >
-              <Plus className="w-4 h-4" />
-              Create Account
-            </button>
+            </div>
           </div>
         </div>
-        
-        {/* Duplicate Management Alert */}
-        {duplicatesData && duplicatesData.totalDuplicateGroups > 0 && (
-          <div className="mt-3 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-3 shadow-lg">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-amber-100 rounded-full">
-                  <AlertCircle className="w-5 h-5 text-amber-600" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-amber-900">
-                    Duplicate Accounts Detected
-                  </h3>
-                  <p className="text-sm text-amber-700">
-                    Found {duplicatesData.totalDuplicateGroups} duplicate groups with {duplicatesData.totalDuplicateAccounts} total duplicate accounts
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => queryClient.invalidateQueries({ queryKey: ['/api/accounts/duplicates'] })}
-                  className="px-3 py-1 text-xs bg-amber-100 text-amber-700 rounded-xl hover:bg-amber-200 transition-all duration-200 flex items-center gap-1 shadow-md hover:shadow-lg transform hover:scale-105"
-                  data-testid="button-refresh-duplicates"
-                >
-                  <RefreshCw className="w-3 h-3" />
-                  Refresh
-                </button>
-                <button
-                  onClick={() => setShowMergeWizard(true)}
-                  className="px-3 py-1 text-xs bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-all duration-200 flex items-center gap-1 shadow-md hover:shadow-lg transform hover:scale-105"
-                  data-testid="button-merge-wizard"
-                >
-                  <GitMerge className="w-3 h-3" />
-                  Merge Wizard
-                </button>
-                <button
-                  onClick={() => cleanupDuplicates.mutate()}
-                  disabled={cleanupDuplicates.isPending}
-                  className="px-3 py-1 text-xs bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-all duration-200 flex items-center gap-1 disabled:opacity-50 shadow-md hover:shadow-lg transform hover:scale-105 disabled:transform-none"
-                  data-testid="button-cleanup-duplicates"
-                >
-                  {cleanupDuplicates.isPending ? (
-                    <>
-                      <RefreshCw className="w-3 h-3 animate-spin" />
-                      Cleaning...
-                    </>
-                  ) : (
-                    <>
-                      <Zap className="w-3 h-3" />
-                      Auto-Cleanup
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
 
-      {/* Search Bar - Moved to immediately follow header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-3 shadow-sm sticky top-20 z-30">
-        <div className="relative max-w-xl">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-          <input
-            type="text"
-            placeholder="Search accounts..."
-            value={filters.searchTerm}
-            onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 shadow-md hover:shadow-lg bg-white"
-            data-testid="input-search"
-          />
+        {/* Search Bar - Integrated within header container */}
+        <div className="px-6 py-3">
+          <div className="relative max-w-xl">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Search accounts..."
+              value={filters.searchTerm}
+              onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 shadow-md hover:shadow-lg bg-white"
+              data-testid="input-search"
+            />
+          </div>
         </div>
       </div>
 
