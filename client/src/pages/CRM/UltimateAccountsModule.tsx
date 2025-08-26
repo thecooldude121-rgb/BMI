@@ -263,7 +263,7 @@ const UltimateAccountsModule: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 bg-gray-50">
+    <div className="flex-1 bg-gray-50 min-h-screen">
       {/* Header Section */}
       <div className="bg-white border-b border-gray-200 px-6 py-4 sticky top-16 z-50">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -434,11 +434,26 @@ const UltimateAccountsModule: React.FC = () => {
         )}
       </div>
 
+      {/* Search Bar - Moved to immediately follow header */}
+      <div className="bg-white border-b border-gray-200 px-6 py-3 shadow-sm sticky top-20 z-30">
+        <div className="relative max-w-xl">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <input
+            type="text"
+            placeholder="Search accounts..."
+            value={filters.searchTerm}
+            onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 shadow-md hover:shadow-lg bg-white"
+            data-testid="input-search"
+          />
+        </div>
+      </div>
+
       {/* Analytics Content Container - Only show when dashboard is enabled */}
       {showDashboard && (
-        <div className="bg-white">
+        <div className="bg-white border-b border-gray-200">
           {/* Compact Analytics Header */}
-          <div className="bg-white border-b border-gray-200 px-6 py-3 shadow-sm sticky top-24 z-40">
+          <div className="px-6 py-3 sticky top-24 z-40">
             <div className="flex items-center justify-between">
               {/* Compact Analytics Summary */}
               <div className="flex items-center gap-8">
@@ -877,21 +892,6 @@ const UltimateAccountsModule: React.FC = () => {
           </motion.div>
         </div>
       )}
-
-      {/* Search Bar */}
-      <div className={`bg-white border-b border-gray-200 px-6 py-3 shadow-sm sticky z-30 ${showDashboard ? 'top-24' : 'top-16'}`}>
-        <div className="relative max-w-xl">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-          <input
-            type="text"
-            placeholder="Search accounts..."
-            value={filters.searchTerm}
-            onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 shadow-md hover:shadow-lg bg-white"
-            data-testid="input-search"
-          />
-        </div>
-      </div>
 
       {/* Accounts Grid */}
       <div className="px-6 py-4">
