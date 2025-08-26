@@ -353,6 +353,18 @@ const UltimateAccountsModule: React.FC = () => {
               )}
             </div>
 
+            {/* Show AI Insights button when dashboard is hidden */}
+            {!showDashboard && (
+              <button
+                onClick={() => setShowDashboard(true)}
+                className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 bg-gray-100 text-gray-700 hover:bg-gray-200 shadow-lg hover:shadow-xl"
+                data-testid="button-show-insights"
+              >
+                <BarChart3 className="w-4 h-4" />
+                Show Insights
+              </button>
+            )}
+
             <button
               onClick={handleCreateAccount}
               className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105"
@@ -422,69 +434,62 @@ const UltimateAccountsModule: React.FC = () => {
         )}
       </div>
 
-      {/* Analytics Content Container */}
-      <div className="bg-white">
-        
-        {/* Compact Analytics Header */}
-        <div className="bg-white border-b border-gray-200 px-6 py-3 shadow-sm sticky top-24 z-40">
-          <div className="flex items-center justify-between">
-            {/* Compact Analytics Summary */}
-            <div className="flex items-center gap-8">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-sm font-medium text-gray-700">Live Analytics</span>
+      {/* Analytics Content Container - Only show when dashboard is enabled */}
+      {showDashboard && (
+        <div className="bg-white">
+          {/* Compact Analytics Header */}
+          <div className="bg-white border-b border-gray-200 px-6 py-3 shadow-sm sticky top-24 z-40">
+            <div className="flex items-center justify-between">
+              {/* Compact Analytics Summary */}
+              <div className="flex items-center gap-8">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-sm font-medium text-gray-700">Live Analytics</span>
+                </div>
+                
+                {/* Compact KPIs */}
+                <div className="hidden lg:flex items-center gap-6">
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-gray-900">{analytics.totalAccounts}</div>
+                    <div className="text-xs text-gray-600">Accounts</div>
+                  </div>
+                  <div className="w-px h-8 bg-gray-200"></div>
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-green-600">{formatCurrency(analytics.totalRevenue)}</div>
+                    <div className="text-xs text-gray-600">Revenue</div>
+                  </div>
+                  <div className="w-px h-8 bg-gray-200"></div>
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-purple-600">{Math.round(analytics.avgHealthScore)}</div>
+                    <div className="text-xs text-gray-600">Avg Health</div>
+                  </div>
+                  <div className="w-px h-8 bg-gray-200"></div>
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-blue-600">{analytics.totalDeals}</div>
+                    <div className="text-xs text-gray-600">Active Deals</div>
+                  </div>
+                </div>
               </div>
-              
-              {/* Compact KPIs */}
-              <div className="hidden lg:flex items-center gap-6">
-                <div className="text-center">
-                  <div className="text-lg font-bold text-gray-900">{analytics.totalAccounts}</div>
-                  <div className="text-xs text-gray-600">Accounts</div>
-                </div>
-                <div className="w-px h-8 bg-gray-200"></div>
-                <div className="text-center">
-                  <div className="text-lg font-bold text-green-600">{formatCurrency(analytics.totalRevenue)}</div>
-                  <div className="text-xs text-gray-600">Revenue</div>
-                </div>
-                <div className="w-px h-8 bg-gray-200"></div>
-                <div className="text-center">
-                  <div className="text-lg font-bold text-purple-600">{Math.round(analytics.avgHealthScore)}</div>
-                  <div className="text-xs text-gray-600">Avg Health</div>
-                </div>
-                <div className="w-px h-8 bg-gray-200"></div>
-                <div className="text-center">
-                  <div className="text-lg font-bold text-blue-600">{analytics.totalDeals}</div>
-                  <div className="text-xs text-gray-600">Active Deals</div>
-                </div>
-              </div>
-            </div>
 
-            {/* Dashboard Toggle & Insights */}
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setShowDashboard(!showDashboard)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
-                  showDashboard 
-                    ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                <BarChart3 className="w-4 h-4" />
-                {showDashboard ? 'Hide Insights' : 'Show Insights'}
-              </button>
+              {/* Dashboard Toggle & Insights */}
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setShowDashboard(!showDashboard)}
+                  className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 bg-blue-100 text-blue-700 hover:bg-blue-200"
+                >
+                  <BarChart3 className="w-4 h-4" />
+                  Hide Insights
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Enhanced Dashboard Insights Panel */}
-        <AnimatePresence>
-          {showDashboard && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="bg-gradient-to-br from-slate-50 via-white to-blue-50 border-b border-gray-200 px-6 py-6 shadow-lg"
-            >
+          {/* Enhanced Dashboard Insights Panel */}
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            className="bg-gradient-to-br from-slate-50 via-white to-blue-50 border-b border-gray-200 px-6 py-6 shadow-lg"
+          >
             {/* Advanced Insights Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               
@@ -870,10 +875,8 @@ const UltimateAccountsModule: React.FC = () => {
               </div>
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
-      
-      </div>
+        </div>
+      )}
 
       {/* Search Bar */}
       <div className="bg-white border-b border-gray-200 px-6 py-3 shadow-sm sticky top-28 z-30">
