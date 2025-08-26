@@ -60,6 +60,16 @@ const WorkingDealsKanban: React.FC = () => {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
         console.log('✅ Deals loaded for Kanban:', data.length);
+        
+        // Debug: Log stage distribution
+        const stageDistribution = DEAL_STAGES.map(stage => ({
+          stage: stage.id,
+          title: stage.title,
+          count: data.filter((deal: any) => deal.stage === stage.id).length,
+          deals: data.filter((deal: any) => deal.stage === stage.id).map((d: any) => d.name)
+        }));
+        console.log('📊 Stage distribution:', stageDistribution);
+        
         setDeals(data);
       } catch (err) {
         console.error('❌ Error:', err);
@@ -97,11 +107,14 @@ const WorkingDealsKanban: React.FC = () => {
     );
   }
 
-  // Group deals by stage
+  // Group deals by stage - ensure all 8 stages are included
   const dealColumns = DEAL_STAGES.map(stage => ({
     ...stage,
     deals: deals.filter(deal => deal.stage === stage.id)
   }));
+  
+  // Debug: Log which stages have deals
+  console.log('🎯 Deal columns:', dealColumns.map(col => `${col.title}: ${col.deals.length} deals`));
 
   const renderDealCard = (deal: Deal) => (
     <div key={deal.id} className="mb-3 bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
