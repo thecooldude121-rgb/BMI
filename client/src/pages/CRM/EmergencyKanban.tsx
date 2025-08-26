@@ -73,13 +73,13 @@ const EmergencyKanban: React.FC = () => {
   const boardStyle = {
     display: 'flex',
     gap: '16px',
-    width: '2240px', // 8 columns * 280px each
-    minWidth: '2240px'
+    width: '2400px', // 8 columns * 300px each
+    minWidth: '2400px'
   };
 
   const columnStyle = {
-    width: '280px',
-    minWidth: '280px',
+    width: '300px',
+    minWidth: '300px',
     backgroundColor: '#f8fafc',
     borderRadius: '8px',
     border: '1px solid #e2e8f0',
