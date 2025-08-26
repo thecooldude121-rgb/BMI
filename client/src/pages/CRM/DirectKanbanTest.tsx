@@ -26,15 +26,19 @@ const DirectKanbanTest: React.FC = () => {
       </div>
       
       <div style={{ 
-        display: 'flex',
-        gap: '20px',
-        overflowX: 'scroll',
-        overflowY: 'hidden',
-        paddingBottom: '20px',
-        minHeight: '500px',
         width: '100%',
-        scrollbarWidth: 'thin'
+        overflowX: 'auto',
+        border: '2px solid white',
+        borderRadius: '12px',
+        backgroundColor: 'rgba(255,255,255,0.1)'
       }}>
+        <div style={{
+          display: 'flex',
+          gap: '20px',
+          padding: '20px',
+          width: 'calc(8 * 300px + 7 * 20px)',
+          minWidth: 'calc(8 * 300px + 7 * 20px)'
+        }}>
         {/* All 8 Stages */}
         {[
           { name: 'Discovery', color: '#3B82F6', deals: ['AWS Migration - $500K'] },
@@ -51,8 +55,8 @@ const DirectKanbanTest: React.FC = () => {
             borderRadius: '12px',
             padding: '20px',
             minHeight: '400px',
-            minWidth: '280px',
-            width: '280px',
+            minWidth: '300px',
+            width: '300px',
             flexShrink: 0,
             boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
             border: '1px solid rgba(255,255,255,0.2)'
@@ -96,6 +100,7 @@ const DirectKanbanTest: React.FC = () => {
             ))}
           </div>
         ))}
+        </div>
       </div>
       
       <div style={{ 
