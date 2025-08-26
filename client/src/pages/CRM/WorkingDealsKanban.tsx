@@ -48,7 +48,7 @@ const DEAL_HEALTH_COLORS = {
 };
 
 const WorkingDealsKanban: React.FC = () => {
-  console.log('WorkingDealsKanban component rendering');
+  console.log('WorkingDealsKanban component rendering - URL:', window.location.pathname);
   const [deals, setDeals] = useState<Deal[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -72,12 +72,13 @@ const WorkingDealsKanban: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="p-6">
+      <div className="p-6 bg-gray-50 min-h-screen">
+        <h1 className="text-3xl font-bold text-gray-900 mb-6">🎯 Loading Deals Kanban...</h1>
         <div className="animate-pulse space-y-4">
           <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-          <div className="flex gap-4">
+          <div className="flex gap-4 overflow-x-auto">
             {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-              <div key={i} className="w-72 h-96 bg-gray-200 rounded"></div>
+              <div key={i} className="w-72 h-96 bg-gray-200 rounded flex-shrink-0"></div>
             ))}
           </div>
         </div>

@@ -24,7 +24,7 @@ import GamificationModule from './GamificationModuleNextGen';
 import WorkingDealsKanban from './WorkingDealsKanban';
 
 const CRMModule = () => {
-  console.log('CRMModule rendering');
+  console.log('CRMModule rendering - URL:', window.location.pathname);
   
   return (
     <div className="min-h-screen w-full bg-white">
