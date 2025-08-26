@@ -470,8 +470,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Account Enrichment routes
   app.get("/api/accounts/:id/enrichment", async (req, res) => {
     try {
-      const enrichment = await storage.getAccountEnrichment(req.params.id);
-      res.json(enrichment);
+      const { enhancedAccountLeadGenSync } = await import('./enhanced-account-leadgen-sync');
+      const syncData = await enhancedAccountLeadGenSync.syncAccountWithLeadGen(req.params.id);
+      
+      // Return comprehensive enrichment data with real CRM metrics
+      const enrichmentData = {
+        // Lead Generation Data
+        industry: syncData.industry,
+        employeeCount: syncData.employeeCount,
+        annualRevenue: syncData.annualRevenue,
+        location: syncData.location,
+        founded: syncData.founded,
+        technologies: syncData.technologies,
+        executives: syncData.executives,
+        description: syncData.description,
+        
+        // Real CRM Metrics
+        crmMetrics: syncData.crmMetrics,
+        deals: syncData.deals,
+        activities: syncData.activities,
+        contacts: syncData.contacts,
+        
+        // Enrichment Quality
+        healthScore: syncData.crmMetrics.accountHealthScore,
+        lastSynced: syncData.lastSynced
+      };
+
+      res.json(enrichmentData);
     } catch (error) {
       handleError(error, res);
     }
@@ -3925,23 +3950,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/accounts/:id/sync-to-leadgen", async (req, res) => {
     try {
-      const { accountLeadGenSyncService } = await import('./account-leadgen-sync');
-      await accountLeadGenSyncService.syncAccountToLeadGen(req.params.id);
-      res.json({ success: true, message: "Account synced to LeadGen successfully" });
+      const { enhancedAccountLeadGenSync } = await import('./enhanced-account-leadgen-sync');
+      const syncData = await enhancedAccountLeadGenSync.syncAccountWithLeadGen(req.params.id);
+      res.json({ 
+        success: true, 
+        message: `Account synced with ${syncData.crmMetrics.totalDeals} deals and ${syncData.crmMetrics.activityCount} activities`,
+        data: syncData
+      });
     } catch (error) {
-      console.error("Account to LeadGen sync error:", error);
+      console.error("Enhanced Account to LeadGen sync error:", error);
       handleError(error, res);
     }
   });
 
   app.post("/api/accounts/:id/sync-from-leadgen", async (req, res) => {
     try {
-      const { accountLeadGenSyncService } = await import('./account-leadgen-sync');
-      const { leadGenData } = req.body;
-      await accountLeadGenSyncService.syncLeadGenToAccount(req.params.id, leadGenData);
-      res.json({ success: true, message: "LeadGen data synced to Account successfully" });
+      const { enhancedAccountLeadGenSync } = await import('./enhanced-account-leadgen-sync');
+      const syncData = await enhancedAccountLeadGenSync.syncAccountWithLeadGen(req.params.id);
+      res.json({ 
+        success: true, 
+        message: "Bidirectional sync completed with real CRM data",
+        data: syncData
+      });
     } catch (error) {
-      console.error("LeadGen to Account sync error:", error);
+      console.error("Enhanced LeadGen bidirectional sync error:", error);
       handleError(error, res);
     }
   });
