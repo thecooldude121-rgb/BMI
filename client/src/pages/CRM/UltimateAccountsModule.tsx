@@ -263,9 +263,9 @@ const UltimateAccountsModule: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 h-full flex flex-col bg-gray-50">
+    <div className="absolute inset-0 top-16 bg-gray-50">
       {/* Fixed Header Section */}
-      <div className="bg-white border-b border-gray-200 sticky top-16 z-50 flex-shrink-0">
+      <div className="bg-white border-b border-gray-200 absolute top-0 left-0 right-0 z-50">
         {/* Main Header */}
         <div className="px-6 py-4 border-b border-gray-100">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -839,8 +839,8 @@ const UltimateAccountsModule: React.FC = () => {
         </div>
       )}
 
-      {/* Scrollable Content Area */}
-      <div className="flex-1 overflow-y-auto">
+      {/* Scrollable Content Area - Positioned below fixed header */}
+      <div className="absolute top-32 left-0 right-0 bottom-0 overflow-y-auto bg-gray-50">
         <div className="px-6 py-4">
         {filteredAccounts.length === 0 ? (
           <motion.div
