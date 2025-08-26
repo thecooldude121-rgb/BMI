@@ -265,7 +265,7 @@ const UltimateAccountsModule: React.FC = () => {
   return (
     <div className="flex-1 bg-gray-50 -mt-px">
       {/* Header Section with Integrated Search */}
-      <div className="bg-white border-b border-gray-200 -mb-px">
+      <div className="bg-white border-b border-gray-200 sticky top-16 z-50 -mb-px">
         {/* Main Header */}
         <div className="px-6 py-4 border-b border-gray-100">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -399,7 +399,7 @@ const UltimateAccountsModule: React.FC = () => {
       {showDashboard && (
         <div className="bg-white border-b border-gray-200">
           {/* Compact Analytics Header */}
-          <div className="px-6 py-3 sticky top-24 z-40">
+          <div className="px-6 py-3">
             <div className="flex items-center justify-between">
               {/* Compact Analytics Summary */}
               <div className="flex items-center gap-8">
@@ -839,8 +839,8 @@ const UltimateAccountsModule: React.FC = () => {
         </div>
       )}
 
-      {/* Accounts Grid */}
-      <div className="px-6 pt-0 pb-4">
+      {/* Accounts Grid - Fixed/Frozen Position */}
+      <div className="px-6 pt-0 pb-4 sticky top-32 z-40 bg-gray-50 min-h-screen">
         {filteredAccounts.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
