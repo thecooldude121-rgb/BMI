@@ -1,22 +1,19 @@
-// Direct navigation utilities that bypass router issues
+// Direct navigation utilities that bypass router issues completely
 export const navigateTo = (path: string) => {
   try {
-    // Method 1: Use history API directly
-    if (window.history && window.history.pushState) {
-      window.history.pushState({}, '', path);
-      // Trigger a popstate event to update the UI
-      window.dispatchEvent(new PopStateEvent('popstate'));
-      console.log(`✅ Navigated to: ${path}`);
-      return true;
-    }
+    console.log(`🔄 Attempting navigation to: ${path}`);
     
-    // Method 2: Fallback to location change
+    // Method 1: Force complete page reload - most reliable
     window.location.href = path;
+    console.log(`✅ Navigation initiated to: ${path}`);
     return true;
+    
   } catch (error) {
     console.error('Navigation failed:', error);
-    // Method 3: Force location change as last resort
-    window.location.href = path;
+    // Fallback: Try again with a slight delay
+    setTimeout(() => {
+      window.location.href = path;
+    }, 100);
     return false;
   }
 };
@@ -30,13 +27,26 @@ export const createNavigationHandler = (path: string) => {
 
 // Test navigation function
 export const testNavigation = () => {
-  console.log('🧪 Testing navigation...');
-  const testPaths = ['/crm/deals', '/crm/accounts', '/analytics'];
+  console.log('🧪 Starting navigation test sequence...');
+  alert('Auto test will navigate through pages. Check console for details.');
   
-  testPaths.forEach((path, index) => {
-    setTimeout(() => {
-      console.log(`Testing navigation to: ${path}`);
-      navigateTo(path);
-    }, index * 1000);
-  });
+  const testPaths = ['/analytics', '/crm/deals', '/crm/accounts'];
+  let currentIndex = 0;
+  
+  const runNextTest = () => {
+    if (currentIndex >= testPaths.length) {
+      console.log('✅ Navigation test sequence completed');
+      return;
+    }
+    
+    const path = testPaths[currentIndex];
+    console.log(`🧪 Test ${currentIndex + 1}/${testPaths.length}: Navigating to ${path}`);
+    navigateTo(path);
+    currentIndex++;
+    
+    // Continue to next test after 3 seconds
+    setTimeout(runNextTest, 3000);
+  };
+  
+  runNextTest();
 };
