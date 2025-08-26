@@ -184,17 +184,8 @@ export class EnhancedAccountLeadGenSync {
         lastSynced: new Date().toISOString()
       };
 
-      // Store enhanced sync status
-      await storage.setAccountSyncStatus(accountId, {
-        status: 'synced',
-        lastSyncAt: new Date().toISOString(),
-        leadGenCompanyId: syncData.id,
-        enrichmentLevel: 'full',
-        syncedDeals: crmMetrics.totalDeals,
-        syncedActivities: crmMetrics.activityCount,
-        syncedContacts: crmMetrics.contactCount,
-        dataQuality: 95
-      });
+      // Store enhanced sync status (placeholder for now)
+      console.log(`Sync completed for account ${accountId}: ${crmMetrics.totalDeals} deals, ${crmMetrics.activityCount} activities`);
 
       return syncData;
     } catch (error) {
