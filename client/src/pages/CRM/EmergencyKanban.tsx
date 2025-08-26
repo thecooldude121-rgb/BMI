@@ -8,8 +8,8 @@ const EmergencyKanban: React.FC = () => {
     { id: '3', name: 'Google Workspace', stage: 'qualification', value: '$300K' },
     { id: '4', name: 'Microsoft Teams', stage: 'proposal', value: '$400K' },
     { id: '5', name: 'Salesforce Integration', stage: 'proposal', value: '$200K' },
-    { id: '6', name: 'Oracle Database', stage: 'demo', value: '$600K' },
-    { id: '7', name: 'Adobe Creative Suite', stage: 'trial', value: '$150K' },
+    { id: '6', name: 'Oracle Database', stage: 'negotiation', value: '$600K' },
+    { id: '7', name: 'Adobe Creative Suite', stage: 'proposal', value: '$150K' },
     { id: '8', name: 'Netflix Enterprise', stage: 'negotiation', value: '$1.2M' },
     { id: '9', name: 'Meta Business Suite', stage: 'closed-won', value: '$800K' },
     { id: '10', name: 'Tesla Energy', stage: 'closed-lost', value: '$2M' }
@@ -19,8 +19,6 @@ const EmergencyKanban: React.FC = () => {
     { id: 'discovery', title: 'Discovery', color: '#3B82F6' },
     { id: 'qualification', title: 'Qualification', color: '#8B5CF6' },
     { id: 'proposal', title: 'Proposal', color: '#F59E0B' },
-    { id: 'demo', title: 'Demo', color: '#6366F1' },
-    { id: 'trial', title: 'Trial', color: '#14B8A6' },
     { id: 'negotiation', title: 'Negotiation', color: '#F97316' },
     { id: 'closed-won', title: 'Closed Won', color: '#10B981' },
     { id: 'closed-lost', title: 'Closed Lost', color: '#EF4444' }
@@ -73,8 +71,8 @@ const EmergencyKanban: React.FC = () => {
   const boardStyle = {
     display: 'flex',
     gap: '16px',
-    width: '2400px', // 8 columns * 300px each
-    minWidth: '2400px'
+    width: '1800px', // 6 columns * 300px each
+    minWidth: '1800px'
   };
 
   const columnStyle = {
@@ -125,7 +123,7 @@ const EmergencyKanban: React.FC = () => {
       <div style={headerStyle}>
         <h1 style={titleStyle}>Emergency Kanban Board</h1>
         <p style={subtitleStyle}>
-          Working version • {deals.length} deals • All 8 stages
+          Working version • {deals.length} deals • 6 stages (Demo/Trial removed)
         </p>
       </div>
 
@@ -186,7 +184,7 @@ const EmergencyKanban: React.FC = () => {
       }}>
         <h3 style={{ margin: '0 0 8px 0', color: '#0c4a6e' }}>Success Indicators:</h3>
         <p style={{ margin: 0, color: '#0c4a6e', fontSize: '0.9rem' }}>
-          ✓ Can scroll horizontally to see all 8 stages | ✓ Hover effects work on cards | ✓ Console logs interactions
+          ✓ Can scroll horizontally to see all 6 stages | ✓ Hover effects work on cards | ✓ Console logs interactions
         </p>
       </div>
     </div>
