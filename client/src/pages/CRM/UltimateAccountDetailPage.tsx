@@ -354,6 +354,16 @@ const UltimateAccountDetailPage: React.FC<{ params: { id: string } }> = ({ param
   // Helper Functions
   const formatCurrency = (amount: number | undefined): string => {
     if (!amount) return 'N/A';
+    
+    // Format large numbers with abbreviations like the Employees dashboard
+    if (amount >= 1000000000) {
+      return `$${(amount / 1000000000).toFixed(1)}B`;
+    } else if (amount >= 1000000) {
+      return `$${(amount / 1000000).toFixed(1)}M`;
+    } else if (amount >= 1000) {
+      return `$${(amount / 1000).toFixed(1)}K`;
+    }
+    
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
