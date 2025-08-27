@@ -1330,7 +1330,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       
       const totalActivities = activities.length;
-      const openActivities = activities.filter(a => a.status === 'planned' || a.status === 'in_progress').length;
+      const openActivities = activities.filter(a => a.status === 'planned' || a.status === 'in_progress' || a.status === 'open').length;
       
       // Safe date parsing for completedToday
       const completedToday = activities.filter(a => {
