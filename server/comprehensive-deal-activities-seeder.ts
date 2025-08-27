@@ -33,6 +33,14 @@ const ACTIVITY_TEMPLATES: Record<string, DealActivityTemplate[]> = {
       priority: 'high',
       outcome: 'successful',
       duration: 35
+    },
+    {
+      type: 'call',
+      subject: 'Contract Negotiation Call',
+      description: 'Scheduled call to discuss contract terms, pricing structure, and implementation timeline. Key stakeholders from both legal and technical teams will be present.',
+      status: 'open',
+      priority: 'high',
+      duration: 60
     }
   ],
   'meeting': [
@@ -53,6 +61,14 @@ const ACTIVITY_TEMPLATES: Record<string, DealActivityTemplate[]> = {
       priority: 'high',
       outcome: 'successful',
       duration: 50
+    },
+    {
+      type: 'meeting',
+      subject: 'Final Approval Meeting',
+      description: 'Executive meeting to finalize deal terms and secure final approval from C-level executives. Will present comprehensive implementation roadmap and expected outcomes.',
+      status: 'open',
+      priority: 'high',
+      duration: 90
     }
   ],
   'task': [
@@ -69,6 +85,13 @@ const ACTIVITY_TEMPLATES: Record<string, DealActivityTemplate[]> = {
       description: 'Schedule and coordinate technical architecture review with client\'s IT team. Prepare technical documentation and integration specifications.',
       status: 'completed',
       priority: 'medium'
+    },
+    {
+      type: 'task',
+      subject: 'Finalize Contract Documentation',
+      description: 'Review and finalize all contract documentation, including terms of service, SLA agreements, and implementation milestones. Coordinate with legal team for approval.',
+      status: 'open',
+      priority: 'high'
     }
   ],
   'note': [
@@ -85,6 +108,13 @@ const ACTIVITY_TEMPLATES: Record<string, DealActivityTemplate[]> = {
       description: 'Client is also evaluating Salesforce and HubSpot. Our key differentiators: superior AI capabilities, better pricing structure, and faster implementation timeline. Need to emphasize these points in final presentation.',
       status: 'completed',
       priority: 'high'
+    },
+    {
+      type: 'note',
+      subject: 'Pre-Closing Strategy Notes',
+      description: 'Strategic notes for final deal closure: Focus on long-term partnership value, emphasize proven ROI from similar implementations, and address any remaining technical concerns. Decision makers are fully aligned.',
+      status: 'completed',
+      priority: 'medium'
     }
   ]
 };
@@ -107,7 +137,7 @@ export async function seedDealActivities() {
       
       let activityCount = 0;
       
-      // Create 2 activities of each type (call, meeting, task, note) for each deal
+      // Create 2 completed activities of each type (call, meeting, task, note) for each deal
       for (const [activityType, templates] of Object.entries(ACTIVITY_TEMPLATES)) {
         for (let i = 0; i < 2; i++) {
           const template = templates[i % templates.length];
@@ -143,6 +173,41 @@ export async function seedDealActivities() {
             console.log(`✅ Created ${template.type}: ${template.subject} for ${deal.name}`);
           } catch (error) {
             console.log(`⚠️ Activity might already exist or failed to create: ${template.subject}`);
+          }
+        }
+        
+        // Create 1 upcoming activity of each type (scheduled 15 days in future)
+        if (templates.length >= 3) { // Use the third template for upcoming activities
+          const upcomingTemplate = templates[2];
+          const futureDate = new Date(now.getTime() + (15 * 24 * 60 * 60 * 1000)); // 15 days from now
+          
+          const upcomingActivityData = {
+            subject: `${upcomingTemplate.subject} (${deal.name})`,
+            type: upcomingTemplate.type,
+            description: upcomingTemplate.description,
+            status: upcomingTemplate.status,
+            priority: upcomingTemplate.priority,
+            outcome: upcomingTemplate.outcome,
+            duration: upcomingTemplate.duration,
+            relatedToType: 'deal' as const,
+            relatedToId: deal.id,
+            dealId: deal.id,
+            accountId: deal.accountId,
+            assignedTo: 'f310c13c-3edf-4f46-a6ec-46503ed02377', // Default user
+            createdBy: 'f310c13c-3edf-4f46-a6ec-46503ed02377',
+            scheduledAt: futureDate,
+            completedAt: null, // Upcoming activity is not completed
+            source: 'CRM' as const // Track source for sync
+          };
+          
+          try {
+            await db.insert(schema.activities).values(upcomingActivityData);
+            activityCount++;
+            totalActivitiesCreated++;
+            
+            console.log(`📅 Created upcoming ${upcomingTemplate.type}: ${upcomingTemplate.subject} for ${deal.name} (scheduled: ${futureDate.toDateString()})`);
+          } catch (error) {
+            console.log(`⚠️ Upcoming activity might already exist or failed to create: ${upcomingTemplate.subject}`);
           }
         }
       }
