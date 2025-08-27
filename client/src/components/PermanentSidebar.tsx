@@ -33,7 +33,7 @@ const PermanentSidebar = () => {
   };
 
   return (
-    <div className="fixed left-0 top-14 bottom-0 w-64 bg-white/95 backdrop-blur-sm border-r border-gray-200 shadow-lg z-40 overflow-y-auto">
+    <div className="fixed left-0 top-16 bottom-0 w-64 bg-white/95 backdrop-blur-sm border-r border-gray-200 shadow-lg z-40 overflow-y-auto">
       <div className="p-4">
         <h2 className="text-lg font-semibold text-gray-800 mb-4">Navigation</h2>
         

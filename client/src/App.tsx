@@ -42,6 +42,7 @@ import NavigationFix from './components/NavigationFix';
 import ClickableNavigation from './components/ClickableNavigation';
 import FixedSidebar from './components/FixedSidebar';
 import DirectURLNavigation from './components/DirectURLNavigation';
+import SimpleErrorBoundary from './components/SimpleErrorBoundary';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
@@ -61,12 +62,13 @@ const App = () => {
   }, []);
 
   return (
-    <AuthProvider>
-      <DataProvider>
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-          <Header />
-          <PermanentSidebar />
-          <main className="pt-16 pl-64 pr-4 pb-8 min-h-screen">
+    <SimpleErrorBoundary>
+      <AuthProvider>
+        <DataProvider>
+          <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+            <Header />
+            <PermanentSidebar />
+            <main className="pt-16 pl-64 pr-4 pb-8 min-h-screen">
             <Switch>
               <Route path="/login" component={Login} />
               <Route path="/" component={Analytics} />
@@ -97,11 +99,12 @@ const App = () => {
               <Route path="/settings" component={Settings} />
             </Switch>
           </main>
-          {/* Native HTML form navigation - bypasses all restrictions */}
-          <DirectURLNavigation />
-        </div>
-      </DataProvider>
-    </AuthProvider>
+            {/* Native HTML form navigation - bypasses all restrictions */}
+            <DirectURLNavigation />
+          </div>
+        </DataProvider>
+      </AuthProvider>
+    </SimpleErrorBoundary>
   );
 };
 
