@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Force header dropdown above all content */
+.header-dropdown-force-top {
+  z-index: 2147483647 !important;
+  position: absolute !important;
+  isolation: isolate !important;
+  transform: translateZ(0) !important;
+  will-change: transform !important;
+}
+
 /* Custom animations for enhanced Deal Progress Bar */
 @keyframes fadeIn {
   from {
