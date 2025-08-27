@@ -1264,6 +1264,11 @@ export const insertActivitySchema = createInsertSchema(activities).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  scheduledAt: z.coerce.date().optional(),
+  completedAt: z.coerce.date().optional(),
+  dueDate: z.coerce.date().optional(),
+  lastReminderAt: z.coerce.date().optional()
 });
 
 export const insertMeetingSchema = createInsertSchema(meetings).omit({
