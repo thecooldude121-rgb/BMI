@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import { useLocation, Link } from 'wouter';
 import { navigateTo, createNavigationHandler } from '../../utils/navigation';
 import { 
@@ -22,6 +23,9 @@ const Header: React.FC = () => {
   const moreMenuRef = useRef<HTMLDivElement>(null);
   const moreButtonRef = useRef<HTMLButtonElement>(null);
   const [moreMenuPosition, setMoreMenuPosition] = useState({ top: 0, left: 0 });
+  const appMenuRef = useRef<HTMLDivElement>(null);
+  const appButtonRef = useRef<HTMLButtonElement>(null);
+  const [appMenuPosition, setAppMenuPosition] = useState({ top: 0, left: 0 });
   
   const isCRMPage = location?.startsWith('/crm') || false;
 
@@ -35,6 +39,16 @@ const Header: React.FC = () => {
       });
     }
   }, [showMoreMenu]);
+
+  useEffect(() => {
+    if (showAppMenu && appButtonRef.current) {
+      const rect = appButtonRef.current.getBoundingClientRect();
+      setAppMenuPosition({
+        top: rect.bottom + 8, // 8px below the button
+        left: rect.right - 256 // Align right edge of dropdown to right edge of button
+      });
+    }
+  }, [showAppMenu]);
 
   const crmNavigation = [
     { name: 'Gamification', href: '/crm/gamification', icon: Trophy },
@@ -121,34 +135,41 @@ const Header: React.FC = () => {
                   <MoreHorizontal className="h-4 w-4" />
                 </button>
                 
-                {showMoreMenu && (
-                  <div 
-                    ref={moreMenuRef}
-                    className="header-dropdown-force-top w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-2"
-                    style={{
-                      top: `${moreMenuPosition.top}px`,
-                      left: `${moreMenuPosition.left}px`
-                    }}>
-                    <div className="px-3 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
-                      More CRM
+                {showMoreMenu && ReactDOM.createPortal(
+                  <>
+                    <div 
+                      className="fixed inset-0 z-[2147483646]" 
+                      onClick={() => setShowMoreMenu(false)}
+                    />
+                    <div 
+                      ref={moreMenuRef}
+                      className="fixed z-[2147483647] w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-2"
+                      style={{
+                        top: `${moreMenuPosition.top}px`,
+                        left: `${moreMenuPosition.left}px`
+                      }}>
+                      <div className="px-3 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                        More CRM
+                      </div>
+                      {moreNavigation.map((item) => {
+                        const Icon = item.icon;
+                        return (
+                          <button
+                            key={item.name}
+                            onClick={(e) => {
+                              setShowMoreMenu(false);
+                              createNavigationHandler(item.href)(e);
+                            }}
+                            className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors cursor-pointer"
+                          >
+                            <Icon className="mr-3 h-4 w-4 text-gray-400" />
+                            {item.name}
+                          </button>
+                        );
+                      })}
                     </div>
-                    {moreNavigation.map((item) => {
-                      const Icon = item.icon;
-                      return (
-                        <button
-                          key={item.name}
-                          onClick={(e) => {
-                            setShowMoreMenu(false);
-                            createNavigationHandler(item.href)(e);
-                          }}
-                          className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors cursor-pointer"
-                        >
-                          <Icon className="mr-3 h-4 w-4 text-gray-400" />
-                          {item.name}
-                        </button>
-                      );
-                    })}
-                  </div>
+                  </>,
+                  document.body
                 )}
               </div>
             </nav>
@@ -277,50 +298,62 @@ const Header: React.FC = () => {
           {/* App Menu */}
           <div className="relative">
             <button
+              ref={appButtonRef}
               onClick={() => setShowAppMenu(!showAppMenu)}
               className="flex items-center p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <LayoutDashboard className="h-5 w-5" />
             </button>
             
-            {showAppMenu && (
-              <div className="header-dropdown-force-top right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
-                <div className="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
-                  All Modules
+            {showAppMenu && ReactDOM.createPortal(
+              <>
+                <div 
+                  className="fixed inset-0 z-[2147483646]" 
+                  onClick={() => setShowAppMenu(false)}
+                />
+                <div 
+                  ref={appMenuRef}
+                  className="fixed z-[2147483647] w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2"
+                  style={{
+                    top: `${appMenuPosition.top}px`,
+                    left: `${appMenuPosition.left}px`
+                  }}>
+                  <div className="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                    All Modules
+                  </div>
+                  <div className="grid grid-cols-1 gap-1 p-2">
+                    {appModules.map((module) => {
+                      const Icon = module.icon;
+                      return (
+                        <button
+                          key={module.name}
+                          onClick={(e) => {
+                            setShowAppMenu(false);
+                            createNavigationHandler(module.href)(e);
+                          }}
+                          className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-md transition-colors"
+                        >
+                          <Icon className="mr-3 h-4 w-4 text-gray-400" />
+                          {module.name}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-                <div className="grid grid-cols-1 gap-1 p-2">
-                  {appModules.map((module) => {
-                    const Icon = module.icon;
-                    return (
-                      <button
-                        key={module.name}
-                        onClick={(e) => {
-                          setShowAppMenu(false);
-                          createNavigationHandler(module.href)(e);
-                        }}
-                        className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-md transition-colors"
-                      >
-                        <Icon className="mr-3 h-4 w-4 text-gray-400" />
-                        {module.name}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+              </>,
+              document.body
             )}
           </div>
         </div>
       </div>
 
       {/* Click outside handlers */}
-      {(showCreateMenu || showAppMenu || showProfileMenu || showMoreMenu) && (
+      {(showCreateMenu || showProfileMenu) && (
         <div 
           className="fixed inset-0 z-[99998]" 
           onClick={() => {
             setShowCreateMenu(false);
-            setShowAppMenu(false);
             setShowProfileMenu(false);
-            setShowMoreMenu(false);
           }}
         />
       )}
