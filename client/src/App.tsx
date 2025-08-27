@@ -52,6 +52,7 @@ import AdvancedClickTest from './components/AdvancedClickTest';
 import WindowNavigation from './components/WindowNavigation';
 import URLNavigation from './components/URLNavigation';
 import KeyboardNavigation from './components/KeyboardNavigation';
+import DocumentNavigation from './components/DocumentNavigation';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
@@ -111,7 +112,7 @@ const App = () => {
           {/* <AutoNavFix /> */}
           {/* {import.meta.env.DEV && <BrowserNavFix />} */}
           {/* All diagnostic components temporarily disabled for clean restart */}
-          <KeyboardNavigation />
+          <DocumentNavigation />
         </div>
       </DataProvider>
     </AuthProvider>
