@@ -41,7 +41,7 @@ import PermanentSidebar from './components/PermanentSidebar';
 import NavigationFix from './components/NavigationFix';
 import ClickableNavigation from './components/ClickableNavigation';
 import FixedSidebar from './components/FixedSidebar';
-import DirectURLNavigation from './components/DirectURLNavigation';
+
 import SimpleErrorBoundary from './components/SimpleErrorBoundary';
 
 // Wrapper components for routes that need props
@@ -99,8 +99,7 @@ const App = () => {
               <Route path="/settings" component={Settings} />
             </Switch>
           </main>
-            {/* Native HTML form navigation - bypasses all restrictions */}
-            <DirectURLNavigation />
+
           </div>
         </DataProvider>
       </AuthProvider>
