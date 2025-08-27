@@ -38,6 +38,9 @@ import IndustryTrendIndicator from './components/IndustryTrendIndicator';
 import BrowserNavFix from './components/BrowserNavFix';
 import AutoNavFix from './components/AutoNavFix';
 import PermanentSidebar from './components/PermanentSidebar';
+import NavigationFix from './components/NavigationFix';
+import ClickableNavigation from './components/ClickableNavigation';
+import FixedSidebar from './components/FixedSidebar';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
@@ -61,8 +64,8 @@ const App = () => {
       <DataProvider>
         <div className="min-h-screen bg-gray-50">
           <Header />
-          <PermanentSidebar />
-          <main className="pt-14">
+          <FixedSidebar />
+          <main className="pt-14 pl-64">
             <Switch>
               <Route path="/login" component={Login} />
               <Route path="/" component={Analytics} />
@@ -93,7 +96,9 @@ const App = () => {
               <Route path="/settings" component={Settings} />
             </Switch>
           </main>
-          {/* All navigation test components removed to prevent auto-redirects */}
+          {/* Navigation fix and working clickable navigation */}
+          <NavigationFix />
+          <ClickableNavigation />
         </div>
       </DataProvider>
     </AuthProvider>

@@ -89,7 +89,7 @@ const DocumentNavigation = () => {
     setTimeout(createNavOverlay, 1500);
 
     // Try keyboard detection as fallback
-    const handleKeyboard = (e) => {
+    const handleKeyboard = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         const overlay = document.getElementById('doc-nav-overlay');
         if (overlay) overlay.style.display = 'none';
