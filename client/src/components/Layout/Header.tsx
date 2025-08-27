@@ -107,34 +107,28 @@ const Header: React.FC = () => {
                 </button>
                 
                 {showMoreMenu && (
-                  <>
-                    <div 
-                      className="fixed inset-0 z-[99998]" 
-                      onClick={() => setShowMoreMenu(false)}
-                    />
-                    <div className="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-[99999]" 
-                         style={{ position: 'fixed', transform: 'translateY(100%)', willChange: 'transform' }}>
-                      <div className="px-3 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
-                        More CRM
-                      </div>
-                      {moreNavigation.map((item) => {
-                        const Icon = item.icon;
-                        return (
-                          <button
-                            key={item.name}
-                            onClick={(e) => {
-                              setShowMoreMenu(false);
-                              createNavigationHandler(item.href)(e);
-                            }}
-                            className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors cursor-pointer"
-                          >
-                            <Icon className="mr-3 h-4 w-4 text-gray-400" />
-                            {item.name}
-                          </button>
-                        );
-                      })}
+                  <div className="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-2" 
+                       style={{ zIndex: 2147483647, position: 'absolute' }}>
+                    <div className="px-3 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                      More CRM
                     </div>
-                  </>
+                    {moreNavigation.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <button
+                          key={item.name}
+                          onClick={(e) => {
+                            setShowMoreMenu(false);
+                            createNavigationHandler(item.href)(e);
+                          }}
+                          className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors cursor-pointer"
+                        >
+                          <Icon className="mr-3 h-4 w-4 text-gray-400" />
+                          {item.name}
+                        </button>
+                      );
+                    })}
+                  </div>
                 )}
               </div>
             </nav>
@@ -299,13 +293,14 @@ const Header: React.FC = () => {
       </div>
 
       {/* Click outside handlers */}
-      {(showCreateMenu || showAppMenu || showProfileMenu) && (
+      {(showCreateMenu || showAppMenu || showProfileMenu || showMoreMenu) && (
         <div 
           className="fixed inset-0 z-[99998]" 
           onClick={() => {
             setShowCreateMenu(false);
             setShowAppMenu(false);
             setShowProfileMenu(false);
+            setShowMoreMenu(false);
           }}
         />
       )}
