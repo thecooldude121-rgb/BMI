@@ -27,17 +27,17 @@ const WindowNavigation = () => {
       `;
 
       navContainer.innerHTML = `
-        <div style="font-weight: bold; margin-bottom: 12px; color: #f59e0b;">DIRECT NAVIGATION</div>
-        <div style="display: grid; gap: 8px;">
-          <a href="/analytics" style="color: #60a5fa; text-decoration: none; padding: 8px; border: 1px solid #374151; border-radius: 6px; display: block; text-align: center; transition: all 0.2s;">Analytics</a>
-          <a href="/crm/accounts" style="color: #60a5fa; text-decoration: none; padding: 8px; border: 1px solid #374151; border-radius: 6px; display: block; text-align: center; transition: all 0.2s;">Accounts</a>
-          <a href="/crm/deals" style="color: #60a5fa; text-decoration: none; padding: 8px; border: 1px solid #374151; border-radius: 6px; display: block; text-align: center; transition: all 0.2s;">Deals</a>
-          <a href="/lead-generation" style="color: #60a5fa; text-decoration: none; padding: 8px; border: 1px solid #374151; border-radius: 6px; display: block; text-align: center; transition: all 0.2s;">Lead Gen</a>
-          <a href="/hrms" style="color: #60a5fa; text-decoration: none; padding: 8px; border: 1px solid #374151; border-radius: 6px; display: block; text-align: center; transition: all 0.2s;">HRMS</a>
-          <a href="/calendar" style="color: #60a5fa; text-decoration: none; padding: 8px; border: 1px solid #374151; border-radius: 6px; display: block; text-align: center; transition: all 0.2s;">Calendar</a>
+        <div style="font-weight: bold; margin-bottom: 12px; color: #f59e0b; font-size: 14px;">🧭 WORKING NAVIGATION</div>
+        <div style="display: grid; gap: 6px;">
+          <a href="/analytics" style="color: #60a5fa; text-decoration: none; padding: 10px; border: 2px solid #374151; border-radius: 8px; display: block; text-align: center; transition: all 0.2s; font-weight: 500; background: rgba(96, 165, 250, 0.1);">📊 Analytics</a>
+          <a href="/crm/accounts" style="color: #60a5fa; text-decoration: none; padding: 10px; border: 2px solid #374151; border-radius: 8px; display: block; text-align: center; transition: all 0.2s; font-weight: 500; background: rgba(96, 165, 250, 0.1);">🏢 Accounts</a>
+          <a href="/crm/deals" style="color: #60a5fa; text-decoration: none; padding: 10px; border: 2px solid #374151; border-radius: 8px; display: block; text-align: center; transition: all 0.2s; font-weight: 500; background: rgba(96, 165, 250, 0.1);">💼 Deals</a>
+          <a href="/lead-generation" style="color: #60a5fa; text-decoration: none; padding: 10px; border: 2px solid #374151; border-radius: 8px; display: block; text-align: center; transition: all 0.2s; font-weight: 500; background: rgba(96, 165, 250, 0.1);">🎯 Lead Gen</a>
+          <a href="/hrms" style="color: #60a5fa; text-decoration: none; padding: 10px; border: 2px solid #374151; border-radius: 8px; display: block; text-align: center; transition: all 0.2s; font-weight: 500; background: rgba(96, 165, 250, 0.1);">👥 HRMS</a>
+          <a href="/calendar" style="color: #60a5fa; text-decoration: none; padding: 10px; border: 2px solid #374151; border-radius: 8px; display: block; text-align: center; transition: all 0.2s; font-weight: 500; background: rgba(96, 165, 250, 0.1);">📅 Calendar</a>
         </div>
-        <div style="margin-top: 12px; padding-top: 8px; border-top: 1px solid #374151; font-size: 12px; color: #9ca3af;">
-          HTML links bypass all JS restrictions
+        <div style="margin-top: 12px; padding-top: 8px; border-top: 1px solid #374151; font-size: 11px; color: #10b981; text-align: center;">
+          ✅ HTML Links Working - No JS Required
         </div>
       `;
 
@@ -45,8 +45,10 @@ const WindowNavigation = () => {
       const style = document.createElement('style');
       style.textContent = `
         #direct-nav a:hover {
-          background-color: #374151 !important;
+          background-color: rgba(96, 165, 250, 0.2) !important;
           border-color: #60a5fa !important;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 8px rgba(96, 165, 250, 0.3);
         }
       `;
       document.head.appendChild(style);
