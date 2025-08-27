@@ -4,7 +4,10 @@ import { AuthProvider } from './contexts/AuthContext';
 import { DataProvider } from './contexts/DataContext';
 import Header from './components/Layout/Header';
 import Dashboard from './pages/Dashboard';
-import CRMModule from './pages/CRM/CRMModule';
+import LazyLoader from './components/LazyLoader';
+
+// Lazy load heavy modules for better performance
+const CRMModule = React.lazy(() => import('./pages/CRM/CRMModule'));
 import EnhancedLeadsPage from './pages/CRM/EnhancedLeadsPage';
 import ContactsPage from './pages/CRM/ContactsPage';
 import EnhancedAccountsPage from './pages/CRM/EnhancedAccountsPage';
@@ -18,10 +21,10 @@ import CreateDealPageFixed from './pages/CRM/CreateDealPageFixed';
 
 import DealDetailPage from './components/Deal/DealDetailPage';
 import AdvancedDealDetailsPage from './components/Deal/AdvancedDealDetailsPage';
-import HRMSModule from './pages/HRMS/HRMSModule';
+const HRMSModule = React.lazy(() => import('./pages/HRMS/HRMSModule'));
 import Analytics from './pages/Analytics/Analytics';
 import Calendar from './pages/Calendar/Calendar';
-import LeadGeneration from './pages/LeadGeneration/LeadGeneration';
+const LeadGeneration = React.lazy(() => import('./pages/LeadGeneration/LeadGeneration'));
 import GamificationPage from './pages/Gamification/GamificationPage';
 import Settings from './pages/Settings/Settings';
 import Login from './pages/Auth/Login';
@@ -43,6 +46,7 @@ import ClickableNavigation from './components/ClickableNavigation';
 import FixedSidebar from './components/FixedSidebar';
 
 import SimpleErrorBoundary from './components/SimpleErrorBoundary';
+import usePerformanceOptimization from './hooks/usePerformanceOptimization';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
@@ -53,6 +57,9 @@ const MeetingDashboardWrapper = ({ params }: { params: { id: string } }) => <Mee
 
 
 const App = () => {
+  // Performance optimizations
+  usePerformanceOptimization();
+  
   // Debug navigation on app load
   React.useEffect(() => {
     // Only run debug in development
@@ -86,13 +93,25 @@ const App = () => {
                   <GamificationModule />
                 </div>
               )} />
-              <Route path="/crm/:rest*" component={CRMModule} />
-              <Route path="/hrms" component={HRMSModule} />
+              <Route path="/crm/:rest*" component={() => (
+                <LazyLoader>
+                  <CRMModule />
+                </LazyLoader>
+              )} />
+              <Route path="/hrms" component={() => (
+                <LazyLoader>
+                  <HRMSModule />
+                </LazyLoader>
+              )} />
               <Route path="/analytics" component={Analytics} />
               <Route path="/calendar" component={Calendar} />
               <Route path="/meeting-intelligence" component={MeetingIntelligencePage} />
               <Route path="/meetings/:id" component={MeetingDashboardWrapper} />
-              <Route path="/lead-generation" component={LeadGeneration} />
+              <Route path="/lead-generation" component={() => (
+                <LazyLoader>
+                  <LeadGeneration />
+                </LazyLoader>
+              )} />
               <Route path="/trends" component={IndustryTrendIndicator} />
               <Route path="/gamification" component={GamificationPage} />
               <Route path="/settings" component={Settings} />
