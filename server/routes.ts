@@ -10,6 +10,7 @@ import { generateContextualInsights, type ContextualHelpRequest } from "./ai-ins
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import { ActivitySyncService } from './services/ActivitySyncService';
 
 // Note: HRMS schemas will be added when HRMS module is implemented
 
@@ -1722,6 +1723,74 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...customFields
       });
       res.status(201).json(activity);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  // Enhanced Activity Sync Routes
+  app.get("/api/activities/deal/:dealId", async (req, res) => {
+    try {
+      const { dealId } = req.params;
+      const activities = await ActivitySyncService.getActivitiesForDeal(dealId);
+      res.json(activities);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/activities/account/:accountId", async (req, res) => {
+    try {
+      const { accountId } = req.params;
+      const activities = await ActivitySyncService.getActivitiesForAccount(accountId);
+      res.json(activities);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/activities/sync/to-leadgen/:activityId", async (req, res) => {
+    try {
+      const { activityId } = req.params;
+      const result = await ActivitySyncService.syncActivityToLeadGen(activityId);
+      res.json(result);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/activities/sync/to-crm/:activityId", async (req, res) => {
+    try {
+      const { activityId } = req.params;
+      const result = await ActivitySyncService.syncActivityToCRM(activityId);
+      res.json(result);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/activities/sync-status", async (req, res) => {
+    try {
+      const { accountId, dealId } = req.query;
+      const status = await ActivitySyncService.getSyncStatus(
+        accountId as string, 
+        dealId as string
+      );
+      res.json(status);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.post("/api/activities/bulk-sync", async (req, res) => {
+    try {
+      const { entityId, entityType, targetModule } = req.body;
+      const result = await ActivitySyncService.bulkSyncActivities(
+        entityId, 
+        entityType, 
+        targetModule
+      );
+      res.json(result);
     } catch (error) {
       handleError(error, res);
     }
