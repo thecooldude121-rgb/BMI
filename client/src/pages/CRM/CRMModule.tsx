@@ -52,9 +52,11 @@ const CRMModule = () => {
         <Route path="/crm/analytics">
           <CRMAnalyticsDashboard />
         </Route>
-        <Route path="/crm/gamification">
-          <GamificationModule />
-        </Route>
+        <Route path="/crm/gamification" component={() => (
+          <div className="min-h-screen w-full">
+            <GamificationModule />
+          </div>
+        )} />
         <Route path="/crm/tasks">
           <div className="p-6">
             <h1 className="text-2xl font-bold mb-4">Tasks</h1>

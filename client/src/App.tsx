@@ -88,15 +88,15 @@ const App = () => {
               <Route path="/crm/contacts/:id" component={ContactDetailPage} />
               <Route path="/lead-generation/company/:id" component={CompanyDetailPageBMI} />
               <Route path="/lead-generation/people/:id" component={PersonDetails} />
-              <Route path="/crm" component={() => (
-                <div className="min-h-screen w-full">
-                  <GamificationModule />
-                </div>
-              )} />
               <Route path="/crm/:rest*" component={() => (
                 <LazyLoader>
                   <CRMModule />
                 </LazyLoader>
+              )} />
+              <Route path="/crm" component={() => (
+                <div className="min-h-screen w-full">
+                  <GamificationModule />
+                </div>
               )} />
               <Route path="/hrms" component={() => (
                 <LazyLoader>
