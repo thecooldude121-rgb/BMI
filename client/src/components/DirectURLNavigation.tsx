@@ -13,7 +13,7 @@ const DirectURLNavigation = () => {
       navContainer.id = 'native-nav';
       navContainer.style.cssText = `
         position: fixed;
-        top: 20px;
+        top: 80px;
         right: 20px;
         background: #ffffff;
         border: 2px solid #3b82f6;
