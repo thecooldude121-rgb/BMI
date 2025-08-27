@@ -109,19 +109,7 @@ const App = () => {
           {/* Temporarily disabled auto fixes to prevent crashes */}
           {/* <AutoNavFix /> */}
           {/* {import.meta.env.DEV && <BrowserNavFix />} */}
-          {import.meta.env.DEV && <NavigationTest />}
-          {import.meta.env.DEV && <DirectNavigationTest />}
-          {import.meta.env.DEV && <LinkBasedNavigation />}
-          {import.meta.env.DEV && <BrowserFixPanel />}
-          <SimpleNavigation />
-          <WorkingNavigation />
-          {import.meta.env.DEV && <RouterDebug />}
-          <ClickTest />
-          <VanillaJSTest />
-          <CSPTest />
-          <AdvancedClickTest />
-          <WindowNavigation />
-          <URLNavigation />
+          {/* All diagnostic components temporarily disabled for clean restart */}
         </div>
       </DataProvider>
     </AuthProvider>
