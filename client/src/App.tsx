@@ -37,22 +37,7 @@ import PersonDetails from './components/LeadGeneration/PersonDetails';
 import IndustryTrendIndicator from './components/IndustryTrendIndicator';
 import BrowserNavFix from './components/BrowserNavFix';
 import AutoNavFix from './components/AutoNavFix';
-import NavigationTest from './components/NavigationTest';
-import DirectNavigationTest from './components/DirectNavigationTest';
-import LinkBasedNavigation from './components/LinkBasedNavigation';
-import BrowserFixPanel from './components/BrowserFixPanel';
-import SimpleNavigation from './components/SimpleNavigation';
-import WorkingNavigation from './components/WorkingNavigation';
 import PermanentSidebar from './components/PermanentSidebar';
-import RouterDebug from './components/RouterDebug';
-import ClickTest from './components/ClickTest';
-import VanillaJSTest from './components/VanillaJSTest';
-import CSPTest from './components/CSPTest';
-import AdvancedClickTest from './components/AdvancedClickTest';
-import WindowNavigation from './components/WindowNavigation';
-import URLNavigation from './components/URLNavigation';
-import KeyboardNavigation from './components/KeyboardNavigation';
-import DocumentNavigation from './components/DocumentNavigation';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
@@ -108,11 +93,7 @@ const App = () => {
               <Route path="/settings" component={Settings} />
             </Switch>
           </main>
-          {/* Temporarily disabled auto fixes to prevent crashes */}
-          {/* <AutoNavFix /> */}
-          {/* {import.meta.env.DEV && <BrowserNavFix />} */}
-          {/* All diagnostic components temporarily disabled for clean restart */}
-          <DocumentNavigation />
+          {/* All navigation test components removed to prevent auto-redirects */}
         </div>
       </DataProvider>
     </AuthProvider>
