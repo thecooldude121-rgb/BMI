@@ -107,7 +107,7 @@ const Header: React.FC = () => {
                 </button>
                 
                 {showMoreMenu && (
-                  <div className="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                  <div className="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-[10000]">
                     <div className="px-3 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
                       More CRM
                     </div>
@@ -160,7 +160,7 @@ const Header: React.FC = () => {
             </button>
             
             {showCreateMenu && (
-              <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+              <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-[10000]">
                 <div className="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
                   Quick Create
                 </div>
@@ -225,7 +225,7 @@ const Header: React.FC = () => {
             </button>
             
             {showProfileMenu && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-[10000]">
                 <div className="px-4 py-2 border-b border-gray-200">
                   <p className="text-sm font-medium text-gray-900">{user?.name}</p>
                   <p className="text-xs text-gray-500">{user?.email}</p>
@@ -263,7 +263,7 @@ const Header: React.FC = () => {
             </button>
             
             {showAppMenu && (
-              <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+              <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-[10000]">
                 <div className="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
                   All Modules
                 </div>
@@ -294,7 +294,7 @@ const Header: React.FC = () => {
       {/* Click outside handlers */}
       {(showCreateMenu || showAppMenu || showProfileMenu || showMoreMenu) && (
         <div 
-          className="fixed inset-0 z-40" 
+          className="fixed inset-0 z-[9999]" 
           onClick={() => {
             setShowCreateMenu(false);
             setShowAppMenu(false);
