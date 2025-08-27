@@ -63,10 +63,10 @@ const App = () => {
   return (
     <AuthProvider>
       <DataProvider>
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
           <Header />
           <PermanentSidebar />
-          <main className="pt-14 pl-64">
+          <main className="pt-16 pl-64 pr-4 pb-8 min-h-screen">
             <Switch>
               <Route path="/login" component={Login} />
               <Route path="/" component={Analytics} />
