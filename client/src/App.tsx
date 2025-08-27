@@ -41,6 +41,7 @@ import PermanentSidebar from './components/PermanentSidebar';
 import NavigationFix from './components/NavigationFix';
 import ClickableNavigation from './components/ClickableNavigation';
 import FixedSidebar from './components/FixedSidebar';
+import DirectURLNavigation from './components/DirectURLNavigation';
 
 // Wrapper components for routes that need props
 const CreateDealWrapper = () => <CreateDealWizard />;
@@ -64,7 +65,7 @@ const App = () => {
       <DataProvider>
         <div className="min-h-screen bg-gray-50">
           <Header />
-          <FixedSidebar />
+          <PermanentSidebar />
           <main className="pt-14 pl-64">
             <Switch>
               <Route path="/login" component={Login} />
@@ -96,9 +97,8 @@ const App = () => {
               <Route path="/settings" component={Settings} />
             </Switch>
           </main>
-          {/* Navigation fix and working clickable navigation */}
-          <NavigationFix />
-          <ClickableNavigation />
+          {/* Native HTML form navigation - bypasses all restrictions */}
+          <DirectURLNavigation />
         </div>
       </DataProvider>
     </AuthProvider>
