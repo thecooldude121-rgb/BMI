@@ -137,7 +137,7 @@ export async function seedDealActivities() {
       
       let activityCount = 0;
       
-      // Create 2 completed activities of each type (call, meeting, task, note) for each deal
+      // Create 2 activities of each type (call, meeting, task, note) for each deal
       for (const [activityType, templates] of Object.entries(ACTIVITY_TEMPLATES)) {
         for (let i = 0; i < 2; i++) {
           const template = templates[i % templates.length];
@@ -173,41 +173,6 @@ export async function seedDealActivities() {
             console.log(`✅ Created ${template.type}: ${template.subject} for ${deal.name}`);
           } catch (error) {
             console.log(`⚠️ Activity might already exist or failed to create: ${template.subject}`);
-          }
-        }
-        
-        // Create 1 upcoming activity of each type (scheduled 15 days in future)
-        if (templates.length >= 3) { // Use the third template for upcoming activities
-          const upcomingTemplate = templates[2];
-          const futureDate = new Date(now.getTime() + (15 * 24 * 60 * 60 * 1000)); // 15 days from now
-          
-          const upcomingActivityData = {
-            subject: `${upcomingTemplate.subject} (${deal.name})`,
-            type: upcomingTemplate.type,
-            description: upcomingTemplate.description,
-            status: upcomingTemplate.status,
-            priority: upcomingTemplate.priority,
-            outcome: upcomingTemplate.outcome,
-            duration: upcomingTemplate.duration,
-            relatedToType: 'deal' as const,
-            relatedToId: deal.id,
-            dealId: deal.id,
-            accountId: deal.accountId,
-            assignedTo: 'f310c13c-3edf-4f46-a6ec-46503ed02377', // Default user
-            createdBy: 'f310c13c-3edf-4f46-a6ec-46503ed02377',
-            scheduledAt: futureDate,
-            completedAt: null, // Upcoming activity is not completed
-            source: 'CRM' as const // Track source for sync
-          };
-          
-          try {
-            await db.insert(schema.activities).values(upcomingActivityData);
-            activityCount++;
-            totalActivitiesCreated++;
-            
-            console.log(`📅 Created upcoming ${upcomingTemplate.type}: ${upcomingTemplate.subject} for ${deal.name} (scheduled: ${futureDate.toDateString()})`);
-          } catch (error) {
-            console.log(`⚠️ Upcoming activity might already exist or failed to create: ${upcomingTemplate.subject}`);
           }
         }
       }
