@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useLocation, Link } from 'wouter';
 import { navigateTo, createNavigationHandler } from '../../utils/navigation';
 import { 
@@ -19,8 +19,22 @@ const Header: React.FC = () => {
   const [showAppMenu, setShowAppMenu] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const moreMenuRef = useRef<HTMLDivElement>(null);
+  const moreButtonRef = useRef<HTMLButtonElement>(null);
+  const [moreMenuPosition, setMoreMenuPosition] = useState({ top: 0, left: 0 });
   
   const isCRMPage = location?.startsWith('/crm') || false;
+
+  // Calculate dropdown position when it opens
+  useEffect(() => {
+    if (showMoreMenu && moreButtonRef.current) {
+      const rect = moreButtonRef.current.getBoundingClientRect();
+      setMoreMenuPosition({
+        top: rect.bottom + 8, // 8px below the button
+        left: rect.left
+      });
+    }
+  }, [showMoreMenu]);
 
   const crmNavigation = [
     { name: 'Gamification', href: '/crm/gamification', icon: Trophy },
@@ -96,6 +110,7 @@ const Header: React.FC = () => {
               {/* More Menu */}
               <div className="relative">
                 <button
+                  ref={moreButtonRef}
                   onClick={() => setShowMoreMenu(!showMoreMenu)}
                   className={`group inline-flex items-center py-2 px-3 rounded-lg font-medium text-sm transition-all duration-200 ${
                     showMoreMenu
@@ -108,7 +123,12 @@ const Header: React.FC = () => {
                 
                 {showMoreMenu && (
                   <div 
-                    className="header-dropdown-force-top left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-2">
+                    ref={moreMenuRef}
+                    className="header-dropdown-force-top w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-2"
+                    style={{
+                      top: `${moreMenuPosition.top}px`,
+                      left: `${moreMenuPosition.left}px`
+                    }}>
                     <div className="px-3 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
                       More CRM
                     </div>

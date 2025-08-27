@@ -5,10 +5,14 @@
 /* Force header dropdown above all content */
 .header-dropdown-force-top {
   z-index: 2147483647 !important;
-  position: absolute !important;
+  position: fixed !important;
   isolation: isolate !important;
   transform: translateZ(0) !important;
   will-change: transform !important;
+  /* Override any potential interference */
+  pointer-events: auto !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 /* Custom animations for enhanced Deal Progress Bar */
