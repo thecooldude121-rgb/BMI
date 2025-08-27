@@ -107,8 +107,8 @@ const Header: React.FC = () => {
                 </button>
                 
                 {showMoreMenu && (
-                  <div className="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-2" 
-                       style={{ zIndex: 2147483647, position: 'absolute' }}>
+                  <div 
+                    className="header-dropdown-force-top left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-2">
                     <div className="px-3 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
                       More CRM
                     </div>
@@ -161,7 +161,7 @@ const Header: React.FC = () => {
             </button>
             
             {showCreateMenu && (
-              <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-[99999]">
+              <div className="header-dropdown-force-top right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
                 <div className="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
                   Quick Create
                 </div>
@@ -226,7 +226,7 @@ const Header: React.FC = () => {
             </button>
             
             {showProfileMenu && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-[99999]">
+              <div className="header-dropdown-force-top right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
                 <div className="px-4 py-2 border-b border-gray-200">
                   <p className="text-sm font-medium text-gray-900">{user?.name}</p>
                   <p className="text-xs text-gray-500">{user?.email}</p>
@@ -264,7 +264,7 @@ const Header: React.FC = () => {
             </button>
             
             {showAppMenu && (
-              <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-[99999]">
+              <div className="header-dropdown-force-top right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
                 <div className="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
                   All Modules
                 </div>
