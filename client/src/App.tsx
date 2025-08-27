@@ -37,7 +37,7 @@ import PersonDetails from './components/LeadGeneration/PersonDetails';
 import IndustryTrendIndicator from './components/IndustryTrendIndicator';
 import BrowserNavFix from './components/BrowserNavFix';
 import AutoNavFix from './components/AutoNavFix';
-import PermanentSidebar from './components/PermanentSidebar';
+
 import NavigationFix from './components/NavigationFix';
 import ClickableNavigation from './components/ClickableNavigation';
 import FixedSidebar from './components/FixedSidebar';
@@ -67,8 +67,7 @@ const App = () => {
         <DataProvider>
           <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
             <Header />
-            <PermanentSidebar />
-            <main className="pt-16 pl-64 pr-4 pb-8 min-h-screen">
+            <main className="pt-16 px-4 pb-8 min-h-screen">
             <Switch>
               <Route path="/login" component={Login} />
               <Route path="/" component={Analytics} />
