@@ -27,9 +27,8 @@ export class CacheWarmer {
       { queryKey: ['/api/activities'], priority: 2 },
       { queryKey: ['/api/leads'], priority: 2 },
       
-      // Analytics data
-      { queryKey: ['/api/analytics/dashboard'], priority: 3 },
-      { queryKey: ['/api/analytics/pipeline'], priority: 3 }
+      // Lead Generation analytics (using existing endpoint)
+      { queryKey: ['/api/lead-generation/analytics'], priority: 3 }
     ];
 
     // Sort by priority and warm high-priority caches first
@@ -64,7 +63,7 @@ export class CacheWarmer {
       '/crm/accounts': ['/api/accounts', '/api/contacts/by-account'],
       '/crm/deals': ['/api/deals', '/api/activities'],
       '/crm/activities': ['/api/activities', '/api/activities/metrics'],
-      '/analytics': ['/api/analytics/dashboard', '/api/analytics/pipeline'],
+      '/analytics': ['/api/lead-generation/analytics'],
       '/lead-generation': ['/api/leads', '/api/companies']
     };
 
