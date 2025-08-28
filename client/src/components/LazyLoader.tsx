@@ -42,20 +42,22 @@ const ErrorFallback = ({ error, retry }: { error: Error; retry: () => void }) =>
 const LazyLoader: React.FC<LazyLoaderProps> = ({ 
   children, 
   fallback = <DefaultLoader />,
-  minLoadingTime = 200,
-  timeout = 10000
+  minLoadingTime = 0, // Removed delay for instant transitions
+  timeout = 5000 // Reduced timeout for faster error feedback
 }) => {
-  const [shouldShowContent, setShouldShowContent] = useState(false);
+  const [shouldShowContent, setShouldShowContent] = useState(minLoadingTime === 0);
   const [hasError, setHasError] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    // Ensure minimum loading time to prevent flash
-    const timer = setTimeout(() => {
-      setShouldShowContent(true);
-    }, minLoadingTime);
+    if (minLoadingTime > 0) {
+      // Only add delay if specified
+      const timer = setTimeout(() => {
+        setShouldShowContent(true);
+      }, minLoadingTime);
 
-    return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
+    }
   }, [minLoadingTime]);
 
   const ErrorBoundaryWrapper = ({ children }: { children: React.ReactNode }) => {
