@@ -17,6 +17,11 @@ const Header: React.FC = () => {
   const [location, setLocation] = useLocation();
   const [showCreateMenu, setShowCreateMenu] = useState(false);
   const [showAppMenu, setShowAppMenu] = useState(false);
+  
+  // Add debug logging for dropdown state
+  useEffect(() => {
+    console.log('App Menu state changed:', showAppMenu);
+  }, [showAppMenu]);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const moreMenuRef = useRef<HTMLDivElement>(null);
@@ -302,99 +307,103 @@ const Header: React.FC = () => {
           <div className="relative">
             <button
               ref={appButtonRef}
-              onClick={() => setShowAppMenu(!showAppMenu)}
-              className={`flex items-center p-2 rounded-lg transition-colors ${
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('All Modules button clicked, current state:', showAppMenu);
+                setShowAppMenu(!showAppMenu);
+              }}
+              className={`flex items-center px-3 py-2 rounded-lg transition-all duration-200 border cursor-pointer ${
                 showAppMenu
-                  ? 'bg-blue-50 text-blue-600 border border-blue-200'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  ? 'bg-blue-50 text-blue-600 border-blue-200 shadow-sm'
+                  : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100 border-transparent hover:border-gray-200'
               }`}
               title="All Modules"
               data-testid="button-all-modules"
             >
               <LayoutDashboard className="h-5 w-5" />
-              <span className="ml-2 text-sm font-medium hidden md:inline">All Modules</span>
-              <ChevronDown className={`ml-1 h-4 w-4 transition-transform ${
+              <span className="ml-2 text-sm font-medium">All Modules</span>
+              <ChevronDown className={`ml-1 h-4 w-4 transition-transform duration-200 ${
                 showAppMenu ? 'rotate-180' : ''
               }`} />
             </button>
             
             {showAppMenu && (
-              <>
-                {/* Backdrop */}
-                <div 
-                  className="fixed inset-0 z-[9999998]"
-                  onClick={() => setShowAppMenu(false)}
-                />
-                
-                {/* Dropdown Menu */}
-                <div 
-                  ref={appMenuRef}
-                  className="fixed w-80 bg-white rounded-lg shadow-xl border border-gray-200 py-3 z-[9999999]"
-                  style={{
-                    top: `${appMenuPosition.top}px`,
-                    left: `${appMenuPosition.left}px`,
-                    maxHeight: '70vh',
-                    overflowY: 'auto'
-                  }}
-                  data-testid="dropdown-all-modules"
-                >
-                  {/* Header */}
-                  <div className="px-4 py-2 flex items-center justify-between border-b border-gray-200">
-                    <div>
-                      <h3 className="text-sm font-semibold text-gray-900">All Modules</h3>
-                      <p className="text-xs text-gray-500 mt-1">Access all platform features</p>
-                    </div>
-                    <button
-                      onClick={() => setShowAppMenu(false)}
-                      className="p-1 hover:bg-gray-100 rounded"
-                      data-testid="button-close-modules"
-                    >
-                      <X className="h-4 w-4 text-gray-400" />
-                    </button>
+              <div 
+                className="absolute top-full right-0 mt-2 w-80 bg-white rounded-lg shadow-2xl border border-gray-200 z-[999999]"
+                style={{
+                  position: 'absolute',
+                  zIndex: 999999,
+                  display: 'block',
+                  opacity: 1,
+                  visibility: 'visible',
+                  pointerEvents: 'auto'
+                }}
+              >
+                {/* Header */}
+                <div className="px-4 py-3 flex items-center justify-between border-b border-gray-200">
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-900">All Modules</h3>
+                    <p className="text-xs text-gray-500 mt-1">Access all platform features</p>
                   </div>
-                  
-                  {/* Module Grid */}
-                  <div className="grid grid-cols-2 gap-2 p-3">
-                    {appModules.map((module) => {
-                      const Icon = module.icon;
-                      return (
-                        <button
-                          key={module.name}
-                          onClick={(e) => {
-                            setShowAppMenu(false);
-                            createNavigationHandler(module.href)(e);
-                          }}
-                          className="flex flex-col items-center p-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-all duration-200 group"
-                          data-testid={`module-${module.name.toLowerCase().replace(/\s+/g, '-')}`}
-                        >
-                          <div className="p-2 bg-gray-100 group-hover:bg-blue-100 rounded-lg mb-2 transition-colors">
-                            <Icon className="h-5 w-5 text-gray-500 group-hover:text-blue-600" />
-                          </div>
-                          <span className="text-center font-medium leading-tight">{module.name}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                  
-                  {/* Footer */}
-                  <div className="px-4 py-2 border-t border-gray-200 bg-gray-50 rounded-b-lg">
-                    <p className="text-xs text-gray-500 text-center">
-                      {appModules.length} modules available
-                    </p>
-                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowAppMenu(false);
+                    }}
+                    className="p-1 hover:bg-gray-100 rounded transition-colors"
+                    data-testid="button-close-modules"
+                  >
+                    <X className="h-4 w-4 text-gray-400" />
+                  </button>
                 </div>
-              </>
+                
+                {/* Module Grid */}
+                <div className="grid grid-cols-2 gap-2 p-3">
+                  {appModules.map((module) => {
+                    const Icon = module.icon;
+                    return (
+                      <button
+                        key={module.name}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          console.log(`Navigating to ${module.name}: ${module.href}`);
+                          setShowAppMenu(false);
+                          createNavigationHandler(module.href)(e);
+                        }}
+                        className="flex flex-col items-center p-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-all duration-200 group cursor-pointer"
+                        data-testid={`module-${module.name.toLowerCase().replace(/\s+/g, '-')}`}
+                      >
+                        <div className="p-2 bg-gray-100 group-hover:bg-blue-100 rounded-lg mb-2 transition-colors">
+                          <Icon className="h-5 w-5 text-gray-500 group-hover:text-blue-600" />
+                        </div>
+                        <span className="text-center font-medium leading-tight">{module.name}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                
+                {/* Footer */}
+                <div className="px-4 py-2 border-t border-gray-200 bg-gray-50 rounded-b-lg">
+                  <p className="text-xs text-gray-500 text-center">
+                    {appModules.length} modules available
+                  </p>
+                </div>
+              </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Click outside handlers (excluding App Menu which has its own) */}
-      {(showCreateMenu || showProfileMenu || showMoreMenu) && (
+      {/* Click outside handlers */}
+      {(showCreateMenu || showAppMenu || showProfileMenu || showMoreMenu) && (
         <div 
           className="fixed inset-0 z-[999998]" 
           onClick={() => {
+            console.log('Backdrop clicked, closing all dropdowns');
             setShowCreateMenu(false);
+            setShowAppMenu(false);
             setShowProfileMenu(false);
             setShowMoreMenu(false);
           }}
