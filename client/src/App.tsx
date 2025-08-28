@@ -4,6 +4,9 @@ import { AuthProvider } from './contexts/AuthContext';
 import { DataProvider } from './contexts/DataContext';
 import Header from './components/Layout/Header';
 import LazyLoader from './components/LazyLoader';
+import FastLoader from './components/FastLoader';
+import useRoutePreloader from './hooks/useRoutePreloader';
+import useTransitionOptimization from './hooks/useTransitionOptimization';
 
 // Lazy load heavy modules for better performance
 const CRMModule = React.lazy(() => import('./pages/CRM/CRMModule'));
@@ -46,33 +49,30 @@ import usePerformanceOptimization from './hooks/usePerformanceOptimization';
 const CreateDealWrapper = React.memo(() => <CreateDealWizard />);
 const CreateDealPageWrapper = React.memo(() => <CreateDealPageFixed />);
 const DealDetailWrapper = React.memo(({ params }: { params: { id: string } }) => (
-  <LazyLoader>
+  <LazyLoader fallback={<FastLoader />}>
     <AdvancedDealDetailsPage dealId={params.id} />
   </LazyLoader>
 ));
 const MeetingDashboardWrapper = React.memo(() => <MeetingDashboard />);
 const AccountDetailWrapper = React.memo(({ params }: { params: { id: string } }) => (
-  <LazyLoader>
-    <UltimateAccountDetailPage />
+  <LazyLoader fallback={<FastLoader />}>
+    <UltimateAccountDetailPage params={params} />
   </LazyLoader>
 ));
 const ContactDetailWrapper = React.memo(({ params }: { params: { id: string } }) => (
-  <LazyLoader>
-    <ContactDetailPage />
+  <LazyLoader fallback={<FastLoader />}>
+    <ContactDetailPage params={params} />
   </LazyLoader>
 ));
 const CompanyDetailWrapper = React.memo(({ params }: { params: { id: string } }) => (
-  <LazyLoader>
-    <CompanyDetailPageBMI />
+  <LazyLoader fallback={<FastLoader />}>
+    <CompanyDetailPageBMI params={params} />
   </LazyLoader>
 ));
 
 
 
 const App = () => {
-  // Performance optimizations
-  usePerformanceOptimization();
-  
   // Debug navigation on app load
   React.useEffect(() => {
     // Only run debug in development
@@ -80,6 +80,12 @@ const App = () => {
       console.log('App loaded successfully - navigation should work normally');
     }
   }, []);
+
+  // Performance optimizations
+  usePerformanceOptimization();
+  useRoutePreloader();
+  useTransitionOptimization();
+
 
   return (
     <SimpleErrorBoundary>
@@ -96,7 +102,7 @@ const App = () => {
                 </LazyLoader>
               )} />
               <Route path="/dashboard" component={() => (
-                <LazyLoader>
+                <LazyLoader fallback={<FastLoader />}>
                   <Analytics />
                 </LazyLoader>
               )} />
@@ -105,7 +111,7 @@ const App = () => {
               <Route path="/crm/deals/create-wizard" component={CreateDealWrapper} />
               <Route path="/crm/deals/:id" component={DealDetailWrapper} />
               <Route path="/crm/accounts/create" component={() => (
-                <LazyLoader>
+                <LazyLoader fallback={<FastLoader />}>
                   <UltimateCreateAccountPageEnhanced />
                 </LazyLoader>
               )} />
@@ -114,7 +120,7 @@ const App = () => {
               <Route path="/lead-generation/company/:id" component={CompanyDetailWrapper} />
               <Route path="/lead-generation/people/:id" component={PersonDetails} />
               <Route path="/crm/:rest*" component={() => (
-                <LazyLoader>
+                <LazyLoader fallback={<FastLoader />}>
                   <CRMModule />
                 </LazyLoader>
               )} />
@@ -124,35 +130,35 @@ const App = () => {
                 </div>
               )} />
               <Route path="/hrms" component={() => (
-                <LazyLoader>
+                <LazyLoader fallback={<FastLoader />}>
                   <HRMSModule />
                 </LazyLoader>
               )} />
               <Route path="/analytics" component={() => (
-                <LazyLoader>
+                <LazyLoader fallback={<FastLoader />}>
                   <Analytics />
                 </LazyLoader>
               )} />
               <Route path="/calendar" component={() => (
-                <LazyLoader>
+                <LazyLoader fallback={<FastLoader />}>
                   <Calendar />
                 </LazyLoader>
               )} />
               <Route path="/meeting-intelligence" component={MeetingIntelligencePage} />
               <Route path="/meetings/:id" component={MeetingDashboardWrapper} />
               <Route path="/lead-generation" component={() => (
-                <LazyLoader>
+                <LazyLoader fallback={<FastLoader />}>
                   <LeadGeneration />
                 </LazyLoader>
               )} />
               <Route path="/trends" component={IndustryTrendIndicator} />
               <Route path="/gamification" component={() => (
-                <LazyLoader>
+                <LazyLoader fallback={<FastLoader />}>
                   <GamificationPage />
                 </LazyLoader>
               )} />
               <Route path="/settings" component={() => (
-                <LazyLoader>
+                <LazyLoader fallback={<FastLoader />}>
                   <Settings />
                 </LazyLoader>
               )} />
