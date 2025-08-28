@@ -1311,6 +1311,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Activity routes
+  // Upcoming Activities Routes (must be before :id route)
+  app.get('/api/activities/upcoming', async (req, res) => {
+    const { getUpcomingActivities } = await import('./routes/upcoming-activities');
+    return getUpcomingActivities(req, res);
+  });
+
+  app.get('/api/activities/upcoming/metrics', async (req, res) => {
+    const { getUpcomingActivitiesMetrics } = await import('./routes/upcoming-activities');
+    return getUpcomingActivitiesMetrics(req, res);
+  });
+
   app.get("/api/activities", async (req, res) => {
     try {
       const activities = await storage.getActivities();
@@ -1948,6 +1959,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: 'Failed to create achievement' });
     }
   });
+
+
 
   // AI Meeting Intelligence Routes (duplicates removed)
 
