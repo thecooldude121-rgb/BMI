@@ -29,13 +29,13 @@ interface ActivityFormData {
   relatedEntityName?: string;
   
   // Call specific
-  outcome?: 'completed' | 'no_answer' | 'follow_up_needed';
+  outcome?: 'completed' | 'no_answer' | 'follow_up_needed' | '';
   participants?: string;
   
   // Meeting specific
   startTime?: string;
   endTime?: string;
-  meetingOutcome?: 'held' | 'cancelled' | 'rescheduled';
+  meetingOutcome?: 'held' | 'cancelled' | 'rescheduled' | '';
   nextSteps?: string;
   
   // Task specific
@@ -70,7 +70,19 @@ const ActivityLogModal: React.FC<ActivityLogModalProps> = ({
     status: 'completed',
     priority: 'medium',
     relatedEntityType: dealId ? 'deal' : accountId ? 'account' : 'deal',
-    relatedEntityName: dealId ? dealTitle : accountId ? 'Account Name' : '',
+    relatedEntityName: dealId ? (dealTitle || '') : accountId ? 'Account Name' : '',
+    // Initialize all optional fields with empty strings to prevent uncontrolled input warnings
+    outcome: '',
+    participants: '',
+    startTime: '',
+    endTime: '',
+    meetingOutcome: '',
+    nextSteps: '',
+    dueDate: '',
+    assignedTo: '',
+    taskStatus: 'open',
+    scheduledAt: '',
+    attachments: '',
   });
 
   const tabs = [
@@ -128,6 +140,20 @@ const ActivityLogModal: React.FC<ActivityLogModalProps> = ({
         description: '',
         status: 'completed',
         priority: 'medium',
+        relatedEntityType: dealId ? 'deal' : accountId ? 'account' : 'deal',
+        relatedEntityName: dealId ? (dealTitle || '') : accountId ? 'Account Name' : '',
+        // Initialize all optional fields with empty strings to prevent uncontrolled input warnings
+        outcome: '',
+        participants: '',
+        startTime: '',
+        endTime: '',
+        meetingOutcome: '',
+        nextSteps: '',
+        dueDate: '',
+        assignedTo: '',
+        taskStatus: 'open',
+        scheduledAt: '',
+        attachments: '',
       });
       onClose();
     } catch (error) {
