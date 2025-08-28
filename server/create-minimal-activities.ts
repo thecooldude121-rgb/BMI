@@ -5,7 +5,7 @@ import { activities, deals } from '../shared/schema';
 
 async function createMinimalActivities() {
   try {
-    console.log('🎯 Creating exactly 2 activities of each type for ALL deals...');
+    console.log('🎯 Creating exactly 1 activity of each type for ALL deals scheduled for November 30th...');
     
     // Get ALL deals
     const dealsData = await db.select().from(deals);
@@ -18,86 +18,57 @@ async function createMinimalActivities() {
     const now = new Date();
     const userId = 'f310c13c-3edf-4f46-a6ec-46503ed02377'; // Default user
     
-    // Define minimal activity templates
+    // November 30th, 2025 - scheduled date for all activities
+    const november30 = new Date('2025-11-30T10:00:00Z');
+    
+    // Define activity templates - 1 of each type
     const activityTemplates = [
-      // 2 Calls
-      {
-        subject: 'Discovery Call',
-        type: 'call',
-        description: 'Initial discovery call to understand requirements',
-        status: 'completed',
-        priority: 'medium',
-        duration: 45,
-        completedAt: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-      },
+      // 1 Call
       {
         subject: 'Follow-up Call',
-        type: 'call', 
-        description: 'Follow-up call to discuss proposal',
+        type: 'call',
+        description: 'Scheduled follow-up call to discuss project progress',
         status: 'completed',
         priority: 'high',
         duration: 30,
-        completedAt: new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+        dueDate: november30,
+        completedAt: november30,
       },
       
-      // 2 Meetings
+      // 1 Meeting
       {
-        subject: 'Product Demo',
+        subject: 'Strategy Meeting',
         type: 'meeting',
-        description: 'Product demonstration meeting',
+        description: 'Strategic planning meeting with stakeholders',
         status: 'completed',
         priority: 'high',
         duration: 60,
-        completedAt: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+        dueDate: november30,
+        completedAt: november30,
       },
+      
+      // 1 Task
       {
-        subject: 'Stakeholder Meeting',
-        type: 'meeting',
-        description: 'Meeting with key stakeholders',
+        subject: 'Project Review',
+        type: 'task',
+        description: 'Complete project review and documentation',
         status: 'completed',
-        priority: 'high',
+        priority: 'medium',
         duration: 90,
-        completedAt: new Date(now.getTime() - 4 * 24 * 60 * 60 * 1000), // 4 days ago
+        dueDate: november30,
+        completedAt: november30,
       },
       
-      // 2 Tasks
+      // 1 Note
       {
-        subject: 'Prepare Proposal',
-        type: 'task',
-        description: 'Prepare detailed proposal document',
-        status: 'completed',
-        priority: 'medium',
-        duration: 120,
-        completedAt: new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
-      },
-      {
-        subject: 'Technical Review',
-        type: 'task',
-        description: 'Review technical requirements',
-        status: 'completed',
-        priority: 'medium',
-        duration: 60,
-        completedAt: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-      },
-      
-      // 2 Notes
-      {
-        subject: 'Client Requirements',
+        subject: 'Meeting Notes',
         type: 'note',
-        description: 'Notes on client requirements and preferences',
+        description: 'Prepare notes for upcoming client discussion',
         status: 'completed',
         priority: 'low',
-        duration: 15,
-        completedAt: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
-      },
-      {
-        subject: 'Competitive Analysis',
-        type: 'note',
-        description: 'Analysis of competitive landscape',
-        status: 'completed',
-        priority: 'low',
-        duration: 30,
-        completedAt: new Date(now.getTime() - 4 * 24 * 60 * 60 * 1000), // 4 days ago
+        duration: 20,
+        dueDate: november30,
+        completedAt: november30,
       }
     ];
     
@@ -132,8 +103,9 @@ async function createMinimalActivities() {
     }
     
     console.log(`\n🎉 Successfully created ${totalCreatedCount} activities total across ${dealsData.length} deals`);
-    console.log(`📊 Each deal now has: 2 calls, 2 meetings, 2 tasks, 2 notes`);
-    console.log(`📊 Total breakdown: ${totalCreatedCount} activities (${dealsData.length * 2} calls, ${dealsData.length * 2} meetings, ${dealsData.length * 2} tasks, ${dealsData.length * 2} notes)`);
+    console.log(`📊 Each deal now has: 1 call, 1 meeting, 1 task, 1 note`);
+    console.log(`📊 All activities scheduled for November 30th, 2025`);
+    console.log(`📊 Total breakdown: ${totalCreatedCount} activities (${dealsData.length} calls, ${dealsData.length} meetings, ${dealsData.length} tasks, ${dealsData.length} notes)`);
     
   } catch (error) {
     console.error('❌ Error creating activities:', error);
