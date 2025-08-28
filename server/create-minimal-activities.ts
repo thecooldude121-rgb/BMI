@@ -21,18 +21,18 @@ async function createMinimalActivities() {
     // November 30th, 2025 - scheduled date for all activities
     const november30 = new Date('2025-11-30T10:00:00Z');
     
-    // Define activity templates - 1 of each type
+    // Define activity templates - 1 of each type  
     const activityTemplates = [
       // 1 Call
       {
         subject: 'Follow-up Call',
         type: 'call',
         description: 'Scheduled follow-up call to discuss project progress',
-        status: 'completed',
+        status: 'planned',
         priority: 'high',
         duration: 30,
         dueDate: november30,
-        completedAt: november30,
+        completedAt: null,
       },
       
       // 1 Meeting
@@ -40,11 +40,11 @@ async function createMinimalActivities() {
         subject: 'Strategy Meeting',
         type: 'meeting',
         description: 'Strategic planning meeting with stakeholders',
-        status: 'completed',
+        status: 'planned',
         priority: 'high',
         duration: 60,
         dueDate: november30,
-        completedAt: november30,
+        completedAt: null,
       },
       
       // 1 Task
@@ -52,11 +52,11 @@ async function createMinimalActivities() {
         subject: 'Project Review',
         type: 'task',
         description: 'Complete project review and documentation',
-        status: 'completed',
+        status: 'planned',
         priority: 'medium',
         duration: 90,
         dueDate: november30,
-        completedAt: november30,
+        completedAt: null,
       },
       
       // 1 Note
@@ -64,11 +64,11 @@ async function createMinimalActivities() {
         subject: 'Meeting Notes',
         type: 'note',
         description: 'Prepare notes for upcoming client discussion',
-        status: 'completed',
+        status: 'planned',
         priority: 'low',
         duration: 20,
         dueDate: november30,
-        completedAt: november30,
+        completedAt: null,
       }
     ];
     
