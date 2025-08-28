@@ -313,45 +313,46 @@ const Header: React.FC = () => {
                 console.log('All Modules button clicked, current state:', showAppMenu);
                 setShowAppMenu(!showAppMenu);
               }}
-              className={`flex items-center px-3 py-2 rounded-lg transition-all duration-200 border cursor-pointer ${
+              className={`flex items-center justify-center p-2 rounded-lg transition-all duration-200 hover:scale-105 ${
                 showAppMenu
-                  ? 'bg-blue-50 text-blue-600 border-blue-200 shadow-sm'
-                  : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100 border-transparent hover:border-gray-200'
+                  ? 'bg-blue-100 text-blue-700 shadow-lg ring-2 ring-blue-200'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 hover:shadow-md'
               }`}
               title="All Modules"
               data-testid="button-all-modules"
             >
               <LayoutDashboard className="h-5 w-5" />
-              <span className="ml-2 text-sm font-medium">All Modules</span>
-              <ChevronDown className={`ml-1 h-4 w-4 transition-transform duration-200 ${
-                showAppMenu ? 'rotate-180' : ''
-              }`} />
             </button>
             
             {showAppMenu && (
               <div 
-                className="absolute top-full right-0 mt-2 w-80 bg-white rounded-lg shadow-2xl border border-gray-200 z-[999999]"
+                className="absolute top-full right-0 mt-3 w-96 bg-white rounded-xl shadow-2xl border border-gray-100 z-[999999] animate-in slide-in-from-top-2 duration-300"
                 style={{
                   position: 'absolute',
                   zIndex: 999999,
                   display: 'block',
                   opacity: 1,
                   visibility: 'visible',
-                  pointerEvents: 'auto'
+                  pointerEvents: 'auto',
+                  backdropFilter: 'blur(10px)',
+                  background: 'rgba(255, 255, 255, 0.98)'
                 }}
               >
                 {/* Header */}
-                <div className="px-4 py-3 flex items-center justify-between border-b border-gray-200">
+                <div className="px-6 py-4 flex items-center justify-between border-b border-gray-100">
                   <div>
-                    <h3 className="text-sm font-semibold text-gray-900">All Modules</h3>
-                    <p className="text-xs text-gray-500 mt-1">Access all platform features</p>
+                    <h3 className="text-lg font-bold text-gray-900 flex items-center">
+                      <LayoutDashboard className="h-5 w-5 mr-2 text-blue-600" />
+                      All Modules
+                    </h3>
+                    <p className="text-sm text-gray-600 mt-1">Access all platform features</p>
                   </div>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       setShowAppMenu(false);
                     }}
-                    className="p-1 hover:bg-gray-100 rounded transition-colors"
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors hover:scale-110"
                     data-testid="button-close-modules"
                   >
                     <X className="h-4 w-4 text-gray-400" />
@@ -359,8 +360,8 @@ const Header: React.FC = () => {
                 </div>
                 
                 {/* Module Grid */}
-                <div className="grid grid-cols-2 gap-2 p-3">
-                  {appModules.map((module) => {
+                <div className="grid grid-cols-3 gap-3 p-4">
+                  {appModules.map((module, index) => {
                     const Icon = module.icon;
                     return (
                       <button
@@ -372,23 +373,34 @@ const Header: React.FC = () => {
                           setShowAppMenu(false);
                           createNavigationHandler(module.href)(e);
                         }}
-                        className="flex flex-col items-center p-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-all duration-200 group cursor-pointer"
+                        className="flex flex-col items-center p-4 text-sm text-gray-700 hover:bg-gradient-to-br hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 rounded-xl transition-all duration-300 group cursor-pointer hover:scale-105 hover:shadow-md"
                         data-testid={`module-${module.name.toLowerCase().replace(/\s+/g, '-')}`}
+                        style={{
+                          animationDelay: `${index * 50}ms`
+                        }}
                       >
-                        <div className="p-2 bg-gray-100 group-hover:bg-blue-100 rounded-lg mb-2 transition-colors">
-                          <Icon className="h-5 w-5 text-gray-500 group-hover:text-blue-600" />
+                        <div className="p-3 bg-gradient-to-br from-gray-50 to-gray-100 group-hover:from-blue-100 group-hover:to-indigo-100 rounded-lg mb-3 transition-all duration-300 group-hover:shadow-sm">
+                          <Icon className="h-6 w-6 text-gray-600 group-hover:text-blue-600 transition-colors duration-300" />
                         </div>
-                        <span className="text-center font-medium leading-tight">{module.name}</span>
+                        <span className="text-center font-medium leading-tight text-xs group-hover:text-blue-700 transition-colors duration-300">
+                          {module.name}
+                        </span>
                       </button>
                     );
                   })}
                 </div>
                 
                 {/* Footer */}
-                <div className="px-4 py-2 border-t border-gray-200 bg-gray-50 rounded-b-lg">
-                  <p className="text-xs text-gray-500 text-center">
-                    {appModules.length} modules available
-                  </p>
+                <div className="px-6 py-3 border-t border-gray-100 bg-gradient-to-r from-gray-50 to-blue-50 rounded-b-xl">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs text-gray-600">
+                      {appModules.length} modules available
+                    </p>
+                    <div className="flex items-center text-xs text-blue-600">
+                      <span className="mr-1">✨</span>
+                      Enterprise Ready
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
