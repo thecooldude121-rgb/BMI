@@ -49,12 +49,13 @@ export async function apiRequest(url: string, options: RequestOptions = {}) {
   }
 
   const response = await fetch(url, config).catch(error => {
-    console.error('Fetch error:', error);
-    throw new Error(`Network error: ${error.message}`);
+    console.error('Fetch error for URL:', url, 'Error:', error);
+    throw new Error(`Network error: ${error.message || 'Unknown network error'}`);
   });
 
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    console.error(`HTTP error for URL: ${url}, Status: ${response.status}, StatusText: ${response.statusText}`);
+    throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
   }
 
   // Handle empty responses (like DELETE)

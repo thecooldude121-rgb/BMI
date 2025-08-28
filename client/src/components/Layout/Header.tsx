@@ -326,7 +326,7 @@ const Header: React.FC = () => {
             
             {showAppMenu && (
               <div 
-                className="absolute top-full right-0 mt-3 w-96 bg-white rounded-xl shadow-2xl border border-gray-100 z-[999999] animate-in slide-in-from-top-2 duration-300"
+                className="absolute top-full right-0 mt-3 w-96 bg-white rounded-xl shadow-2xl border border-gray-100 z-[999999] animate-fadeIn"
                 style={{
                   position: 'absolute',
                   zIndex: 999999,
@@ -375,9 +375,6 @@ const Header: React.FC = () => {
                         }}
                         className="flex flex-col items-center p-4 text-sm text-gray-700 hover:bg-gradient-to-br hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 rounded-xl transition-all duration-300 group cursor-pointer hover:scale-105 hover:shadow-md"
                         data-testid={`module-${module.name.toLowerCase().replace(/\s+/g, '-')}`}
-                        style={{
-                          animationDelay: `${index * 50}ms`
-                        }}
                       >
                         <div className="p-3 bg-gradient-to-br from-gray-50 to-gray-100 group-hover:from-blue-100 group-hover:to-indigo-100 rounded-lg mb-3 transition-all duration-300 group-hover:shadow-sm">
                           <Icon className="h-6 w-6 text-gray-600 group-hover:text-blue-600 transition-colors duration-300" />
