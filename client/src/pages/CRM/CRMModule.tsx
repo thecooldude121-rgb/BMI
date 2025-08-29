@@ -28,8 +28,26 @@ const CRMModule = () => {
   console.log('CRM Module rendering, current location:', window.location.pathname);
   
   return (
-    <div className="min-h-screen w-full overflow-auto" style={{ backgroundColor: '#f3f4f6', minHeight: '100vh' }}>
-      <div style={{ padding: '20px', backgroundColor: 'yellow', color: 'black', fontWeight: 'bold' }}>
+    <div style={{ 
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100vw',
+      height: '100vh',
+      backgroundColor: '#f3f4f6',
+      zIndex: 9999,
+      overflow: 'auto',
+      padding: '20px'
+    }}>
+      <div style={{ 
+        padding: '20px', 
+        backgroundColor: 'yellow', 
+        color: 'black', 
+        fontWeight: 'bold',
+        marginBottom: '20px',
+        border: '5px solid red',
+        fontSize: '24px'
+      }}>
         CRM MODULE IS LOADING - PATH: {window.location.pathname}
       </div>
       <Switch>

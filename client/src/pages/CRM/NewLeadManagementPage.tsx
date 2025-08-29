@@ -218,8 +218,23 @@ const NewLeadManagementPage: React.FC = () => {
   console.log('NewLeadManagementPage about to render, leads data:', leads);
   
   return (
-    <div className="p-6 space-y-6 bg-gray-50 min-h-screen" style={{ backgroundColor: 'lightblue', minHeight: '100vh' }}>
-      <div style={{ backgroundColor: 'red', color: 'white', padding: '10px', fontWeight: 'bold' }}>
+    <div style={{ 
+      width: '100%',
+      minHeight: '100vh',
+      backgroundColor: 'lightblue',
+      padding: '20px',
+      position: 'relative',
+      zIndex: 1000
+    }}>
+      <div style={{ 
+        backgroundColor: 'red', 
+        color: 'white', 
+        padding: '20px', 
+        fontWeight: 'bold',
+        fontSize: '18px',
+        marginBottom: '20px',
+        border: '3px solid white'
+      }}>
         LEAD MANAGEMENT PAGE IS RENDERING - {leads.length} leads loaded
       </div>
       {/* Header */}
