@@ -25,36 +25,18 @@ import CRMAnalyticsDashboard from './CRMAnalyticsDashboard';
 import GamificationModule from './GamificationModuleNextGen';
 
 const CRMModule = () => {
-  console.log('CRM Module rendering, current location:', window.location.pathname);
   
   return (
-    <div style={{ 
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      width: '100vw',
-      height: '100vh',
-      backgroundColor: '#f3f4f6',
-      zIndex: 9999,
-      overflow: 'auto',
-      padding: '20px'
-    }}>
-      <div style={{ 
-        padding: '20px', 
-        backgroundColor: 'yellow', 
-        color: 'black', 
-        fontWeight: 'bold',
-        marginBottom: '20px',
-        border: '5px solid red',
-        fontSize: '24px'
-      }}>
-        CRM MODULE IS LOADING - PATH: {window.location.pathname}
-      </div>
+    <div className="min-h-screen w-full bg-white" style={{ minHeight: '100vh', backgroundColor: 'white' }}>
       <Switch>
         <Route path="/crm/leads/new" component={() => {
           // Show only the lead creation form on a dedicated page
           return (
-            <div className="min-h-screen bg-gray-50">
+            <div className="min-h-screen bg-gray-50 p-6">
+              <div className="mb-4 p-4 bg-green-100 border border-green-200 rounded-lg">
+                <h1 className="text-2xl font-bold text-green-800">✅ Lead Creation Page is Working!</h1>
+                <p className="text-green-600">Ready to create new leads</p>
+              </div>
               <div className="max-w-4xl mx-auto py-8">
                 <div className="mb-6">
                   <h1 className="text-3xl font-bold text-gray-900 mb-2">Create New Lead</h1>
