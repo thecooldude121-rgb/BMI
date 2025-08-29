@@ -21,14 +21,11 @@ const SimpleLeadsPage: React.FC = () => {
   useEffect(() => {
     const fetchLeads = async () => {
       try {
-        console.log('🚀 Fetching leads...');
         const response = await fetch('/api/leads');
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        console.log('✅ Leads loaded:', data.length);
         setLeads(data);
       } catch (err) {
-        console.error('❌ Error:', err);
         setError(String(err));
       } finally {
         setLoading(false);

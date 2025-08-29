@@ -24,14 +24,11 @@ const SimpleDealsPage: React.FC = () => {
   useEffect(() => {
     const fetchDeals = async () => {
       try {
-        console.log('🚀 Fetching deals...');
         const response = await fetch('/api/deals');
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        console.log('✅ Deals loaded:', data.length);
         setDeals(data);
       } catch (err) {
-        console.error('❌ Error:', err);
         setError(String(err));
       } finally {
         setLoading(false);

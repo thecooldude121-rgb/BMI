@@ -24,14 +24,11 @@ const SimpleAccountsPage: React.FC = () => {
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
-        console.log('🚀 Fetching accounts...');
         const response = await fetch('/api/accounts');
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        console.log('✅ Accounts loaded:', data.length);
         setAccounts(data);
       } catch (err) {
-        console.error('❌ Error:', err);
         setError(String(err));
       } finally {
         setLoading(false);
