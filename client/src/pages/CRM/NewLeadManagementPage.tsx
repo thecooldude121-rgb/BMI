@@ -6,8 +6,6 @@ import {
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { apiRequest } from '../../lib/queryClient';
-import NewLeadForm from '../../components/CRM/NewLeadForm';
-import LeadDetailsPage from '../../components/CRM/LeadDetailsPage';
 
 interface Lead {
   id: string;
@@ -24,9 +22,7 @@ interface Lead {
 
 const NewLeadManagementPage: React.FC = () => {
   // State management
-  const [showNewLeadForm, setShowNewLeadForm] = useState(false);
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
-  const [editingLead, setEditingLead] = useState<any>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -60,23 +56,18 @@ const NewLeadManagementPage: React.FC = () => {
   };
 
   const handleCreateLead = () => {
-    setEditingLead(null);
-    setShowNewLeadForm(true);
+    // Navigate to dedicated lead creation page
+    window.location.href = '/crm/leads/new';
   };
 
   const handleEditLead = (lead: any) => {
-    setEditingLead(lead);
-    setShowNewLeadForm(true);
-  };
-
-  const handleFormSuccess = () => {
-    refetch();
-    setShowNewLeadForm(false);
-    setEditingLead(null);
+    // Navigate to edit page (for now, same as details)
+    window.location.href = `/crm/leads/${lead.id}`;
   };
 
   const handleViewDetails = (leadId: string) => {
-    setSelectedLeadId(leadId);
+    // Navigate to dedicated lead details page
+    window.location.href = `/crm/leads/${leadId}`;
   };
 
   const getStatusColor = (status: string) => {
@@ -465,29 +456,7 @@ const NewLeadManagementPage: React.FC = () => {
         )}
       </div>
 
-      {/* New Lead Form Modal */}
-      <NewLeadForm
-        isOpen={showNewLeadForm}
-        onClose={() => {
-          setShowNewLeadForm(false);
-          setEditingLead(null);
-        }}
-        onSuccess={handleFormSuccess}
-        leadData={editingLead}
-        mode={editingLead ? 'edit' : 'create'}
-      />
-
-      {/* Lead Details Modal */}
-      {selectedLeadId && (
-        <LeadDetailsPage
-          leadId={selectedLeadId}
-          onClose={() => setSelectedLeadId(null)}
-          onEdit={(lead) => {
-            setSelectedLeadId(null);
-            handleEditLead(lead);
-          }}
-        />
-      )}
+      {/* All modals removed - using separate pages now */}
     </div>
   );
 };

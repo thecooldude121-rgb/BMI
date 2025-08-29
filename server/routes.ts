@@ -1101,6 +1101,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Lead-specific endpoints
+  app.get("/api/leads/:id/activities", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const activities = await storage.getActivities();
+      const leadActivities = activities.filter(activity => 
+        activity.leadId === id || 
+        (activity.relatedToType === 'lead' && activity.relatedToId === id)
+      );
+      res.json(leadActivities);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/leads/:id/deals", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const deals = await storage.getDeals();
+      const leadDeals = deals.filter(deal => deal.leadId === id);
+      res.json(leadDeals);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/leads/:id/contacts", async (req, res) => {
+    try {
+      const { id } = req.params;
+      // For now, return empty array as contacts don't have leadId in current schema
+      res.json([]);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
+  app.get("/api/leads/:id/files", async (req, res) => {
+    try {
+      const { id } = req.params;
+      // For now, return empty array - could be extended to include actual file storage
+      res.json([]);
+    } catch (error) {
+      handleError(error, res);
+    }
+  });
+
   app.get("/api/leads/by-assignee/:assigneeId", async (req, res) => {
     try {
       const leads = await storage.getLeadsByAssignee(req.params.assigneeId);
