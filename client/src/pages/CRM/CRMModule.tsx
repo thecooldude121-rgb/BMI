@@ -2,6 +2,7 @@ import React from 'react';
 import { Switch, Route } from 'wouter';
 import NextGenLeadsModule from './NextGenLeadsModule';
 import LeadDetailPage from './LeadDetailPage';
+import NewLeadManagementPage from './NewLeadManagementPage';
 import EnterpriseContactsModule from './EnterpriseContactsModule';
 import NextGenAccountModule from './NextGenAccountModule';
 import NextGenAccountsModule from './NextGenAccountsModule';
@@ -30,8 +31,9 @@ const CRMModule = () => {
 
 
       <Switch>
+        <Route path="/crm/leads/new-management" component={NewLeadManagementPage} />
         <Route path="/crm/leads/:id" component={LeadDetailPage} />
-        <Route path="/crm/leads" component={NextGenLeadsModule} />
+        <Route path="/crm/leads" component={NewLeadManagementPage} />
         <Route path="/crm/contacts/:id" component={() => <div>Contact Detail Page Coming Soon</div>} />
         <Route path="/crm/contacts">
           <NextGenContactsModule />
