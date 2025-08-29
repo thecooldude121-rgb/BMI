@@ -3,6 +3,7 @@ import { Switch, Route } from 'wouter';
 import NextGenLeadsModule from './NextGenLeadsModule';
 import LeadDetailPage from './LeadDetailPage';
 import NewLeadManagementPage from './NewLeadManagementPage';
+import NewLeadForm from '../../components/CRM/NewLeadForm';
 import EnterpriseContactsModule from './EnterpriseContactsModule';
 import NextGenAccountModule from './NextGenAccountModule';
 import NextGenAccountsModule from './NextGenAccountsModule';
@@ -31,7 +32,21 @@ const CRMModule = () => {
 
 
       <Switch>
-        <Route path="/crm/leads/new-management" component={NewLeadManagementPage} />
+        <Route path="/crm/leads/new" component={() => {
+          // Show only the lead creation form on a dedicated page
+          return (
+            <div className="min-h-screen bg-gray-50">
+              <div className="max-w-4xl mx-auto py-8">
+                <NewLeadForm 
+                  isOpen={true}
+                  onClose={() => window.history.back()} 
+                  onSuccess={() => window.history.back()}
+                  mode="create"
+                />
+              </div>
+            </div>
+          );
+        }} />
         <Route path="/crm/leads/:id" component={LeadDetailPage} />
         <Route path="/crm/leads" component={NewLeadManagementPage} />
         <Route path="/crm/contacts/:id" component={() => <div>Contact Detail Page Coming Soon</div>} />
