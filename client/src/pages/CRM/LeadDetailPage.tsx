@@ -145,8 +145,9 @@ const LEAD_STATUSES = [
   { id: 'converted', name: 'Converted', color: 'bg-emerald-100 text-emerald-800' }
 ];
 
-export default function LeadDetailPage() {
-  const { id } = useParams<{ id: string }>();
+export default function LeadDetailPage({ params }: { params?: { id: string } } = {}) {
+  const { id: routeId } = useParams<{ id: string }>();
+  const id = params?.id || routeId;
   const [, setLocation] = useLocation();
   const [editingField, setEditingField] = useState<string | null>(null);
   const [editValue, setEditValue] = useState('');
@@ -161,6 +162,31 @@ export default function LeadDetailPage() {
     retry: 3,
     retryDelay: 1000
   }) as { data: Lead | undefined, isLoading: boolean, error: any, refetch: () => void };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (!lead) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Lead Not Found</h2>
+          <p className="text-gray-600 mb-4">The lead you're looking for doesn't exist.</p>
+          <button 
+            onClick={() => setLocation('/crm/leads')}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          >
+            Back to Leads
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // Lead update mutation
   const updateLeadMutation = useMutation({

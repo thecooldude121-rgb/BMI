@@ -47,7 +47,9 @@ const CRMModule = () => {
             </div>
           );
         }} />
-        <Route path="/crm/leads/:id" component={LeadDetailPage} />
+        <Route path="/crm/leads/:id" component={({ params }: { params: { id: string } }) => (
+          <LeadDetailPage params={params} />
+        )} />
         <Route path="/crm/leads" component={NewLeadManagementPage} />
         <Route path="/crm/contacts/:id" component={() => <div>Contact Detail Page Coming Soon</div>} />
         <Route path="/crm/contacts">

@@ -34,6 +34,14 @@ const NewLeadManagementPage: React.FC = () => {
     queryFn: () => apiRequest('/api/leads')
   });
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
   // Filter leads based on search and filters
   const filteredLeads = leads.filter((lead: Lead) => {
     const matchesSearch = lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
