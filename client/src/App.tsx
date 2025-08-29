@@ -130,11 +130,6 @@ const App = () => {
                   <CRMModule />
                 </LazyLoader>
               )} />
-              <Route path="/crm" component={() => (
-                <div className="min-h-screen w-full">
-                  <GamificationModule />
-                </div>
-              )} />
               <Route path="/hrms" component={() => (
                 <LazyLoader fallback={<FastLoader />}>
                   <HRMSModule />
