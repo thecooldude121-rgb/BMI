@@ -21,7 +21,6 @@ interface Lead {
 }
 
 const NewLeadManagementPage: React.FC = () => {
-  console.log('NewLeadManagementPage rendering');
   // State management
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -217,7 +216,7 @@ const NewLeadManagementPage: React.FC = () => {
   );
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50 min-h-screen" style={{ backgroundColor: 'red', border: '3px solid blue' }}>
+    <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
       {/* Header */}
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
