@@ -148,6 +148,7 @@ const LEAD_STATUSES = [
 export default function LeadDetailPage({ params }: { params?: { id: string } } = {}) {
   const { id: routeId } = useParams<{ id: string }>();
   const id = params?.id || routeId;
+  console.log('LeadDetailPage rendering with id:', id, 'params:', params);
   const [, setLocation] = useLocation();
   const [editingField, setEditingField] = useState<string | null>(null);
   const [editValue, setEditValue] = useState('');
