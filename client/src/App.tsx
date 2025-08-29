@@ -118,11 +118,6 @@ const App = () => {
               )} />
               <Route path="/crm/accounts/:id" component={AccountDetailWrapper} />
               <Route path="/crm/contacts/:id" component={ContactDetailWrapper} />
-              <Route path="/crm/leads/new-management" component={() => (
-                <LazyLoader fallback={<FastLoader />}>
-                  <NewLeadManagementPage />
-                </LazyLoader>
-              )} />
               <Route path="/lead-generation/company/:id" component={CompanyDetailWrapper} />
               <Route path="/lead-generation/people/:id" component={PersonDetails} />
               <Route path="/crm/:rest*" component={() => (
