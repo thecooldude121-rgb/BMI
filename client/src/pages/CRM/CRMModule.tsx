@@ -33,10 +33,12 @@ const CRMModule = () => {
 
       <Switch>
         <Route path="/crm/leads/new" component={() => {
+          console.log('Lead creation page rendering');
           // Show only the lead creation form on a dedicated page
           return (
-            <div className="min-h-screen bg-gray-50">
+            <div className="min-h-screen bg-gray-50" style={{ backgroundColor: 'green', border: '3px solid orange' }}>
               <div className="max-w-4xl mx-auto py-8">
+                <h1 style={{ color: 'white', fontSize: '24px', padding: '20px' }}>LEAD CREATION PAGE</h1>
                 <NewLeadForm 
                   isOpen={true}
                   onClose={() => window.history.back()} 
