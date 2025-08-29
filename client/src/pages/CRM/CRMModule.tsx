@@ -25,9 +25,13 @@ import CRMAnalyticsDashboard from './CRMAnalyticsDashboard';
 import GamificationModule from './GamificationModuleNextGen';
 
 const CRMModule = () => {
+  console.log('CRM Module rendering, current location:', window.location.pathname);
   
   return (
-    <div className="min-h-screen w-full overflow-auto">
+    <div className="min-h-screen w-full overflow-auto" style={{ backgroundColor: '#f3f4f6', minHeight: '100vh' }}>
+      <div style={{ padding: '20px', backgroundColor: 'yellow', color: 'black', fontWeight: 'bold' }}>
+        CRM MODULE IS LOADING - PATH: {window.location.pathname}
+      </div>
       <Switch>
         <Route path="/crm/leads/new" component={() => {
           // Show only the lead creation form on a dedicated page
