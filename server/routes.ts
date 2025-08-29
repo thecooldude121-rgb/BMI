@@ -60,14 +60,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const processed = new Set();
 
       // Helper function to determine duplicate criteria
-      function getDuplicateCriteria(group: any[]): string[] {
+      const getDuplicateCriteria = (group: any[]): string[] => {
         const criteria = [];
         if (group.every(acc => acc.name)) criteria.push('name');
         if (group.every(acc => acc.website)) criteria.push('website');
         if (group.every(acc => acc.domain)) criteria.push('domain');
         if (group.every(acc => acc.phone)) criteria.push('phone');
         return criteria;
-      }
+      };
 
       accounts.forEach((account: any, index: number) => {
         if (processed.has(account.id)) return;
@@ -1335,7 +1335,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/activities/metrics", async (req, res) => {
     try {
       const activities = await storage.getActivities();
-      console.log(`📊 Processing ${activities.length} activities for metrics calculation`);
       
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -1393,10 +1392,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         completionRate
       };
 
-      console.log('📈 Activities metrics calculated:', metrics);
       res.json(metrics);
     } catch (error) {
-      console.error('❌ Error calculating activities metrics:', error);
       // Return default metrics in case of error
       res.json({
         totalActivities: 0,
@@ -1607,7 +1604,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI-Powered Activity Suggestions
   app.get("/api/activities/ai-suggestions", async (req, res) => {
     try {
-      console.log('🤖 AI suggestions API called');
       
       // Return mock suggestions for now to demonstrate functionality
       const suggestions = [
@@ -1673,10 +1669,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       ];
       
-      console.log(`✨ Returning ${suggestions.length} AI suggestions`);
       res.json(suggestions);
     } catch (error) {
-      console.error('❌ Error generating AI suggestions:', error);
       res.json([]);
     }
   });
@@ -1704,10 +1698,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const activity = await storage.createActivity(activityData);
       
-      console.log(`✅ Created activity from AI suggestion: ${suggestionId}`);
       res.status(201).json(activity);
     } catch (error) {
-      console.error('❌ Error accepting AI suggestion:', error);
       handleError(error, res);
     }
   });

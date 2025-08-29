@@ -24,14 +24,11 @@ const SimpleContactsPage: React.FC = () => {
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        console.log('🚀 Fetching contacts...');
         const response = await fetch('/api/contacts');
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        console.log('✅ Contacts loaded:', data.length);
         setContacts(data);
       } catch (err) {
-        console.error('❌ Error:', err);
         setError(String(err));
       } finally {
         setLoading(false);
