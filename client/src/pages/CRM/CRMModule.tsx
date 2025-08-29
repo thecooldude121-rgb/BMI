@@ -25,20 +25,19 @@ import CRMAnalyticsDashboard from './CRMAnalyticsDashboard';
 import GamificationModule from './GamificationModuleNextGen';
 
 const CRMModule = () => {
-  console.log('CRMModule rendering');
   
   return (
     <div className="min-h-screen w-full overflow-auto">
-
-
       <Switch>
         <Route path="/crm/leads/new" component={() => {
-          console.log('Lead creation page rendering');
           // Show only the lead creation form on a dedicated page
           return (
-            <div className="min-h-screen bg-gray-50" style={{ backgroundColor: 'green', border: '3px solid orange' }}>
+            <div className="min-h-screen bg-gray-50">
               <div className="max-w-4xl mx-auto py-8">
-                <h1 style={{ color: 'white', fontSize: '24px', padding: '20px' }}>LEAD CREATION PAGE</h1>
+                <div className="mb-6">
+                  <h1 className="text-3xl font-bold text-gray-900 mb-2">Create New Lead</h1>
+                  <p className="text-gray-600">Add a new lead to your CRM system</p>
+                </div>
                 <NewLeadForm 
                   isOpen={true}
                   onClose={() => window.history.back()} 
