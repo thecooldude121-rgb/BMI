@@ -1,0 +1,77 @@
+Design a 'New Lead' creation page for a CRM. The UI/UX must rival Hubspot, Salesforce, and Zoho, prioritizing speed, clarity, and completeness for Sales reps/managers.
+
+Fields:
+- Full Name (first, last)
+- Company Name
+- Email Address (validation)
+- Mobile & Work Phone
+- Lead Source (dropdown: Web, Referral, Social, Event, etc.)
+- Lead Status (dropdown: New, Contacted, Qualified, Unqualified, Converted, Lost)
+- Industry (autocomplete/typeahead)
+- Lead Owner (assign to team member)
+- Priority (High/Medium/Low)
+- Estimated Value
+- Next Follow-Up Date (date picker)
+- Notes (rich text/attachments support)
+- Tags (multi-select)
+
+UI/UX Requirements:
+- Step-by-step progressive disclosure ("Basic Details", "Contact Info", "Lead Qualification")
+- Clear error validation and inline tips
+- Modern, distraction-free design – plenty of white space, card-based layout, sticky save button
+- Smart autofill/icons for common fields
+- Responsive, dark/light mode support
+- Instant feedback on save with toasts/snackbars
+- "Add New Field" for customization
+
+Bonus:
+- Allow uploading a contact vCard to auto-populate fields
+- Launch in modal or side-panel to keep sales context
+
+Test all user flows:
+- Create with required only
+- Invalid email/phone
+- All fields filled
+- Large note/image upload
+- Mobile view, keyboard navigation
+- Field-by-field reset
+- Save draft/cancel
+- Assign to another user
+- Autosave behavior
+- Validation for duplicates
+
+Provide all major design components, verify interactions, and output code/templates in React/TypeScript.
+
+Create a 'Lead Details' page UI/UX for a CRM platform with a focus on clarity, performance, and competitive intelligence over Hubspot, Salesforce, and Zoho.
+
+At-a-glance lead summary (top card):
+- Avatar/Initials & full lead name
+- Status, lead owner, priority tag
+- Company, value, source, creation date
+
+Tabbed or vertical sections:
+- Timeline: all activities, emails, calls, notes, tasks (sortable/filterable, inline logging)
+- Contact Info: phone, email, address, LinkedIn/social links, vCard download
+- Details: industry, lead score, custom fields, last touch
+- Opportunities: related deals, value, conversion history
+- Files/Notes: upload/review docs, proposal PDFs
+- Smart reminders: upcoming tasks, meetings
+- Changelog/history with undo
+
+UI/UX Best Practices:
+- Always-visible action bar (edit, convert, add activity, assign, mark as lost/won, duplicate, delete)
+- Optimized for quick glance & rapid actions
+- Hover states, skeleton loaders, empty states
+- Responsive, mobile-friendly, visually balanced
+
+Test every feature:
+- Navigating sections
+- Creating, editing, deleting, and linking activities
+- Assigning owner/priority/status change
+- Uploading/deleting files
+- Timeline inline updates
+- Undo actions/logs
+- All error/warning states
+- Mobile/responsive transitions
+
+Provide production-grade component spec (React, TypeScript), explain UX choices, and validate all interaction flows.
