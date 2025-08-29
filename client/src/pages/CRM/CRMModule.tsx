@@ -3,6 +3,7 @@ import { Switch, Route } from 'wouter';
 import NextGenLeadsModule from './NextGenLeadsModule';
 import LeadDetailPage from './LeadDetailPage';
 import NewLeadManagementPage from './NewLeadManagementPage';
+import TestLeadsPage from './TestLeadsPage';
 import NewLeadForm from '../../components/CRM/NewLeadForm';
 import EnterpriseContactsModule from './EnterpriseContactsModule';
 import NextGenAccountModule from './NextGenAccountModule';
@@ -30,24 +31,31 @@ const CRMModule = () => {
     <div className="min-h-screen w-full bg-white" style={{ minHeight: '100vh', backgroundColor: 'white' }}>
       <Switch>
         <Route path="/crm/leads/new" component={() => {
-          // Show only the lead creation form on a dedicated page
           return (
-            <div className="min-h-screen bg-gray-50 p-6">
-              <div className="mb-4 p-4 bg-green-100 border border-green-200 rounded-lg">
-                <h1 className="text-2xl font-bold text-green-800">✅ Lead Creation Page is Working!</h1>
-                <p className="text-green-600">Ready to create new leads</p>
-              </div>
-              <div className="max-w-4xl mx-auto py-8">
-                <div className="mb-6">
-                  <h1 className="text-3xl font-bold text-gray-900 mb-2">Create New Lead</h1>
-                  <p className="text-gray-600">Add a new lead to your CRM system</p>
-                </div>
-                <NewLeadForm 
-                  isOpen={true}
-                  onClose={() => window.history.back()} 
-                  onSuccess={() => window.history.back()}
-                  mode="create"
-                />
+            <div style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              backgroundColor: '#00ff00',
+              color: 'black',
+              fontSize: '48px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 999999,
+              fontFamily: 'Arial, sans-serif',
+              fontWeight: 'bold'
+            }}>
+              <div style={{ textAlign: 'center' }}>
+                <h1>🚀 LEAD CREATION PAGE IS VISIBLE!</h1>
+                <p style={{ fontSize: '24px', marginTop: '20px' }}>
+                  Path: {window.location.pathname}
+                </p>
+                <p style={{ fontSize: '20px', marginTop: '10px' }}>
+                  This should be clearly visible with green background
+                </p>
               </div>
             </div>
           );
@@ -55,7 +63,7 @@ const CRMModule = () => {
         <Route path="/crm/leads/:id" component={({ params }: { params: { id: string } }) => (
           <LeadDetailPage params={params} />
         )} />
-        <Route path="/crm/leads" component={NewLeadManagementPage} />
+        <Route path="/crm/leads" component={TestLeadsPage} />
         <Route path="/crm/contacts/:id" component={() => <div>Contact Detail Page Coming Soon</div>} />
         <Route path="/crm/contacts">
           <NextGenContactsModule />
