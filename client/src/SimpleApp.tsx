@@ -6,6 +6,12 @@ import {
   Home, Building2, ChevronDown, X, Brain, Video
 } from 'lucide-react';
 
+// Import existing full-featured components
+import NewLeadManagementPage from './pages/CRM/NewLeadManagementPage';
+import NewLeadForm from './components/CRM/NewLeadForm';
+import LeadGeneration from './pages/LeadGeneration/LeadGeneration';
+import MeetingIntelligencePage from './pages/MeetingIntelligencePage';
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -256,71 +262,30 @@ const DashboardContent = () => {
   );
 };
 
-// Simple placeholder components for other modules
-const LeadGenerationContent = () => {
-  return (
-    <div style={{ marginLeft: '256px', paddingTop: '64px', minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
-      <div className="p-6">
-        <div className="mb-8">
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg">
-              <Target className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Lead Generation</h1>
-              <p className="text-gray-600 mt-1">AI-powered prospecting and discovery</p>
-            </div>
-          </div>
-        </div>
-        
-        <div className="bg-white p-8 rounded-xl border shadow-sm">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Lead Generation Module</h2>
-          <p className="text-gray-600 mb-4">Find and discover new prospects with AI-powered tools.</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <h3 className="font-medium text-gray-900">People Discovery</h3>
-              <p className="text-sm text-gray-600 mt-1">Find and connect with decision makers</p>
-            </div>
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <h3 className="font-medium text-gray-900">Company Research</h3>
-              <p className="text-sm text-gray-600 mt-1">Research companies and opportunities</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+// Lead Management Content (using the existing enhanced component)
+const LeadManagementContent = () => {
+  return <NewLeadManagementPage />;
 };
 
-const MeetingIntelligenceContent = () => {
+// Lead Creation Content
+const LeadCreationContent = () => {
+  const [isOpen, setIsOpen] = useState(true);
+
   return (
     <div style={{ marginLeft: '256px', paddingTop: '64px', minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
-      <div className="p-6">
+      <div style={{ padding: '24px' }}>
         <div className="mb-8">
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="p-2 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg">
-              <Brain className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">AI Meeting Intelligence</h1>
-              <p className="text-gray-600 mt-1">Transform meetings into actionable insights</p>
-            </div>
-          </div>
+          <h1 className="text-3xl font-bold text-gray-900">Create New Lead</h1>
+          <p className="text-gray-600 mt-2">Add a new prospect to your CRM pipeline</p>
         </div>
-        
-        <div className="bg-white p-8 rounded-xl border shadow-sm">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Meeting Intelligence Module</h2>
-          <p className="text-gray-600 mb-4">Analyze meetings with AI-powered insights and recommendations.</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <h3 className="font-medium text-gray-900">Meeting Analysis</h3>
-              <p className="text-sm text-gray-600 mt-1">AI-powered meeting transcription and analysis</p>
-            </div>
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <h3 className="font-medium text-gray-900">Action Items</h3>
-              <p className="text-sm text-gray-600 mt-1">Automatic action item extraction</p>
-            </div>
-          </div>
+        <div className="bg-white p-6 rounded-xl border shadow-sm">
+          <NewLeadForm 
+            isOpen={isOpen} 
+            onClose={() => {
+              setIsOpen(false);
+              window.location.href = '/crm/leads';
+            }}
+          />
         </div>
       </div>
     </div>
@@ -336,14 +301,24 @@ const SimpleAppContent = () => {
     return <DashboardContent />;
   }
   
-  // Lead Generation Page
-  if (currentPath === '/lead-generation') {
-    return <LeadGenerationContent />;
+  // Lead Management Page
+  if (currentPath === '/crm/leads') {
+    return <LeadManagementContent />;
   }
   
-  // AI Meeting Intelligence Page
+  // Lead Creation Page
+  if (currentPath === '/crm/leads/new') {
+    return <LeadCreationContent />;
+  }
+  
+  // Lead Generation Page (full module)
+  if (currentPath === '/lead-generation') {
+    return <LeadGeneration />;
+  }
+  
+  // AI Meeting Intelligence Page (full module)
   if (currentPath === '/meeting-intelligence') {
-    return <MeetingIntelligenceContent />;
+    return <MeetingIntelligencePage />;
   }
   
   // Default fallback - redirect to dashboard
