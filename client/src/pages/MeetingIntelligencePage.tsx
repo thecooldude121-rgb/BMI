@@ -80,12 +80,11 @@ export default function MeetingIntelligencePage() {
   };
 
   return (
-    <div style={{ marginLeft: '256px', paddingTop: '64px', minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
-      <div className="p-6 max-w-7xl mx-auto space-y-6">
-        <div className="border-b pb-4">
-          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
-            <Brain className="h-8 w-8 text-blue-600" />
-            AI Meeting Intelligence
+    <div className="p-6 max-w-7xl mx-auto space-y-6">
+      <div className="border-b pb-4">
+        <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
+          <Brain className="h-8 w-8 text-blue-600" />
+          AI Meeting Intelligence
         </h1>
         <p className="text-gray-600 mt-2">
           Transform your meetings into actionable insights with AI-powered analysis
@@ -343,7 +342,6 @@ export default function MeetingIntelligencePage() {
             )}
           </div>
         )}
-      </div>
       </div>
     </div>
   );
