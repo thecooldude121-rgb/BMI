@@ -215,16 +215,8 @@ const NewLeadManagementPage: React.FC = () => {
     </tr>
   );
 
-  
   return (
-    <div className="min-h-screen bg-gray-50 p-6" style={{ minHeight: '100vh' }}>
-      <div className="mb-4 p-4 bg-blue-100 border border-blue-200 rounded-lg">
-        <h1 className="text-2xl font-bold text-blue-800">✅ Lead Management Page is Working!</h1>
-        <p className="text-blue-600">Found {leads.length} leads in the system</p>
-        <p className="text-sm text-blue-500 mt-2">
-          Navigate to individual leads or create new ones using the interface below
-        </p>
-      </div>
+    <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
       {/* Header */}
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
