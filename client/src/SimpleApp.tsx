@@ -3,8 +3,14 @@ import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-quer
 import { 
   Plus, Search, Filter, Mail, Phone, Building, Calendar, DollarSign, Star, User,
   Menu, Bell, Settings, LogOut, Users, BarChart3, Target, Briefcase,
-  Home, Building2, ChevronDown, X
+  Home, Building2, ChevronDown, X, Brain, Video
 } from 'lucide-react';
+
+// Import existing components
+import NewLeadManagementPage from './pages/CRM/NewLeadManagementPage';
+import NewLeadForm from './components/CRM/NewLeadForm';
+import LeadGeneration from './pages/LeadGeneration/LeadGeneration';
+import MeetingIntelligencePage from './pages/MeetingIntelligencePage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -170,6 +176,8 @@ const Sidebar = () => {
     { path: '/crm/leads', icon: Target, label: 'CRM - Leads', color: 'text-red-600' },
     { path: '/crm/accounts', icon: Building2, label: 'CRM - Accounts', color: 'text-purple-600' },
     { path: '/crm/deals', icon: Briefcase, label: 'CRM - Deals', color: 'text-orange-600' },
+    { path: '/lead-generation', icon: Target, label: 'Lead Generation', color: 'text-pink-600' },
+    { path: '/meeting-intelligence', icon: Brain, label: 'AI Meeting Intelligence', color: 'text-indigo-600' },
     { path: '/hrms', icon: Users, label: 'HRMS', color: 'text-teal-600' },
   ];
 
@@ -846,11 +854,19 @@ const DashboardContent = () => {
               </div>
             </a>
             
-            <a href="/crm/accounts" className="flex items-center p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-              <Building2 className="h-5 w-5 text-blue-600 mr-3" />
+            <a href="/lead-generation" className="flex items-center p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+              <Target className="h-5 w-5 text-pink-600 mr-3" />
               <div>
-                <p className="font-medium text-gray-900">View Accounts</p>
-                <p className="text-gray-600 text-xs">Manage companies</p>
+                <p className="font-medium text-gray-900">Lead Generation</p>
+                <p className="text-gray-600 text-xs">Find new prospects</p>
+              </div>
+            </a>
+            
+            <a href="/meeting-intelligence" className="flex items-center p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+              <Brain className="h-5 w-5 text-indigo-600 mr-3" />
+              <div>
+                <p className="font-medium text-gray-900">AI Meeting Intelligence</p>
+                <p className="text-gray-600 text-xs">Analyze meetings</p>
               </div>
             </a>
             
@@ -859,14 +875,6 @@ const DashboardContent = () => {
               <div>
                 <p className="font-medium text-gray-900">View Analytics</p>
                 <p className="text-gray-600 text-xs">Business insights</p>
-              </div>
-            </a>
-            
-            <a href="/hrms" className="flex items-center p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-              <Users className="h-5 w-5 text-orange-600 mr-3" />
-              <div>
-                <p className="font-medium text-gray-900">HRMS</p>
-                <p className="text-gray-600 text-xs">Manage team</p>
               </div>
             </a>
           </div>
@@ -893,6 +901,16 @@ const SimpleAppContent = () => {
   // Lead Creation Page
   if (currentPath === '/crm/leads/new') {
     return <LeadCreationContent />;
+  }
+  
+  // Lead Generation Page
+  if (currentPath === '/lead-generation') {
+    return <LeadGeneration />;
+  }
+  
+  // AI Meeting Intelligence Page
+  if (currentPath === '/meeting-intelligence') {
+    return <MeetingIntelligencePage />;
   }
   
   // Default fallback - redirect to dashboard
