@@ -1,6 +1,122 @@
 import React from 'react';
+import { Route, Router } from 'wouter';
 
 const SimpleApp = () => {
+  // Get current path for simple routing
+  const currentPath = window.location.pathname;
+  
+  // Lead Management Page
+  if (currentPath === '/crm/leads') {
+    return (
+      <div style={{ padding: '20px', backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
+        <div style={{ 
+          backgroundColor: '#d1ecf1', 
+          border: '1px solid #bee5eb', 
+          borderRadius: '8px', 
+          padding: '20px', 
+          marginBottom: '20px' 
+        }}>
+          <h1 style={{ color: '#0c5460', fontSize: '24px', fontWeight: 'bold', margin: '0 0 10px 0' }}>
+            ✅ Lead Management Page is Working!
+          </h1>
+          <p style={{ color: '#0c5460', margin: '0' }}>
+            Successfully loaded the lead management interface
+          </p>
+        </div>
+        
+        <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #ddd' }}>
+          <h2 style={{ marginBottom: '20px' }}>Lead Management Interface</h2>
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+            <a 
+              href="/crm/leads/new" 
+              style={{
+                display: 'inline-block',
+                padding: '10px 20px',
+                backgroundColor: '#28a745',
+                color: 'white',
+                textDecoration: 'none',
+                borderRadius: '4px'
+              }}
+            >
+              Create New Lead
+            </a>
+          </div>
+          <p>Lead list and management features would go here...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Lead Creation Page
+  if (currentPath === '/crm/leads/new') {
+    return (
+      <div style={{ padding: '20px', backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
+        <div style={{ 
+          backgroundColor: '#d4edda', 
+          border: '1px solid #c3e6cb', 
+          borderRadius: '8px', 
+          padding: '20px', 
+          marginBottom: '20px' 
+        }}>
+          <h1 style={{ color: '#155724', fontSize: '24px', fontWeight: 'bold', margin: '0 0 10px 0' }}>
+            ✅ Lead Creation Page is Working!
+          </h1>
+          <p style={{ color: '#155724', margin: '0' }}>
+            Ready to create new leads
+          </p>
+        </div>
+        
+        <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #ddd' }}>
+          <h2 style={{ marginBottom: '20px' }}>Create New Lead</h2>
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+            <a 
+              href="/crm/leads" 
+              style={{
+                display: 'inline-block',
+                padding: '10px 20px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                textDecoration: 'none',
+                borderRadius: '4px'
+              }}
+            >
+              Back to Lead List
+            </a>
+          </div>
+          <p>Lead creation form would go here...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Test Page
+  if (currentPath === '/test-leads') {
+    return (
+      <div style={{ 
+        backgroundColor: '#dc3545', 
+        color: 'white', 
+        padding: '40px', 
+        textAlign: 'center', 
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <h1 style={{ fontSize: '48px', margin: '0 0 20px 0' }}>
+          🚀 TEST LEADS PAGE IS VISIBLE!
+        </h1>
+        <p style={{ fontSize: '18px', margin: '0' }}>
+          Path: /test-leads
+        </p>
+        <p style={{ fontSize: '16px', margin: '10px 0 0 0' }}>
+          This should be clearly visible with red background
+        </p>
+      </div>
+    );
+  }
+  
+  // Default Home Page
   return (
     <div style={{ padding: '20px', backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
       <div style={{ 
@@ -11,29 +127,56 @@ const SimpleApp = () => {
         marginBottom: '20px' 
       }}>
         <h1 style={{ color: '#0c5460', fontSize: '24px', fontWeight: 'bold', margin: '0 0 10px 0' }}>
-          ✅ Simple App is Working!
+          ✅ Business Management Platform
         </h1>
         <p style={{ color: '#0c5460', margin: '0' }}>
-          This is a basic React component without any routing
+          Navigate to your lead management pages
         </p>
       </div>
       
       <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #ddd' }}>
-        <h2>Test Interface</h2>
-        <p>If you can see this, React is working properly.</p>
-        <button 
-          onClick={() => alert('Button clicked!')}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#007bff',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
-          Test Button
-        </button>
+        <h2 style={{ marginBottom: '20px' }}>Available Pages</h2>
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <a 
+            href="/crm/leads" 
+            style={{
+              display: 'inline-block',
+              padding: '10px 20px',
+              backgroundColor: '#007bff',
+              color: 'white',
+              textDecoration: 'none',
+              borderRadius: '4px'
+            }}
+          >
+            Lead Management
+          </a>
+          <a 
+            href="/crm/leads/new" 
+            style={{
+              display: 'inline-block',
+              padding: '10px 20px',
+              backgroundColor: '#28a745',
+              color: 'white',
+              textDecoration: 'none',
+              borderRadius: '4px'
+            }}
+          >
+            Create New Lead
+          </a>
+          <a 
+            href="/test-leads" 
+            style={{
+              display: 'inline-block',
+              padding: '10px 20px',
+              backgroundColor: '#dc3545',
+              color: 'white',
+              textDecoration: 'none',
+              borderRadius: '4px'
+            }}
+          >
+            Test Page
+          </a>
+        </div>
       </div>
     </div>
   );
