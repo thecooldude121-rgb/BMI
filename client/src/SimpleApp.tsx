@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { Route, Router } from 'wouter';
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
-import { Plus, Search, Filter, Mail, Phone, Building, Calendar, DollarSign, Star, User } from 'lucide-react';
+import { 
+  Plus, Search, Filter, Mail, Phone, Building, Calendar, DollarSign, Star, User,
+  Menu, Bell, Settings, LogOut, Users, BarChart3, Target, Briefcase,
+  Home, Building2, ChevronDown, X
+} from 'lucide-react';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,6 +32,207 @@ const apiRequest = async (url: string, options: any = {}) => {
   return response.json();
 };
 
+// Header Component
+const Header = () => {
+  const [showModulesMenu, setShowModulesMenu] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
+  return (
+    <header className="bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
+      <div className="flex items-center justify-between h-16 px-6">
+        {/* Left Section - Company Name */}
+        <div className="flex items-center space-x-8">
+          <div className="flex items-center space-x-2">
+            <Building2 className="h-8 w-8 text-blue-600" />
+            <div>
+              <span className="text-xl font-bold text-gray-900">BMI Platform</span>
+              <div className="text-xs text-gray-500 font-medium">Business Management Intelligence</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Center Section - Search */}
+        <div className="flex-1 max-w-2xl mx-8">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search across all modules..."
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
+            />
+          </div>
+        </div>
+
+        {/* Right Section - Actions and User */}
+        <div className="flex items-center space-x-4">
+          {/* All Modules Menu */}
+          <div className="relative">
+            <button
+              onClick={() => setShowModulesMenu(!showModulesMenu)}
+              className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+            >
+              <Menu className="h-4 w-4 mr-2" />
+              All Modules
+              <ChevronDown className="h-3 w-3 ml-1" />
+            </button>
+            
+            {showModulesMenu && (
+              <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
+                <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                  Business Modules
+                </div>
+                <a href="/dashboard" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  <Home className="h-4 w-4 mr-3 text-blue-600" />
+                  Dashboard
+                </a>
+                <a href="/crm/leads" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  <Target className="h-4 w-4 mr-3 text-green-600" />
+                  CRM - Leads
+                </a>
+                <a href="/crm/accounts" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  <Building2 className="h-4 w-4 mr-3 text-purple-600" />
+                  CRM - Accounts
+                </a>
+                <a href="/crm/deals" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  <Briefcase className="h-4 w-4 mr-3 text-orange-600" />
+                  CRM - Deals
+                </a>
+                <a href="/analytics" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  <BarChart3 className="h-4 w-4 mr-3 text-indigo-600" />
+                  Analytics
+                </a>
+                <a href="/hrms" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  <Users className="h-4 w-4 mr-3 text-teal-600" />
+                  HRMS
+                </a>
+              </div>
+            )}
+          </div>
+
+          {/* Notifications */}
+          <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg relative">
+            <Bell className="h-5 w-5" />
+            <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
+          </button>
+
+          {/* Settings */}
+          <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg">
+            <Settings className="h-5 w-5" />
+          </button>
+
+          {/* User Menu */}
+          <div className="relative">
+            <button
+              onClick={() => setShowUserMenu(!showUserMenu)}
+              className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+            >
+              <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <User className="h-5 w-5 text-blue-600" />
+              </div>
+              <span>Admin User</span>
+              <ChevronDown className="h-3 w-3" />
+            </button>
+
+            {showUserMenu && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
+                <div className="px-4 py-2 text-sm text-gray-500 border-b">
+                  Signed in as <strong>Admin</strong>
+                </div>
+                <a href="/profile" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  <User className="h-4 w-4 mr-3" />
+                  Your Profile
+                </a>
+                <a href="/settings" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  <Settings className="h-4 w-4 mr-3" />
+                  Settings
+                </a>
+                <div className="border-t border-gray-100 my-1"></div>
+                <button className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  <LogOut className="h-4 w-4 mr-3" />
+                  Sign out
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+// Sidebar Component
+const Sidebar = () => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  
+  const navItems = [
+    { path: '/dashboard', icon: Home, label: 'Dashboard', color: 'text-blue-600' },
+    { path: '/analytics', icon: BarChart3, label: 'Analytics', color: 'text-green-600' },
+    { path: '/crm/leads', icon: Target, label: 'CRM - Leads', color: 'text-red-600' },
+    { path: '/crm/accounts', icon: Building2, label: 'CRM - Accounts', color: 'text-purple-600' },
+    { path: '/crm/deals', icon: Briefcase, label: 'CRM - Deals', color: 'text-orange-600' },
+    { path: '/hrms', icon: Users, label: 'HRMS', color: 'text-teal-600' },
+  ];
+
+  const currentPath = window.location.pathname;
+
+  return (
+    <div className={`fixed left-0 top-16 h-full bg-white border-r border-gray-200 shadow-sm z-40 transition-all duration-200 ${
+      isCollapsed ? 'w-16' : 'w-64'
+    }`}>
+      {/* Collapse Toggle */}
+      <div className="p-4 border-b border-gray-200">
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="w-full flex items-center justify-center p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Navigation */}
+      <div className="p-4">
+        {!isCollapsed && (
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Navigation</h2>
+        )}
+        <nav className="space-y-2">
+          {navItems.map(({ path, icon: Icon, label, color }) => {
+            const isActive = currentPath === path;
+            
+            return (
+              <a
+                key={path}
+                href={path}
+                className={`flex items-center px-3 py-2 rounded-lg transition-all ${
+                  isActive 
+                    ? 'bg-blue-50 text-blue-700 border border-blue-200' 
+                    : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                }`}
+                title={isCollapsed ? label : undefined}
+              >
+                <Icon className={`h-5 w-5 ${isActive ? 'text-blue-600' : color} ${isCollapsed ? '' : 'mr-3'}`} />
+                {!isCollapsed && (
+                  <span className="font-medium">{label}</span>
+                )}
+              </a>
+            );
+          })}
+        </nav>
+      </div>
+
+      {/* Status Indicator */}
+      {!isCollapsed && (
+        <div className="absolute bottom-4 left-4 right-4">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+            <div className="text-xs text-green-800 font-medium">🟢 System Online</div>
+            <div className="text-xs text-green-600">All modules active</div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Lead Management Content
 const LeadManagementContent = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -94,282 +298,207 @@ const LeadManagementContent = () => {
   };
 
   return (
-    <div style={{ padding: '20px', backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
-      {/* Success Banner */}
-      <div style={{ 
-        backgroundColor: '#d1ecf1', 
-        border: '1px solid #bee5eb', 
-        borderRadius: '8px', 
-        padding: '20px', 
-        marginBottom: '20px' 
-      }}>
-        <h1 style={{ color: '#0c5460', fontSize: '24px', fontWeight: 'bold', margin: '0 0 10px 0' }}>
-          ✅ Lead Management Page is Working!
-        </h1>
-        <p style={{ color: '#0c5460', margin: '0' }}>
-          Found {leads.length} leads in the system with full UI functionality
-        </p>
-      </div>
-
-      {/* Stats Dashboard */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-        <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div>
-              <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 4px 0' }}>Total Leads</p>
-              <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', margin: '0' }}>{stats.total}</p>
-            </div>
-            <User style={{ width: '24px', height: '24px', color: '#3b82f6' }} />
-          </div>
-        </div>
-        
-        <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div>
-              <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 4px 0' }}>New Leads</p>
-              <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', margin: '0' }}>{stats.new}</p>
-            </div>
-            <Plus style={{ width: '24px', height: '24px', color: '#10b981' }} />
-          </div>
-        </div>
-        
-        <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div>
-              <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 4px 0' }}>Qualified</p>
-              <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', margin: '0' }}>{stats.qualified}</p>
-            </div>
-            <Star style={{ width: '24px', height: '24px', color: '#f59e0b' }} />
-          </div>
-        </div>
-        
-        <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div>
-              <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 4px 0' }}>Total Value</p>
-              <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', margin: '0' }}>
-                ${stats.totalValue.toLocaleString()}
-              </p>
-            </div>
-            <DollarSign style={{ width: '24px', height: '24px', color: '#8b5cf6' }} />
-          </div>
-        </div>
-      </div>
-
-      {/* Controls */}
-      <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e5e7eb', marginBottom: '24px' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
-            <div>
-              <h2 style={{ fontSize: '20px', fontWeight: '600', color: '#111827', margin: '0 0 4px 0' }}>
-                Lead Management
-              </h2>
-              <p style={{ fontSize: '14px', color: '#6b7280', margin: '0' }}>
-                Manage and track your sales leads
-              </p>
-            </div>
-            <a 
-              href="/crm/leads/new" 
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '10px 20px',
-                backgroundColor: '#10b981',
-                color: 'white',
-                textDecoration: 'none',
-                borderRadius: '6px',
-                fontSize: '14px',
-                fontWeight: '500'
-              }}
-            >
-              <Plus style={{ width: '16px', height: '16px' }} />
-              Create New Lead
-            </a>
-          </div>
-
-          {/* Search and Filters */}
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-            <div style={{ position: 'relative', flex: '1', minWidth: '200px' }}>
-              <Search style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', width: '16px', height: '16px', color: '#6b7280' }} />
-              <input
-                type="text"
-                placeholder="Search leads..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={{
-                  width: '100%',
-                  paddingLeft: '40px',
-                  paddingRight: '12px',
-                  paddingTop: '8px',
-                  paddingBottom: '8px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '14px'
-                }}
-              />
-            </div>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <button
-                onClick={() => setViewMode('grid')}
-                style={{
-                  padding: '8px 16px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  backgroundColor: viewMode === 'grid' ? '#3b82f6' : 'white',
-                  color: viewMode === 'grid' ? 'white' : '#374151',
-                  fontSize: '14px',
-                  cursor: 'pointer'
-                }}
-              >
-                Grid
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                style={{
-                  padding: '8px 16px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  backgroundColor: viewMode === 'list' ? '#3b82f6' : 'white',
-                  color: viewMode === 'list' ? 'white' : '#374151',
-                  fontSize: '14px',
-                  cursor: 'pointer'
-                }}
-              >
-                List
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Leads Display */}
-      {viewMode === 'grid' ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-          {filteredLeads.map((lead: any) => (
-            <div key={lead.id} style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '12px' }}>
-                <div>
-                  <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#111827', margin: '0 0 4px 0' }}>
-                    {lead.name}
-                  </h3>
-                  <p style={{ fontSize: '14px', color: '#6b7280', margin: '0', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Building style={{ width: '14px', height: '14px' }} />
-                    {lead.company}
-                  </p>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '12px', padding: '2px 8px', borderRadius: '12px' }} className={getStatusColor(lead.status)}>
-                    {lead.status}
-                  </span>
-                  <Star style={{ width: '14px', height: '14px' }} className={getPriorityColor(lead.priority)} />
-                </div>
+    <div style={{ marginLeft: '256px', paddingTop: '64px', minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
+      <div style={{ padding: '24px' }}>
+        {/* Stats Dashboard */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white p-5 rounded-lg border shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium">Total Leads</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
               </div>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px', color: '#6b7280' }}>
-                  <Mail style={{ width: '14px', height: '14px' }} />
-                  {lead.email}
-                </div>
-                {lead.phone && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px', color: '#6b7280' }}>
-                    <Phone style={{ width: '14px', height: '14px' }} />
-                    {lead.phone}
-                  </div>
-                )}
-                {lead.estimatedValue && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px', color: '#6b7280' }}>
-                    <DollarSign style={{ width: '14px', height: '14px' }} />
-                    ${lead.estimatedValue.toLocaleString()}
-                  </div>
-                )}
+              <User className="h-6 w-6 text-blue-600" />
+            </div>
+          </div>
+          
+          <div className="bg-white p-5 rounded-lg border shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium">New Leads</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.new}</p>
               </div>
-              
-              <div style={{ display: 'flex', gap: '8px' }}>
+              <Plus className="h-6 w-6 text-green-600" />
+            </div>
+          </div>
+          
+          <div className="bg-white p-5 rounded-lg border shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium">Qualified</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.qualified}</p>
+              </div>
+              <Star className="h-6 w-6 text-yellow-600" />
+            </div>
+          </div>
+          
+          <div className="bg-white p-5 rounded-lg border shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium">Total Value</p>
+                <p className="text-2xl font-bold text-gray-900">${stats.totalValue.toLocaleString()}</p>
+              </div>
+              <DollarSign className="h-6 w-6 text-purple-600" />
+            </div>
+          </div>
+        </div>
+
+        {/* Controls */}
+        <div className="bg-white p-6 rounded-lg border shadow-sm mb-6">
+          <div className="flex flex-col space-y-4">
+            <div className="flex justify-between items-center flex-wrap gap-4">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">Lead Management</h2>
+                <p className="text-gray-600 text-sm">Manage and track your sales leads</p>
+              </div>
+              <a 
+                href="/crm/leads/new" 
+                className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+                Create New Lead
+              </a>
+            </div>
+
+            {/* Search and Filters */}
+            <div className="flex gap-3 items-center flex-wrap">
+              <div className="relative flex-1 min-w-[200px]">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search leads..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div className="flex gap-2">
                 <button
-                  style={{
-                    flex: 1,
-                    padding: '6px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '4px',
-                    backgroundColor: 'white',
-                    color: '#374151',
-                    fontSize: '12px',
-                    cursor: 'pointer'
-                  }}
+                  onClick={() => setViewMode('grid')}
+                  className={`px-4 py-2 border rounded-lg text-sm font-medium ${
+                    viewMode === 'grid' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'
+                  }`}
                 >
-                  Edit
+                  Grid
                 </button>
                 <button
-                  style={{
-                    flex: 1,
-                    padding: '6px 12px',
-                    border: '1px solid #3b82f6',
-                    borderRadius: '4px',
-                    backgroundColor: '#3b82f6',
-                    color: 'white',
-                    fontSize: '12px',
-                    cursor: 'pointer'
-                  }}
+                  onClick={() => setViewMode('list')}
+                  className={`px-4 py-2 border rounded-lg text-sm font-medium ${
+                    viewMode === 'list' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'
+                  }`}
                 >
-                  View Details
+                  List
                 </button>
               </div>
             </div>
-          ))}
+          </div>
         </div>
-      ) : (
-        // List View
-        <div style={{ backgroundColor: 'white', borderRadius: '8px', border: '1px solid #e5e7eb', overflow: 'hidden' }}>
-          <table style={{ width: '100%' }}>
-            <thead style={{ backgroundColor: '#f9fafb' }}>
-              <tr>
-                <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#374151', borderBottom: '1px solid #e5e7eb' }}>Name</th>
-                <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#374151', borderBottom: '1px solid #e5e7eb' }}>Company</th>
-                <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#374151', borderBottom: '1px solid #e5e7eb' }}>Email</th>
-                <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#374151', borderBottom: '1px solid #e5e7eb' }}>Status</th>
-                <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#374151', borderBottom: '1px solid #e5e7eb' }}>Priority</th>
-                <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#374151', borderBottom: '1px solid #e5e7eb' }}>Value</th>
-                <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#374151', borderBottom: '1px solid #e5e7eb' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredLeads.map((lead: any) => (
-                <tr key={lead.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                  <td style={{ padding: '12px', fontSize: '14px', color: '#111827' }}>{lead.name}</td>
-                  <td style={{ padding: '12px', fontSize: '14px', color: '#6b7280' }}>{lead.company}</td>
-                  <td style={{ padding: '12px', fontSize: '14px', color: '#6b7280' }}>{lead.email}</td>
-                  <td style={{ padding: '12px' }}>
-                    <span style={{ fontSize: '12px', padding: '2px 8px', borderRadius: '12px' }} className={getStatusColor(lead.status)}>
+
+        {/* Leads Display */}
+        {viewMode === 'grid' ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {filteredLeads.map((lead: any) => (
+              <div key={lead.id} className="bg-white border rounded-lg p-5 hover:shadow-lg transition-shadow">
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <h3 className="font-semibold text-gray-900">{lead.name}</h3>
+                    <p className="text-gray-600 text-sm flex items-center gap-1">
+                      <Building className="h-3 w-3" />
+                      {lead.company}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(lead.status)}`}>
                       {lead.status}
                     </span>
-                  </td>
-                  <td style={{ padding: '12px' }}>
-                    <Star style={{ width: '14px', height: '14px' }} className={getPriorityColor(lead.priority)} />
-                  </td>
-                  <td style={{ padding: '12px', fontSize: '14px', color: '#6b7280' }}>
-                    ${lead.estimatedValue?.toLocaleString() || '0'}
-                  </td>
-                  <td style={{ padding: '12px' }}>
-                    <div style={{ display: 'flex', gap: '4px' }}>
-                      <button style={{ padding: '4px 8px', fontSize: '12px', border: '1px solid #d1d5db', borderRadius: '4px', backgroundColor: 'white', cursor: 'pointer' }}>
-                        Edit
-                      </button>
-                      <button style={{ padding: '4px 8px', fontSize: '12px', border: '1px solid #3b82f6', borderRadius: '4px', backgroundColor: '#3b82f6', color: 'white', cursor: 'pointer' }}>
-                        View
-                      </button>
+                    <Star className={`h-3 w-3 ${getPriorityColor(lead.priority)}`} />
+                  </div>
+                </div>
+                
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Mail className="h-3 w-3" />
+                    {lead.email}
+                  </div>
+                  {lead.phone && (
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <Phone className="h-3 w-3" />
+                      {lead.phone}
                     </div>
-                  </td>
+                  )}
+                  {lead.estimatedValue && (
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <DollarSign className="h-3 w-3" />
+                      ${lead.estimatedValue.toLocaleString()}
+                    </div>
+                  )}
+                </div>
+                
+                <div className="flex gap-2">
+                  <button className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm hover:bg-gray-50">
+                    Edit
+                  </button>
+                  <button className="flex-1 px-3 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700">
+                    View Details
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          // List View
+          <div className="bg-white rounded-lg border overflow-hidden">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Company</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Priority</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Value</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {filteredLeads.map((lead: any) => (
+                  <tr key={lead.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 text-sm font-medium text-gray-900">{lead.name}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">{lead.company}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">{lead.email}</td>
+                    <td className="px-4 py-3">
+                      <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(lead.status)}`}>
+                        {lead.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <Star className={`h-4 w-4 ${getPriorityColor(lead.priority)}`} />
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-600">
+                      ${lead.estimatedValue?.toLocaleString() || '0'}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex gap-2">
+                        <button className="px-2 py-1 text-xs border rounded hover:bg-gray-50">
+                          Edit
+                        </button>
+                        <button className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">
+                          View
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
 
+// Lead Creation Content
 const LeadCreationContent = () => {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -425,341 +554,336 @@ const LeadCreationContent = () => {
   };
 
   return (
-    <div style={{ padding: '20px', backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
-      {/* Success Banner */}
-      <div style={{ 
-        backgroundColor: '#d4edda', 
-        border: '1px solid #c3e6cb', 
-        borderRadius: '8px', 
-        padding: '20px', 
-        marginBottom: '20px' 
-      }}>
-        <h1 style={{ color: '#155724', fontSize: '24px', fontWeight: 'bold', margin: '0 0 10px 0' }}>
-          ✅ Lead Creation Page is Working!
-        </h1>
-        <p style={{ color: '#155724', margin: '0' }}>
-          Complete the form below to create a new lead
-        </p>
-      </div>
-      
-      {/* Form */}
-      <div style={{ backgroundColor: 'white', padding: '30px', borderRadius: '8px', border: '1px solid #e5e7eb', maxWidth: '800px', margin: '0 auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-          <div>
-            <h2 style={{ fontSize: '24px', fontWeight: '600', color: '#111827', margin: '0 0 8px 0' }}>Create New Lead</h2>
-            <p style={{ fontSize: '14px', color: '#6b7280', margin: '0' }}>Add a new lead to your CRM system</p>
-          </div>
-          <a 
-            href="/crm/leads" 
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '8px 16px',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              backgroundColor: 'white',
-              color: '#374151',
-              textDecoration: 'none',
-              fontSize: '14px'
-            }}
-          >
-            ← Back to Lead List
-          </a>
-        </div>
-
-        <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '24px' }}>
-          {/* Basic Info */}
-          <div>
-            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <User style={{ width: '20px', height: '20px', color: '#3b82f6' }} />
-              Basic Information
-            </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
-                  First Name *
-                </label>
-                <input
-                  type="text"
-                  value={formData.firstName}
-                  onChange={(e) => handleInputChange('firstName', e.target.value)}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px'
-                  }}
-                  placeholder="Enter first name"
-                />
-              </div>
-              
-              <div>
-                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
-                  Last Name *
-                </label>
-                <input
-                  type="text"
-                  value={formData.lastName}
-                  onChange={(e) => handleInputChange('lastName', e.target.value)}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px'
-                  }}
-                  placeholder="Enter last name"
-                />
-              </div>
-              
-              <div>
-                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
-                  Email *
-                </label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px'
-                  }}
-                  placeholder="Enter email address"
-                />
-              </div>
-              
-              <div>
-                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
-                  Phone
-                </label>
-                <input
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => handleInputChange('phone', e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px'
-                  }}
-                  placeholder="Enter phone number"
-                />
-              </div>
+    <div style={{ marginLeft: '256px', paddingTop: '64px', minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
+      <div style={{ padding: '24px' }}>
+        {/* Form */}
+        <div className="bg-white p-8 rounded-lg border max-w-4xl mx-auto">
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h2 className="text-2xl font-semibold text-gray-900">Create New Lead</h2>
+              <p className="text-gray-600 mt-1">Add a new lead to your CRM system</p>
             </div>
-          </div>
-
-          {/* Company Info */}
-          <div>
-            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Building style={{ width: '20px', height: '20px', color: '#8b5cf6' }} />
-              Company Information
-            </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
-                  Company Name *
-                </label>
-                <input
-                  type="text"
-                  value={formData.company}
-                  onChange={(e) => handleInputChange('company', e.target.value)}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px'
-                  }}
-                  placeholder="Enter company name"
-                />
-              </div>
-              
-              <div>
-                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
-                  Job Title
-                </label>
-                <input
-                  type="text"
-                  value={formData.title}
-                  onChange={(e) => handleInputChange('title', e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px'
-                  }}
-                  placeholder="Enter job title"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Lead Details */}
-          <div>
-            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Star style={{ width: '20px', height: '20px', color: '#f59e0b' }} />
-              Lead Details
-            </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
-                  Lead Source
-                </label>
-                <select
-                  value={formData.source}
-                  onChange={(e) => handleInputChange('source', e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    backgroundColor: 'white'
-                  }}
-                >
-                  <option value="website">Website</option>
-                  <option value="referral">Referral</option>
-                  <option value="social-media">Social Media</option>
-                  <option value="cold-call">Cold Call</option>
-                  <option value="email">Email Campaign</option>
-                  <option value="trade-show">Trade Show</option>
-                </select>
-              </div>
-              
-              <div>
-                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
-                  Priority
-                </label>
-                <select
-                  value={formData.priority}
-                  onChange={(e) => handleInputChange('priority', e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    backgroundColor: 'white'
-                  }}
-                >
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                </select>
-              </div>
-              
-              <div>
-                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
-                  Estimated Value ($)
-                </label>
-                <input
-                  type="number"
-                  value={formData.estimatedValue}
-                  onChange={(e) => handleInputChange('estimatedValue', parseInt(e.target.value) || 0)}
-                  min="0"
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px'
-                  }}
-                  placeholder="0"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Notes */}
-          <div>
-            <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
-              Notes
-            </label>
-            <textarea
-              value={formData.notes}
-              onChange={(e) => handleInputChange('notes', e.target.value)}
-              rows={4}
-              style={{
-                width: '100%',
-                padding: '10px 12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '14px',
-                resize: 'vertical'
-              }}
-              placeholder="Add any additional notes about this lead..."
-            />
-          </div>
-
-          {/* Submit Buttons */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', paddingTop: '20px', borderTop: '1px solid #e5e7eb' }}>
-            <a
-              href="/crm/leads"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                padding: '10px 20px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                backgroundColor: 'white',
-                color: '#374151',
-                textDecoration: 'none',
-                fontSize: '14px',
-                fontWeight: '500'
-              }}
+            <a 
+              href="/crm/leads" 
+              className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
             >
-              Cancel
+              ← Back to Lead List
             </a>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '10px 20px',
-                border: 'none',
-                borderRadius: '6px',
-                backgroundColor: isSubmitting ? '#9ca3af' : '#10b981',
-                color: 'white',
-                fontSize: '14px',
-                fontWeight: '500',
-                cursor: isSubmitting ? 'not-allowed' : 'pointer'
-              }}
-            >
-              {isSubmitting ? (
-                <>
-                  <div style={{ width: '16px', height: '16px', border: '2px solid transparent', borderTop: '2px solid white', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                  Creating...
-                </>
-              ) : (
-                <>
-                  <Plus style={{ width: '16px', height: '16px' }} />
-                  Create Lead
-                </>
-              )}
-            </button>
           </div>
-        </form>
+
+          <form onSubmit={handleSubmit} className="space-y-8">
+            {/* Basic Info */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <User className="h-5 w-5 text-blue-600" />
+                Basic Information
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    First Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.firstName}
+                    onChange={(e) => handleInputChange('firstName', e.target.value)}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Enter first name"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Last Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.lastName}
+                    onChange={(e) => handleInputChange('lastName', e.target.value)}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Enter last name"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email *
+                  </label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Enter email address"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Phone
+                  </label>
+                  <input
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => handleInputChange('phone', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Enter phone number"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Company Info */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <Building className="h-5 w-5 text-purple-600" />
+                Company Information
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Company Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.company}
+                    onChange={(e) => handleInputChange('company', e.target.value)}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Enter company name"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Job Title
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.title}
+                    onChange={(e) => handleInputChange('title', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Enter job title"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Lead Details */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <Star className="h-5 w-5 text-yellow-600" />
+                Lead Details
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Lead Source
+                  </label>
+                  <select
+                    value={formData.source}
+                    onChange={(e) => handleInputChange('source', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                  >
+                    <option value="website">Website</option>
+                    <option value="referral">Referral</option>
+                    <option value="social-media">Social Media</option>
+                    <option value="cold-call">Cold Call</option>
+                    <option value="email">Email Campaign</option>
+                    <option value="trade-show">Trade Show</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Priority
+                  </label>
+                  <select
+                    value={formData.priority}
+                    onChange={(e) => handleInputChange('priority', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Estimated Value ($)
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.estimatedValue}
+                    onChange={(e) => handleInputChange('estimatedValue', parseInt(e.target.value) || 0)}
+                    min="0"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="0"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Notes */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Notes
+              </label>
+              <textarea
+                value={formData.notes}
+                onChange={(e) => handleInputChange('notes', e.target.value)}
+                rows={4}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-vertical"
+                placeholder="Add any additional notes about this lead..."
+              />
+            </div>
+
+            {/* Submit Buttons */}
+            <div className="flex justify-end gap-3 pt-6 border-t border-gray-200">
+              <a
+                href="/crm/leads"
+                className="inline-flex items-center px-5 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </a>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`inline-flex items-center gap-2 px-5 py-2 rounded-lg text-white ${
+                  isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'
+                }`}
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                    Creating...
+                  </>
+                ) : (
+                  <>
+                    <Plus className="h-4 w-4" />
+                    Create Lead
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
 };
 
+// Dashboard Component
+const DashboardContent = () => {
+  return (
+    <div style={{ marginLeft: '256px', paddingTop: '64px', minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
+      <div style={{ padding: '24px' }}>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Business Intelligence Dashboard</h1>
+          <p className="text-gray-600 mt-2">Welcome to your comprehensive business management platform</p>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8">
+          <div className="bg-white p-6 rounded-xl border shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium">Total Revenue</p>
+                <p className="text-2xl font-bold text-gray-900">$2.4M</p>
+                <p className="text-green-600 text-xs mt-1">+12% from last month</p>
+              </div>
+              <DollarSign className="h-8 w-8 text-green-600" />
+            </div>
+          </div>
+          
+          <div className="bg-white p-6 rounded-xl border shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium">Active Deals</p>
+                <p className="text-2xl font-bold text-gray-900">156</p>
+                <p className="text-blue-600 text-xs mt-1">+8 this week</p>
+              </div>
+              <Briefcase className="h-8 w-8 text-blue-600" />
+            </div>
+          </div>
+          
+          <div className="bg-white p-6 rounded-xl border shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium">New Leads</p>
+                <p className="text-2xl font-bold text-gray-900">89</p>
+                <p className="text-orange-600 text-xs mt-1">+23 today</p>
+              </div>
+              <Target className="h-8 w-8 text-orange-600" />
+            </div>
+          </div>
+          
+          <div className="bg-white p-6 rounded-xl border shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium">Team Members</p>
+                <p className="text-2xl font-bold text-gray-900">24</p>
+                <p className="text-purple-600 text-xs mt-1">All active</p>
+              </div>
+              <Users className="h-8 w-8 text-purple-600" />
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="bg-white p-6 rounded-xl border shadow-sm">
+          <h2 className="text-xl font-semibold text-gray-900 mb-5">Quick Actions</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <a href="/crm/leads/new" className="flex items-center p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+              <Plus className="h-5 w-5 text-green-600 mr-3" />
+              <div>
+                <p className="font-medium text-gray-900">Create Lead</p>
+                <p className="text-gray-600 text-xs">Add new prospect</p>
+              </div>
+            </a>
+            
+            <a href="/crm/accounts" className="flex items-center p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+              <Building2 className="h-5 w-5 text-blue-600 mr-3" />
+              <div>
+                <p className="font-medium text-gray-900">View Accounts</p>
+                <p className="text-gray-600 text-xs">Manage companies</p>
+              </div>
+            </a>
+            
+            <a href="/analytics" className="flex items-center p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+              <BarChart3 className="h-5 w-5 text-purple-600 mr-3" />
+              <div>
+                <p className="font-medium text-gray-900">View Analytics</p>
+                <p className="text-gray-600 text-xs">Business insights</p>
+              </div>
+            </a>
+            
+            <a href="/hrms" className="flex items-center p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+              <Users className="h-5 w-5 text-orange-600 mr-3" />
+              <div>
+                <p className="font-medium text-gray-900">HRMS</p>
+                <p className="text-gray-600 text-xs">Manage team</p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Main App Content Router
 const SimpleAppContent = () => {
-  // Get current path for simple routing
   const currentPath = window.location.pathname;
+  
+  // Dashboard
+  if (currentPath === '/' || currentPath === '/dashboard') {
+    return <DashboardContent />;
+  }
   
   // Lead Management Page
   if (currentPath === '/crm/leads') {
@@ -771,103 +895,19 @@ const SimpleAppContent = () => {
     return <LeadCreationContent />;
   }
   
-  // Test Page
-  if (currentPath === '/test-leads') {
-    return (
-      <div style={{ 
-        backgroundColor: '#dc3545', 
-        color: 'white', 
-        padding: '40px', 
-        textAlign: 'center', 
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
-        <h1 style={{ fontSize: '48px', margin: '0 0 20px 0' }}>
-          🚀 TEST LEADS PAGE IS VISIBLE!
-        </h1>
-        <p style={{ fontSize: '18px', margin: '0' }}>
-          Path: /test-leads
-        </p>
-        <p style={{ fontSize: '16px', margin: '10px 0 0 0' }}>
-          This should be clearly visible with red background
-        </p>
-      </div>
-    );
-  }
-  
-  // Default Home Page
-  return (
-    <div style={{ padding: '20px', backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
-      <div style={{ 
-        backgroundColor: '#d1ecf1', 
-        border: '1px solid #bee5eb', 
-        borderRadius: '8px', 
-        padding: '20px', 
-        marginBottom: '20px' 
-      }}>
-        <h1 style={{ color: '#0c5460', fontSize: '24px', fontWeight: 'bold', margin: '0 0 10px 0' }}>
-          ✅ Business Management Platform
-        </h1>
-        <p style={{ color: '#0c5460', margin: '0' }}>
-          Navigate to your lead management pages
-        </p>
-      </div>
-      
-      <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #ddd' }}>
-        <h2 style={{ marginBottom: '20px' }}>Available Pages</h2>
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-          <a 
-            href="/crm/leads" 
-            style={{
-              display: 'inline-block',
-              padding: '10px 20px',
-              backgroundColor: '#007bff',
-              color: 'white',
-              textDecoration: 'none',
-              borderRadius: '4px'
-            }}
-          >
-            Lead Management
-          </a>
-          <a 
-            href="/crm/leads/new" 
-            style={{
-              display: 'inline-block',
-              padding: '10px 20px',
-              backgroundColor: '#28a745',
-              color: 'white',
-              textDecoration: 'none',
-              borderRadius: '4px'
-            }}
-          >
-            Create New Lead
-          </a>
-          <a 
-            href="/test-leads" 
-            style={{
-              display: 'inline-block',
-              padding: '10px 20px',
-              backgroundColor: '#dc3545',
-              color: 'white',
-              textDecoration: 'none',
-              borderRadius: '4px'
-            }}
-          >
-            Test Page
-          </a>
-        </div>
-      </div>
-    </div>
-  );
+  // Default fallback - redirect to dashboard
+  return <DashboardContent />;
 };
 
+// Main App Component
 const SimpleApp = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <SimpleAppContent />
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <Sidebar />
+        <SimpleAppContent />
+      </div>
     </QueryClientProvider>
   );
 };
