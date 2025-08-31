@@ -133,6 +133,22 @@ const App = () => {
               }} />
               <Route path="/lead-generation/company/:id" component={CompanyDetailWrapper} />
               <Route path="/lead-generation/people/:id" component={PersonDetails} />
+              <Route path="/crm/leads/new" component={() => {
+                const SimpleLeadCreationPage = React.lazy(() => import('./pages/CRM/SimpleLeadCreationPage'));
+                return (
+                  <LazyLoader fallback={<FastLoader />}>
+                    <SimpleLeadCreationPage />
+                  </LazyLoader>
+                );
+              }} />
+              <Route path="/crm/leads" component={() => {
+                const NewLeadManagementPage = React.lazy(() => import('./pages/CRM/NewLeadManagementPage'));
+                return (
+                  <LazyLoader fallback={<FastLoader />}>
+                    <NewLeadManagementPage />
+                  </LazyLoader>
+                );
+              }} />
               <Route path="/crm/:rest*" component={() => (
                 <LazyLoader fallback={<FastLoader />}>
                   <CRMModule />
