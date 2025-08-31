@@ -107,17 +107,22 @@ const App = () => {
                   <Analytics />
                 </LazyLoader>
               )} />
-              <Route path="/crm/deals/new" component={CreateDealPageWrapper} />
-              <Route path="/crm/deals/create" component={CreateDealPageWrapper} />
-              <Route path="/crm/deals/create-wizard" component={CreateDealWrapper} />
-              <Route path="/crm/deals/:id" component={DealDetailWrapper} />
-              <Route path="/crm/accounts/create" component={() => (
-                <LazyLoader fallback={<FastLoader />}>
-                  <UltimateCreateAccountPageEnhanced />
-                </LazyLoader>
-              )} />
-              <Route path="/crm/accounts/:id" component={AccountDetailWrapper} />
-              <Route path="/crm/contacts/:id" component={ContactDetailWrapper} />
+              <Route path="/direct-crm-leads" component={() => {
+                const TestLeadsPage = React.lazy(() => import('./pages/CRM/TestLeadsPage'));
+                return (
+                  <LazyLoader fallback={<FastLoader />}>
+                    <TestLeadsPage />
+                  </LazyLoader>
+                );
+              }} />
+              <Route path="/direct-crm-leads-new" component={() => {
+                const NewLeadManagementPage = React.lazy(() => import('./pages/CRM/NewLeadManagementPage'));
+                return (
+                  <LazyLoader fallback={<FastLoader />}>
+                    <NewLeadManagementPage />
+                  </LazyLoader>
+                );
+              }} />
               <Route path="/test-leads" component={() => {
                 const DirectTestPage = React.lazy(() => import('./pages/DirectTestPage'));
                 return (
