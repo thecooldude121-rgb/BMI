@@ -221,6 +221,9 @@ const NewLeadManagementPage: React.FC = () => {
       <div className="mb-4 p-4 bg-blue-100 border border-blue-200 rounded-lg">
         <h1 className="text-2xl font-bold text-blue-800">✅ Lead Management Page is Working!</h1>
         <p className="text-blue-600">Found {leads.length} leads in the system</p>
+        <p className="text-sm text-blue-500 mt-2">
+          Navigate to individual leads or create new ones using the interface below
+        </p>
       </div>
       {/* Header */}
       <div className="bg-white rounded-lg border border-gray-200 p-6">
