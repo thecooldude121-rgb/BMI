@@ -1,72 +1,106 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import CRMModule from './pages/CRM/CRMModule';
+import { Route, Router } from 'wouter';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+// import { Toaster } from '@/components/ui/toaster';
+
+// Lazy loading components
+const LazyLoader: React.FC<{ children: React.ReactNode; fallback?: React.ReactNode }> = ({ 
+  children, 
+  fallback = <div>Loading...</div> 
+}) => {
+  return <React.Suspense fallback={fallback}>{children}</React.Suspense>;
+};
+
+const FastLoader = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+  </div>
+);
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function App() {
-  // Fixed: Removed problematic hooks that were causing runtime errors
-  // const { preloadRoutes } = useRoutePreloader(); // <- This was undefined
-  // const { optimizeTransitions } = useTransitionOptimization(); // <- This was undefined
-
   return (
-    <Router>
-      <div className="App">
-        <header style={{ padding: '1rem', background: '#f8f9fa', borderBottom: '1px solid #dee2e6' }}>
-          <h1>Business Management Interface</h1>
-          <p>Navigate to different modules using the links below.</p>
-          <div style={{ marginTop: '2rem' }}>
-            <a 
-              href="/crm/leads" 
-              style={{
-                display: 'inline-block',
-                padding: '10px 20px',
-                background: '#007bff',
-                color: 'white',
-                textDecoration: 'none',
-                borderRadius: '4px',
-                margin: '0 8px'
-              }}
-            >
-              View Leads
-            </a>
-            <a 
-              href="/crm/leads/new" 
-              style={{
-                display: 'inline-block',
-                padding: '10px 20px',
-                background: '#28a745',
-                color: 'white',
-                textDecoration: 'none',
-                borderRadius: '4px',
-                margin: '0 8px'
-              }}
-            >
-              Create Lead
-            </a>
-            <a 
-              href="/crm/leads/2ec7feab-1edb-43c4-8780-a45b51f01c10" 
-              style={{
-                display: 'inline-block',
-                padding: '10px 20px',
-                background: '#ffc107',
-                color: 'black',
-                textDecoration: 'none',
-                borderRadius: '4px',
-                margin: '0 8px'
-              }}
-            >
-              Test Lead Detail
-            </a>
-          </div>
-        </header>
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <div className="App">
+          <Route path="/" component={() => {
+            const Dashboard = React.lazy(() => import('./pages/Dashboard'));
+            return (
+              <LazyLoader fallback={<FastLoader />}>
+                <Dashboard />
+              </LazyLoader>
+            );
+          }} />
+          
+          {/* Direct CRM Lead Routes - Fixed and Working */}
+          <Route path="/crm/leads/new" component={() => {
+            const SimpleLeadCreationPage = React.lazy(() => import('./pages/CRM/SimpleLeadCreationPage'));
+            return (
+              <LazyLoader fallback={<FastLoader />}>
+                <SimpleLeadCreationPage />
+              </LazyLoader>
+            );
+          }} />
+          
+          <Route path="/crm/leads" component={() => {
+            const NewLeadManagementPage = React.lazy(() => import('./pages/CRM/NewLeadManagementPage'));
+            return (
+              <LazyLoader fallback={<FastLoader />}>
+                <NewLeadManagementPage />
+              </LazyLoader>
+            );
+          }} />
 
-        <main style={{ padding: '2rem' }}>
-          <Routes>
-            <Route path="/" element={<Navigate to="/crm" replace />} />
-            <Route path="/crm/*" element={<CRMModule />} />
-          </Routes>
-        </main>
-      </div>
-    </Router>
+          {/* Test Routes */}
+          <Route path="/test-leads" component={() => {
+            const DirectTestPage = React.lazy(() => import('./pages/DirectTestPage'));
+            return (
+              <LazyLoader fallback={<FastLoader />}>
+                <DirectTestPage />
+              </LazyLoader>
+            );
+          }} />
+          
+          <Route path="/direct-crm-leads" component={() => {
+            const TestLeadsPage = React.lazy(() => import('./pages/CRM/TestLeadsPage'));
+            return (
+              <LazyLoader fallback={<FastLoader />}>
+                <TestLeadsPage />
+              </LazyLoader>
+            );
+          }} />
+          
+          <Route path="/direct-crm-leads-new" component={() => {
+            const NewLeadManagementPage = React.lazy(() => import('./pages/CRM/NewLeadManagementPage'));
+            return (
+              <LazyLoader fallback={<FastLoader />}>
+                <NewLeadManagementPage />
+              </LazyLoader>
+            );
+          }} />
+
+          {/* Other CRM Routes - Temporarily disabled due to react-router-dom conflicts */}
+          {/* <Route path="/crm/:rest*" component={() => {
+            const CRMModule = React.lazy(() => import('./pages/CRM/CRMModule'));
+            return (
+              <LazyLoader fallback={<FastLoader />}>
+                <CRMModule />
+              </LazyLoader>
+            );
+          }} /> */}
+          
+        </div>
+      </Router>
+      {/* <Toaster /> */}
+    </QueryClientProvider>
   );
 }
 
