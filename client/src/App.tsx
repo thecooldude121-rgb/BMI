@@ -118,6 +118,14 @@ const App = () => {
               )} />
               <Route path="/crm/accounts/:id" component={AccountDetailWrapper} />
               <Route path="/crm/contacts/:id" component={ContactDetailWrapper} />
+              <Route path="/test-leads" component={() => {
+                const DirectTestPage = React.lazy(() => import('./pages/DirectTestPage'));
+                return (
+                  <LazyLoader fallback={<FastLoader />}>
+                    <DirectTestPage />
+                  </LazyLoader>
+                );
+              }} />
               <Route path="/lead-generation/company/:id" component={CompanyDetailWrapper} />
               <Route path="/lead-generation/people/:id" component={PersonDetails} />
               <Route path="/crm/:rest*" component={() => (
