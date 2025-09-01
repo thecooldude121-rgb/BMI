@@ -377,11 +377,12 @@ const PeopleDetailPage: React.FC = () => {
 
       <div className="flex h-full">
         {/* Left Sidebar - Lead Information */}
-        <div className="w-80 bg-white border-r border-gray-200 overflow-y-auto">
-          <div className="p-6 space-y-6">
+        <div className="w-80 bg-gradient-to-b from-gray-50 to-white border-r border-gray-300 overflow-y-auto shadow-[inset_0_1px_3px_rgba(0,0,0,0.1)] relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-transparent to-gray-100/40 pointer-events-none"></div>
+          <div className="relative p-6 space-y-6">
             {/* Lead Photo & Basic Info */}
             <div className="text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4">
+              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4 shadow-lg shadow-blue-500/30 border-2 border-white/20">
                 {lead.name.split(' ').map(n => n[0]).join('')}
               </div>
               <h2 className="text-xl font-bold text-gray-900">{lead.name}</h2>
@@ -390,8 +391,8 @@ const PeopleDetailPage: React.FC = () => {
             </div>
 
             {/* Contact Information */}
-            <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Contact</h3>
+            <div className="bg-white/80 rounded-xl p-4 shadow-[0_2px_8px_rgba(0,0,0,0.1)] border border-gray-200/60 backdrop-blur-sm">
+              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-3">Contact</h3>
               <div className="space-y-2">
                 <div className="flex items-center space-x-3">
                   <Mail className="h-4 w-4 text-gray-400" />
@@ -415,8 +416,8 @@ const PeopleDetailPage: React.FC = () => {
             </div>
 
             {/* Company Information */}
-            <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Company</h3>
+            <div className="bg-white/80 rounded-xl p-4 shadow-[0_2px_8px_rgba(0,0,0,0.1)] border border-gray-200/60 backdrop-blur-sm">
+              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-3">Company</h3>
               <div className="space-y-2">
                 <div className="flex items-center space-x-3">
                   <Building2 className="h-4 w-4 text-gray-400" />
@@ -440,8 +441,8 @@ const PeopleDetailPage: React.FC = () => {
             </div>
 
             {/* Lead Score */}
-            <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Lead Score</h3>
+            <div className="bg-white/80 rounded-xl p-4 shadow-[0_2px_8px_rgba(0,0,0,0.1)] border border-gray-200/60 backdrop-blur-sm">
+              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-3">Lead Score</h3>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-700">Overall</span>
@@ -471,8 +472,8 @@ const PeopleDetailPage: React.FC = () => {
             </div>
 
             {/* Status & Tags */}
-            <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Status & Tags</h3>
+            <div className="bg-white/80 rounded-xl p-4 shadow-[0_2px_8px_rgba(0,0,0,0.1)] border border-gray-200/60 backdrop-blur-sm">
+              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-3">Status & Tags</h3>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-700">Status</span>
@@ -498,8 +499,8 @@ const PeopleDetailPage: React.FC = () => {
             </div>
 
             {/* Notes */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
+            <div className="bg-white/80 rounded-xl p-4 shadow-[0_2px_8px_rgba(0,0,0,0.1)] border border-gray-200/60 backdrop-blur-sm">
+              <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Notes</h3>
                 <button
                   onClick={() => setShowNoteEditor(true)}
