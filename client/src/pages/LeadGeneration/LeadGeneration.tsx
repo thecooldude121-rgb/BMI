@@ -14,7 +14,7 @@ const LeadGeneration: React.FC = () => {
   return (
     <div className="h-screen bg-gray-50 flex">
       {/* Left Navigation Pane */}
-      <div className="w-64 bg-white border-r border-gray-200 flex-shrink-0">
+      <div className="w-32 bg-white border-r border-gray-200 flex-shrink-0">
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg">
