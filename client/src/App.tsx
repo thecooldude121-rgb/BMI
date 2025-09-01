@@ -24,6 +24,7 @@ const UltimateAccountDetailPage = React.lazy(() => import('./pages/CRM/UltimateA
 const UltimateCreateAccountPageEnhanced = React.lazy(() => import('./pages/CRM/UltimateCreateAccountPageEnhanced'));
 const ContactDetailPage = React.lazy(() => import('./pages/CRM/ContactDetailPage'));
 const CompanyDetailPageBMI = React.lazy(() => import('./pages/LeadGeneration/CompanyDetailPageBMI'));
+const PeopleDetailPage = React.lazy(() => import('./components/LeadGeneration/PeopleDetailPage'));
 const AdvancedDealDetailsPage = React.lazy(() => import('./components/Deal/AdvancedDealDetailsPage'));
 const NewLeadManagementPage = React.lazy(() => import('./pages/CRM/NewLeadManagementPage'));
 
@@ -68,6 +69,11 @@ const ContactDetailWrapper = React.memo(({ params }: { params: { id: string } })
 const CompanyDetailWrapper = React.memo(({ params }: { params: { id: string } }) => (
   <LazyLoader fallback={<FastLoader />}>
     <CompanyDetailPageBMI params={params} />
+  </LazyLoader>
+));
+const PeopleDetailWrapper = React.memo(({ params }: { params: { id: string } }) => (
+  <LazyLoader fallback={<FastLoader />}>
+    <PeopleDetailPage />
   </LazyLoader>
 ));
 
@@ -125,6 +131,7 @@ const App = () => {
               )} />
               <Route path="/lead-generation/company/:id" component={CompanyDetailWrapper} />
               <Route path="/lead-generation/people/:id" component={PersonDetails} />
+              <Route path="/lead-details/:id" component={PeopleDetailWrapper} />
               <Route path="/crm/:rest*" component={() => (
                 <LazyLoader fallback={<FastLoader />}>
                   <CRMModule />

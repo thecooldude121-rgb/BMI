@@ -619,15 +619,8 @@ const PeopleDiscovery: React.FC = () => {
   };
 
   const handlePersonClick = (personId: string, person: PersonData) => {
-    // Only navigate to detail view for real CRM contacts (not fake company employees)
-    if (personId.startsWith('person-') || personId.startsWith('fake-')) {
-      // Show a message for fake demo data
-      alert('This is demo data. Person details are only available for real CRM contacts.');
-      return;
-    }
-    
-    // Navigate to person detail view for real CRM contacts
-    setLocation(`/lead-generation/people/${personId}`);
+    // Navigate to the new comprehensive detail page for all leads
+    setLocation(`/lead-details/${personId}`);
   };
 
   const renderTableCell = (person: PersonData, column: TableColumn) => {
