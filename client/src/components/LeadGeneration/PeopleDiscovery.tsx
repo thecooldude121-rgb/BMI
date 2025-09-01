@@ -41,6 +41,7 @@ const PeopleDiscovery: React.FC = () => {
   const [, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
   const [advancedSearchMode, setAdvancedSearchMode] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
   const [savedSearches, setSavedSearches] = useState<Array<{id: string, name: string, query: string, filters: any}>>([]);
   const [showSaveSearchModal, setShowSaveSearchModal] = useState(false);
   const [sortBy, setSortBy] = useState<'relevance' | 'recent' | 'company' | 'title' | 'score'>('relevance');
@@ -321,46 +322,135 @@ const PeopleDiscovery: React.FC = () => {
 
   // Filter options from data
   const filterOptions = useMemo(() => ({
-    industries: [...new Set(people.map(p => p.industry))],
-    locations: [...new Set(people.map(p => p.location.split(',')[0]))],
-    jobTitles: [...new Set(people.map(p => p.jobTitle))],
-    companies: [...new Set(people.map(p => p.company))],
-    companySizes: [...new Set(people.map(p => p.companyEmployeeCount))],
-    keywords: [...new Set(people.flatMap(p => p.keywords))].slice(0, 20),
+    industries: Array.from(new Set(people.flatMap(p => p.keywords))).slice(0, 15),
+    locations: Array.from(new Set(people.map(p => p.location.split(',')[0]))),
+    jobTitles: Array.from(new Set(people.map(p => p.jobTitle))),
+    companies: Array.from(new Set(people.map(p => p.company))),
+    companySizes: Array.from(new Set(people.map(p => p.companyEmployeeCount))),
+    keywords: Array.from(new Set(people.flatMap(p => p.keywords))).slice(0, 20),
     seniorities: ['C-Level', 'VP', 'Director', 'Manager', 'Senior', 'Junior'],
     emailStatuses: ['Verified', 'Unverified', 'Bounced', 'Unknown']
   }), [people]);
 
-  // Advanced search with Boolean operators
+  // Enhanced Boolean search parser with comprehensive error handling
   const parseAdvancedSearch = (query: string) => {
     if (!advancedSearchMode) {
+      setSearchError(null);
       return { simple: query.toLowerCase() };
     }
     
-    // Parse Boolean operators (AND, OR, NOT)
-    const terms = query.split(/\s+(AND|OR|NOT)\s+/i);
-    const parsedQuery = { advanced: true, terms: [] as any[] };
-    
-    for (let i = 0; i < terms.length; i += 2) {
-      const term = terms[i]?.trim();
-      const operator = terms[i + 1]?.toUpperCase();
-      if (term) {
-        parsedQuery.terms.push({ term: term.toLowerCase(), operator: operator || 'AND' });
-      }
+    if (!query.trim()) {
+      setSearchError(null);
+      return { advanced: true, terms: [] };
     }
     
-    return parsedQuery;
+    try {
+      // Validate basic syntax
+      const trimmedQuery = query.trim();
+      
+      // Check for invalid starting/ending operators
+      if (/^(AND|OR|NOT)\s+/i.test(trimmedQuery)) {
+        throw new Error('Search cannot start with AND, OR, or NOT operator');
+      }
+      if (/\s+(AND|OR)$/i.test(trimmedQuery)) {
+        throw new Error('Search cannot end with AND or OR operator');
+      }
+      
+      // Check for consecutive operators
+      if (/\s+(AND|OR|NOT)\s+(AND|OR|NOT)\s+/i.test(trimmedQuery)) {
+        throw new Error('Cannot have consecutive operators (e.g., "AND OR" or "NOT AND")');
+      }
+      
+      // Check for empty terms between operators
+      if (/\s+(AND|OR|NOT)\s+(AND|OR|NOT)/i.test(trimmedQuery)) {
+        throw new Error('Missing search term between operators');
+      }
+      
+      // Parse Boolean operators with proper grouping
+      const tokens = trimmedQuery.split(/(\s+(?:AND|OR|NOT)\s+)/i).filter(token => token.trim());
+      const parsedQuery = { advanced: true, terms: [] as any[], error: null };
+      
+      let currentTerm = '';
+      let nextOperator = 'AND';
+      
+      for (let i = 0; i < tokens.length; i++) {
+        const token = tokens[i].trim();
+        
+        if (/^(AND|OR|NOT)$/i.test(token)) {
+          // This is an operator
+          if (currentTerm) {
+            // Validate term is not empty
+            if (!currentTerm.trim()) {
+              throw new Error('Empty search term found');
+            }
+            parsedQuery.terms.push({ 
+              term: currentTerm.toLowerCase().trim(), 
+              operator: nextOperator,
+              originalTerm: currentTerm.trim()
+            });
+            currentTerm = '';
+          }
+          nextOperator = token.toUpperCase();
+        } else {
+          // This is a search term
+          if (currentTerm) {
+            currentTerm += ' ' + token;
+          } else {
+            currentTerm = token;
+          }
+        }
+      }
+      
+      // Add the last term
+      if (currentTerm.trim()) {
+        parsedQuery.terms.push({ 
+          term: currentTerm.toLowerCase().trim(), 
+          operator: nextOperator,
+          originalTerm: currentTerm.trim()
+        });
+      }
+      
+      // Validate we have at least one term
+      if (parsedQuery.terms.length === 0) {
+        throw new Error('No valid search terms found');
+      }
+      
+      // Check for balanced quotes (if quotes are used)
+      const quoteCount = (trimmedQuery.match(/"/g) || []).length;
+      if (quoteCount % 2 !== 0) {
+        throw new Error('Unmatched quotation marks in search query');
+      }
+      
+      setSearchError(null);
+      return parsedQuery;
+      
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Invalid search syntax';
+      setSearchError(errorMessage);
+      return { advanced: true, terms: [], error: errorMessage };
+    }
   };
 
-  // Enhanced filtering with advanced search and filters
+  // Enhanced filtering with improved Boolean search logic
   const filteredPeople = useMemo(() => {
     const searchConfig = parseAdvancedSearch(searchQuery);
     
+    // If there's a search error, return empty results
+    if (searchConfig.error) {
+      return [];
+    }
+    
     return people.filter(person => {
-      // Apply advanced search
-      if (searchConfig.advanced) {
-        let matches = false;
-        for (const { term, operator } of searchConfig.terms) {
+      // Apply advanced search with improved Boolean logic
+      if (searchConfig.advanced && searchConfig.terms.length > 0) {
+        let finalResult = null;
+        let hasOrOperator = false;
+        let orResults: boolean[] = [];
+        
+        for (let i = 0; i < searchConfig.terms.length; i++) {
+          const { term, operator } = searchConfig.terms[i];
+          
+          // Check if term matches any searchable field
           const termMatches = 
             person.name.toLowerCase().includes(term) ||
             person.jobTitle.toLowerCase().includes(term) ||
@@ -369,15 +459,38 @@ const PeopleDiscovery: React.FC = () => {
             person.keywords.some(keyword => keyword.toLowerCase().includes(term));
           
           if (operator === 'NOT') {
-            if (termMatches) return false;
+            // NOT operator: if this term matches, exclude the person
+            if (termMatches) {
+              return false;
+            }
           } else if (operator === 'OR') {
-            matches = matches || termMatches;
-          } else { // AND
-            if (!termMatches) return false;
+            // OR operator: collect OR results for later evaluation
+            hasOrOperator = true;
+            orResults.push(termMatches);
+          } else { // AND operator (default)
+            // AND operator: all AND terms must match
+            if (finalResult === null) {
+              finalResult = termMatches;
+            } else {
+              finalResult = finalResult && termMatches;
+            }
           }
         }
-        if (!matches && searchConfig.terms.some(t => t.operator !== 'NOT')) return false;
-      } else if (searchConfig.simple) {
+        
+        // Handle OR logic: if any OR term matches, include the person
+        if (hasOrOperator) {
+          const orMatch = orResults.some(result => result);
+          finalResult = finalResult === null ? orMatch : (finalResult && orMatch);
+        }
+        
+        // Default to false if no terms were processed
+        if (finalResult === null) {
+          finalResult = false;
+        }
+        
+        if (!finalResult) return false;
+      } else if ('simple' in searchConfig && searchConfig.simple) {
+        // Simple search: match any field
         const simpleMatch = 
           person.name.toLowerCase().includes(searchConfig.simple) ||
           person.jobTitle.toLowerCase().includes(searchConfig.simple) ||
@@ -709,7 +822,16 @@ const PeopleDiscovery: React.FC = () => {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-gray-900">People Discovery</h1>
-                <p className="text-sm text-gray-600">{filteredPeople.length.toLocaleString()} prospects found</p>
+                <p className="text-sm text-gray-600">
+                  {searchError 
+                    ? "Fix search syntax to see results" 
+                    : `${filteredPeople.length.toLocaleString()} prospects found`}
+                  {advancedSearchMode && !searchError && searchQuery && (
+                    <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                      Boolean search active
+                    </span>
+                  )}
+                </p>
               </div>
             </div>
           </div>
@@ -738,12 +860,25 @@ const PeopleDiscovery: React.FC = () => {
               type="text"
               placeholder={advancedSearchMode ? "Use AND, OR, NOT operators (e.g., 'manager AND marketing NOT assistant')" : "Search by name, job title, company, location..."}
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-32 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 hover-border-glow"
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                // Clear error when user starts typing
+                if (searchError) {
+                  setSearchError(null);
+                }
+              }}
+              className={`w-full pl-10 pr-32 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-all ${
+                searchError 
+                  ? 'border-red-300 focus:ring-red-500 bg-red-50' 
+                  : 'border-gray-300 focus:ring-blue-500 hover-border-glow'
+              }`}
             />
             <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center space-x-2">
               <button
-                onClick={() => setAdvancedSearchMode(!advancedSearchMode)}
+                onClick={() => {
+                  setAdvancedSearchMode(!advancedSearchMode);
+                  setSearchError(null); // Clear any existing errors when switching modes
+                }}
                 className={`text-xs px-2 py-1 rounded transition-all ${
                   advancedSearchMode 
                     ? 'bg-blue-100 text-blue-700 border border-blue-300' 
@@ -754,6 +889,35 @@ const PeopleDiscovery: React.FC = () => {
               </button>
             </div>
           </div>
+          
+          {/* Search Error Display */}
+          {searchError && (
+            <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-2">
+              <div className="w-5 h-5 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-red-600 text-xs font-bold">!</span>
+              </div>
+              <div className="min-w-0 flex-1">
+                <h4 className="text-sm font-medium text-red-800 mb-1">Boolean Search Error</h4>
+                <p className="text-sm text-red-700">{searchError}</p>
+                <div className="mt-2 text-xs text-red-600">
+                  <strong>Valid examples:</strong>
+                  <ul className="mt-1 list-disc list-inside space-y-1">
+                    <li>"manager AND marketing" - Both terms must be present</li>
+                    <li>"CEO OR founder" - Either term can be present</li>
+                    <li>"developer NOT senior" - Must have 'developer' but not 'senior'</li>
+                    <li>"software AND (engineer OR developer)" - Complex queries with parentheses</li>
+                  </ul>
+                </div>
+              </div>
+              <button
+                onClick={() => setSearchError(null)}
+                className="text-red-400 hover:text-red-600 flex-shrink-0"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          )}
+          
           <button 
             onClick={() => setShowSaveSearchModal(true)}
             className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg border border-gray-300 btn-hover"
@@ -1040,7 +1204,8 @@ const PeopleDiscovery: React.FC = () => {
                     Object.entries(activeFilters).reduce((count, [key, value]) => {
                       if (key === 'leadScore') {
                         // Check if score range is not default (0-100)
-                        return count + (value.min > 0 || value.max < 100 ? 1 : 0);
+                        const scoreRange = value as { min: number; max: number };
+                        return count + (scoreRange.min > 0 || scoreRange.max < 100 ? 1 : 0);
                       }
                       return count + (Array.isArray(value) ? value.length : 0);
                     }, 0)
@@ -1332,7 +1497,8 @@ const PeopleDiscovery: React.FC = () => {
                   {
                     Object.entries(activeFilters).reduce((count, [key, value]) => {
                       if (key === 'leadScore') {
-                        return count + (value.min > 0 || value.max < 100 ? 1 : 0);
+                        const scoreRange = value as { min: number; max: number };
+                        return count + (scoreRange.min > 0 || scoreRange.max < 100 ? 1 : 0);
                       }
                       return count + (Array.isArray(value) ? value.length : 0);
                     }, 0)
