@@ -8,7 +8,7 @@ import {
   TrendingUp, Calendar, BarChart3, Star, Bookmark, MoreVertical,
   ExternalLink, Download, Settings, Layers, Database, RefreshCw,
   Tag, BookmarkCheck, X, Zap, Eye, EyeOff, Columns, ChevronLeft, ChevronRight, ChevronUp,
-  Building2, User, ChevronDown, UserPlus, List, Target, Save
+  Building2, User, ChevronDown, UserPlus, List, Target, Save, Award
 } from 'lucide-react';
 import { SiLinkedin } from 'react-icons/si';
 
@@ -439,13 +439,32 @@ const PeopleDiscovery: React.FC = () => {
     };
   }, [filteredPeople]);
 
+  // Multi-column sorting
+  const sortedPeople = useMemo(() => {
+    if (multiSort.length === 0) return filteredPeople;
+    
+    return [...filteredPeople].sort((a, b) => {
+      for (const sort of multiSort) {
+        let aValue = a[sort.field as keyof PersonData];
+        let bValue = b[sort.field as keyof PersonData];
+        
+        if (typeof aValue === 'string') aValue = aValue.toLowerCase();
+        if (typeof bValue === 'string') bValue = bValue.toLowerCase();
+        
+        if (aValue < bValue) return sort.direction === 'asc' ? -1 : 1;
+        if (aValue > bValue) return sort.direction === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+  }, [filteredPeople, multiSort]);
+
   const paginatedPeople = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    return filteredPeople.slice(startIndex, endIndex);
-  }, [filteredPeople, currentPage, itemsPerPage]);
+    return sortedPeople.slice(startIndex, endIndex);
+  }, [sortedPeople, currentPage, itemsPerPage]);
 
-  const totalPages = Math.ceil(filteredPeople.length / itemsPerPage);
+  const totalPages = Math.ceil(sortedPeople.length / itemsPerPage);
 
   const visibleColumns = useMemo(() => columns.filter(col => col.visible), [columns]);
 
@@ -676,6 +695,51 @@ const PeopleDiscovery: React.FC = () => {
   return (
     <div className="h-full bg-gray-50 flex flex-col">
       {/* Real-time Metrics Dashboard */}
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-200 px-6 py-4 flex-shrink-0">
+        <div className="grid grid-cols-4 gap-6">
+          <div className="bg-white rounded-lg p-4 shadow-sm border border-blue-100">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 font-medium">Total Prospects</p>
+                <p className="text-2xl font-bold text-blue-600">{liveMetrics.totalLeads.toLocaleString()}</p>
+              </div>
+              <Users className="h-8 w-8 text-blue-500" />
+            </div>
+          </div>
+          <div className="bg-white rounded-lg p-4 shadow-sm border border-green-100">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 font-medium">Email Verified</p>
+                <p className="text-2xl font-bold text-green-600">{liveMetrics.emailVerified}</p>
+                <p className="text-xs text-gray-500">{Math.round((liveMetrics.emailVerified / liveMetrics.totalLeads) * 100)}% verified</p>
+              </div>
+              <Mail className="h-8 w-8 text-green-500" />
+            </div>
+          </div>
+          <div className="bg-white rounded-lg p-4 shadow-sm border border-orange-100">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 font-medium">Avg Lead Score</p>
+                <p className="text-2xl font-bold text-orange-600">{liveMetrics.avgScore}</p>
+                <p className="text-xs text-gray-500">Above industry avg</p>
+              </div>
+              <Target className="h-8 w-8 text-orange-500" />
+            </div>
+          </div>
+          <div className="bg-white rounded-lg p-4 shadow-sm border border-purple-100">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 font-medium">High-Value Leads</p>
+                <p className="text-2xl font-bold text-purple-600">{liveMetrics.highValue}</p>
+                <p className="text-xs text-gray-500">Score 85+</p>
+              </div>
+              <Award className="h-8 w-8 text-purple-500" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Header Controls */}
       <div className="bg-white border-b border-gray-200 p-4 flex-shrink-0">
         <div className="grid grid-cols-5 gap-4">
           <div className="text-center">
@@ -840,6 +904,31 @@ const PeopleDiscovery: React.FC = () => {
           </div>
         </div>
 
+        {/* Saved Search Presets */}
+        {savedSearches.length > 0 && (
+          <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium text-blue-900">Saved Searches</h3>
+              <span className="text-xs text-blue-700">{savedSearches.length} saved</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {savedSearches.map(search => (
+                <button
+                  key={search.id}
+                  onClick={() => {
+                    setSearchQuery(search.query);
+                    setActiveFilters(search.filters);
+                  }}
+                  className="px-3 py-1 text-xs bg-white text-blue-700 border border-blue-300 rounded-full hover:bg-blue-100 hover:border-blue-400 transition-all hover-scale"
+                  title={`Query: ${search.query}`}
+                >
+                  {search.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Comprehensive Filter Panels */}
         {showFilters && (
           <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
@@ -947,6 +1036,31 @@ const PeopleDiscovery: React.FC = () => {
                 </div>
               </div>
 
+              {/* Keywords Filters */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Keywords</label>
+                <div className="space-y-2 max-h-32 overflow-y-auto">
+                  {filterOptions.keywords.map(keyword => (
+                    <label key={keyword} className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={activeFilters.keywords.includes(keyword)}
+                        onChange={(e) => {
+                          setActiveFilters(prev => ({
+                            ...prev,
+                            keywords: e.target.checked 
+                              ? [...prev.keywords, keyword]
+                              : prev.keywords.filter(k => k !== keyword)
+                          }));
+                        }}
+                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="text-sm text-gray-700 truncate">{keyword}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
               {/* Email Status Filters */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Email Status</label>
@@ -1015,27 +1129,56 @@ const PeopleDiscovery: React.FC = () => {
                 </button>
                 
                 {showBulkActions && (
-                  <div className="absolute top-12 left-0 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                    <div className="p-2">
-                      <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded flex items-center">
-                        <UserPlus className="h-4 w-4 mr-2" />
-                        Add to CRM
+                  <div className="absolute top-12 left-0 w-80 bg-white border border-gray-200 rounded-lg shadow-xl z-50">
+                    <div className="p-3">
+                      <div className="text-xs text-gray-500 mb-3 font-medium">CRM ACTIONS</div>
+                      <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 rounded flex items-center group transition-all">
+                        <UserPlus className="h-4 w-4 mr-3 text-blue-600 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="font-medium">Sync to CRM</div>
+                          <div className="text-xs text-gray-500">Add as new contacts</div>
+                        </div>
                       </button>
-                      <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded flex items-center">
-                        <Mail className="h-4 w-4 mr-2" />
-                        Add to Email Sequence
+                      
+                      <div className="text-xs text-gray-500 mb-2 mt-4 font-medium">OUTREACH SEQUENCES</div>
+                      <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-green-50 rounded flex items-center group transition-all">
+                        <Mail className="h-4 w-4 mr-3 text-green-600 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="font-medium">Cold Email Sequence</div>
+                          <div className="text-xs text-gray-500">5-touch personalized campaign</div>
+                        </div>
                       </button>
-                      <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded flex items-center">
-                        <List className="h-4 w-4 mr-2" />
-                        Create Custom List
+                      <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 rounded flex items-center group transition-all">
+                        <Calendar className="h-4 w-4 mr-3 text-blue-600 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="font-medium">LinkedIn Outreach</div>
+                          <div className="text-xs text-gray-500">Connect + follow-up sequence</div>
+                        </div>
                       </button>
-                      <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded flex items-center">
-                        <Download className="h-4 w-4 mr-2" />
-                        Export Selected
+                      
+                      <div className="text-xs text-gray-500 mb-2 mt-4 font-medium">LIST MANAGEMENT</div>
+                      <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-purple-50 rounded flex items-center group transition-all">
+                        <List className="h-4 w-4 mr-3 text-purple-600 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="font-medium">Create Custom List</div>
+                          <div className="text-xs text-gray-500">Save for future campaigns</div>
+                        </div>
                       </button>
-                      <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded flex items-center">
-                        <Target className="h-4 w-4 mr-2" />
-                        Score & Enrich
+                      <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-indigo-50 rounded flex items-center group transition-all">
+                        <Download className="h-4 w-4 mr-3 text-indigo-600 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="font-medium">Export Data</div>
+                          <div className="text-xs text-gray-500">CSV, Excel, or JSON format</div>
+                        </div>
+                      </button>
+                      
+                      <div className="text-xs text-gray-500 mb-2 mt-4 font-medium">DATA ENRICHMENT</div>
+                      <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-orange-50 rounded flex items-center group transition-all">
+                        <Target className="h-4 w-4 mr-3 text-orange-600 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="font-medium">Score & Enrich</div>
+                          <div className="text-xs text-gray-500">Update contact data & scoring</div>
+                        </div>
                       </button>
                     </div>
                   </div>
@@ -1080,7 +1223,38 @@ const PeopleDiscovery: React.FC = () => {
                     <span className="text-sm font-medium text-gray-700">{column.label}</span>
                   </div>
                 )}
-                {column.key !== 'name' && (
+                {column.key !== 'name' && column.sortable && (
+                  <button
+                    onClick={() => {
+                      const existingSort = multiSort.find(s => s.field === column.key);
+                      if (existingSort) {
+                        if (existingSort.direction === 'asc') {
+                          setMultiSort(prev => prev.map(s => 
+                            s.field === column.key ? { ...s, direction: 'desc' } : s
+                          ));
+                        } else {
+                          setMultiSort(prev => prev.filter(s => s.field !== column.key));
+                        }
+                      } else {
+                        setMultiSort(prev => [...prev, { field: column.key, direction: 'asc' }]);
+                      }
+                    }}
+                    className="flex items-center space-x-1 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors group"
+                  >
+                    <span>{column.label}</span>
+                    {multiSort.find(s => s.field === column.key) && (
+                      <div className="flex items-center space-x-1">
+                        <ChevronUp className={`h-3 w-3 transition-transform ${
+                          multiSort.find(s => s.field === column.key)?.direction === 'desc' ? 'rotate-180' : ''
+                        }`} />
+                        <span className="text-xs bg-blue-100 text-blue-700 px-1 rounded">
+                          {multiSort.findIndex(s => s.field === column.key) + 1}
+                        </span>
+                      </div>
+                    )}
+                  </button>
+                )}
+                {column.key !== 'name' && !column.sortable && (
                   <span className="text-sm font-medium text-gray-700">{column.label}</span>
                 )}
               </div>
@@ -1128,7 +1302,7 @@ const PeopleDiscovery: React.FC = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <span className="text-sm text-gray-700">
-              Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredPeople.length)} of {filteredPeople.length} results
+              Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, sortedPeople.length)} of {sortedPeople.length} results
             </span>
             <select
               value={itemsPerPage}
