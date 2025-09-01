@@ -694,50 +694,7 @@ const PeopleDiscovery: React.FC = () => {
 
   return (
     <div className="h-full bg-gray-50 flex flex-col">
-      {/* Real-time Metrics Dashboard */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-200 px-6 py-4 flex-shrink-0">
-        <div className="grid grid-cols-4 gap-6">
-          <div className="bg-white rounded-lg p-4 shadow-sm border border-blue-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 font-medium">Total Prospects</p>
-                <p className="text-2xl font-bold text-blue-600">{liveMetrics.totalLeads.toLocaleString()}</p>
-              </div>
-              <Users className="h-8 w-8 text-blue-500" />
-            </div>
-          </div>
-          <div className="bg-white rounded-lg p-4 shadow-sm border border-green-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 font-medium">Email Verified</p>
-                <p className="text-2xl font-bold text-green-600">{liveMetrics.emailVerified}</p>
-                <p className="text-xs text-gray-500">{Math.round((liveMetrics.emailVerified / liveMetrics.totalLeads) * 100)}% verified</p>
-              </div>
-              <Mail className="h-8 w-8 text-green-500" />
-            </div>
-          </div>
-          <div className="bg-white rounded-lg p-4 shadow-sm border border-orange-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 font-medium">Avg Lead Score</p>
-                <p className="text-2xl font-bold text-orange-600">{liveMetrics.avgScore}</p>
-                <p className="text-xs text-gray-500">Above industry avg</p>
-              </div>
-              <Target className="h-8 w-8 text-orange-500" />
-            </div>
-          </div>
-          <div className="bg-white rounded-lg p-4 shadow-sm border border-purple-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 font-medium">High-Value Leads</p>
-                <p className="text-2xl font-bold text-purple-600">{liveMetrics.highValue}</p>
-                <p className="text-xs text-gray-500">Score 85+</p>
-              </div>
-              <Award className="h-8 w-8 text-purple-500" />
-            </div>
-          </div>
-        </div>
-      </div>
+      
 
       {/* Header Controls */}
       <div className="bg-white border-b border-gray-200 p-4 flex-shrink-0">
