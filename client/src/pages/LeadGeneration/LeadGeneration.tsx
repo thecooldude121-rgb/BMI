@@ -19,7 +19,7 @@ const LeadGenerationContent: React.FC = () => {
   const { trackConversion } = useABTestVariant('sync-button-test');
 
   return (
-    <div className="h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex page-transition">
+    <div className="h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex page-transition">
       {/* Left Navigation Pane */}
       <div className="w-32 bg-white/90 backdrop-blur-sm border-r border-gray-200 flex-shrink-0 card-modern">
         <div className="p-2 border-b border-gray-200">
@@ -109,7 +109,7 @@ const LeadGenerationContent: React.FC = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-hidden animate-slide-in-up">
+      <div className="flex-1 w-full overflow-hidden animate-slide-in-up">
         <AnimatePresence mode="wait">
           {activeSection === 'people' && (
             <motion.div

@@ -818,7 +818,7 @@ const PeopleDiscovery: React.FC = () => {
   };
 
   return (
-    <div className="h-full bg-gray-50 flex flex-col">
+    <div className="h-full w-full bg-gradient-to-br from-white to-slate-50 flex flex-col page-transition">
       
 
       
