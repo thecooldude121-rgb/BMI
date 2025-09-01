@@ -340,8 +340,8 @@ const PeopleDetailPage: React.FC = () => {
   return (
     <div className="h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex flex-col">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4 flex-shrink-0">
-        <div className="flex items-center justify-between">
+      <div className="bg-white border-b border-gray-200 px-0 py-4 flex-shrink-0">
+        <div className="flex items-center justify-between px-6">
           <div className="flex items-center space-x-4">
             <button
               onClick={() => setLocation('/lead-generation')}
