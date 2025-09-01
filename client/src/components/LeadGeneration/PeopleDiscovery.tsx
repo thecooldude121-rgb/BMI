@@ -979,7 +979,7 @@ const PeopleDiscovery: React.FC = () => {
             
             {/* Column Manager Dropdown */}
             {showColumnManager && (
-              <div className="absolute right-0 top-12 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50 card-hover">
+              <div className="absolute right-0 top-full mt-2 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-[60] card-hover">
                 <div className="p-4 border-b border-gray-200">
                   <div className="flex items-center justify-between">
                     <h3 className="text-sm font-medium text-gray-900">Manage Table Columns</h3>
