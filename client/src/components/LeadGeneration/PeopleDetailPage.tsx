@@ -340,35 +340,40 @@ const PeopleDetailPage: React.FC = () => {
   return (
     <div className="h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex flex-col">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-0 py-4 flex-shrink-0">
+      <div className="bg-white/95 backdrop-blur-sm border-b border-gray-200/60 px-0 py-6 flex-shrink-0 shadow-sm">
         <div className="flex items-center justify-between px-6">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-6">
             <button
               onClick={() => setLocation('/lead-generation')}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2.5 hover:bg-gray-100 rounded-xl transition-all duration-200 hover:scale-105 group"
             >
-              <ArrowLeft className="h-5 w-5 text-gray-600" />
+              <ArrowLeft className="h-5 w-5 text-gray-600 group-hover:text-gray-800" />
             </button>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">{lead.name}</h1>
-              <p className="text-gray-600">{lead.jobTitle} at {lead.company}</p>
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/30">
+                {lead.name.split(' ').map(n => n[0]).join('')}
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 mb-1">{lead.name}</h1>
+                <p className="text-lg text-gray-600">{lead.jobTitle} at {lead.company}</p>
+              </div>
             </div>
           </div>
           
           <div className="flex items-center space-x-3">
-            <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+            <button className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 transform">
               <Mail className="h-4 w-4" />
-              <span>Email</span>
+              <span className="font-medium">Email</span>
             </button>
-            <button className="flex items-center space-x-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+            <button className="flex items-center space-x-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 hover:scale-105 transform">
               <Phone className="h-4 w-4" />
-              <span>Call</span>
+              <span className="font-medium">Call</span>
             </button>
-            <button className="flex items-center space-x-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+            <button className="flex items-center space-x-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 hover:scale-105 transform">
               <Calendar className="h-4 w-4" />
-              <span>Meeting</span>
+              <span className="font-medium">Meeting</span>
             </button>
-            <button className="p-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+            <button className="p-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 hover:scale-105 transform">
               <MoreHorizontal className="h-5 w-5" />
             </button>
           </div>
@@ -377,22 +382,26 @@ const PeopleDetailPage: React.FC = () => {
 
       <div className="flex flex-1 min-h-0">
         {/* Left Sidebar - Lead Information */}
-        <div className="w-64 bg-gradient-to-b from-gray-50 to-white border-r border-gray-300 overflow-y-auto shadow-[inset_0_1px_3px_rgba(0,0,0,0.1)] relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-transparent to-gray-100/40 pointer-events-none"></div>
-          <div className="relative p-4 pb-8 space-y-4">
+        <div className="w-64 bg-gradient-to-b from-gray-50/80 to-white border-r border-gray-200/60 overflow-y-auto shadow-[inset_0_1px_3px_rgba(0,0,0,0.08)] relative backdrop-blur-sm">
+          <div className="absolute inset-0 bg-gradient-to-br from-white/70 via-transparent to-gray-50/50 pointer-events-none"></div>
+          <div className="relative p-5 pb-8 space-y-5">
             {/* Lead Photo & Basic Info */}
             <div className="text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4 shadow-lg shadow-blue-500/30 border-2 border-white/20">
-                {lead.name.split(' ').map(n => n[0]).join('')}
+              <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl flex items-center justify-center text-white font-bold text-2xl mx-auto mb-5 shadow-xl shadow-blue-500/40 border-3 border-white/30 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
+                <span className="relative z-10">{lead.name.split(' ').map(n => n[0]).join('')}</span>
               </div>
-              <h2 className="text-xl font-bold text-gray-900">{lead.name}</h2>
-              <p className="text-gray-600">{lead.jobTitle}</p>
-              <p className="text-sm text-gray-500">{lead.department}</p>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">{lead.name}</h2>
+              <p className="text-gray-600 font-medium mb-1">{lead.jobTitle}</p>
+              <p className="text-sm text-gray-500 px-3 py-1 bg-gray-100 rounded-full inline-block">{lead.department}</p>
             </div>
 
             {/* Contact Information */}
-            <div className="bg-white/80 rounded-xl p-4 shadow-[0_2px_8px_rgba(0,0,0,0.1)] border border-gray-200/60 backdrop-blur-sm">
-              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-3">Contact</h3>
+            <div className="bg-white/90 rounded-2xl p-5 shadow-[0_4px_12px_rgba(0,0,0,0.08)] border border-gray-200/50 backdrop-blur-sm hover:shadow-[0_6px_20px_rgba(0,0,0,0.12)] transition-all duration-300">
+              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 flex items-center">
+                <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                Contact
+              </h3>
               <div className="space-y-2">
                 <div className="flex items-center space-x-3">
                   <Mail className="h-4 w-4 text-gray-400" />
@@ -416,8 +425,11 @@ const PeopleDetailPage: React.FC = () => {
             </div>
 
             {/* Company Information */}
-            <div className="bg-white/80 rounded-xl p-4 shadow-[0_2px_8px_rgba(0,0,0,0.1)] border border-gray-200/60 backdrop-blur-sm">
-              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-3">Company</h3>
+            <div className="bg-white/90 rounded-2xl p-5 shadow-[0_4px_12px_rgba(0,0,0,0.08)] border border-gray-200/50 backdrop-blur-sm hover:shadow-[0_6px_20px_rgba(0,0,0,0.12)] transition-all duration-300">
+              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 flex items-center">
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                Company
+              </h3>
               <div className="space-y-2">
                 <div className="flex items-center space-x-3">
                   <Building2 className="h-4 w-4 text-gray-400" />
@@ -441,8 +453,11 @@ const PeopleDetailPage: React.FC = () => {
             </div>
 
             {/* Lead Score */}
-            <div className="bg-white/80 rounded-xl p-4 shadow-[0_2px_8px_rgba(0,0,0,0.1)] border border-gray-200/60 backdrop-blur-sm">
-              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-3">Lead Score</h3>
+            <div className="bg-white/90 rounded-2xl p-5 shadow-[0_4px_12px_rgba(0,0,0,0.08)] border border-gray-200/50 backdrop-blur-sm hover:shadow-[0_6px_20px_rgba(0,0,0,0.12)] transition-all duration-300">
+              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 flex items-center">
+                <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
+                Lead Score
+              </h3>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-700">Overall</span>
@@ -472,8 +487,11 @@ const PeopleDetailPage: React.FC = () => {
             </div>
 
             {/* Status & Tags */}
-            <div className="bg-white/80 rounded-xl p-4 shadow-[0_2px_8px_rgba(0,0,0,0.1)] border border-gray-200/60 backdrop-blur-sm">
-              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-3">Status & Tags</h3>
+            <div className="bg-white/90 rounded-2xl p-5 shadow-[0_4px_12px_rgba(0,0,0,0.08)] border border-gray-200/50 backdrop-blur-sm hover:shadow-[0_6px_20px_rgba(0,0,0,0.12)] transition-all duration-300">
+              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 flex items-center">
+                <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
+                Status & Tags
+              </h3>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-700">Status</span>
@@ -499,14 +517,17 @@ const PeopleDetailPage: React.FC = () => {
             </div>
 
             {/* Notes */}
-            <div className="bg-white/80 rounded-xl p-4 shadow-[0_2px_8px_rgba(0,0,0,0.1)] border border-gray-200/60 backdrop-blur-sm">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Notes</h3>
+            <div className="bg-white/90 rounded-2xl p-5 shadow-[0_4px_12px_rgba(0,0,0,0.08)] border border-gray-200/50 backdrop-blur-sm hover:shadow-[0_6px_20px_rgba(0,0,0,0.12)] transition-all duration-300">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
+                  Notes
+                </h3>
                 <button
                   onClick={() => setShowNoteEditor(true)}
-                  className="p-1 hover:bg-gray-100 rounded transition-colors"
+                  className="p-2 hover:bg-gray-100 rounded-xl transition-all duration-200 hover:scale-105 group"
                 >
-                  <Plus className="h-4 w-4 text-gray-600" />
+                  <Plus className="h-4 w-4 text-gray-600 group-hover:text-gray-800" />
                 </button>
               </div>
               
@@ -553,8 +574,8 @@ const PeopleDetailPage: React.FC = () => {
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Tab Navigation */}
-          <div className="bg-white border-b border-gray-200 px-6">
-            <nav className="flex space-x-6">
+          <div className="bg-white/95 backdrop-blur-sm border-b border-gray-200/60 px-6 shadow-sm">
+            <nav className="flex space-x-8">
               {[
                 { key: 'activity', label: 'Activity', icon: Activity },
                 { key: 'insights', label: 'Insights', icon: Lightbulb },
@@ -566,10 +587,10 @@ const PeopleDetailPage: React.FC = () => {
                 <button
                   key={key}
                   onClick={() => setActiveTab(key as any)}
-                  className={`flex items-center space-x-2 py-4 px-2 border-b-2 transition-colors ${
+                  className={`flex items-center space-x-2 py-4 px-4 border-b-2 transition-all duration-200 rounded-t-lg ${
                     activeTab === key
-                      ? 'border-blue-600 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700'
+                      ? 'border-blue-600 text-blue-600 bg-blue-50/50'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50/50'
                   }`}
                 >
                   <Icon className="h-4 w-4" />
