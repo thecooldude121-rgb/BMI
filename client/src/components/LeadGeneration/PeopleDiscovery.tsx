@@ -696,31 +696,7 @@ const PeopleDiscovery: React.FC = () => {
     <div className="h-full bg-gray-50 flex flex-col">
       
 
-      {/* Header Controls */}
-      <div className="bg-white border-b border-gray-200 p-4 flex-shrink-0">
-        <div className="grid grid-cols-5 gap-4">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">{liveMetrics.totalLeads}</div>
-            <div className="text-xs text-gray-600">Total Leads</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">{liveMetrics.emailAccuracy}%</div>
-            <div className="text-xs text-gray-600">Email Accuracy</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-purple-600">{liveMetrics.avgLeadScore}</div>
-            <div className="text-xs text-gray-600">Avg Lead Score</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-orange-600">{liveMetrics.responseRate}%</div>
-            <div className="text-xs text-gray-600">Response Rate</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-teal-600">{liveMetrics.conversionRate}%</div>
-            <div className="text-xs text-gray-600">Conversion Rate</div>
-          </div>
-        </div>
-      </div>
+      
 
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-4">
