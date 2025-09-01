@@ -105,30 +105,41 @@ const PeopleDiscovery: React.FC = () => {
     { key: 'leadScore', label: 'Lead Score', width: '120px', minWidth: '120px', visible: true, sortable: true }
   ]);
 
-  // Fetch CRM Accounts as primary data source
-  const { data: crmAccounts = [] } = useQuery({
-    queryKey: ['/api/accounts'],
+  // Fetch independent Lead Generation people data - not tied to CRM
+  const { data: leadGenPeople = [] } = useQuery({
+    queryKey: ['/api/leads'],
     queryFn: async () => {
-      const response = await fetch('/api/accounts');
-      if (!response.ok) throw new Error('Failed to fetch CRM accounts');
+      const response = await fetch('/api/leads');
+      if (!response.ok) throw new Error('Failed to fetch lead generation people');
       return response.json();
     }
   });
 
-  // Fetch contacts from CRM
-  const { data: crmContacts = [] } = useQuery({
-    queryKey: ['/api/contacts'],
+  // Independent companies data for Lead Generation module
+  const { data: leadGenCompanies = [] } = useQuery({
+    queryKey: ['/api/companies'],
     queryFn: async () => {
-      const response = await fetch('/api/contacts');
-      if (!response.ok) throw new Error('Failed to fetch CRM contacts');
+      const response = await fetch('/api/companies');
+      if (!response.ok) throw new Error('Failed to fetch lead generation companies');
       return response.json();
     }
   });
 
-  // Get companies from CRM Accounts first, fallback to local data
+  // Use independent Lead Generation companies data
   const companies = useMemo(() => {
-    return getCompanies(crmAccounts);
-  }, [crmAccounts]);
+    // If we have lead gen companies data, use it; otherwise create sample data
+    if (leadGenCompanies.length > 0) {
+      return leadGenCompanies;
+    }
+    // Fallback sample companies for Lead Generation
+    return [
+      { id: '1', name: 'Tesla Inc', industry: 'automotive', domain: 'tesla.com' },
+      { id: '2', name: 'SpaceX', industry: 'aerospace', domain: 'spacex.com' },
+      { id: '3', name: 'Meta Platforms', industry: 'technology', domain: 'meta.com' },
+      { id: '4', name: 'Amazon.com Inc', industry: 'e-commerce', domain: 'amazon.com' },
+      { id: '5', name: 'Google LLC', industry: 'technology', domain: 'google.com' }
+    ];
+  }, [leadGenCompanies]);
 
 
 
@@ -276,14 +287,12 @@ const PeopleDiscovery: React.FC = () => {
       });
     });
 
-    // Add CRM contacts with industry-specific keywords
-    const crmPeople = crmContacts.map((contact: any, index: number) => {
-      const company = crmAccounts.find((acc: any) => acc.id === contact.accountId);
-      
-      // Determine industry based on company type or job title
+    // Add Lead Generation people data with industry-specific keywords
+    const leadGenPeopleData = leadGenPeople.map((lead: any, index: number) => {
+      // Determine industry based on job title or lead data
       let industry = 'technology'; // default
-      const jobTitle = (contact.title || '').toLowerCase();
-      const companyName = (company?.name || '').toLowerCase();
+      const jobTitle = (lead.title || lead.jobTitle || '').toLowerCase();
+      const companyName = (lead.company || '').toLowerCase();
       
       if (jobTitle.includes('marketing') || jobTitle.includes('sales') || companyName.includes('marketing')) {
         industry = 'marketing';
@@ -301,24 +310,24 @@ const PeopleDiscovery: React.FC = () => {
       const selectedKeywords = relevantKeywords.slice(startIndex, startIndex + 6);
       
       return {
-        id: contact.id,
-        name: contact.name || 'Unknown Contact',
-        jobTitle: contact.title || 'N/A',
-        company: company?.name || 'Unknown Company',
-        companyId: contact.accountId || '',
-        location: contact.location || company?.location || 'Unknown',
-        email: contact.email || `${contact.name?.toLowerCase().replace(/\s+/g, '.')}@${company?.domain || 'company.com'}`,
-        phone: contact.phone || '+1 (555) 000-0000',
-        linkedinUrl: contact.linkedinUrl || `https://linkedin.com/in/${contact.name?.toLowerCase().replace(/\s+/g, '-')}`,
-        companyEmployeeCount: company?.employeeCount || '1-50',
+        id: lead.id,
+        name: lead.name || lead.firstName + ' ' + lead.lastName || 'Unknown Contact',
+        jobTitle: lead.title || lead.jobTitle || 'N/A',
+        company: lead.company || 'Unknown Company',
+        companyId: lead.companyId || '',
+        location: lead.location || 'Unknown',
+        email: lead.email || `${(lead.name || 'contact').toLowerCase().replace(/\s+/g, '.')}@${lead.company?.toLowerCase().replace(/\s+/g, '') || 'company'}.com`,
+        phone: lead.phone || '+1 (555) 000-0000',
+        linkedinUrl: lead.linkedinUrl || `https://linkedin.com/in/${(lead.name || 'contact').toLowerCase().replace(/\s+/g, '-')}`,
+        companyEmployeeCount: lead.companyEmployeeCount || '1-50',
         keywords: selectedKeywords,
         accessibleEmail: true,
         accessiblePhone: true
       };
     });
 
-    return [...peopleFromCompanies, ...crmPeople];
-  }, [companies, crmContacts, crmAccounts]);
+    return [...peopleFromCompanies, ...leadGenPeopleData];
+  }, [companies, leadGenPeople]);
 
   const [selectedPeople, setSelectedPeople] = useState<string[]>([]);
 
