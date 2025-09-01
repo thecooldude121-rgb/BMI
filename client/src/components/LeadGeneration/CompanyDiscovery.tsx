@@ -110,34 +110,6 @@ const CompanyDiscovery: React.FC = () => {
 
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
 
-  // Filter options from data
-  const filterOptions = useMemo(() => ({
-    industries: [...new Set(companies.map(c => c.industry))],
-    locations: [...new Set(companies.map(c => c.location.split(',')[0]))],
-    companySizes: [...new Set(companies.map(c => c.employeeCount))],
-    revenues: [...new Set(companies.map(c => c.revenue))],
-    keywords: [...new Set(companies.flatMap(c => c.keywords))].slice(0, 20),
-    fundingStatuses: ['Funded', 'Bootstrapped', 'Series A', 'Series B', 'IPO']
-  }), [companies]);
-
-  // Real-time metrics calculation
-  const liveMetrics = useMemo(() => {
-    const totalCompanies = filteredCompanies.length;
-    const fundedCompanies = filteredCompanies.filter(c => c.funding && c.funding !== 'N/A').length;
-    const avgEmployees = filteredCompanies.reduce((sum, c) => {
-      const count = parseInt(c.employeeCount.split('-')[0]) || 50;
-      return sum + count;
-    }, 0) / totalCompanies;
-    
-    return {
-      totalCompanies,
-      fundingRate: totalCompanies > 0 ? ((fundedCompanies / totalCompanies) * 100).toFixed(1) : '0',
-      avgEmployees: Math.floor(avgEmployees || 0),
-      avgRevenue: (Math.random() * 50 + 10).toFixed(1) + 'M',
-      marketCap: (Math.random() * 500 + 100).toFixed(0) + 'M'
-    };
-  }, [filteredCompanies]);
-
   // Advanced search with Boolean operators
   const parseAdvancedSearch = (query: string) => {
     if (!advancedSearchMode) {
@@ -163,30 +135,14 @@ const CompanyDiscovery: React.FC = () => {
     const searchConfig = parseAdvancedSearch(searchQuery);
     
     return companies.filter(company => {
-      // Apply advanced search
-      if (searchConfig.advanced) {
-        let matches = false;
-        for (const { term, operator } of searchConfig.terms) {
-          const termMatches = 
-            company.name.toLowerCase().includes(term) ||
-            company.industry.toLowerCase().includes(term) ||
-            company.location.toLowerCase().includes(term) ||
-            company.keywords.some(keyword => keyword.toLowerCase().includes(term));
-          
-          if (operator === 'NOT') {
-            if (termMatches) return false;
-          } else if (operator === 'OR') {
-            matches = matches || termMatches;
-          } else { // AND
-            if (!termMatches) return false;
-          }
-        }
-        if (!matches && searchConfig.terms.some(t => t.operator !== 'NOT')) return false;
-      } else if (searchConfig.simple) {
+      // Apply search
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase();
         const simpleMatch = 
-          company.name.toLowerCase().includes(searchConfig.simple) ||
-          company.industry.toLowerCase().includes(searchConfig.simple) ||
-          company.keywords.some(keyword => keyword.toLowerCase().includes(searchConfig.simple));
+          company.name.toLowerCase().includes(query) ||
+          company.industry.toLowerCase().includes(query) ||
+          company.location.toLowerCase().includes(query) ||
+          company.keywords.some(keyword => keyword.toLowerCase().includes(query));
         if (!simpleMatch) return false;
       }
 
@@ -210,7 +166,35 @@ const CompanyDiscovery: React.FC = () => {
 
       return true;
     });
-  }, [companies, searchQuery, advancedSearchMode, activeFilters]);
+  }, [companies, searchQuery, activeFilters]);
+
+  // Filter options from data
+  const filterOptions = useMemo(() => ({
+    industries: Array.from(new Set(companies.map(c => c.industry))),
+    locations: Array.from(new Set(companies.map(c => c.location.split(',')[0]))),
+    companySizes: Array.from(new Set(companies.map(c => c.employeeCount))),
+    revenues: Array.from(new Set(companies.map(c => c.revenue))),
+    keywords: Array.from(new Set(companies.flatMap(c => c.keywords))).slice(0, 20),
+    fundingStatuses: ['Funded', 'Bootstrapped', 'Series A', 'Series B', 'IPO']
+  }), [companies]);
+
+  // Real-time metrics calculation
+  const liveMetrics = useMemo(() => {
+    const totalCompanies = filteredCompanies.length;
+    const fundedCompanies = filteredCompanies.filter(c => c.funding && c.funding !== 'N/A').length;
+    const avgEmployees = totalCompanies > 0 ? filteredCompanies.reduce((sum, c) => {
+      const count = parseInt(c.employeeCount.split('-')[0]) || 50;
+      return sum + count;
+    }, 0) / totalCompanies : 0;
+    
+    return {
+      totalCompanies,
+      fundingRate: totalCompanies > 0 ? ((fundedCompanies / totalCompanies) * 100).toFixed(1) : '0',
+      avgEmployees: Math.floor(avgEmployees || 0),
+      avgRevenue: (Math.random() * 50 + 10).toFixed(1) + 'M',
+      marketCap: (Math.random() * 500 + 100).toFixed(0) + 'M'
+    };
+  }, [filteredCompanies]);
 
   // Enhanced sorting logic
   const sortedCompanies = useMemo(() => {
