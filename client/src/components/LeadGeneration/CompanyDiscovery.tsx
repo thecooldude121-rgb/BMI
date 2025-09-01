@@ -467,7 +467,7 @@ const CompanyDiscovery: React.FC = () => {
   };
 
   return (
-    <div className="h-full bg-gradient-to-br from-white to-slate-50 flex flex-col page-transition">
+    <div className="h-full w-full bg-gradient-to-br from-white to-slate-50 flex flex-col page-transition">
       {/* Real-time Metrics Dashboard */}
       <div className="bg-white border-b border-gray-200 p-4 flex-shrink-0">
         <div className="grid grid-cols-5 gap-4">
