@@ -11,6 +11,7 @@ import {
   Building2, User, ChevronDown, UserPlus, List, Target, Save, Award
 } from 'lucide-react';
 import { SiLinkedin } from 'react-icons/si';
+import SyncPanel from './SyncPanel';
 
 interface PersonData {
   id: string;
@@ -44,6 +45,7 @@ const PeopleDiscovery: React.FC = () => {
   const [searchError, setSearchError] = useState<string | null>(null);
   const [savedSearches, setSavedSearches] = useState<Array<{id: string, name: string, query: string, filters: any}>>([]);
   const [showSaveSearchModal, setShowSaveSearchModal] = useState(false);
+  const [showSyncPanel, setShowSyncPanel] = useState(false);
   const [sortBy, setSortBy] = useState<'relevance' | 'recent' | 'company' | 'title' | 'score'>('relevance');
   const [multiSort, setMultiSort] = useState<Array<{field: string, direction: 'asc' | 'desc'}>>([]);
   const [showFilters, setShowFilters] = useState(true);
@@ -859,6 +861,13 @@ const PeopleDiscovery: React.FC = () => {
               <Zap className="h-4 w-4 inline mr-2 icon-hover" />
               Enrich Data
             </button>
+            <button 
+              onClick={() => setShowSyncPanel(!showSyncPanel)}
+              className="btn-secondary px-4 py-2 text-sm hover-lift"
+            >
+              <RefreshCw className="h-4 w-4 inline mr-2 icon-hover" />
+              CRM Sync
+            </button>
           </div>
         </div>
 
@@ -1033,6 +1042,17 @@ const PeopleDiscovery: React.FC = () => {
                 </button>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* CRM Sync Panel */}
+        {showSyncPanel && (
+          <div className="mt-4">
+            <SyncPanel 
+              module="leads" 
+              selectedIds={selectedPeople} 
+              onSyncComplete={() => setShowSyncPanel(false)}
+            />
           </div>
         )}
 

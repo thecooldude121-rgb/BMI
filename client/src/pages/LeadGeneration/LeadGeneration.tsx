@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Target, Users, Building2, ChevronRight, ChevronDown
+  Target, Users, Building2, ChevronRight, ChevronDown, MessageSquare
 } from 'lucide-react';
 import ProspectDiscovery from '../../components/LeadGeneration/ProspectDiscovery';
 import PeopleDiscovery from '../../components/LeadGeneration/PeopleDiscovery';
 import CompanyDiscovery from '../../components/LeadGeneration/CompanyDiscovery';
 import LeadGenLogo from '../../components/ui/LeadGenLogo';
+import FeedbackModal from '../../components/ui/FeedbackModal';
+import { ABTestProvider, useABTestVariant } from '../../components/ui/ABTestProvider';
 
-const LeadGeneration: React.FC = () => {
+const LeadGenerationContent: React.FC = () => {
   const [activeSection, setActiveSection] = useState<'people' | 'companies'>('people');
   const [enrichDataExpanded, setEnrichDataExpanded] = useState(true);
+  const [showFeedback, setShowFeedback] = useState(false);
+  
+  const { variant: themeVariant, config: themeConfig } = useABTestVariant('theme-test');
+  const { trackConversion } = useABTestVariant('sync-button-test');
 
   return (
     <div className="h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex page-transition">
@@ -83,6 +89,21 @@ const LeadGeneration: React.FC = () => {
                 <span className="font-medium text-purple-600 flex-shrink-0">23.4%</span>
               </div>
             </div>
+            
+            {/* Feedback Button */}
+            <div className="pt-3 border-t border-gray-200">
+              <button
+                onClick={() => {
+                  setShowFeedback(true);
+                  trackConversion('feedback_opened', { source: 'sidebar' });
+                }}
+                className="flex items-center space-x-2 w-full text-left p-1.5 text-xs rounded-lg text-gray-600 hover:bg-blue-50 transition-all duration-200 hover-lift"
+                title="Share Feedback"
+              >
+                <MessageSquare className="w-3 h-3 icon-hover flex-shrink-0" />
+                <span className="truncate">Feedback</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -117,7 +138,22 @@ const LeadGeneration: React.FC = () => {
           )}
         </AnimatePresence>
       </div>
+      
+      {/* Feedback Modal */}
+      <FeedbackModal 
+        isOpen={showFeedback}
+        onClose={() => setShowFeedback(false)}
+        feature="lead-generation"
+      />
     </div>
+  );
+};
+
+const LeadGeneration: React.FC = () => {
+  return (
+    <ABTestProvider userId="demo-user">
+      <LeadGenerationContent />
+    </ABTestProvider>
   );
 };
 
