@@ -509,7 +509,7 @@ const PeopleDiscovery: React.FC = () => {
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => handlePersonClick(person.id, person)}
-                  className={`font-medium hover:scale-105 transition-all duration-200 text-left truncate block flex-1 ${
+                  className={`text-sm font-medium hover:scale-105 transition-all duration-200 text-left truncate block flex-1 ${
                     isRealContact 
                       ? 'text-blue-600 hover:text-blue-800' 
                       : 'text-gray-500 hover:text-gray-700'
@@ -534,13 +534,13 @@ const PeopleDiscovery: React.FC = () => {
         );
 
       case 'jobTitle':
-        return <span className="text-gray-900 truncate block" title={person.jobTitle}>{person.jobTitle}</span>;
+        return <span className="text-sm text-gray-900 truncate block" title={person.jobTitle}>{person.jobTitle}</span>;
 
       case 'company':
         return (
           <div className="flex items-center space-x-2 min-w-0">
             <Building2 className="h-4 w-4 text-gray-400 flex-shrink-0" />
-            <span className="text-gray-900 truncate" title={person.company}>{person.company}</span>
+            <span className="text-sm text-gray-900 truncate" title={person.company}>{person.company}</span>
           </div>
         );
 
