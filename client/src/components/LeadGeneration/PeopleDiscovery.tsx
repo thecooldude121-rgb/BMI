@@ -822,7 +822,7 @@ const PeopleDiscovery: React.FC = () => {
       
 
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-white/90 backdrop-blur-sm border-b border-gray-200 px-6 py-4 animate-slide-in-down">
         <div className="flex items-center justify-between">
           {/* Left side - Title and controls */}
           <div className="flex items-center space-x-4">
@@ -850,12 +850,12 @@ const PeopleDiscovery: React.FC = () => {
           <div className="flex items-center space-x-3">
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg border border-gray-300 btn-hover"
+              className="btn-secondary px-4 py-2 text-sm hover-lift"
             >
               <Filter className="h-4 w-4 inline mr-2 icon-hover" />
               {showFilters ? 'Hide' : 'Show'} Filters
             </button>
-            <button className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 btn-hover">
+            <button className="btn-primary px-4 py-2 text-sm hover-glow">
               <Zap className="h-4 w-4 inline mr-2 icon-hover" />
               Enrich Data
             </button>
@@ -1038,7 +1038,7 @@ const PeopleDiscovery: React.FC = () => {
 
         {/* Comprehensive Filter Panels */}
         {showFilters && (
-          <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="mt-4 p-4 filter-panel">
             <div className="grid grid-cols-3 gap-6">
               {/* Industry Filters */}
               <div>
@@ -1312,7 +1312,7 @@ const PeopleDiscovery: React.FC = () => {
       )}
 
       {/* Table */}
-      <div className="flex-1 overflow-auto bg-white">
+      <div className="flex-1 overflow-auto table-modern">
         <div className="min-w-max">
           {/* Table Header */}
           <div className="bg-gray-50 border-b border-gray-200 h-12 flex items-center sticky top-0 z-10">
@@ -1476,7 +1476,7 @@ const PeopleDiscovery: React.FC = () => {
       {/* Save Search Modal */}
       {showSaveSearchModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-96">
+          <div className="modal-modern p-6 w-96">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">Save Search</h3>
               <button
@@ -1529,13 +1529,13 @@ const PeopleDiscovery: React.FC = () => {
                     setSavedSearches(prev => [...prev, newSearch]);
                     setShowSaveSearchModal(false);
                   }}
-                  className="flex-1 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="btn-primary flex-1 px-4 py-2 text-sm hover-glow"
                 >
                   Save Search
                 </button>
                 <button
                   onClick={() => setShowSaveSearchModal(false)}
-                  className="flex-1 px-4 py-2 text-sm text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  className="btn-secondary flex-1 px-4 py-2 text-sm hover-lift"
                 >
                   Cancel
                 </button>

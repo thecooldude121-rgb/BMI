@@ -6,33 +6,28 @@ import {
 import ProspectDiscovery from '../../components/LeadGeneration/ProspectDiscovery';
 import PeopleDiscovery from '../../components/LeadGeneration/PeopleDiscovery';
 import CompanyDiscovery from '../../components/LeadGeneration/CompanyDiscovery';
+import LeadGenLogo from '../../components/ui/LeadGenLogo';
 
 const LeadGeneration: React.FC = () => {
   const [activeSection, setActiveSection] = useState<'people' | 'companies'>('people');
   const [enrichDataExpanded, setEnrichDataExpanded] = useState(true);
 
   return (
-    <div className="h-screen bg-gray-50 flex">
+    <div className="h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex page-transition">
       {/* Left Navigation Pane */}
-      <div className="w-32 bg-white border-r border-gray-200 flex-shrink-0">
+      <div className="w-32 bg-white/90 backdrop-blur-sm border-r border-gray-200 flex-shrink-0 card-modern">
         <div className="p-2 border-b border-gray-200">
-          <div className="flex flex-col items-center text-center space-y-2">
-            <div className="p-1.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg">
-              <Target className="h-4 w-4 text-white" />
-            </div>
-            <div>
-              <h1 className="text-xs font-bold text-gray-900 truncate">Lead Gen</h1>
-              <p className="text-xs text-gray-600 truncate">AI-powered</p>
-            </div>
+          <div className="flex flex-col items-center text-center">
+            <LeadGenLogo size={20} className="animate-slide-in-down" />
           </div>
         </div>
 
         <div className="p-2">
           {/* Enrich & data section */}
-          <div className="mb-3">
+          <div className="mb-3 animate-slide-in-left">
             <button
               onClick={() => setEnrichDataExpanded(!enrichDataExpanded)}
-              className="flex items-center justify-between w-full text-left p-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 rounded btn-hover"
+              className="flex items-center justify-between w-full text-left p-1.5 text-xs font-medium text-gray-700 hover:bg-blue-50 rounded-lg btn-secondary transition-all duration-200"
             >
               <span className="truncate">Enrich & data</span>
               {enrichDataExpanded ? (
@@ -46,10 +41,10 @@ const LeadGeneration: React.FC = () => {
               <div className="ml-2 mt-1 space-y-1">
                 <button
                   onClick={() => setActiveSection('people')}
-                  className={`flex items-center space-x-2 w-full text-left p-1.5 text-xs rounded btn-hover ${
+                  className={`flex items-center space-x-2 w-full text-left p-1.5 text-xs rounded-lg transition-all duration-200 hover-lift ${
                     activeSection === 'people'
-                      ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                      : 'text-gray-600 hover:bg-gray-50'
+                      ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md'
+                      : 'text-gray-600 hover:bg-blue-50'
                   }`}
                 >
                   <Users className="w-3 h-3 icon-hover flex-shrink-0" />
@@ -58,10 +53,10 @@ const LeadGeneration: React.FC = () => {
                 
                 <button
                   onClick={() => setActiveSection('companies')}
-                  className={`flex items-center space-x-2 w-full text-left p-1.5 text-xs rounded btn-hover ${
+                  className={`flex items-center space-x-2 w-full text-left p-1.5 text-xs rounded-lg transition-all duration-200 hover-lift ${
                     activeSection === 'companies'
-                      ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                      : 'text-gray-600 hover:bg-gray-50'
+                      ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-md'
+                      : 'text-gray-600 hover:bg-purple-50'
                   }`}
                 >
                   <Building2 className="w-3 h-3 icon-hover flex-shrink-0" />
@@ -72,9 +67,9 @@ const LeadGeneration: React.FC = () => {
           </div>
 
           {/* Stats */}
-          <div className="space-y-2 pt-3 border-t border-gray-200">
+          <div className="space-y-2 pt-3 border-t border-gray-200 animate-slide-in-right">
             <div className="text-xs font-medium text-gray-500 uppercase tracking-wider truncate">Performance</div>
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 stagger-children">
               <div className="flex justify-between text-xs">
                 <span className="text-gray-600 truncate">Email</span>
                 <span className="font-medium text-green-600 flex-shrink-0">94.5%</span>
@@ -93,7 +88,7 @@ const LeadGeneration: React.FC = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-hidden animate-slide-in-up">
         <AnimatePresence mode="wait">
           {activeSection === 'people' && (
             <motion.div

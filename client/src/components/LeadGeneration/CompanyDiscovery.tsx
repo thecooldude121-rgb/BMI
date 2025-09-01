@@ -465,7 +465,7 @@ const CompanyDiscovery: React.FC = () => {
   };
 
   return (
-    <div className="h-full bg-gray-50 flex flex-col">
+    <div className="h-full bg-gradient-to-br from-white to-slate-50 flex flex-col page-transition">
       {/* Real-time Metrics Dashboard */}
       <div className="bg-white border-b border-gray-200 p-4 flex-shrink-0">
         <div className="grid grid-cols-5 gap-4">
@@ -493,7 +493,7 @@ const CompanyDiscovery: React.FC = () => {
       </div>
 
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-white/90 backdrop-blur-sm border-b border-gray-200 px-6 py-4 animate-slide-in-down">
         <div className="flex items-center justify-between">
           {/* Left side - Title and controls */}
           <div className="flex items-center space-x-4">
@@ -512,12 +512,12 @@ const CompanyDiscovery: React.FC = () => {
           <div className="flex items-center space-x-3">
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg border border-gray-300 btn-hover"
+              className="btn-secondary px-4 py-2 text-sm hover-lift"
             >
               <Filter className="h-4 w-4 inline mr-2 icon-hover" />
               {showFilters ? 'Hide' : 'Show'} Filters
             </button>
-            <button className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 btn-hover">
+            <button className="btn-primary px-4 py-2 text-sm hover-glow">
               <Zap className="h-4 w-4 inline mr-2 icon-hover" />
               Enrich Data
             </button>
@@ -634,7 +634,7 @@ const CompanyDiscovery: React.FC = () => {
 
         {/* Comprehensive Filter Panels */}
         {showFilters && (
-          <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="mt-4 p-4 filter-panel">
             <div className="grid grid-cols-3 gap-6">
               {/* Industry Filters */}
               <div>
