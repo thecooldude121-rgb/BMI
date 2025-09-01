@@ -377,7 +377,7 @@ const PeopleDetailPage: React.FC = () => {
 
       <div className="flex flex-1 min-h-0">
         {/* Left Sidebar - Lead Information */}
-        <div className="w-60 bg-gradient-to-b from-gray-50 to-white border-r border-gray-300 overflow-y-auto shadow-[inset_0_1px_3px_rgba(0,0,0,0.1)] relative">
+        <div className="w-64 bg-gradient-to-b from-gray-50 to-white border-r border-gray-300 overflow-y-auto shadow-[inset_0_1px_3px_rgba(0,0,0,0.1)] relative">
           <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-transparent to-gray-100/40 pointer-events-none"></div>
           <div className="relative p-4 pb-8 space-y-4">
             {/* Lead Photo & Basic Info */}
