@@ -264,7 +264,7 @@ const PeopleDiscovery: React.FC = () => {
     ];
 
     // Create people from companies and their employees
-    companies.forEach((company, companyIndex) => {
+    companies.forEach((company: any, companyIndex: number) => {
       // Assign employees to companies in a round-robin fashion
       const companyEmployees = sampleEmployees.filter((_, index) => index % companies.length === companyIndex);
       
@@ -771,7 +771,7 @@ const PeopleDiscovery: React.FC = () => {
         return (
           <div className="min-w-0" title={person.keywords.join(', ')}>
             <div className="flex flex-wrap gap-1">
-              {person.keywords.slice(0, 2).map((keyword, index) => {
+              {person.keywords.slice(0, 2).map((keyword: string, index: number) => {
                 const trendInfo = getTrendInfo(keyword);
                 return (
                   <div key={index} className="flex items-center space-x-1 flex-shrink-0">
