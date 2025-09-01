@@ -11,6 +11,7 @@ import {
   ChevronDown, UserPlus, List, Target, Save, Mail, Phone
 } from 'lucide-react';
 import { SiLinkedin } from 'react-icons/si';
+import SyncPanel from './SyncPanel';
 
 // Remove duplicate interface as it's now imported from companies.ts
 
@@ -52,6 +53,7 @@ const CompanyDiscovery: React.FC = () => {
   const [itemsPerPage, setItemsPerPage] = useState(25);
   const [showColumnManager, setShowColumnManager] = useState(false);
   const [showBulkActions, setShowBulkActions] = useState(false);
+  const [showSyncPanel, setShowSyncPanel] = useState(false);
   const columnManagerRef = useRef<HTMLDivElement>(null);
   const bulkActionsRef = useRef<HTMLDivElement>(null);
 
@@ -521,6 +523,13 @@ const CompanyDiscovery: React.FC = () => {
               <Zap className="h-4 w-4 inline mr-2 icon-hover" />
               Enrich Data
             </button>
+            <button 
+              onClick={() => setShowSyncPanel(!showSyncPanel)}
+              className="btn-secondary px-4 py-2 text-sm hover-lift"
+            >
+              <RefreshCw className="h-4 w-4 inline mr-2 icon-hover" />
+              CRM Sync
+            </button>
           </div>
         </div>
 
@@ -631,6 +640,17 @@ const CompanyDiscovery: React.FC = () => {
               </div>
             </div>
           </div>
+
+        {/* CRM Sync Panel */}
+        {showSyncPanel && (
+          <div className="mt-4">
+            <SyncPanel 
+              module="companies" 
+              selectedIds={selectedCompanies} 
+              onSyncComplete={() => setShowSyncPanel(false)}
+            />
+          </div>
+        )}
 
         {/* Comprehensive Filter Panels */}
         {showFilters && (
