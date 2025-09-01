@@ -1,0 +1,133 @@
+Create a comprehensive People Details page for the Lead Generation app with the following requirements:
+
+## Task: Build PeopleDetailPage.tsx with Apollo.io-style Design
+
+### 1. Routing Setup
+- Add route `/lead-details/:id` in the main routing configuration
+- Make clicking a lead's Name in PeopleDiscovery table navigate to this new route
+- Pass the lead ID as a URL parameter
+
+### 2. Core Lead Information Section
+**Primary Details:**
+- Full Name (large, prominent)
+- Job Title & Department
+- Company name with logo placeholder
+- Location (city, country)
+- Contact info: Email, Phone, LinkedIn profile
+- Manager/Reports to relationship
+
+**Company Context:**
+- Industry & company size (employees)
+- Company website & last funding info
+- Company description/overview
+
+### 3. Lead Intelligence & Analytics
+**Scoring & Enrichment:**
+- Personalized lead score with breakdown (fit score, intent score, engagement score)
+- AI enrichment status and data sources
+- Lead source tracking
+- Last conversation summary
+
+**Status & Ownership:**
+- Current lead status (New, Contacted, Qualified, etc.)
+- Assigned owner/rep
+- Tags, segments, and personas
+- GDPR consent status
+
+### 4. Apollo-style Panel System
+Create tabbed panels for:
+
+**Activity Panel:**
+- Recent emails, calls, meetings timeline
+- Engagement history with timestamps
+- Response rates and interaction patterns
+
+**Insights Panel:**
+- Company news and alerts
+- Intent signals and buying signals
+- Competitive intelligence
+- Market trends affecting this lead
+
+**Tasks & Reminders:**
+- Upcoming follow-ups
+- Assigned tasks with due dates
+- Automated sequence status
+
+**Files & Attachments:**
+- Uploaded documents
+- Email attachments
+- Proposal/contract files
+
+**AI Research:**
+- Automated research findings
+- Social media insights
+- Recent company updates
+- Personalization suggestions
+
+**Timeline:**
+- Chronological activity feed
+- All touchpoints and interactions
+- Status change history
+
+### 5. UI/UX Requirements
+
+**Layout:**
+- Responsive card-based grid system
+- Sticky sidebar with quick action buttons
+- Left panel: lead info, right panel: activity/insights
+- Mobile-responsive design
+
+**Quick Actions:**
+- Email button with template suggestions
+- Call button with click-to-dial
+- Schedule meeting integration
+- Add to sequence/campaign
+- Update lead status
+- Add notes (inline editing)
+
+**Visual Design:**
+- Clean, modern Figma-level design
+- Consistent with existing app theme
+- Smooth animations and transitions
+- Loading states and skeleton screens
+- Proper accessibility (ARIA labels, keyboard navigation)
+
+**Interactive Elements:**
+- Inline editing for notes/comments
+- Expandable sections
+- Hover effects and micro-interactions
+- Toast notifications for actions
+
+### 6. Data Structure
+Create mock data that includes:
+- Personal info (name, title, contact details)
+- Company info (name, logo, industry, size, funding)
+- Activity timeline (emails, calls, meetings)
+- Lead scoring metrics
+- Tags and segments
+- Notes and comments
+- File attachments
+- Task/reminder lists
+
+### 7. Implementation Steps
+1. Create PeopleDetailPage.tsx component
+2. Add route configuration in App.tsx or routing file
+3. Update PeopleDiscovery.tsx to make names clickable and navigate to details
+4. Implement responsive layout with sidebar and main content areas
+5. Create reusable components for panels, cards, and quick actions
+6. Add proper TypeScript interfaces for data structures
+7. Implement mock data service for lead details
+8. Add animations and micro-interactions
+9. Ensure accessibility compliance
+10. Test responsive design across different screen sizes
+
+### 8. Testing Requirements
+- Test navigation from PeopleDiscovery to PeopleDetailPage
+- Verify all panels and tabs work correctly
+- Test responsive behavior on mobile/tablet
+- Validate inline editing functionality
+- Check quick actions (email, call, schedule)
+- Ensure proper loading states
+- Test back navigation and URL handling
+
+Build this with modern React best practices, proper component composition, and ensure it integrates seamlessly with the existing Lead Generation module. The design should feel premium and professional, matching Apollo.io's user experience standards.
