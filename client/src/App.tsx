@@ -153,9 +153,11 @@ const App = () => {
               <Route path="/meeting-intelligence" component={MeetingIntelligencePage} />
               <Route path="/meetings/:id" component={MeetingDashboardWrapper} />
               <Route path="/lead-generation" component={() => (
-                <LazyLoader fallback={<FastLoader />}>
-                  <LeadGeneration />
-                </LazyLoader>
+                <div className="absolute inset-0 top-16">
+                  <LazyLoader fallback={<FastLoader />}>
+                    <LeadGeneration />
+                  </LazyLoader>
+                </div>
               )} />
               <Route path="/trends" component={IndustryTrendIndicator} />
               <Route path="/gamification" component={() => (
