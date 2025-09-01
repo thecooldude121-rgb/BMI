@@ -753,7 +753,7 @@ const CompanyDiscovery: React.FC = () => {
                   Object.entries(activeFilters).reduce((count, [key, value]) => {
                     if (key === 'companyScore') {
                       // Check if score range is not default (0-100)
-                      return count + (value.min > 0 || value.max < 100 ? 1 : 0);
+                      return count + (typeof value === 'object' && 'min' in value && 'max' in value && (value.min > 0 || value.max < 100) ? 1 : 0);
                     }
                     return count + (Array.isArray(value) ? value.length : 0);
                   }, 0)
@@ -1043,7 +1043,7 @@ const CompanyDiscovery: React.FC = () => {
                 <p><strong>Filters:</strong> {
                   Object.entries(activeFilters).reduce((count, [key, value]) => {
                     if (key === 'companyScore') {
-                      return count + (value.min > 0 || value.max < 100 ? 1 : 0);
+                      return count + (typeof value === 'object' && 'min' in value && 'max' in value && (value.min > 0 || value.max < 100) ? 1 : 0);
                     }
                     return count + (Array.isArray(value) ? value.length : 0);
                   }, 0)
