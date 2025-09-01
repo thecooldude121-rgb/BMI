@@ -1103,7 +1103,15 @@ const PeopleDiscovery: React.FC = () => {
                   Clear All Filters
                 </button>
                 <div className="text-xs text-gray-500">
-                  Active Filters: {Object.values(activeFilters).flat().length - 2}
+                  Active Filters: {
+                    Object.entries(activeFilters).reduce((count, [key, value]) => {
+                      if (key === 'leadScore') {
+                        // Check if score range is not default (0-100)
+                        return count + (value.min > 0 || value.max < 100 ? 1 : 0);
+                      }
+                      return count + (Array.isArray(value) ? value.length : 0);
+                    }, 0)
+                  }
                 </div>
               </div>
             </div>
@@ -1388,15 +1396,24 @@ const PeopleDiscovery: React.FC = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Active Filters</label>
                 <div className="text-sm text-gray-600">
-                  {Object.values(activeFilters).flat().length - 2} filters applied
+                  {
+                    Object.entries(activeFilters).reduce((count, [key, value]) => {
+                      if (key === 'leadScore') {
+                        return count + (value.min > 0 || value.max < 100 ? 1 : 0);
+                      }
+                      return count + (Array.isArray(value) ? value.length : 0);
+                    }, 0)
+                  } filters applied
                 </div>
               </div>
               <div className="flex space-x-3">
                 <button
                   onClick={() => {
+                    const input = document.querySelector('input[placeholder="Enter search name..."]') as HTMLInputElement;
+                    const searchName = input?.value.trim() || `Search ${savedSearches.length + 1}`;
                     const newSearch = {
                       id: Date.now().toString(),
-                      name: `Search ${savedSearches.length + 1}`,
+                      name: searchName,
                       query: searchQuery,
                       filters: activeFilters
                     };

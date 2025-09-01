@@ -729,7 +729,15 @@ const CompanyDiscovery: React.FC = () => {
                 Clear All Filters
               </button>
               <div className="text-xs text-gray-500">
-                Active Filters: {Object.values(activeFilters).flat().length - 2}
+                Active Filters: {
+                  Object.entries(activeFilters).reduce((count, [key, value]) => {
+                    if (key === 'companyScore') {
+                      // Check if score range is not default (0-100)
+                      return count + (value.min > 0 || value.max < 100 ? 1 : 0);
+                    }
+                    return count + (Array.isArray(value) ? value.length : 0);
+                  }, 0)
+                }
               </div>
             </div>
           </div>
@@ -1012,7 +1020,14 @@ const CompanyDiscovery: React.FC = () => {
               </div>
               <div className="text-sm text-gray-600">
                 <p><strong>Query:</strong> {searchQuery || 'No search query'}</p>
-                <p><strong>Filters:</strong> {Object.values(activeFilters).flat().length - 2} active</p>
+                <p><strong>Filters:</strong> {
+                  Object.entries(activeFilters).reduce((count, [key, value]) => {
+                    if (key === 'companyScore') {
+                      return count + (value.min > 0 || value.max < 100 ? 1 : 0);
+                    }
+                    return count + (Array.isArray(value) ? value.length : 0);
+                  }, 0)
+                } active</p>
               </div>
               <div className="flex justify-end space-x-3">
                 <button
