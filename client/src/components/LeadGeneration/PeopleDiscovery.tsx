@@ -1342,13 +1342,14 @@ const PeopleDiscovery: React.FC = () => {
 
       {/* Table */}
       <div 
-        className="flex-1 overflow-auto table-modern scroll-smooth scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-500" 
+        className="flex-1 overflow-x-auto overflow-y-auto table-modern" 
         style={{ 
           maxHeight: 'calc(100vh - 280px)',
-          minHeight: '400px'
+          minHeight: '400px',
+          scrollBehavior: 'smooth'
         }}
       >
-        <div className="min-w-max" style={{ minWidth: '1200px' }}>
+        <div style={{ minWidth: '1400px', width: 'max-content' }}>
           {/* Table Header */}
           <div className="bg-gray-50 border-b border-gray-200 h-12 flex items-center sticky top-0 z-10">
             {visibleColumns.map((column) => (
