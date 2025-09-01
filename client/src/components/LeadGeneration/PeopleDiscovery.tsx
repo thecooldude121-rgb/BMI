@@ -1332,7 +1332,7 @@ const PeopleDiscovery: React.FC = () => {
       )}
 
       {/* Table */}
-      <div className="flex-1 overflow-auto table-modern">
+      <div className="flex-1 overflow-auto table-modern scroll-smooth" style={{ maxHeight: 'calc(100vh - 280px)' }}>
         <div className="min-w-max">
           {/* Table Header */}
           <div className="bg-gray-50 border-b border-gray-200 h-12 flex items-center sticky top-0 z-10">

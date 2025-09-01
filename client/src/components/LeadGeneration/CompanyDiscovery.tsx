@@ -835,7 +835,7 @@ const CompanyDiscovery: React.FC = () => {
               </div>
               
               {/* Frozen Content */}
-              <div ref={frozenScrollRef} className="overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
+              <div ref={frozenScrollRef} className="overflow-y-auto scroll-smooth" style={{ maxHeight: 'calc(100vh - 350px)' }}>
                 <div className="divide-y divide-gray-200">
                   {paginatedCompanies.map((company, index) => (
                     <div key={`frozen-${company.id}`} className="px-4 py-2.5 h-12 hover:bg-gray-50 transition-colors hover-lift cursor-pointer flex items-center table-row-with-tooltip">
@@ -866,7 +866,7 @@ const CompanyDiscovery: React.FC = () => {
             </div>
 
             {/* Scrollable Right Columns */}
-            <div className="flex-1 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+            <div className="flex-1 overflow-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 scroll-smooth">
               {/* Scrollable Header */}
               <div className="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
                 <div className="flex" style={{ minWidth: `${(visibleColumns.length - 1) * 150}px` }}>
@@ -886,7 +886,7 @@ const CompanyDiscovery: React.FC = () => {
               </div>
               
               {/* Scrollable Content */}
-              <div ref={scrollableScrollRef} className="overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
+              <div ref={scrollableScrollRef} className="overflow-y-auto scroll-smooth" style={{ maxHeight: 'calc(100vh - 350px)' }}>
                 <div className="divide-y divide-gray-200">
                   {paginatedCompanies.map((company, index) => (
                     <div key={`scrollable-${company.id}`} className="h-12 hover:bg-gray-50 transition-colors hover-lift cursor-pointer flex items-center table-row-with-tooltip">
