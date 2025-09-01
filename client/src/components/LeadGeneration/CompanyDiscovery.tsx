@@ -835,7 +835,7 @@ const CompanyDiscovery: React.FC = () => {
               </div>
               
               {/* Frozen Content */}
-              <div ref={frozenScrollRef} className="overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)', scrollBehavior: 'smooth' }}>
+              <div ref={frozenScrollRef} className="table-scroll-container" style={{ maxHeight: 'calc(100vh - 350px)', scrollBehavior: 'smooth' }}>
                 <div className="divide-y divide-gray-200">
                   {paginatedCompanies.map((company, index) => (
                     <div key={`frozen-${company.id}`} className="px-4 py-2.5 h-12 hover:bg-gray-50 transition-colors hover-lift cursor-pointer flex items-center table-row-with-tooltip">
@@ -866,10 +866,10 @@ const CompanyDiscovery: React.FC = () => {
             </div>
 
             {/* Scrollable Right Columns */}
-            <div className="flex-1 overflow-x-auto overflow-y-auto" style={{ scrollBehavior: 'smooth' }}>
+            <div className="flex-1 table-scroll-container" style={{ scrollBehavior: 'smooth' }}>
               {/* Scrollable Header */}
               <div className="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
-                <div className="flex" style={{ minWidth: `${(visibleColumns.length - 1) * 150}px` }}>
+                <div className="flex" style={{ minWidth: `${(visibleColumns.length - 1) * 180}px` }}>
                   {visibleColumns.filter(col => col.key !== 'name').map((column) => (
                     <div key={column.key} className="flex-shrink-0 px-4 py-2.5 h-12 border-r border-gray-200 last:border-r-0 flex items-center" style={{ width: column.minWidth || '150px', minWidth: column.minWidth || '150px' }}>
                       <div className="flex items-center space-x-1 text-xs font-medium text-gray-600 uppercase tracking-wider">
@@ -886,11 +886,11 @@ const CompanyDiscovery: React.FC = () => {
               </div>
               
               {/* Scrollable Content */}
-              <div ref={scrollableScrollRef} className="overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)', scrollBehavior: 'smooth' }}>
+              <div ref={scrollableScrollRef} className="table-scroll-container" style={{ maxHeight: 'calc(100vh - 350px)', scrollBehavior: 'smooth' }}>
                 <div className="divide-y divide-gray-200">
                   {paginatedCompanies.map((company, index) => (
                     <div key={`scrollable-${company.id}`} className="h-12 hover:bg-gray-50 transition-colors hover-lift cursor-pointer flex items-center table-row-with-tooltip">
-                      <div className="flex h-full" style={{ minWidth: `${(visibleColumns.length - 1) * 150}px` }}>
+                      <div className="flex h-full" style={{ minWidth: `${(visibleColumns.length - 1) * 180}px` }}>
                         {visibleColumns.filter(col => col.key !== 'name').map((column) => (
                           <div key={column.key} className="flex-shrink-0 px-4 py-2.5 border-r border-gray-200 last:border-r-0 flex items-center h-full overflow-hidden" style={{ width: column.minWidth || '150px', minWidth: column.minWidth || '150px' }}>
                             <div className={index < 2 ? 'tooltip-below' : ''}>
