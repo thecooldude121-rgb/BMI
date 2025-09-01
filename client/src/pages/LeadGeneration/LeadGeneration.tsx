@@ -22,11 +22,7 @@ const LeadGenerationContent: React.FC = () => {
     <div className="h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex page-transition">
       {/* Left Navigation Pane */}
       <div className="w-44 bg-white/90 backdrop-blur-sm border-r border-gray-200 flex-shrink-0 card-modern">
-        <div className="p-2 border-b border-gray-200">
-          <div className="flex flex-col items-center text-center">
-            <LeadGenLogo size={20} className="animate-slide-in-down" />
-          </div>
-        </div>
+        
 
         <div className="p-2">
           {/* Enrich & data section */}
