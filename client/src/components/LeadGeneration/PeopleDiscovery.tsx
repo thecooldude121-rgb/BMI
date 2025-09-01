@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { useLocation } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { getCompanies } from '../../data/companies';
@@ -332,15 +332,13 @@ const PeopleDiscovery: React.FC = () => {
     emailStatuses: ['Verified', 'Unverified', 'Bounced', 'Unknown']
   }), [people]);
 
-  // Enhanced Boolean search parser with comprehensive error handling
-  const parseAdvancedSearch = (query: string) => {
+  // Enhanced Boolean search parser - pure function without side effects
+  const parseAdvancedSearchPure = useCallback((query: string) => {
     if (!advancedSearchMode) {
-      setSearchError(null);
       return { simple: query.toLowerCase() };
     }
     
     if (!query.trim()) {
-      setSearchError(null);
       return { advanced: true, terms: [] };
     }
     
@@ -421,19 +419,31 @@ const PeopleDiscovery: React.FC = () => {
         throw new Error('Unmatched quotation marks in search query');
       }
       
-      setSearchError(null);
       return parsedQuery;
       
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Invalid search syntax';
-      setSearchError(errorMessage);
       return { advanced: true, terms: [], error: errorMessage };
     }
-  };
+  }, [advancedSearchMode]);
+  
+  // Separate effect to manage search error state
+  useEffect(() => {
+    if (searchQuery) {
+      const result = parseAdvancedSearchPure(searchQuery);
+      if ('error' in result && result.error) {
+        setSearchError(result.error);
+      } else {
+        setSearchError(null);
+      }
+    } else {
+      setSearchError(null);
+    }
+  }, [searchQuery, advancedSearchMode, parseAdvancedSearchPure]);
 
   // Enhanced filtering with improved Boolean search logic
   const filteredPeople = useMemo(() => {
-    const searchConfig = parseAdvancedSearch(searchQuery);
+    const searchConfig = parseAdvancedSearchPure(searchQuery);
     
     // If there's a search error, return empty results
     if (searchConfig.error) {
@@ -532,7 +542,7 @@ const PeopleDiscovery: React.FC = () => {
 
       return true;
     });
-  }, [people, searchQuery, advancedSearchMode, activeFilters]);
+  }, [people, searchQuery, advancedSearchMode, activeFilters, parseAdvancedSearchPure]);
 
   // Real-time metrics calculation
   const liveMetrics = useMemo(() => {
