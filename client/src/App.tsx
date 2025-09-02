@@ -130,7 +130,7 @@ const App = () => {
                 </LazyLoader>
               )} />
               <Route path="/lead-generation/company/:id" component={CompanyDetailWrapper} />
-              <Route path="/lead-generation/people/:id" component={PersonDetails} />
+              <Route path="/lead-generation/people/:id" component={PeopleDetailWrapper} />
               <Route path="/lead-details/:id" component={() => (
                 <div className="absolute inset-0 top-16">
                   <PeopleDetailWrapper />
