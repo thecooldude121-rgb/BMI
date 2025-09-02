@@ -630,7 +630,7 @@ const PeopleDiscovery: React.FC = () => {
         return (
           <div className="flex items-center space-x-3 min-w-0">
             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white font-medium text-xs flex-shrink-0">
-              {person.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+              {person.name.split(' ').map((n, i) => n[0]).join('').substring(0, 2).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center space-x-2">

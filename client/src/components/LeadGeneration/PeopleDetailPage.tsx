@@ -257,7 +257,7 @@ const PeopleDetailPage: React.FC = () => {
             </button>
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/30">
-                {lead.name.split(' ').map(n => n[0]).join('')}
+                {lead.name.split(' ').map((n: string) => n[0]).join('')}
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900 mb-1">{lead.name}</h1>
@@ -295,7 +295,7 @@ const PeopleDetailPage: React.FC = () => {
             <div className="text-center">
               <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl flex items-center justify-center text-white font-bold text-2xl mx-auto mb-5 shadow-xl shadow-blue-500/40 border-3 border-white/30 relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
-                <span className="relative z-10">{lead.name.split(' ').map(n => n[0]).join('')}</span>
+                <span className="relative z-10">{lead.name.split(' ').map((n: string) => n[0]).join('')}</span>
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">{lead.name}</h2>
               <p className="text-gray-600 font-medium mb-1">{lead.title}</p>
@@ -406,7 +406,7 @@ const PeopleDetailPage: React.FC = () => {
                 <div>
                   <span className="text-sm text-gray-700 block mb-2">Tags</span>
                   <div className="flex flex-wrap gap-1">
-                    {lead.tags.map((tag, index) => (
+                    {lead.tags.map((tag: string, index: number) => (
                       <span key={index} className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
                         {tag}
                       </span>
@@ -461,7 +461,7 @@ const PeopleDetailPage: React.FC = () => {
               )}
               
               <div className="space-y-2">
-                {lead.notes.map((note, index) => (
+                {lead.notes.map((note: string, index: number) => (
                   <div key={index} className="p-3 bg-gray-50 rounded-lg">
                     <p className="text-sm text-gray-700">{note}</p>
                   </div>
@@ -514,7 +514,7 @@ const PeopleDetailPage: React.FC = () => {
                 >
                   <h2 className="text-lg font-semibold text-gray-900">Activity Timeline</h2>
                   <div className="space-y-4">
-                    {lead.activities.map((activity) => (
+                    {lead.activities.map((activity: ActivityItem) => (
                       <div key={activity.id} className="flex space-x-4 p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
                         <div className="flex-shrink-0">
                           <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
@@ -556,7 +556,7 @@ const PeopleDetailPage: React.FC = () => {
                 >
                   <h2 className="text-lg font-semibold text-gray-900">Lead Insights</h2>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    {lead.insights.map((insight) => (
+                    {lead.insights.map((insight: InsightItem) => (
                       <div key={insight.id} className="p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
                         <div className="flex items-start justify-between mb-2">
                           <h3 className="text-sm font-medium text-gray-900">{insight.title}</h3>
@@ -596,7 +596,7 @@ const PeopleDetailPage: React.FC = () => {
                     </button>
                   </div>
                   <div className="space-y-4">
-                    {lead.tasks.map((task) => (
+                    {lead.tasks.map((task: TaskItem) => (
                       <div key={task.id} className="p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
@@ -647,7 +647,7 @@ const PeopleDetailPage: React.FC = () => {
                     </button>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {lead.files.map((file) => (
+                    {lead.files.map((file: FileItem) => (
                       <div key={file.id} className="p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
                         <div className="flex items-center space-x-3">
                           <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -784,7 +784,7 @@ const PeopleDetailPage: React.FC = () => {
                   <div className="relative">
                     <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gray-200"></div>
                     <div className="space-y-6">
-                      {[...lead.activities, ...lead.insights.map(i => ({
+                      {[...lead.activities, ...lead.insights.map((i: InsightItem) => ({
                         id: i.id,
                         type: 'insight' as const,
                         title: i.title,
