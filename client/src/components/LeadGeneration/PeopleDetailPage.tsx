@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams, useLocation } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useQuery } from '@tanstack/react-query';
 import {
   ArrowLeft, Mail, Phone, Calendar, MessageSquare, MapPin, Building2,
   Globe, Users, DollarSign, Star, TrendingUp, Clock, FileText,
@@ -46,7 +47,7 @@ interface TaskItem {
   description: string;
   dueDate: Date;
   priority: 'high' | 'medium' | 'low';
-  status: 'pending' | 'completed' | 'overdue';
+  status: 'completed' | 'pending' | 'overdue';
   assignedTo: string;
 }
 
@@ -57,252 +58,157 @@ interface FileItem {
   size: string;
   uploadedAt: Date;
   uploadedBy: string;
-  category: 'proposal' | 'contract' | 'presentation' | 'document' | 'other';
-}
-
-interface LeadDetail {
-  id: string;
-  name: string;
-  jobTitle: string;
-  department: string;
-  company: string;
-  companyLogo?: string;
-  location: string;
-  email: string;
-  phone: string;
-  linkedinUrl: string;
-  twitterUrl?: string;
-  managerName?: string;
-  reportsTo?: string;
-  
-  // Company context
-  industry: string;
-  companySize: string;
-  companyWebsite: string;
-  lastFunding?: string;
-  companyDescription: string;
-  
-  // Lead intelligence
-  score: LeadScore;
-  enrichmentStatus: 'complete' | 'partial' | 'pending';
-  dataSources: string[];
-  leadSource: string;
-  lastConversationSummary?: string;
-  
-  // Status and ownership
-  status: 'new' | 'contacted' | 'qualified' | 'opportunity' | 'closed_won' | 'closed_lost';
-  assignedOwner: string;
-  tags: string[];
-  segments: string[];
-  personas: string[];
-  gdprConsent: boolean;
-  
-  // Related data
-  activities: ActivityItem[];
-  insights: InsightItem[];
-  tasks: TaskItem[];
-  files: FileItem[];
-  notes: string[];
+  category: 'proposal' | 'contract' | 'presentation' | 'document' | 'image';
 }
 
 const PeopleDetailPage: React.FC = () => {
   const params = useParams();
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState<'activity' | 'insights' | 'tasks' | 'files' | 'ai-research' | 'timeline'>('activity');
-  const [lead, setLead] = useState<LeadDetail | null>(null);
-  const [loading, setLoading] = useState(true);
   const [showNoteEditor, setShowNoteEditor] = useState(false);
   const [newNote, setNewNote] = useState('');
 
-  // Mock data service - in real app this would be an API call
-  useEffect(() => {
-    const fetchLeadDetail = async () => {
-      setLoading(true);
-      
-      // Simulate API call with mock data
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const mockLead: LeadDetail = {
-        id: params.id || '1',
-        name: 'Sarah Chen',
-        jobTitle: 'VP of Engineering',
-        department: 'Engineering',
-        company: 'TechCorp Solutions',
-        location: 'San Francisco, CA',
-        email: 'sarah.chen@techcorp.com',
-        phone: '+1 (555) 123-4567',
-        linkedinUrl: 'https://linkedin.com/in/sarah-chen-tech',
-        twitterUrl: 'https://twitter.com/sarahtech',
-        managerName: 'David Kim (CTO)',
-        reportsTo: 'David Kim',
-        
-        industry: 'Technology',
-        companySize: '500-1000 employees',
-        companyWebsite: 'https://techcorp.com',
-        lastFunding: 'Series B - $25M (2023)',
-        companyDescription: 'Leading provider of enterprise cloud solutions with focus on AI-driven automation and data analytics.',
-        
-        score: {
-          overall: 87,
-          fit: 92,
-          intent: 78,
-          engagement: 91
-        },
-        enrichmentStatus: 'complete',
-        dataSources: ['LinkedIn', 'Company Website', 'Clearbit', 'ZoomInfo'],
-        leadSource: 'LinkedIn Sales Navigator',
-        lastConversationSummary: 'Discussed implementation timeline for Q2 2024. High interest in enterprise package.',
-        
-        status: 'qualified',
-        assignedOwner: 'John Smith',
-        tags: ['Enterprise', 'High-Priority', 'Technical Decision Maker'],
-        segments: ['Enterprise Tech Leaders', 'West Coast'],
-        personas: ['Technical Buyer', 'Innovation Leader'],
-        gdprConsent: true,
-        
-        activities: [
-          {
-            id: '1',
-            type: 'email',
-            title: 'Follow-up after demo',
-            description: 'Sent follow-up email with pricing proposal and implementation timeline',
-            timestamp: new Date('2024-01-15T10:30:00'),
-            status: 'completed'
-          },
-          {
-            id: '2',
-            type: 'meeting',
-            title: 'Product demo call',
-            description: '45-minute demo of enterprise features. Sarah expressed strong interest',
-            timestamp: new Date('2024-01-14T14:00:00'),
-            status: 'completed'
-          },
-          {
-            id: '3',
-            type: 'call',
-            title: 'Discovery call',
-            description: 'Initial qualification call to understand requirements',
-            timestamp: new Date('2024-01-10T11:00:00'),
-            status: 'completed'
-          }
-        ],
-        
-        insights: [
-          {
-            id: '1',
-            type: 'news',
-            title: 'TechCorp raises $25M Series B',
-            description: 'Company announced significant funding round to expand engineering team',
-            source: 'TechCrunch',
-            confidence: 95,
-            timestamp: new Date('2024-01-12T09:00:00'),
-            impact: 'high'
-          },
-          {
-            id: '2',
-            type: 'intent',
-            title: 'Increased website activity',
-            description: 'Multiple team members from TechCorp visited pricing and enterprise pages',
-            source: 'Website Analytics',
-            confidence: 87,
-            timestamp: new Date('2024-01-13T16:30:00'),
-            impact: 'medium'
-          }
-        ],
-        
-        tasks: [
-          {
-            id: '1',
-            title: 'Send technical requirements doc',
-            description: 'Prepare and send detailed technical specifications for enterprise implementation',
-            dueDate: new Date('2024-01-18T12:00:00'),
-            priority: 'high',
-            status: 'pending',
-            assignedTo: 'John Smith'
-          },
-          {
-            id: '2',
-            title: 'Schedule stakeholder meeting',
-            description: 'Coordinate meeting with Sarah and her technical team',
-            dueDate: new Date('2024-01-20T15:00:00'),
-            priority: 'medium',
-            status: 'pending',
-            assignedTo: 'John Smith'
-          }
-        ],
-        
-        files: [
-          {
-            id: '1',
-            name: 'Enterprise_Proposal_TechCorp.pdf',
-            type: 'PDF',
-            size: '2.3 MB',
-            uploadedAt: new Date('2024-01-15T11:00:00'),
-            uploadedBy: 'John Smith',
-            category: 'proposal'
-          },
-          {
-            id: '2',
-            name: 'Technical_Specifications.docx',
-            type: 'DOCX',
-            size: '1.8 MB',
-            uploadedAt: new Date('2024-01-14T16:30:00'),
-            uploadedBy: 'Technical Team',
-            category: 'document'
-          }
-        ],
-        
-        notes: [
-          'Very technical and detail-oriented. Prefers data-driven discussions.',
-          'Strong advocate for security and compliance within her organization.',
-          'Looking to implement by Q2 2024. Budget approved for $100k+.'
-        ]
-      };
-      
-      setLead(mockLead);
-      setLoading(false);
-    };
+  // Fetch lead data from API
+  const { data: leads, isLoading: loading } = useQuery<any[]>({
+    queryKey: ['/api/leads']
+  });
 
-    fetchLeadDetail();
-  }, [params.id]);
+  // Find the specific lead by ID
+  const leadData = leads?.find(l => l.id === params.id);
+
+  // Create enhanced lead detail from API data with additional mock data
+  const lead = leadData ? {
+    ...leadData,
+    score: {
+      overall: 87,
+      fit: 92,
+      intent: 78,
+      engagement: 91
+    },
+    activities: [
+      {
+        id: '1',
+        type: 'email' as const,
+        title: 'Follow-up after demo',
+        description: 'Sent follow-up email with pricing proposal and implementation timeline',
+        timestamp: new Date('2024-01-15T10:30:00'),
+        status: 'completed' as const
+      },
+      {
+        id: '2',
+        type: 'meeting' as const,
+        title: 'Product demo call',
+        description: '45-minute demo of enterprise features. Strong interest expressed',
+        timestamp: new Date('2024-01-14T14:00:00'),
+        status: 'completed' as const
+      },
+      {
+        id: '3',
+        type: 'call' as const,
+        title: 'Discovery call',
+        description: 'Initial qualification call to understand requirements',
+        timestamp: new Date('2024-01-10T11:00:00'),
+        status: 'completed' as const
+      }
+    ],
+    insights: [
+      {
+        id: '1',
+        type: 'news' as const,
+        title: `${leadData.company} raises funding`,
+        description: 'Company announced significant funding round to expand engineering team',
+        source: 'TechCrunch',
+        confidence: 95,
+        timestamp: new Date('2024-01-12T09:00:00'),
+        impact: 'high' as const
+      },
+      {
+        id: '2',
+        type: 'intent' as const,
+        title: 'Increased website activity',
+        description: 'Multiple team members visited pricing and enterprise pages',
+        source: 'Website Analytics',
+        confidence: 87,
+        timestamp: new Date('2024-01-13T16:30:00'),
+        impact: 'medium' as const
+      }
+    ],
+    tasks: [
+      {
+        id: '1',
+        title: 'Send technical requirements doc',
+        description: 'Prepare and send detailed technical specifications',
+        dueDate: new Date('2024-01-18T12:00:00'),
+        priority: 'high' as const,
+        status: 'pending' as const,
+        assignedTo: 'Sales Team'
+      },
+      {
+        id: '2',
+        title: 'Schedule stakeholder meeting',
+        description: `Coordinate meeting with ${leadData.name} and technical team`,
+        dueDate: new Date('2024-01-20T15:00:00'),
+        priority: 'medium' as const,
+        status: 'pending' as const,
+        assignedTo: 'Sales Team'
+      }
+    ],
+    files: [
+      {
+        id: '1',
+        name: `Proposal_${leadData.company.replace(/\s+/g, '_')}.pdf`,
+        type: 'PDF',
+        size: '2.3 MB',
+        uploadedAt: new Date('2024-01-15T11:00:00'),
+        uploadedBy: 'Sales Team',
+        category: 'proposal' as const
+      }
+    ],
+    notes: [
+      'Technical decision maker with strong attention to detail.',
+      'Looking for enterprise-grade solutions with good security.',
+      'Budget approved - high potential for closure.'
+    ],
+    tags: ['Enterprise', 'High-Priority', 'Technical Decision Maker'],
+    status: 'qualified',
+    assignedOwner: 'Sales Team',
+    companySize: '500-1000 employees',
+    lastFunding: 'Series B - $25M (2023)',
+    department: leadData.title?.split(' ')[0] || 'Engineering',
+    linkedinUrl: 'https://linkedin.com/in/profile',
+    phone: '+1 (555) 123-4567'
+  } : null;
 
   const handleAddNote = () => {
-    if (newNote.trim() && lead) {
-      setLead({
-        ...lead,
-        notes: [...lead.notes, newNote.trim()]
-      });
-      setNewNote('');
-      setShowNoteEditor(false);
-    }
+    if (!newNote.trim() || !lead) return;
+    
+    lead.notes = [...(lead.notes || []), newNote.trim()];
+    setNewNote('');
+    setShowNoteEditor(false);
+  };
+
+  const getScoreColor = (score: number) => {
+    if (score >= 80) return 'bg-green-100 text-green-800 border-green-300';
+    if (score >= 60) return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+    return 'bg-red-100 text-red-800 border-red-300';
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'new': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'contacted': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'qualified': return 'bg-green-100 text-green-800 border-green-200';
-      case 'opportunity': return 'bg-purple-100 text-purple-800 border-purple-200';
-      case 'closed_won': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
-      case 'closed_lost': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'qualified': return 'bg-green-100 text-green-800 border-green-300';
+      case 'contacted': return 'bg-blue-100 text-blue-800 border-blue-300';
+      case 'new': return 'bg-gray-100 text-gray-800 border-gray-300';
+      default: return 'bg-gray-100 text-gray-800 border-gray-300';
     }
-  };
-
-  const getScoreColor = (score: number) => {
-    if (score >= 90) return 'text-green-600 bg-green-50 border-green-200';
-    if (score >= 70) return 'text-blue-600 bg-blue-50 border-blue-200';
-    if (score >= 50) return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-    return 'text-red-600 bg-red-50 border-red-200';
   };
 
   const getActivityIcon = (type: string) => {
     switch (type) {
       case 'email': return <Mail className="h-4 w-4" />;
       case 'call': return <Phone className="h-4 w-4" />;
-      case 'meeting': return <Calendar className="h-4 w-4" />;
+      case 'meeting': return <Video className="h-4 w-4" />;
       case 'linkedin': return <SiLinkedin className="h-4 w-4" />;
-      case 'note': return <Edit3 className="h-4 w-4" />;
+      case 'note': return <FileText className="h-4 w-4" />;
       case 'task': return <CheckCircle className="h-4 w-4" />;
       default: return <Activity className="h-4 w-4" />;
     }
@@ -311,9 +217,9 @@ const PeopleDetailPage: React.FC = () => {
   if (loading) {
     return (
       <div className="h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-          <p className="text-gray-600">Loading lead details...</p>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+          <p className="mt-4 text-gray-600">Loading lead details...</p>
         </div>
       </div>
     );
@@ -323,12 +229,12 @@ const PeopleDetailPage: React.FC = () => {
     return (
       <div className="h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="text-center">
-          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Lead Not Found</h2>
-          <p className="text-gray-600 mb-4">The requested lead could not be found.</p>
+          <AlertCircle className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Lead Not Found</h2>
+          <p className="text-gray-600 mb-6">The lead you're looking for doesn't exist or has been removed.</p>
           <button
             onClick={() => setLocation('/lead-generation')}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             Back to Lead Generation
           </button>
@@ -355,7 +261,7 @@ const PeopleDetailPage: React.FC = () => {
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900 mb-1">{lead.name}</h1>
-                <p className="text-lg text-gray-600">{lead.jobTitle} at {lead.company}</p>
+                <p className="text-lg text-gray-600">{lead.title} at {lead.company}</p>
               </div>
             </div>
           </div>
@@ -392,7 +298,7 @@ const PeopleDetailPage: React.FC = () => {
                 <span className="relative z-10">{lead.name.split(' ').map(n => n[0]).join('')}</span>
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">{lead.name}</h2>
-              <p className="text-gray-600 font-medium mb-1">{lead.jobTitle}</p>
+              <p className="text-gray-600 font-medium mb-1">{lead.title}</p>
               <p className="text-sm text-gray-500 px-3 py-1 bg-gray-100 rounded-full inline-block">{lead.department}</p>
             </div>
 
@@ -434,12 +340,6 @@ const PeopleDetailPage: React.FC = () => {
                 <div className="flex items-center space-x-3">
                   <Building2 className="h-4 w-4 text-gray-400" />
                   <span className="text-sm text-gray-700">{lead.company}</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Globe className="h-4 w-4 text-gray-400" />
-                  <a href={lead.companyWebsite} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
-                    Company Website
-                  </a>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Users className="h-4 w-4 text-gray-400" />
@@ -835,7 +735,7 @@ const PeopleDetailPage: React.FC = () => {
                         <div className="flex items-start space-x-3">
                           <Sparkles className="h-4 w-4 text-yellow-500 mt-0.5" />
                           <div>
-                            <p className="text-sm text-gray-900">Mention their recent Series B funding</p>
+                            <p className="text-sm text-gray-900">Mention their recent funding round</p>
                             <p className="text-xs text-gray-500">High relevance for enterprise discussion</p>
                           </div>
                         </div>
@@ -895,30 +795,27 @@ const PeopleDetailPage: React.FC = () => {
                         <div key={`${item.type}-${item.id}`} className="relative flex items-start space-x-4">
                           <div className="relative">
                             <div className="w-8 h-8 bg-white border-2 border-gray-200 rounded-full flex items-center justify-center">
-                              {item.type === 'insight' ? 
-                                <Lightbulb className="h-4 w-4 text-yellow-500" /> :
-                                getActivityIcon(item.type)
-                              }
+                              {item.type === 'insight' ? <Lightbulb className="h-4 w-4 text-yellow-500" /> : getActivityIcon(item.type)}
                             </div>
                           </div>
-                          <div className="flex-1 min-w-0 pb-6">
+                          <div className="flex-1 min-w-0 pb-4">
                             <div className="flex items-center justify-between">
                               <h3 className="text-sm font-medium text-gray-900">{item.title}</h3>
                               <span className="text-xs text-gray-500">
-                                {item.timestamp.toLocaleDateString()} {item.timestamp.toLocaleTimeString()}
+                                {item.timestamp.toLocaleDateString()}
                               </span>
                             </div>
                             <p className="text-sm text-gray-600 mt-1">{item.description}</p>
-                            {item.type === 'insight' && item.metadata && (
-                              <div className="mt-2 flex space-x-2">
-                                <span className="text-xs text-gray-500">Source: {item.metadata.source}</span>
-                                <span className={`text-xs px-2 py-1 rounded-full ${
+                            {item.metadata && (
+                              <div className="mt-2 flex items-center space-x-4 text-xs text-gray-500">
+                                {item.metadata.source && <span>Source: {item.metadata.source}</span>}
+                                {item.metadata.impact && <span className={`px-2 py-1 rounded-full font-medium ${
                                   item.metadata.impact === 'high' ? 'bg-red-100 text-red-800' :
                                   item.metadata.impact === 'medium' ? 'bg-yellow-100 text-yellow-800' :
                                   'bg-green-100 text-green-800'
                                 }`}>
                                   {item.metadata.impact} impact
-                                </span>
+                                </span>}
                               </div>
                             )}
                           </div>
