@@ -80,6 +80,7 @@ const Header: React.FC = () => {
   const appModules = [
     { name: 'BI Board', href: '/analytics', icon: BarChart3 },
     { name: 'CRM', href: '/crm', icon: Users },
+    { name: 'Sequences', href: '/sequences', icon: Mail },
     { name: 'AI Meeting Intelligence', href: '/meeting-intelligence', icon: Brain },
     { name: 'Industry Trends', href: '/trends', icon: Activity },
     { name: 'HRMS', href: '/hrms', icon: UserCheck },
@@ -91,6 +92,7 @@ const Header: React.FC = () => {
 
   const createMenuItems = [
     { name: 'Quick Meeting', action: () => setLocation('/meeting-intelligence'), icon: Brain },
+    { name: 'Create Sequence', action: () => setLocation('/sequences/create'), icon: Mail },
     { name: 'Add Lead', action: () => setLocation('/crm/leads/new'), icon: UserPlus },
     { name: 'Create Deal', action: () => setLocation('/crm/deals/create'), icon: DollarSign },
     { name: 'Add Contact', action: () => setLocation('/crm/contacts/new'), icon: Users },
