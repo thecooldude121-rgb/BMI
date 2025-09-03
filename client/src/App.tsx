@@ -12,6 +12,7 @@ import useTransitionOptimization from './hooks/useTransitionOptimization';
 const CRMModule = React.lazy(() => import('./pages/CRM/CRMModule'));
 const HRMSModule = React.lazy(() => import('./pages/HRMS/HRMSModule'));
 const LeadGeneration = React.lazy(() => import('./pages/LeadGeneration/LeadGeneration'));
+const SequencesModule = React.lazy(() => import('./pages/Sequences/SequencesModule'));
 
 // Lazy load commonly used components
 const Analytics = React.lazy(() => import('./pages/Analytics/Analytics'));
@@ -169,6 +170,16 @@ const App = () => {
                     <LeadGeneration />
                   </LazyLoader>
                 </div>
+              )} />
+              <Route path="/sequences/:rest*" component={() => (
+                <LazyLoader fallback={<FastLoader />}>
+                  <SequencesModule />
+                </LazyLoader>
+              )} />
+              <Route path="/sequences" component={() => (
+                <LazyLoader fallback={<FastLoader />}>
+                  <SequencesModule />
+                </LazyLoader>
               )} />
               <Route path="/trends" component={IndustryTrendIndicator} />
               <Route path="/gamification" component={() => (
