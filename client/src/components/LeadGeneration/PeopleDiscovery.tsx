@@ -333,12 +333,12 @@ const PeopleDiscovery: React.FC = () => {
 
   // Filter options from data
   const filterOptions = useMemo(() => ({
-    industries: Array.from(new Set(people.flatMap(p => p.keywords))).slice(0, 15),
-    locations: Array.from(new Set(people.map(p => p.location.split(',')[0]))),
-    jobTitles: Array.from(new Set(people.map(p => p.jobTitle))),
-    companies: Array.from(new Set(people.map(p => p.company))),
-    companySizes: Array.from(new Set(people.map(p => p.companyEmployeeCount))),
-    keywords: Array.from(new Set(people.flatMap(p => p.keywords))).slice(0, 20),
+    industries: Array.from(new Set(people.flatMap(p => p.keywords).filter(k => k && k.trim()))).slice(0, 15),
+    locations: Array.from(new Set(people.map(p => p.location.split(',')[0]).filter(l => l && l.trim()))),
+    jobTitles: Array.from(new Set(people.map(p => p.jobTitle).filter(j => j && j.trim()))),
+    companies: Array.from(new Set(people.map(p => p.company).filter(c => c && c.trim()))),
+    companySizes: Array.from(new Set(people.map(p => p.companyEmployeeCount).filter(s => s && s.trim()))),
+    keywords: Array.from(new Set(people.flatMap(p => p.keywords).filter(k => k && k.trim()))).slice(0, 20),
     seniorities: ['C-Level', 'VP', 'Director', 'Manager', 'Senior', 'Junior'],
     emailStatuses: ['Verified', 'Unverified', 'Bounced', 'Unknown']
   }), [people]);
