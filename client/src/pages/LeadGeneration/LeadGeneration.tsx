@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Target, Users, Building2, ChevronRight, ChevronDown, MessageSquare
+  Target, Users, Building2, ChevronRight, ChevronDown, MessageSquare, Mail
 } from 'lucide-react';
 import ProspectDiscovery from '../../components/LeadGeneration/ProspectDiscovery';
 import PeopleDiscovery from '../../components/LeadGeneration/PeopleDiscovery';
 import CompanyDiscovery from '../../components/LeadGeneration/CompanyDiscovery';
+import SequencesModule from '../Sequences/SequencesModule';
 import LeadGenLogo from '../../components/ui/LeadGenLogo';
 import FeedbackModal from '../../components/ui/FeedbackModal';
 import { ABTestProvider, useABTestVariant } from '../../components/ui/ABTestProvider';
 
 const LeadGenerationContent: React.FC = () => {
-  const [activeSection, setActiveSection] = useState<'people' | 'companies'>('people');
+  const [activeSection, setActiveSection] = useState<'people' | 'companies' | 'sequences'>('people');
   const [enrichDataExpanded, setEnrichDataExpanded] = useState(true);
   const [showFeedback, setShowFeedback] = useState(false);
   
@@ -63,6 +64,18 @@ const LeadGenerationContent: React.FC = () => {
                 >
                   <Building2 className="w-3 h-3 icon-hover flex-shrink-0" />
                   <span className="truncate">Companies</span>
+                </button>
+                
+                <button
+                  onClick={() => setActiveSection('sequences')}
+                  className={`flex items-center space-x-2 w-full text-left p-1.5 text-xs rounded-lg transition-all duration-200 hover-lift ${
+                    activeSection === 'sequences'
+                      ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md'
+                      : 'text-gray-600 hover:bg-emerald-50'
+                  }`}
+                >
+                  <Mail className="w-3 h-3 icon-hover flex-shrink-0" />
+                  <span className="truncate">Sequences</span>
                 </button>
               </div>
             )}
@@ -130,6 +143,19 @@ const LeadGenerationContent: React.FC = () => {
               className="h-full"
             >
               <CompanyDiscovery />
+            </motion.div>
+          )}
+
+          {activeSection === 'sequences' && (
+            <motion.div
+              key="sequences"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+              className="h-full"
+            >
+              <SequencesModule />
             </motion.div>
           )}
         </AnimatePresence>
