@@ -29,53 +29,12 @@ const SequencesModule: React.FC = () => {
   const showBackButton = location !== '/sequences' && !location?.endsWith('/sequences');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
-      {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-30">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              {showBackButton && (
-                <motion.button
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  onClick={() => navigateTo('/sequences')}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                  data-testid="button-back-sequences"
-                >
-                  <ArrowLeft className="h-5 w-5 text-gray-600" />
-                </motion.button>
-              )}
-              <div>
-                <motion.h1 
-                  key={pageTitle}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-2xl font-bold text-gray-900"
-                >
-                  {pageTitle}
-                </motion.h1>
-                <p className="text-sm text-gray-600 mt-1">
-                  {location?.includes('/create') ? 'Design your email and call sequence' : 
-                   location?.includes('/sequences/') && location.split('/').length > 2 ? 'Manage sequence steps and analytics' :
-                   'Manage your email and call sequences'}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1">
-        <Switch>
-          <Route path="/sequences/create" component={CreateSequencePage} />
-          <Route path="/sequences/:id" component={SequenceDetailPage} />
-          <Route path="/sequences" component={SequenceDashboard} />
-          <Route component={SequenceDashboard} />
-        </Switch>
-      </div>
-    </div>
+    <Switch>
+      <Route path="/sequences/create" component={CreateSequencePage} />
+      <Route path="/sequences/:id" component={SequenceDetailPage} />
+      <Route path="/sequences" component={SequenceDashboard} />
+      <Route component={SequenceDashboard} />
+    </Switch>
   );
 };
 
