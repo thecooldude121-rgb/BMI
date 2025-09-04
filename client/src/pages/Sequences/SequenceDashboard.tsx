@@ -44,6 +44,8 @@ const SequenceDashboard: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedSequences, setSelectedSequences] = useState<string[]>([]);
+  const [showAllSequencesDropdown, setShowAllSequencesDropdown] = useState(false);
+  const [selectedView, setSelectedView] = useState('All Sequences');
 
   // Mock data - replace with API call
   const mockSequences: Sequence[] = [
@@ -221,7 +223,7 @@ const SequenceDashboard: React.FC = () => {
           <div className="flex items-center space-x-8">
             <h1 className="text-xl font-semibold">Sequences</h1>
             <div className="flex items-center space-x-1">
-              <button className="px-4 py-2 text-sm font-medium text-white border-b-2 border-white">
+              <button className="px-4 py-2 text-sm font-medium text-white border-b-2 border-blue-500">
                 All Sequences
               </button>
               <button className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white">
@@ -252,12 +254,70 @@ const SequenceDashboard: React.FC = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             {/* All Sequences Dropdown */}
-            <div className="flex items-center space-x-2">
-              <div className="bg-gray-800 rounded-lg px-3 py-2 flex items-center space-x-2">
+            <div className="relative flex items-center space-x-2">
+              <button
+                onClick={() => setShowAllSequencesDropdown(!showAllSequencesDropdown)}
+                className="bg-gray-800 rounded-lg px-3 py-2 flex items-center space-x-2 hover:bg-gray-700 transition-colors"
+              >
                 <Grid className="h-4 w-4" />
-                <span className="text-sm">All Sequences</span>
+                <span className="text-sm">{selectedView}</span>
                 <span className="text-gray-400">▼</span>
-              </div>
+              </button>
+
+              {/* All Sequences Dropdown Panel */}
+              {showAllSequencesDropdown && (
+                <div className="absolute top-full left-0 mt-2 w-80 bg-gray-800 border border-gray-600 rounded-lg shadow-lg z-20 p-4">
+                  {/* Search Views */}
+                  <div className="mb-4">
+                    <input
+                      type="text"
+                      placeholder="Search views"
+                      className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 text-sm"
+                    />
+                  </div>
+
+                  {/* View Categories */}
+                  <div className="space-y-3">
+                    <div>
+                      <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">All views</h4>
+                      <button
+                        onClick={() => {
+                          setSelectedView('All Sequences');
+                          setShowAllSequencesDropdown(false);
+                        }}
+                        className="w-full text-left flex items-center px-3 py-2 text-sm text-white hover:bg-gray-700 rounded"
+                      >
+                        <Grid className="h-4 w-4 mr-3" />
+                        All Sequences
+                        <span className="ml-auto text-xs text-gray-400">System</span>
+                        {selectedView === 'All Sequences' && <span className="ml-2 text-blue-400">✓</span>}
+                      </button>
+                    </div>
+
+                    <div>
+                      <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Your views</h4>
+                      <div className="text-sm text-gray-400 italic">No custom views yet</div>
+                    </div>
+
+                    <div>
+                      <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Starred</h4>
+                      <div className="text-sm text-gray-400 italic">No starred views yet</div>
+                    </div>
+
+                    <div>
+                      <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Shared</h4>
+                      <div className="text-sm text-gray-400 italic">No shared views yet</div>
+                    </div>
+                  </div>
+
+                  {/* Create New View Button */}
+                  <div className="mt-4 pt-3 border-t border-gray-600">
+                    <button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded font-medium text-sm">
+                      Create new view
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Show Filters */}
@@ -611,7 +671,7 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
   return (
     <div className="bg-gray-900">
       {/* Table Header */}
-      <div className="grid grid-cols-12 gap-4 px-6 py-3 border-b border-gray-700 bg-gray-800 text-xs font-medium text-gray-300 uppercase tracking-wide">
+      <div className="grid grid-cols-14 gap-4 px-6 py-3 border-b border-gray-700 bg-gray-800 text-xs font-medium text-gray-300 uppercase tracking-wide">
         <div className="col-span-1 flex items-center">
           <input type="checkbox" className="mr-2 h-4 w-4 rounded border-gray-600 bg-gray-700" />
           ACTIVATE
@@ -626,6 +686,9 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
         <div className="col-span-1 text-center">FINISHED</div>
         <div className="col-span-1 text-center">SCHEDULED</div>
         <div className="col-span-1 text-center">DELIVERED</div>
+        <div className="col-span-1 text-center">REPLY</div>
+        <div className="col-span-1 text-center">INTERESTED</div>
+        <div className="col-span-1 text-center">ACTIONS</div>
       </div>
 
       {/* Table Rows */}
@@ -635,7 +698,7 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
             key={sequence.id}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-gray-700 hover:bg-gray-800 cursor-pointer text-sm text-white"
+            className="grid grid-cols-14 gap-4 px-6 py-4 border-b border-gray-700 hover:bg-gray-800 cursor-pointer text-sm text-white"
             onClick={() => navigateTo(`/sequences/${sequence.id}`)}
             data-testid={`row-sequence-${sequence.id}`}
           >
@@ -651,7 +714,7 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
                     onAction(sequence.status === 'active' ? 'pause' : 'activate', sequence.id);
                   }}
                 />
-                <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-purple-600"></div>
               </label>
               {sequence.name.includes('LMX') && (
                 <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center text-xs font-semibold">
@@ -706,14 +769,28 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
             </div>
 
             {/* Delivered */}
-            <div className="col-span-1 text-center text-white relative">
+            <div className="col-span-1 text-center text-white">
               {sequence.opened}
+            </div>
+
+            {/* Reply */}
+            <div className="col-span-1 text-center text-white">
+              {sequence.replyRate}%
+            </div>
+
+            {/* Interested */}
+            <div className="col-span-1 text-center text-white">
+              {(sequence.replyRate * 0.2).toFixed(1)}%
+            </div>
+
+            {/* Actions */}
+            <div className="col-span-1 text-center text-white relative">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowMenu(showMenu === sequence.id ? null : sequence.id);
                 }}
-                className="ml-2 p-1 hover:bg-gray-700 rounded text-gray-400"
+                className="p-1 hover:bg-gray-700 rounded text-gray-400"
               >
                 <MoreVertical className="h-4 w-4" />
               </button>
