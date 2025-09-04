@@ -435,18 +435,10 @@ const SequenceDashboard: React.FC = () => {
       </AnimatePresence>
 
 
-      {/* Sequences Grid/List */}
-      {viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredSequences.map((sequence) => (
-            <SequenceCard key={sequence.id} sequence={sequence} onAction={handleSequenceAction} />
-          ))}
-        </div>
-      ) : (
-        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-          <SequenceList sequences={filteredSequences} onAction={handleSequenceAction} />
-        </div>
-      )}
+      {/* Sequences Table */}
+      <div className="bg-gray-900 rounded-lg overflow-hidden">
+        <SequenceList sequences={filteredSequences} onAction={handleSequenceAction} />
+      </div>
 
       {filteredSequences.length === 0 && (
         <div className="text-center py-12">
