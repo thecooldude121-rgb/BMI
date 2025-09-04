@@ -214,66 +214,94 @@ const SequenceDashboard: React.FC = () => {
   };
 
   return (
-    <div className="p-6 space-y-6 h-full overflow-auto">
-      {/* Top Actions Bar */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search sequences..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 py-2 w-80 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              data-testid="input-search-sequences"
-            />
+    <div className="h-full overflow-auto bg-gray-900 text-white">
+      {/* Header with Tabs */}
+      <div className="border-b border-gray-700 bg-gray-900 sticky top-0 z-10">
+        <div className="flex items-center justify-between px-6 py-4">
+          <div className="flex items-center space-x-8">
+            <h1 className="text-xl font-semibold">Sequences</h1>
+            <div className="flex items-center space-x-1">
+              <button className="px-4 py-2 text-sm font-medium text-white border-b-2 border-white">
+                All Sequences
+              </button>
+              <button className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white">
+                Analytics
+              </button>
+              <button className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white bg-green-600 rounded px-3">
+                New
+              </button>
+              <button className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white">
+                Diagnostics
+              </button>
+            </div>
           </div>
-
-          {/* Filters Toggle */}
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-lg border transition-colors ${
-              showFilters ? 'bg-blue-50 border-blue-200 text-blue-700' : 'border-gray-300 hover:bg-gray-50'
-            }`}
-            data-testid="button-toggle-filters"
-          >
-            <Filter className="h-4 w-4" />
-            <span>Filters</span>
-          </button>
-
-          {/* View Mode Toggle */}
-          <div className="flex items-center bg-gray-100 rounded-lg p-1">
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`p-2 rounded-md transition-colors ${
-                viewMode === 'grid' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-600 hover:text-gray-900'
-              }`}
-              data-testid="button-grid-view"
-            >
-              <Grid className="h-4 w-4" />
+          <div className="flex items-center space-x-2">
+            <button className="p-2 hover:bg-gray-800 rounded">
+              <span className="text-gray-400">?</span>
             </button>
             <button
-              onClick={() => setViewMode('list')}
-              className={`p-2 rounded-md transition-colors ${
-                viewMode === 'list' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-600 hover:text-gray-900'
-              }`}
-              data-testid="button-list-view"
+              onClick={() => navigateTo('/sequences/create')}
+              className="bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded-lg font-medium"
+              data-testid="button-create-sequence"
             >
-              <List className="h-4 w-4" />
+              Create sequence
             </button>
           </div>
         </div>
+      </div>
 
-        <button
-          onClick={() => navigateTo('/sequences/create')}
-          className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors hover:scale-105 transform"
-          data-testid="button-create-sequence"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Create Sequence</span>
-        </button>
+      {/* Controls Bar */}
+      <div className="px-6 py-4 border-b border-gray-700 bg-gray-900">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            {/* All Sequences Dropdown */}
+            <div className="flex items-center space-x-2">
+              <div className="bg-gray-800 rounded-lg px-3 py-2 flex items-center space-x-2">
+                <Grid className="h-4 w-4" />
+                <span className="text-sm">All Sequences</span>
+                <span className="text-gray-400">▼</span>
+              </div>
+            </div>
+
+            {/* Show Filters */}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center space-x-2 text-sm text-gray-300 hover:text-white"
+              data-testid="button-toggle-filters"
+            >
+              <Filter className="h-4 w-4" />
+              <span>Show Filters</span>
+              <span className="bg-gray-700 text-xs px-2 py-1 rounded">1</span>
+            </button>
+
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search sequences..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-4 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-400"
+                data-testid="input-search-sequences"
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <button className="text-sm text-gray-300 hover:text-white">
+              Save as new view
+            </button>
+            <button className="flex items-center space-x-1 text-sm text-gray-300 hover:text-white">
+              <span>Sort</span>
+              <span>▼</span>
+            </button>
+            <button className="flex items-center space-x-1 text-sm text-gray-300 hover:text-white">
+              <span>View options</span>
+              <span>▼</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Filters Panel */}
@@ -626,127 +654,170 @@ const SequenceCard: React.FC<{ sequence: Sequence; onAction: (action: string, id
   );
 };
 
-// Sequence List Component
+// Sequence List Component - Apollo.io style
 const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string, id: string) => void }> = ({ 
   sequences, onAction 
 }) => {
+  const [selectedSequences, setSelectedSequences] = useState<string[]>([]);
+  const [showMenu, setShowMenu] = useState<string | null>(null);
+
+  const toggleSequence = (sequenceId: string) => {
+    setSelectedSequences(prev => 
+      prev.includes(sequenceId) 
+        ? prev.filter(id => id !== sequenceId)
+        : [...prev, sequenceId]
+    );
+  };
+
   return (
-    <div>
-      {/* Header */}
-      <div className="bg-gray-50 px-6 py-3 border-b border-gray-200">
-        <div className="grid grid-cols-12 gap-4 text-xs font-medium text-gray-500 uppercase tracking-wide">
-          <div className="col-span-3">Sequence</div>
-          <div className="col-span-1">Status</div>
-          <div className="col-span-1">Type</div>
-          <div className="col-span-1">Steps</div>
-          <div className="col-span-1">Prospects</div>
-          <div className="col-span-1">Replies</div>
-          <div className="col-span-1">Opens</div>
-          <div className="col-span-1">Reply Rate</div>
-          <div className="col-span-1">Open Rate</div>
-          <div className="col-span-1">Actions</div>
+    <div className="bg-gray-900">
+      {/* Table Header */}
+      <div className="grid grid-cols-12 gap-4 px-6 py-3 border-b border-gray-700 bg-gray-800 text-xs font-medium text-gray-300 uppercase tracking-wide">
+        <div className="col-span-1 flex items-center">
+          <input type="checkbox" className="mr-2 h-4 w-4 rounded border-gray-600 bg-gray-700" />
+          ACTIVATE
         </div>
+        <div className="col-span-2">NAME</div>
+        <div className="col-span-1 text-center">CREATED BY</div>
+        <div className="col-span-1 text-center">ACTIVE</div>
+        <div className="col-span-1 text-center">PAUSED</div>
+        <div className="col-span-1 text-center">NOT SENT</div>
+        <div className="col-span-1 text-center">BOUNCED</div>
+        <div className="col-span-1 text-center">SPAM BLOCK</div>
+        <div className="col-span-1 text-center">FINISHED</div>
+        <div className="col-span-1 text-center">SCHEDULED</div>
+        <div className="col-span-1 text-center">DELIVERED</div>
       </div>
 
-      {/* Rows */}
+      {/* Table Rows */}
       <div>
         {sequences.map((sequence) => (
           <motion.div
             key={sequence.id}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="px-6 py-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
+            className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-gray-700 hover:bg-gray-800 cursor-pointer text-sm text-white"
             onClick={() => navigateTo(`/sequences/${sequence.id}`)}
             data-testid={`row-sequence-${sequence.id}`}
           >
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <div className="col-span-3">
-                <div>
-                  <p className="font-medium text-gray-900">{sequence.name}</p>
-                  <p className="text-sm text-gray-500 truncate">{sequence.description}</p>
+            {/* Activate Toggle + Avatar */}
+            <div className="col-span-1 flex items-center space-x-3">
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  className="sr-only peer" 
+                  checked={sequence.status === 'active'}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    onAction(sequence.status === 'active' ? 'pause' : 'activate', sequence.id);
+                  }}
+                />
+                <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
+              {sequence.name.includes('LMX') && (
+                <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center text-xs font-semibold">
+                  WE
                 </div>
-              </div>
-              <div className="col-span-1">
-                <span className={`px-2 py-1 rounded-full text-xs font-medium border ${sequence.status === 'active' ? 'bg-green-100 text-green-800 border-green-200' : sequence.status === 'paused' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' : sequence.status === 'draft' ? 'bg-gray-100 text-gray-800 border-gray-200' : 'bg-red-100 text-red-800 border-red-200'}`}>
-                  {sequence.status}
-                </span>
-              </div>
-              <div className="col-span-1">
-                <div className="flex items-center space-x-1">
-                  {sequence.type === 'email' && <Mail className="h-4 w-4 text-gray-400" />}
-                  {sequence.type === 'call' && <Phone className="h-4 w-4 text-gray-400" />}
-                  {sequence.type === 'mixed' && <Target className="h-4 w-4 text-gray-400" />}
-                  <span className="text-sm text-gray-900 capitalize">{sequence.type}</span>
-                </div>
-              </div>
-              <div className="col-span-1">
-                <span className="text-sm text-gray-900">{sequence.steps}</span>
-              </div>
-              <div className="col-span-1">
-                <span className="text-sm text-gray-900">{sequence.prospects}</span>
-              </div>
-              <div className="col-span-1">
-                <span className="text-sm text-gray-900">{sequence.replied}</span>
-              </div>
-              <div className="col-span-1">
-                <span className="text-sm text-gray-900">{sequence.opened}</span>
-              </div>
-              <div className="col-span-1">
-                <span className="text-sm font-medium text-gray-900">{sequence.replyRate}%</span>
-              </div>
-              <div className="col-span-1">
-                <span className="text-sm font-medium text-gray-900">{sequence.openRate}%</span>
-              </div>
-              <div className="col-span-1">
-                <div className="flex items-center space-x-1">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onAction('edit', sequence.id);
-                    }}
-                    className="p-1 hover:bg-gray-200 rounded transition-colors"
-                    title="Edit"
-                  >
-                    <Edit3 className="h-4 w-4 text-gray-400" />
+              )}
+            </div>
+
+            {/* Name */}
+            <div className="col-span-2">
+              <div className="font-medium text-white truncate">{sequence.name}</div>
+            </div>
+
+            {/* Created By */}
+            <div className="col-span-1 text-center text-gray-300">
+              WE
+            </div>
+
+            {/* Active */}
+            <div className="col-span-1 text-center text-white">
+              {sequence.status === 'active' ? sequence.prospects : '-'}
+            </div>
+
+            {/* Paused */}
+            <div className="col-span-1 text-center text-white">
+              {sequence.status === 'paused' ? sequence.prospects : '-'}
+            </div>
+
+            {/* Not Sent */}
+            <div className="col-span-1 text-center text-white">
+              {Math.floor(sequence.prospects * 0.1)}
+            </div>
+
+            {/* Bounced */}
+            <div className="col-span-1 text-center text-white">
+              {Math.floor(sequence.prospects * 0.02)}
+            </div>
+
+            {/* Spam Block */}
+            <div className="col-span-1 text-center text-white">
+              {Math.floor(sequence.prospects * 0.01)}
+            </div>
+
+            {/* Finished */}
+            <div className="col-span-1 text-center text-white">
+              {sequence.replied}
+            </div>
+
+            {/* Scheduled */}
+            <div className="col-span-1 text-center text-white">
+              {Math.floor(sequence.prospects * 0.15)}
+            </div>
+
+            {/* Delivered */}
+            <div className="col-span-1 text-center text-white relative">
+              {sequence.opened}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowMenu(showMenu === sequence.id ? null : sequence.id);
+                }}
+                className="ml-2 p-1 hover:bg-gray-700 rounded text-gray-400"
+              >
+                <MoreVertical className="h-4 w-4" />
+              </button>
+
+              {/* Actions Menu */}
+              {showMenu === sequence.id && (
+                <div className="absolute right-0 top-8 bg-gray-800 border border-gray-600 rounded-lg shadow-lg py-2 z-20 min-w-[120px]">
+                  <button className="w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-700">
+                    Share
                   </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onAction('clone', sequence.id);
-                    }}
-                    className="p-1 hover:bg-gray-200 rounded transition-colors"
-                    title="Clone"
-                  >
-                    <Copy className="h-4 w-4 text-gray-400" />
+                  <button className="w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-700">
+                    Archive
                   </button>
-                  {sequence.status === 'active' ? (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onAction('pause', sequence.id);
-                      }}
-                      className="p-1 hover:bg-gray-200 rounded transition-colors"
-                      title="Pause"
-                    >
-                      <Pause className="h-4 w-4 text-gray-400" />
-                    </button>
-                  ) : (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onAction('activate', sequence.id);
-                      }}
-                      className="p-1 hover:bg-gray-200 rounded transition-colors"
-                      title="Activate"
-                    >
-                      <Play className="h-4 w-4 text-gray-400" />
-                    </button>
-                  )}
+                  <button className="w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-700">
+                    Clone
+                  </button>
+                  <button className="w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-700">
+                    Edit
+                  </button>
+                  <button className="w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-700">
+                    Move sequence to folder
+                  </button>
+                  <button className="w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-700">
+                    Add to starred
+                  </button>
                 </div>
-              </div>
+              )}
             </div>
           </motion.div>
         ))}
+      </div>
+
+      {/* Pagination */}
+      <div className="flex items-center justify-between px-6 py-4 border-t border-gray-700 bg-gray-900">
+        <div className="flex items-center space-x-2 text-sm text-gray-300">
+          <span>1</span>
+          <span>▼</span>
+          <span className="mx-2">▼</span>
+          <span>1 - 14 of 14</span>
+        </div>
+        <div className="bg-blue-600 p-2 rounded-full">
+          <span className="text-white text-xs">?</span>
+        </div>
       </div>
     </div>
   );
