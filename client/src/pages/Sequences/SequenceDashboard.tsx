@@ -377,64 +377,6 @@ const SequenceDashboard: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Total Sequences</p>
-              <p className="text-2xl font-bold text-gray-900">{filteredSequences.length}</p>
-            </div>
-            <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Target className="h-6 w-6 text-blue-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Active Sequences</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {filteredSequences.filter(s => s.status === 'active').length}
-              </p>
-            </div>
-            <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
-              <Play className="h-6 w-6 text-green-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Total Prospects</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {filteredSequences.reduce((sum, s) => sum + s.prospects, 0)}
-              </p>
-            </div>
-            <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
-              <Users className="h-6 w-6 text-purple-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Avg Reply Rate</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {filteredSequences.length > 0 
-                  ? (filteredSequences.reduce((sum, s) => sum + s.replyRate, 0) / filteredSequences.length).toFixed(1)
-                  : '0'}%
-              </p>
-            </div>
-            <div className="h-12 w-12 bg-orange-100 rounded-lg flex items-center justify-center">
-              <TrendingUp className="h-6 w-6 text-orange-600" />
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Sequences Grid/List */}
       {viewMode === 'grid' ? (
