@@ -51,84 +51,210 @@ const SequenceDashboard: React.FC = () => {
   const mockSequences: Sequence[] = [
     {
       id: '1',
-      name: 'SaaS Demo Follow-up',
-      description: 'Follow up sequence for SaaS demo prospects',
+      name: 'LMX-CMS | Hospitality Industry',
+      description: 'Hospitality industry outreach sequence',
       status: 'active',
       type: 'mixed',
       steps: 7,
-      prospects: 156,
-      replied: 23,
-      opened: 89,
-      clicked: 34,
-      booked: 12,
+      prospects: 6647,
+      replied: 65,
+      opened: 4978,
+      clicked: 398,
+      booked: 65,
       createdAt: '2024-01-15',
       updatedAt: '2024-01-20',
-      createdBy: 'Sarah Johnson',
-      tags: ['demo', 'saas', 'high-value'],
-      replyRate: 14.7,
-      openRate: 57.1,
+      createdBy: 'WE',
+      tags: ['hospitality', 'cms', 'industry'],
+      replyRate: 1,
+      openRate: 0.1,
       clickRate: 21.8,
       bookingRate: 7.7
     },
     {
       id: '2', 
-      name: 'Cold Outreach - Enterprise',
-      description: 'Initial outreach for enterprise prospects',
+      name: 'LMX | Media Owners Europe',
+      description: 'European media owners outreach',
       status: 'active',
-      type: 'email',
+      type: 'mixed',
       steps: 5,
-      prospects: 89,
-      replied: 8,
-      opened: 45,
-      clicked: 12,
+      prospects: 578,
+      replied: 9,
+      opened: 526,
+      clicked: 10,
       booked: 3,
       createdAt: '2024-01-10',
       updatedAt: '2024-01-18',
-      createdBy: 'Mike Chen',
-      tags: ['cold', 'enterprise', 'outreach'],
-      replyRate: 9.0,
-      openRate: 50.6,
+      createdBy: 'WE',
+      tags: ['media', 'europe', 'owners'],
+      replyRate: 1,
+      openRate: 0,
       clickRate: 13.5,
       bookingRate: 3.4
     },
     {
       id: '3',
-      name: 'Webinar Registration Follow-up',
-      description: 'Nurture sequence for webinar attendees',
-      status: 'paused',
+      name: 'Healthcare Middle East',
+      description: 'Middle East healthcare prospects',
+      status: 'active',
       type: 'email',
       steps: 4,
-      prospects: 234,
-      replied: 45,
-      opened: 178,
-      clicked: 67,
-      booked: 21,
+      prospects: 55,
+      replied: 3,
+      opened: 48,
+      clicked: 14,
+      booked: 1,
       createdAt: '2024-01-05',
       updatedAt: '2024-01-16',
-      createdBy: 'Emily Rodriguez',
-      tags: ['webinar', 'nurture', 'marketing'],
-      replyRate: 19.2,
-      openRate: 76.1,
+      createdBy: 'WE',
+      tags: ['healthcare', 'middle-east', 'medical'],
+      replyRate: 7.2,
+      openRate: 2.9,
       clickRate: 28.6,
       bookingRate: 9.0
     },
     {
       id: '4',
-      name: 'Free Trial Activation',
-      description: 'Onboard and activate free trial users',
-      status: 'draft',
+      name: 'LMX | Media Owners Saudi Arabia',
+      description: 'Saudi Arabia media owners campaign',
+      status: 'active',
       type: 'mixed',
       steps: 6,
-      prospects: 0,
-      replied: 0,
-      opened: 0,
-      clicked: 0,
-      booked: 0,
+      prospects: 51,
+      replied: 1,
+      opened: 133,
+      clicked: 10,
+      booked: 1,
       createdAt: '2024-01-22',
       updatedAt: '2024-01-22',
-      createdBy: 'David Park',
-      tags: ['trial', 'onboarding', 'activation'],
+      createdBy: 'WE',
+      tags: ['media', 'saudi', 'arabia'],
+      replyRate: 2.9,
+      openRate: 0,
+      clickRate: 0,
+      bookingRate: 0
+    },
+    {
+      id: '5',
+      name: 'CMS Competitors (Europe)',
+      description: 'European CMS competitor analysis',
+      status: 'active',
+      type: 'email',
+      steps: 4,
+      prospects: 52,
+      replied: 0,
+      opened: 18,
+      clicked: 34,
+      booked: 0,
+      createdAt: '2024-01-18',
+      updatedAt: '2024-01-18',
+      createdBy: 'WE',
+      tags: ['cms', 'competitors', 'europe'],
       replyRate: 0,
+      openRate: 0,
+      clickRate: 0,
+      bookingRate: 0
+    },
+    {
+      id: '6',
+      name: 'LMX | Media Owners Kuwait',
+      description: 'Kuwait media owners outreach',
+      status: 'active',
+      type: 'mixed',
+      steps: 3,
+      prospects: 15,
+      replied: 4,
+      opened: 69,
+      clicked: 6,
+      booked: 2,
+      createdAt: '2024-01-17',
+      updatedAt: '2024-01-17',
+      createdBy: 'WE',
+      tags: ['media', 'kuwait', 'owners'],
+      replyRate: 7.2,
+      openRate: 2.9,
+      clickRate: 0,
+      bookingRate: 0
+    },
+    {
+      id: '7',
+      name: 'CMS Competitors (France)',
+      description: 'French CMS competitor research',
+      status: 'active',
+      type: 'email',
+      steps: 2,
+      prospects: 8,
+      replied: 0,
+      opened: 8,
+      clicked: 0,
+      booked: 0,
+      createdAt: '2024-01-16',
+      updatedAt: '2024-01-16',
+      createdBy: 'WE',
+      tags: ['cms', 'france', 'competitors'],
+      replyRate: 0,
+      openRate: 0,
+      clickRate: 0,
+      bookingRate: 0
+    },
+    {
+      id: '8',
+      name: 'LMX | Media Owners MENA',
+      description: 'MENA region media owners',
+      status: 'paused',
+      type: 'mixed',
+      steps: 5,
+      prospects: 918,
+      replied: 3,
+      opened: 1091,
+      clicked: 5,
+      booked: 1,
+      createdAt: '2024-01-15',
+      updatedAt: '2024-01-15',
+      createdBy: 'WE',
+      tags: ['media', 'mena', 'owners'],
+      replyRate: 1,
+      openRate: 0.1,
+      clickRate: 0,
+      bookingRate: 0
+    },
+    {
+      id: '9',
+      name: 'MO-UAE',
+      description: 'UAE media owners campaign',
+      status: 'active',
+      type: 'email',
+      steps: 3,
+      prospects: 43,
+      replied: 1,
+      opened: 43,
+      clicked: 0,
+      booked: 0,
+      createdAt: '2024-01-14',
+      updatedAt: '2024-01-14',
+      createdBy: 'WE',
+      tags: ['uae', 'media', 'owners'],
+      replyRate: 0,
+      openRate: 0,
+      clickRate: 0,
+      bookingRate: 0
+    },
+    {
+      id: '10',
+      name: 'LMX | Media Owners North America',
+      description: 'North American media owners outreach',
+      status: 'paused',
+      type: 'mixed',
+      steps: 4,
+      prospects: 17,
+      replied: 1,
+      opened: 19,
+      clicked: 1,
+      booked: 0,
+      createdAt: '2024-01-13',
+      updatedAt: '2024-01-13',
+      createdBy: 'WE',
+      tags: ['media', 'north-america', 'owners'],
+      replyRate: 5.3,
       openRate: 0,
       clickRate: 0,
       bookingRate: 0
@@ -221,13 +347,16 @@ const SequenceDashboard: React.FC = () => {
       <div className="border-b border-gray-700 bg-gray-900 sticky top-0 z-10">
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center space-x-8">
-            <h1 className="text-xl font-semibold">Sequences</h1>
+            <h1 className="text-xl font-semibold text-white">Sequences</h1>
             <div className="flex items-center space-x-1">
-              <button className="px-4 py-2 text-sm font-medium text-white border-b-2 border-blue-500">
+              <button className="px-4 py-2 text-sm font-medium text-white border-b-2 border-white">
                 All Sequences
               </button>
               <button className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white">
                 Analytics
+              </button>
+              <button className="px-3 py-1 text-xs font-medium text-white bg-green-600 rounded">
+                New
               </button>
               <button className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white">
                 Diagnostics
@@ -260,7 +389,7 @@ const SequenceDashboard: React.FC = () => {
                 className="bg-gray-800 rounded-lg px-3 py-2 flex items-center space-x-2 hover:bg-gray-700 transition-colors"
               >
                 <Grid className="h-4 w-4" />
-                <span className="text-sm">{selectedView}</span>
+                <span className="text-sm">All Sequences</span>
                 <span className="text-gray-400">▼</span>
               </button>
 
@@ -339,7 +468,7 @@ const SequenceDashboard: React.FC = () => {
                 placeholder="Search sequences..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-400"
+                className="pl-10 pr-4 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-400 w-64"
                 data-testid="input-search-sequences"
               />
             </div>
@@ -694,8 +823,8 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
             onClick={() => navigateTo(`/sequences/${sequence.id}`)}
             data-testid={`row-sequence-${sequence.id}`}
           >
-            {/* Activate Toggle + Avatar */}
-            <div className="col-span-1 flex items-center space-x-3">
+            {/* Activate Toggle */}
+            <div className="col-span-1 flex items-center">
               <label className="relative inline-flex items-center cursor-pointer">
                 <input 
                   type="checkbox" 
@@ -708,15 +837,15 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
                 />
                 <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-purple-600"></div>
               </label>
-              {sequence.name.includes('LMX') && (
-                <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center text-xs font-semibold">
-                  WE
-                </div>
-              )}
             </div>
 
             {/* Name */}
-            <div className="col-span-2">
+            <div className="col-span-2 flex items-center space-x-3">
+              {(sequence.name.includes('LMX') || sequence.name.includes('Media')) && (
+                <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center text-xs font-semibold text-white">
+                  WE
+                </div>
+              )}
               <div className="font-medium text-white truncate">{sequence.name}</div>
             </div>
 
@@ -819,9 +948,7 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
       <div className="flex items-center justify-between px-6 py-4 border-t border-gray-700 bg-gray-900">
         <div className="flex items-center space-x-2 text-sm text-gray-300">
           <span>1</span>
-          <span>▼</span>
-          <span className="mx-2">▼</span>
-          <span>1 - 14 of 14</span>
+          <span className="mx-2">1 - 14 of 14</span>
         </div>
         <div className="bg-blue-600 p-2 rounded-full">
           <span className="text-white text-xs">?</span>
