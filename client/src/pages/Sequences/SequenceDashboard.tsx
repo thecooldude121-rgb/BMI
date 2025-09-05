@@ -883,37 +883,40 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
   };
 
   return (
-    <div className="bg-gray-900">
-      {/* Table Header */}
-      <div className="grid grid-cols-12 gap-4 px-6 py-3 border-b border-gray-700 bg-gray-800 text-xs font-medium text-gray-300 uppercase tracking-wide">
-        <div className="col-span-1 flex items-center">
-          <input type="checkbox" className="mr-2 h-4 w-4 rounded border-gray-600 bg-gray-700" />
-          ACTIVATE
+    <div className="bg-gray-900 h-full flex flex-col">
+      {/* Fixed Header */}
+      <div className="flex-shrink-0 overflow-x-auto border-b border-gray-700 bg-gray-800">
+        <div className="min-w-[1400px] grid grid-cols-12 gap-4 px-6 py-3 text-xs font-medium text-gray-300 uppercase tracking-wide">
+          <div className="col-span-1 flex items-center whitespace-nowrap">
+            <input type="checkbox" className="mr-2 h-4 w-4 rounded border-gray-600 bg-gray-700" />
+            ACTIVATE
+          </div>
+          <div className="col-span-2 whitespace-nowrap">NAME</div>
+          <div className="col-span-1 text-center whitespace-nowrap">CREATED BY</div>
+          <div className="col-span-1 text-center whitespace-nowrap">ACTIVE</div>
+          <div className="col-span-1 text-center whitespace-nowrap">PAUSED</div>
+          <div className="col-span-1 text-center whitespace-nowrap">NOT SENT</div>
+          <div className="col-span-1 text-center whitespace-nowrap">BOUNCED</div>
+          <div className="col-span-1 text-center whitespace-nowrap">SPAM BLOCK</div>
+          <div className="col-span-1 text-center whitespace-nowrap">FINISHED</div>
+          <div className="col-span-1 text-center whitespace-nowrap">SCHEDULED</div>
+          <div className="col-span-1 text-center whitespace-nowrap">DELIVERED</div>
+          <div className="col-span-1 text-center whitespace-nowrap">ACTIONS</div>
         </div>
-        <div className="col-span-2">NAME</div>
-        <div className="col-span-1 text-center">CREATED BY</div>
-        <div className="col-span-1 text-center">ACTIVE</div>
-        <div className="col-span-1 text-center">PAUSED</div>
-        <div className="col-span-1 text-center">NOT SENT</div>
-        <div className="col-span-1 text-center">BOUNCED</div>
-        <div className="col-span-1 text-center">SPAM BLOCK</div>
-        <div className="col-span-1 text-center">FINISHED</div>
-        <div className="col-span-1 text-center">SCHEDULED</div>
-        <div className="col-span-1 text-center">DELIVERED</div>
-        <div className="col-span-1 text-center">ACTIONS</div>
       </div>
 
-      {/* Table Rows */}
-      <div>
-        {sequences.map((sequence) => (
-          <motion.div
-            key={sequence.id}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-gray-700 hover:bg-gray-800 cursor-pointer text-sm text-white"
-            onClick={() => navigateTo(`/sequences/${sequence.id}`)}
-            data-testid={`row-sequence-${sequence.id}`}
-          >
+      {/* Scrollable Table Content */}
+      <div className="flex-1 overflow-auto">
+        <div className="min-w-[1400px]">
+          {sequences.map((sequence) => (
+            <motion.div
+              key={sequence.id}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-gray-700 hover:bg-gray-800 cursor-pointer text-sm text-white"
+              onClick={() => navigateTo(`/sequences/${sequence.id}`)}
+              data-testid={`row-sequence-${sequence.id}`}
+            >
             {/* Activate Toggle */}
             <div className="col-span-1 flex items-center">
               <label className="relative inline-flex items-center cursor-pointer">
@@ -1049,11 +1052,12 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
               )}
             </div>
           </motion.div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      {/* Pagination */}
-      <div className="flex items-center justify-between px-6 py-4 border-t border-gray-700 bg-gray-900">
+      {/* Fixed Pagination */}
+      <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-t border-gray-700 bg-gray-900">
         <div className="flex items-center space-x-2 text-sm text-gray-300">
           <span>1</span>
           <span className="mx-2">1 - 14 of 14</span>
