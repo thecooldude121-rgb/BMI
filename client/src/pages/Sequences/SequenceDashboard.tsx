@@ -887,11 +887,11 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
       {/* Unified Scrollable Container */}
       <div className="flex-1 overflow-auto relative">
         <div className="min-h-full">
-          {/* Fixed Header Row */}
-          <div className="sticky top-0 z-40 bg-gray-800 border-b border-gray-700 shadow-md">
+          {/* Sticky Header Row */}
+          <div className="sticky top-0 z-50 bg-gray-800 border-b border-gray-700 shadow-lg backdrop-blur-sm">
             <div className="flex min-w-[1400px]">
               {/* Frozen Columns: ACTIVATE & NAME */}
-              <div className="sticky left-0 z-30 bg-gray-800 flex border-r border-gray-600">
+              <div className="sticky left-0 z-40 bg-gray-800 flex border-r border-gray-600">
                 <div className="w-[140px] px-4 py-3 flex items-center text-xs font-medium text-gray-300 uppercase tracking-wide">
                   <input type="checkbox" className="mr-2 h-4 w-4 rounded border-gray-600 bg-gray-700" />
                   ACTIVATE
@@ -929,21 +929,27 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
               data-testid={`row-sequence-${sequence.id}`}
             >
               {/* Frozen Columns: ACTIVATE & NAME */}
-              <div className="sticky left-0 z-10 bg-gray-900 hover:bg-gray-800 flex border-r border-gray-600">
+              <div className="sticky left-0 z-30 bg-gray-900 hover:bg-gray-800 flex border-r border-gray-600">
                 {/* Activate Toggle */}
                 <div className="w-[140px] px-4 py-4 flex items-center justify-center">
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      className="sr-only peer" 
-                      checked={sequence.status === 'active'}
-                      onChange={(e) => {
-                        e.stopPropagation();
-                        onAction(sequence.status === 'active' ? 'pause' : 'activate', sequence.id);
-                      }}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onAction(sequence.status === 'active' ? 'pause' : 'activate', sequence.id);
+                    }}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${
+                      sequence.status === 'active'
+                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 shadow-lg'
+                        : 'bg-gray-600 hover:bg-gray-500'
+                    }`}
+                    data-testid={`toggle-activate-${sequence.id}`}
+                  >
+                    <span
+                      className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-lg transition-transform ${
+                        sequence.status === 'active' ? 'translate-x-5' : 'translate-x-0.5'
+                      }`}
                     />
-                    <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-purple-600"></div>
-                  </label>
+                  </button>
                 </div>
 
                 {/* Name */}
@@ -1011,7 +1017,8 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
                       e.stopPropagation();
                       setShowMenu(showMenu === sequence.id ? null : sequence.id);
                     }}
-                    className="p-1 hover:bg-gray-700 rounded text-gray-400"
+                    className="p-2 hover:bg-gray-700 rounded-md text-gray-400 hover:text-white transition-colors"
+                    data-testid={`actions-menu-${sequence.id}`}
                   >
                     <MoreHorizontal className="h-4 w-4" />
                   </button>
@@ -1019,11 +1026,14 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
                   {/* Actions Menu */}
                   {showMenu === sequence.id && (
                     <motion.div
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      className="absolute right-0 top-8 bg-gray-800 border border-gray-600 rounded-lg shadow-xl py-2 z-50 min-w-[120px]"
-                      style={{ transform: 'translateZ(0)' }}
+                      initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                      className="absolute right-0 top-12 bg-gray-800 border border-gray-600 rounded-lg shadow-2xl py-2 z-[100] min-w-[120px] backdrop-blur-sm"
+                      style={{ 
+                        transform: 'translateZ(0)',
+                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8)'
+                      }}
                     >
                       <button 
                         onClick={() => {
