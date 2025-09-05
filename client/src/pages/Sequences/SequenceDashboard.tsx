@@ -434,9 +434,9 @@ const SequenceDashboard: React.FC = () => {
   };
 
   return (
-    <div className="h-full overflow-auto bg-gray-900 text-gray-900">
+    <div className="h-full overflow-auto bg-white text-gray-900">
       {/* Header with Tabs */}
-      <div className="border-b border-gray-700 bg-gray-900 sticky top-0 z-10">
+      <div className="border-b border-gray-200 bg-white sticky top-0 z-10">
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center space-x-8">
             <h1 className="text-xl font-semibold text-gray-900">Sequences</h1>
@@ -471,68 +471,68 @@ const SequenceDashboard: React.FC = () => {
       </div>
 
       {/* Controls Bar */}
-      <div className="px-6 py-4 border-b border-gray-700 bg-gray-900">
+      <div className="px-6 py-4 border-b border-gray-200 bg-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             {/* All Sequences Dropdown */}
             <div className="relative flex items-center space-x-2">
               <button
                 onClick={() => setShowAllSequencesDropdown(!showAllSequencesDropdown)}
-                className="bg-gray-800 rounded-lg px-3 py-2 flex items-center space-x-2 hover:bg-gray-700 transition-colors"
+                className="bg-gray-100 rounded-lg px-3 py-2 flex items-center space-x-2 hover:bg-gray-200 transition-colors"
               >
                 <Grid className="h-4 w-4" />
                 <span className="text-sm">All Sequences</span>
-                <span className="text-gray-400">▼</span>
+                <span className="text-gray-500">▼</span>
               </button>
 
               {/* All Sequences Dropdown Panel */}
               {showAllSequencesDropdown && (
-                <div className="absolute top-full left-0 mt-2 w-80 bg-gray-800 border border-gray-600 rounded-lg shadow-lg z-20 p-4">
+                <div className="absolute top-full left-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-20 p-4">
                   {/* Search Views */}
                   <div className="mb-4">
                     <input
                       type="text"
                       placeholder="Search views"
-                      className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-gray-900 placeholder-gray-400 text-sm"
+                      className="w-full bg-gray-50 border border-gray-200 rounded px-3 py-2 text-gray-900 placeholder-gray-400 text-sm"
                     />
                   </div>
 
                   {/* View Categories */}
                   <div className="space-y-3">
                     <div>
-                      <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">All views</h4>
+                      <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">All views</h4>
                       <button
                         onClick={() => {
                           setSelectedView('All Sequences');
                           setShowAllSequencesDropdown(false);
                         }}
-                        className="w-full text-left flex items-center px-3 py-2 text-sm text-gray-900 hover:bg-gray-700 rounded"
+                        className="w-full text-left flex items-center px-3 py-2 text-sm text-gray-900 hover:bg-gray-100 rounded"
                       >
                         <Grid className="h-4 w-4 mr-3" />
                         All Sequences
-                        <span className="ml-auto text-xs text-gray-400">System</span>
-                        {selectedView === 'All Sequences' && <span className="ml-2 text-blue-400">✓</span>}
+                        <span className="ml-auto text-xs text-gray-500">System</span>
+                        {selectedView === 'All Sequences' && <span className="ml-2 text-blue-600">✓</span>}
                       </button>
                     </div>
 
                     <div>
-                      <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Your views</h4>
-                      <div className="text-sm text-gray-400 italic">No custom views yet</div>
+                      <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Your views</h4>
+                      <div className="text-sm text-gray-500 italic">No custom views yet</div>
                     </div>
 
                     <div>
-                      <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Starred</h4>
-                      <div className="text-sm text-gray-400 italic">No starred views yet</div>
+                      <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Starred</h4>
+                      <div className="text-sm text-gray-500 italic">No starred views yet</div>
                     </div>
 
                     <div>
-                      <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Shared</h4>
-                      <div className="text-sm text-gray-400 italic">No shared views yet</div>
+                      <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Shared</h4>
+                      <div className="text-sm text-gray-500 italic">No shared views yet</div>
                     </div>
                   </div>
 
                   {/* Create New View Button */}
-                  <div className="mt-4 pt-3 border-t border-gray-600">
+                  <div className="mt-4 pt-3 border-t border-gray-200">
                     <button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded font-medium text-sm">
                       Create new view
                     </button>
@@ -544,37 +544,37 @@ const SequenceDashboard: React.FC = () => {
             {/* Show Filters */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center space-x-2 text-sm text-gray-300 hover:text-gray-900"
+              className="flex items-center space-x-2 text-sm text-gray-600 hover:text-gray-900"
               data-testid="button-toggle-filters"
             >
               <Filter className="h-4 w-4" />
               <span>Show Filters</span>
-              <span className="bg-gray-700 text-xs px-2 py-1 rounded">1</span>
+              <span className="bg-gray-200 text-xs px-2 py-1 rounded">1</span>
             </button>
 
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
               <input
                 type="text"
                 placeholder="Search sequences..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400 w-64"
+                className="pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500 w-64"
                 data-testid="input-search-sequences"
               />
             </div>
           </div>
 
           <div className="flex items-center space-x-4">
-            <button className="text-sm text-gray-300 hover:text-gray-900">
+            <button className="text-sm text-gray-600 hover:text-gray-900">
               Save as new view
             </button>
-            <button className="flex items-center space-x-1 text-sm text-gray-300 hover:text-gray-900">
+            <button className="flex items-center space-x-1 text-sm text-gray-600 hover:text-gray-900">
               <span>Sort</span>
               <span>▼</span>
             </button>
-            <button className="flex items-center space-x-1 text-sm text-gray-300 hover:text-gray-900">
+            <button className="flex items-center space-x-1 text-sm text-gray-600 hover:text-gray-900">
               <span>View options</span>
               <span>▼</span>
             </button>
@@ -657,7 +657,7 @@ const SequenceDashboard: React.FC = () => {
 
 
       {/* Sequences Table */}
-      <div className="bg-gray-900 rounded-lg overflow-hidden">
+      <div className="bg-white rounded-lg overflow-hidden">
         <SequenceList sequences={filteredSequences} onAction={handleSequenceAction} />
       </div>
 
