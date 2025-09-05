@@ -885,10 +885,10 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
   return (
     <div className="bg-gray-900 h-full flex flex-col">
       {/* Unified Scrollable Container */}
-      <div className="flex-1 overflow-auto">
-        <div className="relative">
+      <div className="flex-1 overflow-auto relative">
+        <div className="min-h-full">
           {/* Fixed Header Row */}
-          <div className="sticky top-0 z-20 bg-gray-800 border-b border-gray-700">
+          <div className="sticky top-0 z-40 bg-gray-800 border-b border-gray-700 shadow-md">
             <div className="flex min-w-[1400px]">
               {/* Frozen Columns: ACTIVATE & NAME */}
               <div className="sticky left-0 z-30 bg-gray-800 flex border-r border-gray-600">
@@ -912,6 +912,7 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
                 <div className="w-[100px] px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">FINISHED</div>
                 <div className="w-[120px] px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">SCHEDULED</div>
                 <div className="w-[120px] px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">DELIVERED</div>
+                <div className="w-[100px] px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">ACTIONS</div>
               </div>
             </div>
           </div>
@@ -1021,7 +1022,8 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      className="absolute right-0 top-8 bg-gray-800 border border-gray-600 rounded-lg shadow-lg py-2 z-20 min-w-[120px]"
+                      className="absolute right-0 top-8 bg-gray-800 border border-gray-600 rounded-lg shadow-xl py-2 z-50 min-w-[120px]"
+                      style={{ transform: 'translateZ(0)' }}
                     >
                       <button 
                         onClick={() => {
