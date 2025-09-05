@@ -888,7 +888,7 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
       <div className="flex-1 overflow-auto relative">
         <div className="min-h-full">
           {/* Sticky Header Row */}
-          <div className="sticky top-0 z-50 bg-gray-800 border-b border-gray-700 shadow-lg backdrop-blur-sm">
+          <div className="sticky top-0 z-50 bg-gray-800 border-b border-gray-700 shadow-lg backdrop-blur-sm" style={{ position: 'sticky', top: 0 }}>
             <div className="flex min-w-[1400px]">
               {/* Frozen Columns: ACTIVATE & NAME */}
               <div className="sticky left-0 z-40 bg-gray-800 flex border-r border-gray-600">
