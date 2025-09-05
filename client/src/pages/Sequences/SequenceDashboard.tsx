@@ -28,6 +28,14 @@ interface Sequence {
   openRate: number;
   clickRate: number;
   bookingRate: number;
+  activeCount?: number;
+  pausedCount?: number;
+  notSentCount?: number;
+  bouncedCount?: number;
+  spamBlockCount?: number;
+  finishedCount?: number;
+  scheduledCount?: number;
+  deliveredCount?: number;
 }
 
 /**
@@ -68,7 +76,15 @@ const SequenceDashboard: React.FC = () => {
       replyRate: 1,
       openRate: 0.1,
       clickRate: 21.8,
-      bookingRate: 7.7
+      bookingRate: 7.7,
+      activeCount: 6647,
+      pausedCount: 62,
+      notSentCount: 172,
+      bouncedCount: 124,
+      spamBlockCount: 98,
+      finishedCount: 398,
+      scheduledCount: 3097,
+      deliveredCount: 4978
     },
     {
       id: '2', 
@@ -86,10 +102,18 @@ const SequenceDashboard: React.FC = () => {
       updatedAt: '2024-01-18',
       createdBy: 'WE',
       tags: ['media', 'europe', 'owners'],
-      replyRate: 1,
+      replyRate: 1.1,
       openRate: 0,
       clickRate: 13.5,
-      bookingRate: 3.4
+      bookingRate: 3.4,
+      activeCount: 578,
+      pausedCount: 9,
+      notSentCount: 75,
+      bouncedCount: 6,
+      spamBlockCount: 25,
+      finishedCount: 10,
+      scheduledCount: 197,
+      deliveredCount: 526
     },
     {
       id: '3',
@@ -107,10 +131,18 @@ const SequenceDashboard: React.FC = () => {
       updatedAt: '2024-01-16',
       createdBy: 'WE',
       tags: ['healthcare', 'middle-east', 'medical'],
-      replyRate: 7.2,
-      openRate: 2.9,
+      replyRate: 0,
+      openRate: 0,
       clickRate: 28.6,
-      bookingRate: 9.0
+      bookingRate: 9.0,
+      activeCount: 55,
+      pausedCount: 0,
+      notSentCount: 1,
+      bouncedCount: 0,
+      spamBlockCount: 3,
+      finishedCount: 14,
+      scheduledCount: 34,
+      deliveredCount: 48
     },
     {
       id: '4',
@@ -128,10 +160,18 @@ const SequenceDashboard: React.FC = () => {
       updatedAt: '2024-01-22',
       createdBy: 'WE',
       tags: ['media', 'saudi', 'arabia'],
-      replyRate: 2.9,
+      replyRate: 0,
       openRate: 0,
       clickRate: 0,
-      bookingRate: 0
+      bookingRate: 0,
+      activeCount: 51,
+      pausedCount: 0,
+      notSentCount: 1,
+      bouncedCount: 1,
+      spamBlockCount: 0,
+      finishedCount: 10,
+      scheduledCount: 30,
+      deliveredCount: 133
     },
     {
       id: '5',
@@ -152,7 +192,15 @@ const SequenceDashboard: React.FC = () => {
       replyRate: 0,
       openRate: 0,
       clickRate: 0,
-      bookingRate: 0
+      bookingRate: 0,
+      activeCount: 52,
+      pausedCount: 0,
+      notSentCount: 4,
+      bouncedCount: 0,
+      spamBlockCount: 0,
+      finishedCount: 0,
+      scheduledCount: 34,
+      deliveredCount: 18
     },
     {
       id: '6',
@@ -173,7 +221,15 @@ const SequenceDashboard: React.FC = () => {
       replyRate: 7.2,
       openRate: 2.9,
       clickRate: 0,
-      bookingRate: 0
+      bookingRate: 0,
+      activeCount: 15,
+      pausedCount: 0,
+      notSentCount: 1,
+      bouncedCount: 0,
+      spamBlockCount: 4,
+      finishedCount: 6,
+      scheduledCount: 2,
+      deliveredCount: 69
     },
     {
       id: '7',
@@ -194,7 +250,15 @@ const SequenceDashboard: React.FC = () => {
       replyRate: 0,
       openRate: 0,
       clickRate: 0,
-      bookingRate: 0
+      bookingRate: 0,
+      activeCount: 8,
+      pausedCount: 0,
+      notSentCount: 0,
+      bouncedCount: 0,
+      spamBlockCount: 0,
+      finishedCount: 0,
+      scheduledCount: 8,
+      deliveredCount: 0
     },
     {
       id: '8',
@@ -203,7 +267,7 @@ const SequenceDashboard: React.FC = () => {
       status: 'paused',
       type: 'mixed',
       steps: 5,
-      prospects: 918,
+      prospects: 0,
       replied: 3,
       opened: 1091,
       clicked: 5,
@@ -215,7 +279,15 @@ const SequenceDashboard: React.FC = () => {
       replyRate: 1,
       openRate: 0.1,
       clickRate: 0,
-      bookingRate: 0
+      bookingRate: 0,
+      activeCount: 0,
+      pausedCount: 918,
+      notSentCount: 37,
+      bouncedCount: 1,
+      spamBlockCount: 3,
+      finishedCount: 5,
+      scheduledCount: 0,
+      deliveredCount: 1091
     },
     {
       id: '9',
@@ -236,7 +308,15 @@ const SequenceDashboard: React.FC = () => {
       replyRate: 0,
       openRate: 0,
       clickRate: 0,
-      bookingRate: 0
+      bookingRate: 0,
+      activeCount: 43,
+      pausedCount: 0,
+      notSentCount: 6,
+      bouncedCount: 1,
+      spamBlockCount: 1,
+      finishedCount: 0,
+      scheduledCount: 0,
+      deliveredCount: 43
     },
     {
       id: '10',
@@ -245,7 +325,7 @@ const SequenceDashboard: React.FC = () => {
       status: 'paused',
       type: 'mixed',
       steps: 4,
-      prospects: 17,
+      prospects: 0,
       replied: 1,
       opened: 19,
       clicked: 1,
@@ -257,7 +337,15 @@ const SequenceDashboard: React.FC = () => {
       replyRate: 5.3,
       openRate: 0,
       clickRate: 0,
-      bookingRate: 0
+      bookingRate: 0,
+      activeCount: 0,
+      pausedCount: 17,
+      notSentCount: 1,
+      bouncedCount: 1,
+      spamBlockCount: 0,
+      finishedCount: 1,
+      scheduledCount: 0,
+      deliveredCount: 19
     }
   ];
 
@@ -796,7 +884,7 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
   return (
     <div className="bg-gray-900">
       {/* Table Header */}
-      <div className="grid grid-cols-14 gap-4 px-6 py-3 border-b border-gray-700 bg-gray-800 text-xs font-medium text-gray-300 uppercase tracking-wide">
+      <div className="grid grid-cols-12 gap-4 px-6 py-3 border-b border-gray-700 bg-gray-800 text-xs font-medium text-gray-300 uppercase tracking-wide">
         <div className="col-span-1 flex items-center">
           <input type="checkbox" className="mr-2 h-4 w-4 rounded border-gray-600 bg-gray-700" />
           ACTIVATE
@@ -811,8 +899,6 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
         <div className="col-span-1 text-center">FINISHED</div>
         <div className="col-span-1 text-center">SCHEDULED</div>
         <div className="col-span-1 text-center">DELIVERED</div>
-        <div className="col-span-1 text-center">REPLY</div>
-        <div className="col-span-1 text-center">INTERESTED</div>
         <div className="col-span-1 text-center">ACTIONS</div>
       </div>
 
@@ -823,7 +909,7 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
             key={sequence.id}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="grid grid-cols-14 gap-4 px-6 py-4 border-b border-gray-700 hover:bg-gray-800 cursor-pointer text-sm text-white"
+            className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-gray-700 hover:bg-gray-800 cursor-pointer text-sm text-white"
             onClick={() => navigateTo(`/sequences/${sequence.id}`)}
             data-testid={`row-sequence-${sequence.id}`}
           >
@@ -860,52 +946,42 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
 
             {/* Active */}
             <div className="col-span-1 text-center text-white">
-              {sequence.status === 'active' ? sequence.prospects : '-'}
+              {sequence.activeCount || '-'}
             </div>
 
             {/* Paused */}
             <div className="col-span-1 text-center text-white">
-              {sequence.status === 'paused' ? sequence.prospects : '-'}
+              {sequence.pausedCount || '-'}
             </div>
 
             {/* Not Sent */}
             <div className="col-span-1 text-center text-white">
-              {sequence.prospects > 0 ? Math.max(1, Math.floor(sequence.prospects * 0.05)) : '-'}
+              {sequence.notSentCount || '-'}
             </div>
 
             {/* Bounced */}
             <div className="col-span-1 text-center text-white">
-              {sequence.prospects > 0 ? Math.max(1, Math.floor(sequence.prospects * 0.02)) : '-'}
+              {sequence.bouncedCount || '-'}
             </div>
 
             {/* Spam Block */}
             <div className="col-span-1 text-center text-white">
-              {sequence.prospects > 0 ? Math.max(1, Math.floor(sequence.prospects * 0.01)) : '-'}
+              {sequence.spamBlockCount || '-'}
             </div>
 
             {/* Finished */}
             <div className="col-span-1 text-center text-white">
-              {sequence.replied > 0 ? sequence.replied : '-'}
+              {sequence.finishedCount || '-'}
             </div>
 
             {/* Scheduled */}
             <div className="col-span-1 text-center text-white">
-              {sequence.prospects > 0 ? Math.floor(sequence.prospects * 0.1) : '-'}
+              {sequence.scheduledCount || '-'}
             </div>
 
             {/* Delivered */}
             <div className="col-span-1 text-center text-white">
-              {sequence.opened > 0 ? sequence.opened : '-'}
-            </div>
-
-            {/* Reply */}
-            <div className="col-span-1 text-center text-white">
-              {sequence.replyRate > 0 ? `${sequence.replyRate}%` : '-'}
-            </div>
-
-            {/* Interested */}
-            <div className="col-span-1 text-center text-white">
-              {sequence.replyRate > 0 ? `${(sequence.replyRate * 0.3).toFixed(1)}%` : '-'}
+              {sequence.deliveredCount || '-'}
             </div>
 
             {/* Actions */}
