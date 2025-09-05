@@ -434,23 +434,23 @@ const SequenceDashboard: React.FC = () => {
   };
 
   return (
-    <div className="h-full overflow-auto bg-gray-900 text-white">
+    <div className="h-full overflow-auto bg-gray-900 text-gray-900">
       {/* Header with Tabs */}
       <div className="border-b border-gray-700 bg-gray-900 sticky top-0 z-10">
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center space-x-8">
-            <h1 className="text-xl font-semibold text-white">Sequences</h1>
+            <h1 className="text-xl font-semibold text-gray-900">Sequences</h1>
             <div className="flex items-center space-x-1">
-              <button className="px-4 py-2 text-sm font-medium text-white border-b-2 border-white">
+              <button className="px-4 py-2 text-sm font-medium text-gray-900 border-b-2 border-white">
                 All Sequences
               </button>
-              <button className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white">
+              <button className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-gray-900">
                 Analytics
               </button>
-              <button className="px-3 py-1 text-xs font-medium text-white bg-green-600 rounded">
+              <button className="px-3 py-1 text-xs font-medium text-gray-900 bg-green-600 rounded">
                 New
               </button>
-              <button className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white">
+              <button className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-gray-900">
                 Diagnostics
               </button>
             </div>
@@ -493,7 +493,7 @@ const SequenceDashboard: React.FC = () => {
                     <input
                       type="text"
                       placeholder="Search views"
-                      className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 text-sm"
+                      className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-gray-900 placeholder-gray-400 text-sm"
                     />
                   </div>
 
@@ -506,7 +506,7 @@ const SequenceDashboard: React.FC = () => {
                           setSelectedView('All Sequences');
                           setShowAllSequencesDropdown(false);
                         }}
-                        className="w-full text-left flex items-center px-3 py-2 text-sm text-white hover:bg-gray-700 rounded"
+                        className="w-full text-left flex items-center px-3 py-2 text-sm text-gray-900 hover:bg-gray-700 rounded"
                       >
                         <Grid className="h-4 w-4 mr-3" />
                         All Sequences
@@ -544,7 +544,7 @@ const SequenceDashboard: React.FC = () => {
             {/* Show Filters */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center space-x-2 text-sm text-gray-300 hover:text-white"
+              className="flex items-center space-x-2 text-sm text-gray-300 hover:text-gray-900"
               data-testid="button-toggle-filters"
             >
               <Filter className="h-4 w-4" />
@@ -560,21 +560,21 @@ const SequenceDashboard: React.FC = () => {
                 placeholder="Search sequences..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-400 w-64"
+                className="pl-10 pr-4 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400 w-64"
                 data-testid="input-search-sequences"
               />
             </div>
           </div>
 
           <div className="flex items-center space-x-4">
-            <button className="text-sm text-gray-300 hover:text-white">
+            <button className="text-sm text-gray-300 hover:text-gray-900">
               Save as new view
             </button>
-            <button className="flex items-center space-x-1 text-sm text-gray-300 hover:text-white">
+            <button className="flex items-center space-x-1 text-sm text-gray-300 hover:text-gray-900">
               <span>Sort</span>
               <span>▼</span>
             </button>
-            <button className="flex items-center space-x-1 text-sm text-gray-300 hover:text-white">
+            <button className="flex items-center space-x-1 text-sm text-gray-300 hover:text-gray-900">
               <span>View options</span>
               <span>▼</span>
             </button>
@@ -668,7 +668,7 @@ const SequenceDashboard: React.FC = () => {
           <p className="text-gray-600 mb-6">Create your first sequence to start engaging prospects.</p>
           <button
             onClick={() => navigateTo('/sequences/create')}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
+            className="bg-blue-600 hover:bg-blue-700 text-gray-900 px-6 py-2 rounded-lg transition-colors"
             data-testid="button-create-first-sequence"
           >
             Create Your First Sequence
@@ -901,36 +901,36 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
   };
 
   return (
-    <div className="bg-gray-900 h-full flex flex-col">
+    <div className="bg-white h-full flex flex-col">
       {/* Unified Scrollable Container */}
       <div className="flex-1 overflow-auto relative">
         <div className="min-h-full">
           {/* Sticky Header Row */}
-          <div className="sticky top-0 z-50 bg-gray-800 border-b border-gray-700 shadow-lg backdrop-blur-sm" style={{ position: 'sticky', top: 0, backgroundColor: 'rgb(31, 41, 55)', zIndex: 50 }}>
+          <div className="sticky top-0 z-50 bg-gray-50 border-b border-gray-200 shadow-lg backdrop-blur-sm" style={{ position: 'sticky', top: 0, backgroundColor: 'rgb(249, 250, 251)', zIndex: 50 }}>
             <div className="flex min-w-[1400px]">
               {/* Frozen Columns: ACTIVATE & NAME */}
-              <div className="sticky left-0 z-40 bg-gray-800 flex border-r border-gray-600">
-                <div className="w-[140px] px-4 py-3 flex items-center text-xs font-medium text-gray-300 uppercase tracking-wide">
-                  <input type="checkbox" className="mr-2 h-4 w-4 rounded border-gray-600 bg-gray-700" />
+              <div className="sticky left-0 z-40 bg-gray-50 flex border-r border-gray-200">
+                <div className="w-[140px] px-4 py-3 flex items-center text-xs font-medium text-gray-600 uppercase tracking-wide">
+                  <input type="checkbox" className="mr-2 h-4 w-4 rounded border-gray-300 bg-white" />
                   ACTIVATE
                 </div>
-                <div className="w-[240px] px-4 py-3 text-xs font-medium text-gray-300 uppercase tracking-wide">
+                <div className="w-[240px] px-4 py-3 text-xs font-medium text-gray-600 uppercase tracking-wide">
                   NAME
                 </div>
               </div>
               
               {/* Scrollable Columns */}
               <div className="flex">
-                <div className="w-[120px] px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">CREATED BY</div>
-                <div className="w-[100px] px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">ACTIVE</div>
-                <div className="w-[100px] px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">PAUSED</div>
-                <div className="w-[100px] px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">NOT SENT</div>
-                <div className="w-[100px] px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">BOUNCED</div>
-                <div className="w-[120px] px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">SPAM BLOCK</div>
-                <div className="w-[100px] px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">FINISHED</div>
-                <div className="w-[120px] px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">SCHEDULED</div>
-                <div className="w-[120px] px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">DELIVERED</div>
-                <div className="w-[100px] px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">ACTIONS</div>
+                <div className="w-[120px] px-4 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wide whitespace-nowrap">CREATED BY</div>
+                <div className="w-[100px] px-4 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wide whitespace-nowrap">ACTIVE</div>
+                <div className="w-[100px] px-4 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wide whitespace-nowrap">PAUSED</div>
+                <div className="w-[100px] px-4 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wide whitespace-nowrap">NOT SENT</div>
+                <div className="w-[100px] px-4 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wide whitespace-nowrap">BOUNCED</div>
+                <div className="w-[120px] px-4 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wide whitespace-nowrap">SPAM BLOCK</div>
+                <div className="w-[100px] px-4 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wide whitespace-nowrap">FINISHED</div>
+                <div className="w-[120px] px-4 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wide whitespace-nowrap">SCHEDULED</div>
+                <div className="w-[120px] px-4 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wide whitespace-nowrap">DELIVERED</div>
+                <div className="w-[100px] px-4 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wide whitespace-nowrap">ACTIONS</div>
               </div>
             </div>
           </div>
@@ -942,12 +942,12 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
               key={sequence.id}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="flex border-b border-gray-700 hover:bg-gray-800 cursor-pointer text-sm text-white min-w-[1400px]"
+              className="flex border-b border-gray-200 hover:bg-gray-50 cursor-pointer text-sm text-gray-900 min-w-[1400px]"
               onClick={() => navigateTo(`/sequences/${sequence.id}`)}
               data-testid={`row-sequence-${sequence.id}`}
             >
               {/* Frozen Columns: ACTIVATE & NAME */}
-              <div className="sticky left-0 z-30 bg-gray-900 hover:bg-gray-800 flex border-r border-gray-600">
+              <div className="sticky left-0 z-30 bg-white hover:bg-gray-50 flex border-r border-gray-200">
                 {/* Activate Toggle */}
                 <div className="w-[140px] px-4 py-4 flex items-center justify-center">
                   <button
@@ -955,10 +955,10 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
                       e.stopPropagation();
                       onAction(sequence.status === 'active' ? 'pause' : 'activate', sequence.id);
                     }}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white ${
                       sequence.status === 'active'
                         ? 'bg-gradient-to-r from-blue-500 to-purple-600 shadow-lg'
-                        : 'bg-gray-600 hover:bg-gray-500'
+                        : 'bg-gray-300 hover:bg-gray-400'
                     }`}
                     data-testid={`toggle-activate-${sequence.id}`}
                   >
@@ -973,69 +973,69 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
                 {/* Name */}
                 <div className="w-[240px] px-4 py-4 flex items-center space-x-3">
                   {(sequence.name.includes('LMX') || sequence.name.includes('Media')) && (
-                    <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center text-xs font-semibold text-white">
+                    <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center text-xs font-semibold text-gray-900">
                       WE
                     </div>
                   )}
-                  <div className="font-medium text-white truncate">{sequence.name}</div>
+                  <div className="font-medium text-gray-900 truncate">{sequence.name}</div>
                 </div>
               </div>
               
               {/* Scrollable Columns */}
               <div className="flex">
                 {/* Created By */}
-                <div className="w-[120px] px-4 py-4 flex items-center justify-center text-gray-300">
+                <div className="w-[120px] px-4 py-4 flex items-center justify-center text-gray-600">
                   WE
                 </div>
 
                 {/* Active */}
-                <div className="w-[100px] px-4 py-4 flex items-center justify-center text-white">
+                <div className="w-[100px] px-4 py-4 flex items-center justify-center text-gray-900">
                   {sequence.activeCount || '-'}
                 </div>
 
                 {/* Paused */}
-                <div className="w-[100px] px-4 py-4 flex items-center justify-center text-white">
+                <div className="w-[100px] px-4 py-4 flex items-center justify-center text-gray-900">
                   {sequence.pausedCount || '-'}
                 </div>
 
                 {/* Not Sent */}
-                <div className="w-[100px] px-4 py-4 flex items-center justify-center text-white">
+                <div className="w-[100px] px-4 py-4 flex items-center justify-center text-gray-900">
                   {sequence.notSentCount || '-'}
                 </div>
 
                 {/* Bounced */}
-                <div className="w-[100px] px-4 py-4 flex items-center justify-center text-white">
+                <div className="w-[100px] px-4 py-4 flex items-center justify-center text-gray-900">
                   {sequence.bouncedCount || '-'}
                 </div>
 
                 {/* Spam Block */}
-                <div className="w-[120px] px-4 py-4 flex items-center justify-center text-white">
+                <div className="w-[120px] px-4 py-4 flex items-center justify-center text-gray-900">
                   {sequence.spamBlockCount || '-'}
                 </div>
 
                 {/* Finished */}
-                <div className="w-[100px] px-4 py-4 flex items-center justify-center text-white">
+                <div className="w-[100px] px-4 py-4 flex items-center justify-center text-gray-900">
                   {sequence.finishedCount || '-'}
                 </div>
 
                 {/* Scheduled */}
-                <div className="w-[120px] px-4 py-4 flex items-center justify-center text-white">
+                <div className="w-[120px] px-4 py-4 flex items-center justify-center text-gray-900">
                   {sequence.scheduledCount || '-'}
                 </div>
 
                 {/* Delivered */}
-                <div className="w-[120px] px-4 py-4 flex items-center justify-center text-white">
+                <div className="w-[120px] px-4 py-4 flex items-center justify-center text-gray-900">
                   {sequence.deliveredCount || '-'}
                 </div>
 
                 {/* Actions */}
-                <div className="w-[100px] px-4 py-4 flex items-center justify-center text-white relative">
+                <div className="w-[100px] px-4 py-4 flex items-center justify-center text-gray-900 relative">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       setShowMenu(showMenu === sequence.id ? null : sequence.id);
                     }}
-                    className="p-2 hover:bg-gray-700 rounded-md text-gray-400 hover:text-white transition-colors"
+                    className="p-2 hover:bg-gray-100 rounded-md text-gray-500 hover:text-gray-700 transition-colors"
                     data-testid={`actions-menu-${sequence.id}`}
                   >
                     <MoreHorizontal className="h-4 w-4" />
@@ -1048,12 +1048,12 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
                       initial={{ opacity: 0, scale: 0.95, y: -10 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                      className="absolute right-0 top-12 bg-gray-800 border border-gray-600 rounded-lg shadow-2xl py-2 z-[100] min-w-[120px]"
+                      className="absolute right-0 top-12 bg-white border border-gray-200 rounded-lg shadow-2xl py-2 z-[100] min-w-[120px]"
                       style={{ 
                         transform: 'translateZ(0)',
-                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8)',
+                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
                         opacity: 1,
-                        backgroundColor: 'rgb(31, 41, 55)'
+                        backgroundColor: 'rgb(255, 255, 255)'
                       }}
                     >
                       <button 
@@ -1061,7 +1061,7 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
                           onAction('share', sequence.id);
                           setShowMenu(null);
                         }}
-                        className="w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-700"
+                        className="w-full text-left px-4 py-2 text-sm text-gray-900 hover:bg-gray-100"
                         data-testid={`action-share-${sequence.id}`}
                       >
                         Share
@@ -1071,7 +1071,7 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
                           onAction('clone', sequence.id);
                           setShowMenu(null);
                         }}
-                        className="w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-700"
+                        className="w-full text-left px-4 py-2 text-sm text-gray-900 hover:bg-gray-100"
                         data-testid={`action-clone-${sequence.id}`}
                       >
                         Clone
@@ -1081,7 +1081,7 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
                           onAction('edit', sequence.id);
                           setShowMenu(null);
                         }}
-                        className="w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-700"
+                        className="w-full text-left px-4 py-2 text-sm text-gray-900 hover:bg-gray-100"
                         data-testid={`action-edit-${sequence.id}`}
                       >
                         Edit
@@ -1091,7 +1091,7 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
                           onAction('delete', sequence.id);
                           setShowMenu(null);
                         }}
-                        className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700"
+                        className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
                         data-testid={`action-delete-${sequence.id}`}
                       >
                         Delete
@@ -1107,13 +1107,13 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
       </div>
 
       {/* Fixed Pagination */}
-      <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-t border-gray-700 bg-gray-900">
-        <div className="flex items-center space-x-2 text-sm text-gray-300">
+      <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-t border-gray-200 bg-white">
+        <div className="flex items-center space-x-2 text-sm text-gray-600">
           <span>1</span>
           <span className="mx-2">1 - 14 of 14</span>
         </div>
         <div className="bg-blue-600 p-2 rounded-full">
-          <span className="text-white text-xs">?</span>
+          <span className="text-gray-900 text-xs">?</span>
         </div>
       </div>
     </div>
