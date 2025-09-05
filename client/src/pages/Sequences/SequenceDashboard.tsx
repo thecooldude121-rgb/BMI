@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Plus, Search, Filter, MoreVertical, Play, Pause, Copy, 
@@ -873,6 +873,24 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
   const [selectedSequences, setSelectedSequences] = useState<string[]>([]);
   const [showMenu, setShowMenu] = useState<string | null>(null);
   const [openActionDropdown, setOpenActionDropdown] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMenu(null);
+      }
+    };
+
+    if (showMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showMenu]);
 
   const toggleSequence = (sequenceId: string) => {
     setSelectedSequences(prev => 
@@ -1026,13 +1044,16 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
                   {/* Actions Menu */}
                   {showMenu === sequence.id && (
                     <motion.div
+                      ref={menuRef}
                       initial={{ opacity: 0, scale: 0.95, y: -10 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                      className="absolute right-0 top-12 bg-gray-800 border border-gray-600 rounded-lg shadow-2xl py-2 z-[100] min-w-[120px] backdrop-blur-sm"
+                      className="absolute right-0 top-12 bg-gray-800 border border-gray-600 rounded-lg shadow-2xl py-2 z-[100] min-w-[120px]"
                       style={{ 
                         transform: 'translateZ(0)',
-                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8)'
+                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8)',
+                        opacity: 1,
+                        backgroundColor: 'rgb(31, 41, 55)'
                       }}
                     >
                       <button 
