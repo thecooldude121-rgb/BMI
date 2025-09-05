@@ -883,44 +883,39 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
   };
 
   return (
-    <div className="bg-gray-900 h-full overflow-hidden">
-      {/* Scrollable Table Container */}
-      <div className="h-full overflow-auto">
-        <div className="min-w-max">
-          {/* Table Header */}
-          <div className="grid grid-cols-14 gap-4 px-6 py-3 border-b border-gray-700 bg-gray-800 text-xs font-medium text-gray-300 uppercase tracking-wide sticky top-0 z-10 min-w-max">
-            <div className="col-span-1 flex items-center sticky left-0 bg-gray-800 z-20 min-w-[120px] pl-2">
-              <input type="checkbox" className="mr-2 h-4 w-4 rounded border-gray-600 bg-gray-700" />
-              ACTIVATE
-            </div>
-            <div className="col-span-2 min-w-[200px]">NAME</div>
-            <div className="col-span-1 text-center min-w-[100px]">CREATED BY</div>
-            <div className="col-span-1 text-center min-w-[80px]">ACTIVE</div>
-            <div className="col-span-1 text-center min-w-[80px]">PAUSED</div>
-            <div className="col-span-1 text-center min-w-[80px]">NOT SENT</div>
-            <div className="col-span-1 text-center min-w-[80px]">BOUNCED</div>
-            <div className="col-span-1 text-center min-w-[90px]">SPAM BLOCK</div>
-            <div className="col-span-1 text-center min-w-[80px]">FINISHED</div>
-            <div className="col-span-1 text-center min-w-[90px]">SCHEDULED</div>
-            <div className="col-span-1 text-center min-w-[90px]">DELIVERED</div>
-            <div className="col-span-1 text-center min-w-[70px]">REPLY</div>
-            <div className="col-span-1 text-center min-w-[90px]">INTERESTED</div>
-            <div className="col-span-1 text-center min-w-[80px]">ACTIONS</div>
-          </div>
+    <div className="bg-gray-900">
+      {/* Table Header */}
+      <div className="grid grid-cols-12 gap-4 px-6 py-3 border-b border-gray-700 bg-gray-800 text-xs font-medium text-gray-300 uppercase tracking-wide">
+        <div className="col-span-1 flex items-center">
+          <input type="checkbox" className="mr-2 h-4 w-4 rounded border-gray-600 bg-gray-700" />
+          ACTIVATE
+        </div>
+        <div className="col-span-2">NAME</div>
+        <div className="col-span-1 text-center">CREATED BY</div>
+        <div className="col-span-1 text-center">ACTIVE</div>
+        <div className="col-span-1 text-center">PAUSED</div>
+        <div className="col-span-1 text-center">NOT SENT</div>
+        <div className="col-span-1 text-center">BOUNCED</div>
+        <div className="col-span-1 text-center">SPAM BLOCK</div>
+        <div className="col-span-1 text-center">FINISHED</div>
+        <div className="col-span-1 text-center">SCHEDULED</div>
+        <div className="col-span-1 text-center">DELIVERED</div>
+        <div className="col-span-1 text-center">ACTIONS</div>
+      </div>
 
-          {/* Table Rows */}
-          <div>
-            {sequences.map((sequence) => (
+      {/* Table Rows */}
+      <div>
+        {sequences.map((sequence) => (
           <motion.div
             key={sequence.id}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="grid grid-cols-14 gap-4 px-6 py-4 border-b border-gray-700 hover:bg-gray-800 cursor-pointer text-sm text-white min-w-max"
+            className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-gray-700 hover:bg-gray-800 cursor-pointer text-sm text-white"
             onClick={() => navigateTo(`/sequences/${sequence.id}`)}
             data-testid={`row-sequence-${sequence.id}`}
           >
             {/* Activate Toggle */}
-            <div className="col-span-1 flex items-center sticky left-0 bg-gray-900 hover:bg-gray-800 z-10 min-w-[120px] pl-2">
+            <div className="col-span-1 flex items-center">
               <label className="relative inline-flex items-center cursor-pointer">
                 <input 
                   type="checkbox" 
@@ -936,7 +931,7 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
             </div>
 
             {/* Name */}
-            <div className="col-span-2 flex items-center space-x-3 min-w-[200px]">
+            <div className="col-span-2 flex items-center space-x-3">
               {(sequence.name.includes('LMX') || sequence.name.includes('Media')) && (
                 <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center text-xs font-semibold text-white">
                   WE
@@ -988,16 +983,6 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
             {/* Delivered */}
             <div className="col-span-1 text-center text-white">
               {sequence.deliveredCount || '-'}
-            </div>
-
-            {/* Reply */}
-            <div className="col-span-1 text-center text-white">
-              {sequence.replyRate > 0 ? `${sequence.replyRate}%` : '-'}
-            </div>
-
-            {/* Interested */}
-            <div className="col-span-1 text-center text-white">
-              {sequence.replyRate > 0 ? `${(sequence.replyRate * 0.3).toFixed(1)}%` : '-'}
             </div>
 
             {/* Actions */}
@@ -1064,19 +1049,17 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
               )}
             </div>
           </motion.div>
-            ))}
-          </div>
+        ))}
+      </div>
 
-          {/* Pagination */}
-          <div className="flex items-center justify-between px-6 py-4 border-t border-gray-700 bg-gray-900">
-            <div className="flex items-center space-x-2 text-sm text-gray-300">
-              <span>1</span>
-              <span className="mx-2">1 - 14 of 14</span>
-            </div>
-            <div className="bg-blue-600 p-2 rounded-full">
-              <span className="text-white text-xs">?</span>
-            </div>
-          </div>
+      {/* Pagination */}
+      <div className="flex items-center justify-between px-6 py-4 border-t border-gray-700 bg-gray-900">
+        <div className="flex items-center space-x-2 text-sm text-gray-300">
+          <span>1</span>
+          <span className="mx-2">1 - 14 of 14</span>
+        </div>
+        <div className="bg-blue-600 p-2 rounded-full">
+          <span className="text-white text-xs">?</span>
         </div>
       </div>
     </div>
