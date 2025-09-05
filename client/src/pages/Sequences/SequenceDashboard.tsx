@@ -901,7 +901,6 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
           <div className="col-span-1 text-center whitespace-nowrap">FINISHED</div>
           <div className="col-span-1 text-center whitespace-nowrap">SCHEDULED</div>
           <div className="col-span-1 text-center whitespace-nowrap">DELIVERED</div>
-          <div className="col-span-1 text-center whitespace-nowrap">ACTIONS</div>
         </div>
       </div>
 
