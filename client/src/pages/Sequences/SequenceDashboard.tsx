@@ -40,7 +40,7 @@ const SequenceDashboard: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<string>('updatedAt');
+  const [sortBy, setSortBy] = useState<string>('prospects');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedSequences, setSelectedSequences] = useState<string[]>([]);
@@ -274,8 +274,12 @@ const SequenceDashboard: React.FC = () => {
       return matchesSearch && matchesStatus && matchesType;
     });
 
-    // Sort sequences
+    // Sort sequences by prospects descending (largest first) by default
     filtered.sort((a, b) => {
+      if (sortBy === 'prospects') {
+        return sortOrder === 'desc' ? b.prospects - a.prospects : a.prospects - b.prospects;
+      }
+      
       let aValue: any = a[sortBy as keyof Sequence];
       let bValue: any = b[sortBy as keyof Sequence];
       
@@ -866,42 +870,42 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
 
             {/* Not Sent */}
             <div className="col-span-1 text-center text-white">
-              {Math.floor(sequence.prospects * 0.1)}
+              {sequence.prospects > 0 ? Math.max(1, Math.floor(sequence.prospects * 0.05)) : '-'}
             </div>
 
             {/* Bounced */}
             <div className="col-span-1 text-center text-white">
-              {Math.floor(sequence.prospects * 0.02)}
+              {sequence.prospects > 0 ? Math.max(1, Math.floor(sequence.prospects * 0.02)) : '-'}
             </div>
 
             {/* Spam Block */}
             <div className="col-span-1 text-center text-white">
-              {Math.floor(sequence.prospects * 0.01)}
+              {sequence.prospects > 0 ? Math.max(1, Math.floor(sequence.prospects * 0.01)) : '-'}
             </div>
 
             {/* Finished */}
             <div className="col-span-1 text-center text-white">
-              {sequence.replied}
+              {sequence.replied > 0 ? sequence.replied : '-'}
             </div>
 
             {/* Scheduled */}
             <div className="col-span-1 text-center text-white">
-              {Math.floor(sequence.prospects * 0.15)}
+              {sequence.prospects > 0 ? Math.floor(sequence.prospects * 0.1) : '-'}
             </div>
 
             {/* Delivered */}
             <div className="col-span-1 text-center text-white">
-              {sequence.opened}
+              {sequence.opened > 0 ? sequence.opened : '-'}
             </div>
 
             {/* Reply */}
             <div className="col-span-1 text-center text-white">
-              {sequence.replyRate}%
+              {sequence.replyRate > 0 ? `${sequence.replyRate}%` : '-'}
             </div>
 
             {/* Interested */}
             <div className="col-span-1 text-center text-white">
-              {(sequence.replyRate * 0.2).toFixed(1)}%
+              {sequence.replyRate > 0 ? `${(sequence.replyRate * 0.3).toFixed(1)}%` : '-'}
             </div>
 
             {/* Actions */}
