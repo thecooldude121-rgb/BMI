@@ -884,174 +884,192 @@ const SequenceList: React.FC<{ sequences: Sequence[]; onAction: (action: string,
 
   return (
     <div className="bg-gray-900 h-full flex flex-col">
-      {/* Fixed Header */}
-      <div className="flex-shrink-0 overflow-x-auto border-b border-gray-700 bg-gray-800">
-        <div className="min-w-[1400px] grid grid-cols-12 gap-4 px-6 py-3 text-xs font-medium text-gray-300 uppercase tracking-wide">
-          <div className="col-span-1 flex items-center whitespace-nowrap">
-            <input type="checkbox" className="mr-2 h-4 w-4 rounded border-gray-600 bg-gray-700" />
-            ACTIVATE
-          </div>
-          <div className="col-span-2 whitespace-nowrap">NAME</div>
-          <div className="col-span-1 text-center whitespace-nowrap">CREATED BY</div>
-          <div className="col-span-1 text-center whitespace-nowrap">ACTIVE</div>
-          <div className="col-span-1 text-center whitespace-nowrap">PAUSED</div>
-          <div className="col-span-1 text-center whitespace-nowrap">NOT SENT</div>
-          <div className="col-span-1 text-center whitespace-nowrap">BOUNCED</div>
-          <div className="col-span-1 text-center whitespace-nowrap">SPAM BLOCK</div>
-          <div className="col-span-1 text-center whitespace-nowrap">FINISHED</div>
-          <div className="col-span-1 text-center whitespace-nowrap">SCHEDULED</div>
-          <div className="col-span-1 text-center whitespace-nowrap">DELIVERED</div>
-        </div>
-      </div>
-
-      {/* Scrollable Table Content */}
+      {/* Unified Scrollable Container */}
       <div className="flex-1 overflow-auto">
-        <div className="min-w-[1400px]">
+        <div className="relative">
+          {/* Fixed Header Row */}
+          <div className="sticky top-0 z-20 bg-gray-800 border-b border-gray-700">
+            <div className="flex min-w-[1400px]">
+              {/* Frozen Columns: ACTIVATE & NAME */}
+              <div className="sticky left-0 z-30 bg-gray-800 flex border-r border-gray-600">
+                <div className="w-[140px] px-4 py-3 flex items-center text-xs font-medium text-gray-300 uppercase tracking-wide">
+                  <input type="checkbox" className="mr-2 h-4 w-4 rounded border-gray-600 bg-gray-700" />
+                  ACTIVATE
+                </div>
+                <div className="w-[240px] px-4 py-3 text-xs font-medium text-gray-300 uppercase tracking-wide">
+                  NAME
+                </div>
+              </div>
+              
+              {/* Scrollable Columns */}
+              <div className="flex">
+                <div className="w-[120px] px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">CREATED BY</div>
+                <div className="w-[100px] px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">ACTIVE</div>
+                <div className="w-[100px] px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">PAUSED</div>
+                <div className="w-[100px] px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">NOT SENT</div>
+                <div className="w-[100px] px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">BOUNCED</div>
+                <div className="w-[120px] px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">SPAM BLOCK</div>
+                <div className="w-[100px] px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">FINISHED</div>
+                <div className="w-[120px] px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">SCHEDULED</div>
+                <div className="w-[120px] px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">DELIVERED</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Table Rows */}
+          <div>
           {sequences.map((sequence) => (
             <motion.div
               key={sequence.id}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-gray-700 hover:bg-gray-800 cursor-pointer text-sm text-white"
+              className="flex border-b border-gray-700 hover:bg-gray-800 cursor-pointer text-sm text-white min-w-[1400px]"
               onClick={() => navigateTo(`/sequences/${sequence.id}`)}
               data-testid={`row-sequence-${sequence.id}`}
             >
-            {/* Activate Toggle */}
-            <div className="col-span-1 flex items-center">
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  className="sr-only peer" 
-                  checked={sequence.status === 'active'}
-                  onChange={(e) => {
-                    e.stopPropagation();
-                    onAction(sequence.status === 'active' ? 'pause' : 'activate', sequence.id);
-                  }}
-                />
-                <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-purple-600"></div>
-              </label>
-            </div>
+              {/* Frozen Columns: ACTIVATE & NAME */}
+              <div className="sticky left-0 z-10 bg-gray-900 hover:bg-gray-800 flex border-r border-gray-600">
+                {/* Activate Toggle */}
+                <div className="w-[140px] px-4 py-4 flex items-center justify-center">
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      className="sr-only peer" 
+                      checked={sequence.status === 'active'}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        onAction(sequence.status === 'active' ? 'pause' : 'activate', sequence.id);
+                      }}
+                    />
+                    <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-purple-600"></div>
+                  </label>
+                </div>
 
-            {/* Name */}
-            <div className="col-span-2 flex items-center space-x-3">
-              {(sequence.name.includes('LMX') || sequence.name.includes('Media')) && (
-                <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center text-xs font-semibold text-white">
+                {/* Name */}
+                <div className="w-[240px] px-4 py-4 flex items-center space-x-3">
+                  {(sequence.name.includes('LMX') || sequence.name.includes('Media')) && (
+                    <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center text-xs font-semibold text-white">
+                      WE
+                    </div>
+                  )}
+                  <div className="font-medium text-white truncate">{sequence.name}</div>
+                </div>
+              </div>
+              
+              {/* Scrollable Columns */}
+              <div className="flex">
+                {/* Created By */}
+                <div className="w-[120px] px-4 py-4 flex items-center justify-center text-gray-300">
                   WE
                 </div>
-              )}
-              <div className="font-medium text-white truncate">{sequence.name}</div>
-            </div>
 
-            {/* Created By */}
-            <div className="col-span-1 text-center text-gray-300">
-              WE
-            </div>
+                {/* Active */}
+                <div className="w-[100px] px-4 py-4 flex items-center justify-center text-white">
+                  {sequence.activeCount || '-'}
+                </div>
 
-            {/* Active */}
-            <div className="col-span-1 text-center text-white">
-              {sequence.activeCount || '-'}
-            </div>
+                {/* Paused */}
+                <div className="w-[100px] px-4 py-4 flex items-center justify-center text-white">
+                  {sequence.pausedCount || '-'}
+                </div>
 
-            {/* Paused */}
-            <div className="col-span-1 text-center text-white">
-              {sequence.pausedCount || '-'}
-            </div>
+                {/* Not Sent */}
+                <div className="w-[100px] px-4 py-4 flex items-center justify-center text-white">
+                  {sequence.notSentCount || '-'}
+                </div>
 
-            {/* Not Sent */}
-            <div className="col-span-1 text-center text-white">
-              {sequence.notSentCount || '-'}
-            </div>
+                {/* Bounced */}
+                <div className="w-[100px] px-4 py-4 flex items-center justify-center text-white">
+                  {sequence.bouncedCount || '-'}
+                </div>
 
-            {/* Bounced */}
-            <div className="col-span-1 text-center text-white">
-              {sequence.bouncedCount || '-'}
-            </div>
+                {/* Spam Block */}
+                <div className="w-[120px] px-4 py-4 flex items-center justify-center text-white">
+                  {sequence.spamBlockCount || '-'}
+                </div>
 
-            {/* Spam Block */}
-            <div className="col-span-1 text-center text-white">
-              {sequence.spamBlockCount || '-'}
-            </div>
+                {/* Finished */}
+                <div className="w-[100px] px-4 py-4 flex items-center justify-center text-white">
+                  {sequence.finishedCount || '-'}
+                </div>
 
-            {/* Finished */}
-            <div className="col-span-1 text-center text-white">
-              {sequence.finishedCount || '-'}
-            </div>
+                {/* Scheduled */}
+                <div className="w-[120px] px-4 py-4 flex items-center justify-center text-white">
+                  {sequence.scheduledCount || '-'}
+                </div>
 
-            {/* Scheduled */}
-            <div className="col-span-1 text-center text-white">
-              {sequence.scheduledCount || '-'}
-            </div>
+                {/* Delivered */}
+                <div className="w-[120px] px-4 py-4 flex items-center justify-center text-white">
+                  {sequence.deliveredCount || '-'}
+                </div>
 
-            {/* Delivered */}
-            <div className="col-span-1 text-center text-white">
-              {sequence.deliveredCount || '-'}
-            </div>
-
-            {/* Actions */}
-            <div className="col-span-1 text-center text-white relative">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowMenu(showMenu === sequence.id ? null : sequence.id);
-                }}
-                className="p-1 hover:bg-gray-700 rounded text-gray-400"
-              >
-                <MoreHorizontal className="h-4 w-4" />
-              </button>
-
-              {/* Actions Menu */}
-              {showMenu === sequence.id && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  className="absolute right-0 top-8 bg-gray-800 border border-gray-600 rounded-lg shadow-lg py-2 z-20 min-w-[120px]"
-                >
-                  <button 
-                    onClick={() => {
-                      onAction('share', sequence.id);
-                      setShowMenu(null);
+                {/* Actions */}
+                <div className="w-[100px] px-4 py-4 flex items-center justify-center text-white relative">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowMenu(showMenu === sequence.id ? null : sequence.id);
                     }}
-                    className="w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-700"
-                    data-testid={`action-share-${sequence.id}`}
+                    className="p-1 hover:bg-gray-700 rounded text-gray-400"
                   >
-                    Share
+                    <MoreHorizontal className="h-4 w-4" />
                   </button>
-                  <button 
-                    onClick={() => {
-                      onAction('clone', sequence.id);
-                      setShowMenu(null);
-                    }}
-                    className="w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-700"
-                    data-testid={`action-clone-${sequence.id}`}
-                  >
-                    Clone
-                  </button>
-                  <button 
-                    onClick={() => {
-                      onAction('edit', sequence.id);
-                      setShowMenu(null);
-                    }}
-                    className="w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-700"
-                    data-testid={`action-edit-${sequence.id}`}
-                  >
-                    Edit
-                  </button>
-                  <button 
-                    onClick={() => {
-                      onAction('delete', sequence.id);
-                      setShowMenu(null);
-                    }}
-                    className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700"
-                    data-testid={`action-delete-${sequence.id}`}
-                  >
-                    Delete
-                  </button>
-                </motion.div>
-              )}
-            </div>
-          </motion.div>
-          ))}
+
+                  {/* Actions Menu */}
+                  {showMenu === sequence.id && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="absolute right-0 top-8 bg-gray-800 border border-gray-600 rounded-lg shadow-lg py-2 z-20 min-w-[120px]"
+                    >
+                      <button 
+                        onClick={() => {
+                          onAction('share', sequence.id);
+                          setShowMenu(null);
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-700"
+                        data-testid={`action-share-${sequence.id}`}
+                      >
+                        Share
+                      </button>
+                      <button 
+                        onClick={() => {
+                          onAction('clone', sequence.id);
+                          setShowMenu(null);
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-700"
+                        data-testid={`action-clone-${sequence.id}`}
+                      >
+                        Clone
+                      </button>
+                      <button 
+                        onClick={() => {
+                          onAction('edit', sequence.id);
+                          setShowMenu(null);
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-700"
+                        data-testid={`action-edit-${sequence.id}`}
+                      >
+                        Edit
+                      </button>
+                      <button 
+                        onClick={() => {
+                          onAction('delete', sequence.id);
+                          setShowMenu(null);
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700"
+                        data-testid={`action-delete-${sequence.id}`}
+                      >
+                        Delete
+                      </button>
+                    </motion.div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+            ))}
+          </div>
         </div>
       </div>
 
