@@ -62,17 +62,17 @@ const AccountDetailWrapper = React.memo(({ params }: { params: { id: string } })
     <UltimateAccountDetailPage params={params} />
   </LazyLoader>
 ));
-const ContactDetailWrapper = React.memo(({ params }: { params: { id: string } }) => (
+const ContactDetailWrapper = React.memo(() => (
   <LazyLoader fallback={<FastLoader />}>
-    <ContactDetailPage params={params} />
+    <ContactDetailPage />
   </LazyLoader>
 ));
-const CompanyDetailWrapper = React.memo(({ params }: { params: { id: string } }) => (
+const CompanyDetailWrapper = React.memo(() => (
   <LazyLoader fallback={<FastLoader />}>
-    <CompanyDetailPageBMI params={params} />
+    <CompanyDetailPageBMI />
   </LazyLoader>
 ));
-const PeopleDetailWrapper = React.memo(({ params }: { params: { id: string } }) => (
+const PeopleDetailWrapper = React.memo(() => (
   <LazyLoader fallback={<FastLoader />}>
     <PeopleDetailPage />
   </LazyLoader>
