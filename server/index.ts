@@ -3,6 +3,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { seedDatabase } from "./seed";
+import { comprehensiveAccountsSeeder } from "./comprehensive-accounts-seeder";
 
 const app = express();
 app.use(express.json({ limit: '10mb' }));
@@ -68,11 +69,11 @@ app.use((req, res, next) => {
 (async () => {
   // Database seeding disabled to prevent automatic account creation
   // Seed database if empty
-  // try {
-  //   await seedDatabase();
-  // } catch (error: any) {
-  //   console.log("Database already seeded or error occurred:", error.message);
-  // }
+  try {
+    await comprehensiveAccountsSeeder.run();
+  } catch (error: any) {
+    console.log("Comprehensive accounts seeding error:", error.message);
+  }
 
   // Seed gamification data
   try {
