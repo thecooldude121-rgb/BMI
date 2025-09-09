@@ -86,7 +86,9 @@ export async function seedGamificationData() {
 
     // Get the first user for sample data - using a simple query since we don't have getUsers method
     try {
-      const firstUser = await storage.getUser("f310c13c-3edf-4f46-a6ec-46503ed02377"); // Use known user ID from seed
+      // Get the first available user from the database instead of using hardcoded ID
+      const users = await storage.db.select().from(storage.schema.profiles).limit(1);
+      const firstUser = users[0];
       if (!firstUser) {
         console.log('⚠️ No users found, skipping user-specific gamification data');
         return;
