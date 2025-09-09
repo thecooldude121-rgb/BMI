@@ -1,68 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
-
-export interface Activity {
-  id: string;
-  type: 'call' | 'email' | 'meeting' | 'task' | 'note' | 'sms' | 'whatsapp' | 'linkedin' | 'demo' | 'proposal' | 'document';
-  subject: string;
-  description?: string;
-  status: 'open' | 'completed' | 'cancelled' | 'planned' | 'in_progress';
-  priority?: 'low' | 'medium' | 'high' | 'urgent';
-  outcome?: string;
-  duration?: number;
-  dueDate?: string;
-  scheduledAt?: string;
-  completedAt?: string;
-  assignedTo?: string;
-  assignedToUser?: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    avatarUrl?: string;
-  };
-  createdBy?: string;
-  createdByUser?: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    avatarUrl?: string;
-  };
-  
-  // Related entities
-  relatedToType?: 'lead' | 'deal' | 'contact' | 'account';
-  relatedToId?: string;
-  relatedTo?: {
-    id: string;
-    name: string;
-    type: string;
-  };
-  
-  // Additional relationship fields
-  accountId?: string;
-  dealId?: string;
-  contactId?: string;
-  leadId?: string;
-  
-  // Enhanced fields
-  recurrence?: 'none' | 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly' | 'custom';
-  nextAction?: string;
-  tags?: string[];
-  followers?: string[];
-  attachments?: any[];
-  source?: string;
-  
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface ActivityMetrics {
-  totalActivities: number;
-  openActivities: number;
-  completedToday: number;
-  overdueActivities: number;
-  avgCompletionTime: number;
-  completionRate: number;
-}
+import type { Activity, ActivityMetrics } from '@/types/crm';
 
 // Activity query keys for consistent caching
 export const ACTIVITY_QUERY_KEYS = {

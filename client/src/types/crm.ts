@@ -496,6 +496,15 @@ export interface AIInsight {
   acknowledgedAt?: string;
 }
 
+export interface ActivityMetrics {
+  totalActivities: number;
+  openActivities: number;
+  completedToday: number;
+  overdueActivities: number;
+  avgCompletionTime: number;
+  completionRate: number;
+}
+
 export interface Notification {
   id: string;
   type: 'mention' | 'assignment' | 'reminder' | 'update' | 'milestone' | 'system';
