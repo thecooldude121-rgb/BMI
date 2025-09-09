@@ -4,6 +4,7 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { seedDatabase } from "./seed";
 import { comprehensiveAccountsSeeder } from "./comprehensive-accounts-seeder";
+import { comprehensiveDealsSeeder } from './comprehensive-deals-seeder';
 
 const app = express();
 app.use(express.json({ limit: '10mb' }));
@@ -71,6 +72,9 @@ app.use((req, res, next) => {
   // Seed database if empty
   try {
     await comprehensiveAccountsSeeder.run();
+    
+    console.log('💼 Running comprehensive deals seeder...');
+    await comprehensiveDealsSeeder.run();
   } catch (error: any) {
     console.log("Comprehensive accounts seeding error:", error.message);
   }
