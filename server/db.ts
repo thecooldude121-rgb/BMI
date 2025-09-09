@@ -1,15 +1,16 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
-import ws from "ws";
+import { createClient } from '@supabase/supabase-js';
 import * as schema from "@shared/schema";
 
-neonConfig.webSocketConstructor = ws;
-
-if (!process.env.DATABASE_URL) {
+if (!process.env.VITE_SUPABASE_URL || !process.env.VITE_SUPABASE_ANON_KEY) {
   throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
+    "VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be set. Did you forget to provision a database?",
   );
 }
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-export const db = drizzle({ client: pool, schema });
+export const supabase = createClient(
+  process.env.VITE_SUPABASE_URL,
+  process.env.VITE_SUPABASE_ANON_KEY
+);
+
+// For compatibility with existing code that expects a db export
+export const db = supabase;
