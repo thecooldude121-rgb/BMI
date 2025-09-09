@@ -995,7 +995,7 @@ export default function SimpleAdvancedDealsModule() {
           </div>
         </div>
 
-        {/* Fixed Analytics Dashboard */}
+        {/* Advanced Analytics Dashboard - Moved to top of header */}
         <div className="px-6 py-4 border-b border-gray-200 bg-white">
           <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
           <div className="bg-blue-50 p-4 rounded-lg">
@@ -1051,39 +1051,10 @@ export default function SimpleAdvancedDealsModule() {
             </div>
           </div>
         </div>
-      </div>
-      </div>
-
-        {/* AI-Powered Quick Insights - Fixed position below analytics */}
-        <div className="px-6 py-4 bg-white border-b border-gray-200">
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <TrendingUp className="w-5 h-5 text-blue-600" />
-                <div>
-                  <h3 className="font-semibold text-gray-900">AI Pipeline Insights</h3>
-                  <p className="text-sm text-gray-600">
-                    {deals.filter((d: any) => d.dealHealth === 'at_risk').length > 0 && 
-                      `⚠️ ${deals.filter((d: any) => d.dealHealth === 'at_risk').length} deals need attention. `
-                    }
-                    📈 Pipeline velocity: {Math.round(Math.random() * 20 + 15)} days avg. 
-                    🎯 Next month forecast: ${Math.round(deals.reduce((sum: number, deal: any) => sum + (parseFloat(deal.value) * deal.probability / 100), 0) * 1.2).toLocaleString()}
-                    💡 Top opportunity: {deals.length > 0 ? deals.sort((a: any, b: any) => parseFloat(b.value) - parseFloat(a.value))[0].name : 'None'}
-                  </p>
-                </div>
-              </div>
-              <button 
-                className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                onClick={() => alert('AI Insights Dashboard - Coming Soon!\n\n• Pipeline health analysis\n• Deal velocity predictions\n• Revenue forecasting\n• Risk assessments\n• Recommended actions')}
-              >
-                View Details →
-              </button>
-            </div>
-          </div>
         </div>
 
-      {/* Scrollable Content Section - Adjusted padding for new fixed section */}
-      <div className="overflow-auto" style={{ paddingTop: '300px', height: 'calc(100vh - 60px)' }}>
+      {/* Scrollable Content Section - Adjusted padding for analytics dashboard */}
+      <div className="overflow-auto" style={{ paddingTop: '240px', height: 'calc(100vh - 60px)' }}>
         <div className="px-6 py-4">
           {/* Search and Filters */}
           <div className="flex items-center justify-between">
@@ -1221,8 +1192,37 @@ export default function SimpleAdvancedDealsModule() {
                 {viewMode === 'kanban' && renderKanbanView()}
                 {viewMode === 'list' && renderListView()}
                 {viewMode === 'table' && renderTableView()}
+                
+                {/* AI-Powered Quick Insights - Moved below deal content */}
+                <div className="mt-8 px-6">
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <TrendingUp className="w-5 h-5 text-blue-600" />
+                        <div>
+                          <h3 className="font-semibold text-gray-900">AI Pipeline Insights</h3>
+                          <p className="text-sm text-gray-600">
+                            {deals.filter((d: any) => d.dealHealth === 'at_risk').length > 0 && 
+                              `⚠️ ${deals.filter((d: any) => d.dealHealth === 'at_risk').length} deals need attention. `
+                            }
+                            📈 Pipeline velocity: {Math.round(Math.random() * 20 + 15)} days avg. 
+                            🎯 Next month forecast: ${Math.round(deals.reduce((sum: number, deal: any) => sum + (parseFloat(deal.value) * deal.probability / 100), 0) * 1.2).toLocaleString()}
+                            💡 Top opportunity: {deals.length > 0 ? deals.sort((a: any, b: any) => parseFloat(b.value) - parseFloat(a.value))[0].name : 'None'}
+                          </p>
+                        </div>
+                      </div>
+                      <button 
+                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                        onClick={() => alert('AI Insights Dashboard - Coming Soon!\n\n• Pipeline health analysis\n• Deal velocity predictions\n• Revenue forecasting\n• Risk assessments\n• Recommended actions')}
+                      >
+                        View Details →
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </>
             )}
+          </div>
           </div>
         </div>
       </div>
