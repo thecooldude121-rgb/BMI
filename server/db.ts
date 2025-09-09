@@ -1,16 +1,15 @@
-import { createClient } from '@supabase/supabase-js';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
 import * as schema from "@shared/schema";
 
-if (!process.env.VITE_SUPABASE_URL || !process.env.VITE_SUPABASE_ANON_KEY) {
+if (!process.env.DATABASE_URL) {
   throw new Error(
-    "VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be set. Did you forget to provision a database?",
+    "DATABASE_URL must be set. Did you forget to provision a database?",
   );
 }
 
-export const supabase = createClient(
-  process.env.VITE_SUPABASE_URL,
-  process.env.VITE_SUPABASE_ANON_KEY
-);
+const client = postgres(process.env.DATABASE_URL);
+export const db = drizzle(client, { schema });
 
-// For compatibility with existing code that expects a db export
-export const db = supabase;
+// For compatibility with existing code that expects a supabase export
+export const supabase = null; // This will need to be properly configured if Supabase features are needed
