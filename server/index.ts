@@ -70,14 +70,14 @@ app.use((req, res, next) => {
 (async () => {
   // Database seeding disabled to prevent automatic account creation
   // Seed database if empty
-  try {
-    await comprehensiveAccountsSeeder.run();
-    
-    console.log('💼 Running comprehensive deals seeder...');
-    await comprehensiveDealsSeeder.run();
-  } catch (error: any) {
-    console.log("Comprehensive accounts seeding error:", error.message);
-  }
+  // try {
+  //   await comprehensiveAccountsSeeder.run();
+  //   
+  //   console.log('💼 Running comprehensive deals seeder...');
+  //   await comprehensiveDealsSeeder.run();
+  // } catch (error: any) {
+  //   console.log("Comprehensive accounts seeding error:", error.message);
+  // }
 
   // Seed gamification data
   try {
