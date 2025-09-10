@@ -2,7 +2,8 @@ import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import { seedDatabase } from "./seed";
+import { db } from "./db";
+import { accounts, contacts, deals, leads, activities } from "../shared/schema";
 import { comprehensiveAccountsSeeder } from "./comprehensive-accounts-seeder";
 import { comprehensiveDealsSeeder } from './comprehensive-deals-seeder';
 
