@@ -103,6 +103,17 @@ app.use((req, res, next) => {
   //   console.log("Meeting seeding error:", error.message);
   // }
 
+  // Contacts endpoint
+  app.get("/api/contacts", async (req, res) => {
+    try {
+      const contactsData = await db.select().from(contacts);
+      res.json(contactsData);
+    } catch (error) {
+      console.error("Error fetching contacts:", error);
+      res.status(500).json({ error: "Failed to fetch contacts" });
+    }
+  });
+
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
