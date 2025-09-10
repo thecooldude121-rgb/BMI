@@ -143,6 +143,16 @@ app.use((req, res, next) => {
     }
   });
 
+  app.get("/api/deals", async (req, res) => {
+    try {
+      const dealsData = await db.select().from(deals);
+      res.json(dealsData);
+    } catch (error) {
+      console.error("Error fetching deals:", error);
+      res.status(500).json({ error: "Failed to fetch deals" });
+    }
+  });
+
   const server = await registerRoutes(app);
 
   // Add missing API endpoints
