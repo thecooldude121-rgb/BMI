@@ -156,6 +156,16 @@ app.use((req, res, next) => {
     }
   });
 
+  app.get("/api/activities", async (req, res) => {
+    try {
+      const activitiesData = await db.select().from(activities);
+      res.json(activitiesData);
+    } catch (error) {
+      console.error("Error fetching activities:", error);
+      res.status(500).json({ error: "Failed to fetch activities" });
+    }
+  });
+
   app.get("/api/lead-generation/analytics", async (req, res) => {
     try {
       // Check if OpenAI API key is configured
