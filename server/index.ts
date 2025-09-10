@@ -106,35 +106,6 @@ app.use((req, res, next) => {
   // Contacts endpoint
   app.get("/api/contacts", async (req, res) => {
     try {
-      // Check if OpenAI API key is configured
-      if (!process.env.OPENAI_API_KEY) {
-        // Return mock data when API key is not configured
-        return res.json({
-          totalLeads: 1250,
-          qualifiedLeads: 890,
-          conversionRate: 71.2,
-          averageScore: 8.4,
-          trends: {
-            leadsGrowth: 15.3,
-            qualityImprovement: 8.7,
-            conversionTrend: 12.1
-          },
-          topSources: [
-            { source: "LinkedIn", leads: 450, conversion: 78 },
-            { source: "Website", leads: 320, conversion: 65 },
-            { source: "Referrals", leads: 280, conversion: 85 },
-            { source: "Email", leads: 200, conversion: 58 }
-          ],
-          industryBreakdown: [
-            { industry: "Technology", count: 380, avgScore: 8.9 },
-            { industry: "Healthcare", count: 290, avgScore: 8.2 },
-            { industry: "Finance", count: 250, avgScore: 8.7 },
-            { industry: "Manufacturing", count: 180, avgScore: 7.8 },
-            { industry: "Retail", count: 150, avgScore: 7.5 }
-          ]
-        });
-      }
-
       const contactsData = await db.select().from(contacts);
       res.json(contactsData);
     } catch (error) {
@@ -159,6 +130,7 @@ app.use((req, res, next) => {
   app.get("/api/accounts", async (req, res) => {
     try {
       const accountsData = await db.select().from(accounts);
+      res.json(accountsData);
       res.json(accountsData);
     } catch (error) {
       console.error("Error fetching accounts:", error);
