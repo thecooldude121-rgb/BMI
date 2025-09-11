@@ -4,6 +4,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { DataProvider } from './contexts/DataContext';
 import Header from './components/Layout/Header';
 import Dashboard from './pages/Dashboard';
+import CRMPage from './pages/CRM/CRMPage';
 import LeadsPage from './pages/CRM/LeadsPage';
 import ContactsPage from './pages/CRM/ContactsPage';
 import CompaniesPage from './pages/CRM/CompaniesPage';
@@ -35,7 +36,8 @@ const CRMRoutes = () => {
   return (
     <div className="h-full overflow-auto bg-gray-50 p-6">
       <Routes>
-        <Route path="/" element={<LeadsPage />} />
+        <Route path="/" element={<Navigate to="/crm/overview" replace />} />
+        <Route path="/overview" element={<CRMPage />} />
         <Route path="/leads" element={<LeadsPage />} />
         <Route path="/contacts" element={<ContactsPage />} />
         <Route path="/accounts" element={<CompaniesPage />} />

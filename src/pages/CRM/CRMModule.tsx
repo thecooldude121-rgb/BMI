@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route, NavLink, Outlet } from 'react-router-dom';
+import CRMPage from './CRMPage';
 import LeadsPage from './LeadsPage';
 import ContactsPage from './ContactsPage';
 import CompaniesPage from './CompaniesPage';
@@ -12,7 +13,8 @@ const CRMModule = () => {
   return (
     <div className="h-full overflow-auto bg-gray-50 p-6">
       <Routes>
-        <Route path="/" element={<LeadsPage />} />
+        <Route path="/" element={<CRMPage />} />
+        <Route path="/overview" element={<CRMPage />} />
         <Route path="/leads" element={<LeadsPage />} />
         <Route path="/contacts" element={<ContactsPage />} />
         <Route path="/accounts" element={<CompaniesPage />} />

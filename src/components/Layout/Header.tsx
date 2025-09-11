@@ -23,6 +23,7 @@ const Header: React.FC = () => {
   const isCRMPage = location.pathname.startsWith('/crm');
 
   const crmNavigation = [
+    { name: 'Overview', href: '/crm/overview', icon: LayoutDashboard },
     { name: 'Leads', href: '/crm/leads', icon: UserPlus },
     { name: 'Accounts', href: '/crm/accounts', icon: Building },
     { name: 'Deals', href: '/crm/deals', icon: DollarSign },
