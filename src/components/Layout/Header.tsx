@@ -4,7 +4,7 @@ import {
   Bell, Search, Settings, Menu, Plus, Mail, Building2, 
   Users, UserPlus, DollarSign, Phone, Activity, LayoutDashboard,
   UserCheck, Target, BarChart3, Calendar, ChevronDown, X, MoreHorizontal,
-  Building
+  Building, Trophy
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
