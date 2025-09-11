@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, NavLink, Outlet } from 'react-router-dom';
 import CRMPage from './CRMPage';
+import GamificationPage from './GamificationPage';
 import LeadsPage from './LeadsPage';
 import ContactsPage from './ContactsPage';
 import CompaniesPage from './CompaniesPage';
@@ -15,6 +16,7 @@ const CRMModule = () => {
       <Routes>
         <Route path="/" element={<CRMPage />} />
         <Route path="/overview" element={<CRMPage />} />
+        <Route path="/gamification" element={<GamificationPage />} />
         <Route path="/leads" element={<LeadsPage />} />
         <Route path="/contacts" element={<ContactsPage />} />
         <Route path="/accounts" element={<CompaniesPage />} />
