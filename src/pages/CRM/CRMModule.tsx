@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, NavLink, Outlet } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import CRMPage from './CRMPage';
 import GamificationPage from './GamificationPage';
 import LeadsPage from './LeadsPage';
