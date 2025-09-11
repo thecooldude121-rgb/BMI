@@ -37,8 +37,7 @@ const CRMRoutes = () => {
   return (
     <div className="h-full overflow-auto bg-gray-50 p-6">
       <Routes>
-        <Route path="/" element={<Navigate to="/crm/overview" replace />} />
-        <Route path="/overview" element={<CRMPage />} />
+        <Route path="/" element={<Navigate to="/crm/leads" replace />} />
         <Route path="/gamification" element={<GamificationPage />} />
         <Route path="/leads" element={<LeadsPage />} />
         <Route path="/contacts" element={<ContactsPage />} />
