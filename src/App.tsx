@@ -20,6 +20,7 @@ import Calendar from './pages/Calendar/Calendar';
 import LeadGeneration from './pages/LeadGeneration/LeadGeneration';
 import Settings from './pages/Settings/Settings';
 import Login from './pages/Auth/Login';
+import GamificationPage from './pages/CRM/GamificationPage';
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -38,6 +39,7 @@ const CRMRoutes = () => {
       <Routes>
         <Route path="/" element={<Navigate to="/crm/overview" replace />} />
         <Route path="/overview" element={<CRMPage />} />
+        <Route path="/gamification" element={<GamificationPage />} />
         <Route path="/leads" element={<LeadsPage />} />
         <Route path="/contacts" element={<ContactsPage />} />
         <Route path="/accounts" element={<CompaniesPage />} />
