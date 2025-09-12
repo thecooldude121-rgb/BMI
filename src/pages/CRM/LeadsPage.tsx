@@ -589,7 +589,7 @@ const LeadsPage: React.FC = () => {
               <button className="flex items-center px-4 py-3 border border-gray-300 rounded-xl text-sm hover:bg-gray-50 transition-colors shadow-sm bg-white">
                 <Download className="h-4 w-4 mr-2" />
                 Export
-              </button>
+                onClick={() => navigate('/crm/leads/new')}
               
               <button className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm hover:from-blue-700 hover:to-purple-700 transition-all shadow-md">
                 <Plus className="h-4 w-4 mr-2" />
@@ -826,15 +826,15 @@ const LeadsPage: React.FC = () => {
                   const page = i + 1;
                   return (
                     <button
-                      key={page}
+                      onClick={() => navigate(`/crm/leads/${lead.id}`)}
                       onClick={() => setCurrentPage(page)}
                       className={`px-3 py-2 rounded-lg text-sm transition-colors ${
                         currentPage === page
                           ? 'bg-blue-600 text-white'
                           : 'border border-gray-300 hover:bg-gray-50'
-                      }`}
+                      title="View Lead"
                     >
-                      {page}
+                      {lead.name}
                     </button>
                   );
                 })}
