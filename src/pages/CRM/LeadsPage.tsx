@@ -539,10 +539,10 @@ const LeadsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pt-2">
       {/* Enhanced Header */}
       <div className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="px-8 py-6">
+        <div className="px-2 py-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-4">
               <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl">
@@ -765,7 +765,7 @@ const LeadsPage: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="px-8 py-6">
+      <div className="px-2 py-6">
         {/* AI Insights Banner */}
         <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-xl p-6 mb-6">
           <div className="flex items-center justify-between">
