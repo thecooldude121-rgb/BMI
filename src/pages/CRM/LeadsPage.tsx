@@ -483,6 +483,7 @@ const LeadsPage: React.FC = () => {
                   {stageLeads.map(lead => (
                     <div
                       key={lead.id}
+                      onClick={() => navigate(`/crm/leads/${lead.id}`)}
                       className="bg-white rounded-xl border border-gray-200 p-4 cursor-pointer hover:shadow-lg transition-all duration-200 hover:border-gray-300 group shadow-sm"
                     >
                       <div className="flex items-start justify-between mb-3">
@@ -589,7 +590,7 @@ const LeadsPage: React.FC = () => {
               <button className="flex items-center px-4 py-3 border border-gray-300 rounded-xl text-sm hover:bg-gray-50 transition-colors shadow-sm bg-white">
                 <Download className="h-4 w-4 mr-2" />
                 Export
-                onClick={() => navigate('/crm/leads/new')}
+              </button>
               
               <button className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm hover:from-blue-700 hover:to-purple-700 transition-all shadow-md">
                 <Plus className="h-4 w-4 mr-2" />
@@ -826,15 +827,15 @@ const LeadsPage: React.FC = () => {
                   const page = i + 1;
                   return (
                     <button
-                      onClick={() => navigate(`/crm/leads/${lead.id}`)}
+                      key={page}
                       onClick={() => setCurrentPage(page)}
                       className={`px-3 py-2 rounded-lg text-sm transition-colors ${
                         currentPage === page
                           ? 'bg-blue-600 text-white'
                           : 'border border-gray-300 hover:bg-gray-50'
-                      title="View Lead"
+                      }`}
                     >
-                      {lead.name}
+                      {page}
                     </button>
                   );
                 })}
