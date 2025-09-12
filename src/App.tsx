@@ -14,6 +14,8 @@ import ActivitiesPage from './pages/CRM/ActivitiesPage';
 import TasksPage from './pages/CRM/TasksPage';
 import CreateDealWizard from './components/Deal/CreateDealWizard';
 import DealDetailPage from './components/Deal/DealDetailPage';
+import AddLeadPage from './pages/CRM/AddLeadPage';
+import LeadDetailPage from './pages/CRM/LeadDetailPage';
 import HRMSModule from './pages/HRMS/HRMSModule';
 import Analytics from './pages/Analytics/Analytics';
 import Calendar from './pages/Calendar/Calendar';
@@ -40,6 +42,8 @@ const CRMRoutes = () => {
         <Route path="/" element={<Navigate to="/crm/leads" replace />} />
         <Route path="/gamification" element={<GamificationPage />} />
         <Route path="/leads" element={<LeadsPage />} />
+        <Route path="/leads/new" element={<AddLeadPage />} />
+        <Route path="/leads/:id" element={<LeadDetailPage />} />
         <Route path="/contacts" element={<ContactsPage />} />
         <Route path="/accounts" element={<CompaniesPage />} />
         <Route path="/deals" element={<UnifiedDealsPage />} />
