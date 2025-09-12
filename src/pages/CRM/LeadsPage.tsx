@@ -483,7 +483,6 @@ const LeadsPage: React.FC = () => {
                   {stageLeads.map(lead => (
                     <div
                       key={lead.id}
-                      onClick={() => navigate(`/crm/leads/${lead.id}`)}
                       className="bg-white rounded-xl border border-gray-200 p-4 cursor-pointer hover:shadow-lg transition-all duration-200 hover:border-gray-300 group shadow-sm"
                     >
                       <div className="flex items-start justify-between mb-3">
