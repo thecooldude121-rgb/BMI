@@ -1132,7 +1132,7 @@ const AddLeadPage: React.FC = () => {
               <div className="mb-8">
                 <div className="flex items-center space-x-3 mb-4">
                   <div className="p-2 bg-blue-100 rounded-lg">
-                    <steps[currentStep].icon className="h-5 w-5 text-blue-600" />
+                    {React.createElement(steps[currentStep].icon, { className: "h-5 w-5 text-blue-600" })}
                   </div>
                   <div>
                     <h2 className="text-xl font-bold text-gray-900">{steps[currentStep].title}</h2>
