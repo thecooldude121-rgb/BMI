@@ -1014,7 +1014,7 @@ const AddLeadPage: React.FC = () => {
               </button>
               <div className="flex items-center space-x-3">
                 <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl">
-                  <User className="h-6 w-6 text-white" />
+                  {React.createElement(steps[currentStep].icon, { className: "h-5 w-5 text-blue-600" })}
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">Add New Lead</h1>
