@@ -1,178 +1,117 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  ArrowLeft, Save, X, Plus, Check, AlertCircle, User, Building, 
-  Mail, Phone, DollarSign, Target, Tag, FileText, Globe, Calendar,
-  Sparkles, Bot, Lightbulb, Shield, Eye, EyeOff, ChevronRight,
-  ChevronDown, Search, MapPin, Briefcase, TrendingUp, Clock,
-  Users, Star, Zap, Info, CheckCircle, AlertTriangle
+  ArrowLeft, Save, X, Plus, User, Building, Target, Tag, 
+  Mail, Phone, Globe, Calendar, DollarSign, Users, Clock,
+  CheckCircle, AlertCircle, Sparkles, Bot, Lightbulb, Shield,
+  ChevronRight, ChevronDown, Info, Star, Zap, Settings
 } from 'lucide-react';
 import { useData } from '../../contexts/DataContext';
 
-// Enhanced Lead Interface for comprehensive data capture
-interface EnhancedLeadFormData {
+interface LeadFormData {
   // Basic Information
   firstName: string;
   lastName: string;
   email: string;
   phone: string;
-  mobile?: string;
+  mobile: string;
   
   // Company Information
   company: string;
-  website?: string;
-  industry: string;
-  companySize: '1-10' | '11-50' | '51-200' | '201-500' | '501-1000' | '1000+' | 'unknown';
-  annualRevenue?: number;
-  
-  // Professional Details
   jobTitle: string;
-  department?: string;
-  seniority: 'individual' | 'manager' | 'director' | 'vp' | 'c-level' | 'owner';
+  department: string;
+  industry: string;
+  companySize: string;
+  companyWebsite: string;
+  companyPhone: string;
   
   // Lead Qualification
   leadSource: string;
-  campaign?: string;
-  referredBy?: string;
   estimatedValue: number;
-  currency: 'USD' | 'EUR' | 'GBP' | 'CAD' | 'AUD';
-  timeframe: 'immediate' | '1-3-months' | '3-6-months' | '6-12-months' | 'unknown';
-  budget: 'no-budget' | 'budget-approved' | 'budget-pending' | 'unknown';
+  currency: string;
+  purchaseTimeframe: string;
+  budgetStatus: string;
+  decisionMakerLevel: string;
   
   // Classification
-  status: 'new' | 'contacted' | 'qualified' | 'unqualified' | 'nurturing';
   priority: 'low' | 'medium' | 'high' | 'urgent';
   temperature: 'hot' | 'warm' | 'cold';
-  stage: 'new' | 'contacted' | 'qualified' | 'proposal' | 'won' | 'lost';
-  
-  // Assignment & Ownership
+  status: 'active' | 'inactive' | 'nurturing';
   assignedTo: string;
-  teamMembers: string[];
   
-  // Location
-  country: string;
-  state?: string;
-  city?: string;
-  timezone?: string;
-  
-  // Notes & Communication
+  // Additional Information
   notes: string;
   tags: string[];
-  communicationPreference: 'email' | 'phone' | 'sms' | 'linkedin';
-  
-  // Compliance & Privacy
+  communicationPreference: string;
+  timezone: string;
   gdprConsent: boolean;
   marketingOptIn: boolean;
-  dataProcessingConsent: boolean;
   
-  // Custom Fields (extensible)
+  // Custom Fields
   customFields: Record<string, any>;
-  
-  // Metadata
-  leadScore?: number;
-  lastContactDate?: string;
-  nextFollowUpDate?: string;
 }
 
 interface ValidationErrors {
   [key: string]: string;
 }
 
-interface FormStep {
-  id: string;
-  title: string;
-  description: string;
-  icon: React.ElementType;
-  required: boolean;
-  fields: string[];
-}
+type WizardStep = 'basic' | 'company' | 'qualification' | 'classification' | 'additional';
 
 const AddLeadPage: React.FC = () => {
   const navigate = useNavigate();
-  const { addLead, employees, leads } = useData();
+  const { addLead, leads } = useData();
   
-  const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState<EnhancedLeadFormData>({
+  const [currentStep, setCurrentStep] = useState<WizardStep>('basic');
+  const [formData, setFormData] = useState<LeadFormData>({
     firstName: '',
     lastName: '',
     email: '',
     phone: '',
+    mobile: '',
     company: '',
-    industry: '',
-    companySize: 'unknown',
     jobTitle: '',
-    seniority: 'individual',
+    department: '',
+    industry: '',
+    companySize: '',
+    companyWebsite: '',
+    companyPhone: '',
     leadSource: '',
     estimatedValue: 0,
     currency: 'USD',
-    timeframe: 'unknown',
-    budget: 'unknown',
-    status: 'new',
+    purchaseTimeframe: '',
+    budgetStatus: '',
+    decisionMakerLevel: '',
     priority: 'medium',
     temperature: 'warm',
-    stage: 'new',
+    status: 'active',
     assignedTo: '',
-    teamMembers: [],
-    country: 'US',
     notes: '',
     tags: [],
     communicationPreference: 'email',
+    timezone: '',
     gdprConsent: false,
     marketingOptIn: false,
-    dataProcessingConsent: false,
     customFields: {}
   });
   
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isDraftSaved, setIsDraftSaved] = useState(false);
-  const [duplicateWarning, setDuplicateWarning] = useState<string>('');
+  const [showDuplicateWarning, setShowDuplicateWarning] = useState(false);
+  const [duplicateLeads, setDuplicateLeads] = useState<any[]>([]);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [tagInput, setTagInput] = useState('');
 
-  // Form steps with progressive disclosure
-  const steps: FormStep[] = [
-    {
-      id: 'basic',
-      title: 'Basic Information',
-      description: 'Essential contact details',
-      icon: User,
-      required: true,
-      fields: ['firstName', 'lastName', 'email', 'phone']
-    },
-    {
-      id: 'company',
-      title: 'Company Details',
-      description: 'Organization information',
-      icon: Building,
-      required: true,
-      fields: ['company', 'industry', 'jobTitle', 'companySize']
-    },
-    {
-      id: 'qualification',
-      title: 'Lead Qualification',
-      description: 'Sales qualification data',
-      icon: Target,
-      required: true,
-      fields: ['leadSource', 'estimatedValue', 'timeframe', 'budget']
-    },
-    {
-      id: 'classification',
-      title: 'Classification',
-      description: 'Priority and assignment',
-      icon: Star,
-      required: true,
-      fields: ['priority', 'assignedTo', 'status']
-    },
-    {
-      id: 'additional',
-      title: 'Additional Info',
-      description: 'Notes and compliance',
-      icon: FileText,
-      required: false,
-      fields: ['notes', 'tags', 'gdprConsent']
-    }
+  const steps = [
+    { id: 'basic', title: 'Basic Information', icon: User, required: true },
+    { id: 'company', title: 'Company Details', icon: Building, required: true },
+    { id: 'qualification', title: 'Lead Qualification', icon: Target, required: false },
+    { id: 'classification', title: 'Classification', icon: Tag, required: false },
+    { id: 'additional', title: 'Additional Info', icon: Settings, required: false }
   ];
+
+  const currentStepIndex = steps.findIndex(step => step.id === currentStep);
+  const progressPercentage = ((currentStepIndex + 1) / steps.length) * 100;
 
   // Auto-save draft every 30 seconds
   useEffect(() => {
@@ -199,63 +138,39 @@ const AddLeadPage: React.FC = () => {
     }
   }, []);
 
-  // Check for duplicate leads
+  // Check for duplicates when email changes
   useEffect(() => {
     if (formData.email) {
-      const duplicate = leads.find(lead => 
+      const duplicates = leads.filter(lead => 
         lead.email.toLowerCase() === formData.email.toLowerCase()
       );
-      if (duplicate) {
-        setDuplicateWarning(`A lead with this email already exists: ${duplicate.name}`);
+      if (duplicates.length > 0) {
+        setDuplicateLeads(duplicates);
+        setShowDuplicateWarning(true);
       } else {
-        setDuplicateWarning('');
+        setShowDuplicateWarning(false);
+        setDuplicateLeads([]);
       }
     }
   }, [formData.email, leads]);
 
-  const validateStep = (stepIndex: number): boolean => {
-    const step = steps[stepIndex];
+  const validateStep = (step: WizardStep): boolean => {
     const newErrors: ValidationErrors = {};
 
-    step.fields.forEach(field => {
-      const value = formData[field as keyof EnhancedLeadFormData];
-      
-      if (step.required) {
-        switch (field) {
-          case 'firstName':
-            if (!value) newErrors.firstName = 'First name is required';
-            break;
-          case 'lastName':
-            if (!value) newErrors.lastName = 'Last name is required';
-            break;
-          case 'email':
-            if (!value) {
-              newErrors.email = 'Email is required';
-            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value as string)) {
-              newErrors.email = 'Please enter a valid email address';
-            }
-            break;
-          case 'phone':
-            if (!value) newErrors.phone = 'Phone number is required';
-            break;
-          case 'company':
-            if (!value) newErrors.company = 'Company name is required';
-            break;
-          case 'industry':
-            if (!value) newErrors.industry = 'Industry is required';
-            break;
-          case 'jobTitle':
-            if (!value) newErrors.jobTitle = 'Job title is required';
-            break;
-          case 'leadSource':
-            if (!value) newErrors.leadSource = 'Lead source is required';
-            break;
-          case 'assignedTo':
-            if (!value) newErrors.assignedTo = 'Lead owner is required';
-            break;
+    switch (step) {
+      case 'basic':
+        if (!formData.firstName) newErrors.firstName = 'First name is required';
+        if (!formData.lastName) newErrors.lastName = 'Last name is required';
+        if (!formData.email) newErrors.email = 'Email is required';
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+          newErrors.email = 'Please enter a valid email address';
         }
-      }
-    });
+        break;
+      case 'company':
+        if (!formData.company) newErrors.company = 'Company name is required';
+        if (!formData.industry) newErrors.industry = 'Industry is required';
+        break;
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -263,32 +178,34 @@ const AddLeadPage: React.FC = () => {
 
   const nextStep = () => {
     if (validateStep(currentStep)) {
-      setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
+      const nextIndex = Math.min(currentStepIndex + 1, steps.length - 1);
+      setCurrentStep(steps[nextIndex].id as WizardStep);
     }
   };
 
   const prevStep = () => {
-    setCurrentStep(prev => Math.max(prev - 1, 0));
+    const prevIndex = Math.max(currentStepIndex - 1, 0);
+    setCurrentStep(steps[prevIndex].id as WizardStep);
   };
 
-  const handleSubmit = async (saveAndNew = false) => {
+  const handleSubmit = async () => {
     // Validate all required steps
-    const isValid = steps.every((step, index) => validateStep(index));
-    
+    const requiredSteps = steps.filter(step => step.required).map(step => step.id as WizardStep);
+    const isValid = requiredSteps.every(step => validateStep(step));
+
     if (!isValid) {
-      // Find first step with errors and navigate to it
-      for (let i = 0; i < steps.length; i++) {
-        if (!validateStep(i)) {
-          setCurrentStep(i);
-          break;
-        }
-      }
+      setErrors({ submit: 'Please complete all required fields' });
+      return;
+    }
+
+    if (showDuplicateWarning) {
+      setErrors({ submit: 'Please resolve duplicate lead warning before saving' });
       return;
     }
 
     setIsLoading(true);
     try {
-      // Convert to format expected by addLead
+      // Convert form data to lead format
       const leadData = {
         name: `${formData.firstName} ${formData.lastName}`,
         email: formData.email,
@@ -296,12 +213,12 @@ const AddLeadPage: React.FC = () => {
         company: formData.company,
         position: formData.jobTitle,
         industry: formData.industry,
-        stage: formData.stage,
-        score: formData.leadScore || 50,
+        stage: 'new' as const,
+        score: 50,
         value: formData.estimatedValue,
-        probability: 50, // Default probability
+        probability: 25,
         source: formData.leadSource,
-        assignedTo: formData.assignedTo,
+        assignedTo: formData.assignedTo || '1',
         status: formData.status,
         notes: formData.notes,
         tags: formData.tags,
@@ -310,45 +227,9 @@ const AddLeadPage: React.FC = () => {
 
       addLead(leadData);
       localStorage.removeItem('leadDraft');
-      
-      if (saveAndNew) {
-        // Reset form for new lead
-        setFormData({
-          firstName: '',
-          lastName: '',
-          email: '',
-          phone: '',
-          company: '',
-          industry: '',
-          companySize: 'unknown',
-          jobTitle: '',
-          seniority: 'individual',
-          leadSource: '',
-          estimatedValue: 0,
-          currency: 'USD',
-          timeframe: 'unknown',
-          budget: 'unknown',
-          status: 'new',
-          priority: 'medium',
-          temperature: 'warm',
-          stage: 'new',
-          assignedTo: formData.assignedTo, // Keep same owner
-          teamMembers: [],
-          country: 'US',
-          notes: '',
-          tags: [],
-          communicationPreference: 'email',
-          gdprConsent: false,
-          marketingOptIn: false,
-          dataProcessingConsent: false,
-          customFields: {}
-        });
-        setCurrentStep(0);
-      } else {
-        navigate('/crm/leads');
-      }
+      navigate('/crm/leads');
     } catch (error) {
-      console.error('Failed to create lead:', error);
+      setErrors({ submit: 'Failed to create lead. Please try again.' });
     } finally {
       setIsLoading(false);
     }
@@ -371,23 +252,41 @@ const AddLeadPage: React.FC = () => {
     }));
   };
 
-  const getCompletionPercentage = () => {
-    const requiredFields = [
-      formData.firstName, formData.lastName, formData.email, formData.phone,
-      formData.company, formData.industry, formData.jobTitle, formData.leadSource,
-      formData.assignedTo
-    ];
-    const completedFields = requiredFields.filter(Boolean).length;
-    return Math.round((completedFields / requiredFields.length) * 100);
+  const getAISuggestions = () => {
+    const suggestions = [];
+    
+    if (formData.industry === 'Technology' && !formData.estimatedValue) {
+      suggestions.push('Tech companies typically have deal values between $25K-$150K');
+    }
+    
+    if (formData.jobTitle.toLowerCase().includes('cto') && formData.estimatedValue < 50000) {
+      suggestions.push('CTOs usually have higher budget authority - consider increasing estimated value');
+    }
+    
+    if (formData.leadSource === 'LinkedIn' && !formData.tags.includes('social-selling')) {
+      suggestions.push('Consider adding "social-selling" tag for LinkedIn leads');
+    }
+    
+    return suggestions;
   };
 
   const renderStepContent = () => {
-    const step = steps[currentStep];
+    const CurrentStepIcon = steps[currentStepIndex].icon;
     
-    switch (step.id) {
+    switch (currentStep) {
       case 'basic':
         return (
           <div className="space-y-6">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <CurrentStepIcon className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Basic Information</h2>
+                <p className="text-gray-600">Essential contact details for the lead</p>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -397,14 +296,14 @@ const AddLeadPage: React.FC = () => {
                   type="text"
                   value={formData.firstName}
                   onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
+                  className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
                     errors.firstName ? 'border-red-300 bg-red-50' : 'border-gray-300'
                   }`}
-                  placeholder="John"
+                  placeholder="Enter first name"
                 />
                 {errors.firstName && <p className="text-sm text-red-600 mt-1">{errors.firstName}</p>}
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Last Name *
@@ -413,75 +312,69 @@ const AddLeadPage: React.FC = () => {
                   type="text"
                   value={formData.lastName}
                   onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
+                  className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
                     errors.lastName ? 'border-red-300 bg-red-50' : 'border-gray-300'
                   }`}
-                  placeholder="Smith"
+                  placeholder="Enter last name"
                 />
                 {errors.lastName && <p className="text-sm text-red-600 mt-1">{errors.lastName}</p>}
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address *
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email Address *
+                </label>
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                  className={`w-full pl-12 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
-                    errors.email ? 'border-red-300 bg-red-50' : 
-                    duplicateWarning ? 'border-yellow-300 bg-yellow-50' : 'border-gray-300'
+                  className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
+                    errors.email ? 'border-red-300 bg-red-50' : 'border-gray-300'
                   }`}
-                  placeholder="john.smith@company.com"
+                  placeholder="john.doe@company.com"
                 />
+                {errors.email && <p className="text-sm text-red-600 mt-1">{errors.email}</p>}
+                
+                {/* Duplicate Warning */}
+                {showDuplicateWarning && (
+                  <div className="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                    <div className="flex items-center space-x-2">
+                      <AlertCircle className="h-4 w-4 text-amber-600" />
+                      <span className="text-sm font-medium text-amber-800">
+                        Potential duplicate found
+                      </span>
+                    </div>
+                    <p className="text-sm text-amber-700 mt-1">
+                      {duplicateLeads.length} existing lead(s) with this email
+                    </p>
+                  </div>
+                )}
               </div>
-              {errors.email && <p className="text-sm text-red-600 mt-1">{errors.email}</p>}
-              {duplicateWarning && (
-                <div className="flex items-center mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                  <AlertTriangle className="h-4 w-4 text-yellow-600 mr-2" />
-                  <p className="text-sm text-yellow-800">{duplicateWarning}</p>
-                </div>
-              )}
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Primary Phone *
+                  Phone Number
                 </label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                  <input
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                    className={`w-full pl-12 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
-                      errors.phone ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                    }`}
-                    placeholder="+1 (555) 123-4567"
-                  />
-                </div>
-                {errors.phone && <p className="text-sm text-red-600 mt-1">{errors.phone}</p>}
+                <input
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="+1 (555) 123-4567"
+                />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Mobile Phone
                 </label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                  <input
-                    type="tel"
-                    value={formData.mobile || ''}
-                    onChange={(e) => setFormData(prev => ({ ...prev, mobile: e.target.value }))}
-                    className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="+1 (555) 987-6543"
-                  />
-                </div>
+                <input
+                  type="tel"
+                  value={formData.mobile}
+                  onChange={(e) => setFormData(prev => ({ ...prev, mobile: e.target.value }))}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="+1 (555) 987-6543"
+                />
               </div>
             </div>
           </div>
@@ -490,26 +383,66 @@ const AddLeadPage: React.FC = () => {
       case 'company':
         return (
           <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Company Name *
-              </label>
-              <div className="relative">
-                <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <CurrentStepIcon className="h-5 w-5 text-green-600" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Company Details</h2>
+                <p className="text-gray-600">Information about the lead's organization</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Company Name *
+                </label>
                 <input
                   type="text"
                   value={formData.company}
                   onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
-                  className={`w-full pl-12 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
+                  className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
                     errors.company ? 'border-red-300 bg-red-50' : 'border-gray-300'
                   }`}
                   placeholder="Acme Corporation"
                 />
+                {errors.company && <p className="text-sm text-red-600 mt-1">{errors.company}</p>}
               </div>
-              {errors.company && <p className="text-sm text-red-600 mt-1">{errors.company}</p>}
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Job Title
+                </label>
+                <input
+                  type="text"
+                  value={formData.jobTitle}
+                  onChange={(e) => setFormData(prev => ({ ...prev, jobTitle: e.target.value }))}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Chief Technology Officer"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Department
+                </label>
+                <select
+                  value={formData.department}
+                  onChange={(e) => setFormData(prev => ({ ...prev, department: e.target.value }))}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Select department</option>
+                  <option value="Executive">Executive</option>
+                  <option value="Technology">Technology</option>
+                  <option value="Sales">Sales</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Operations">Operations</option>
+                  <option value="Finance">Finance</option>
+                  <option value="HR">Human Resources</option>
+                </select>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Industry *
@@ -517,11 +450,11 @@ const AddLeadPage: React.FC = () => {
                 <select
                   value={formData.industry}
                   onChange={(e) => setFormData(prev => ({ ...prev, industry: e.target.value }))}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
+                  className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
                     errors.industry ? 'border-red-300 bg-red-50' : 'border-gray-300'
                   }`}
                 >
-                  <option value="">Select Industry</option>
+                  <option value="">Select industry</option>
                   <option value="Technology">Technology</option>
                   <option value="Healthcare">Healthcare</option>
                   <option value="Finance">Finance</option>
@@ -530,102 +463,40 @@ const AddLeadPage: React.FC = () => {
                   <option value="Education">Education</option>
                   <option value="Real Estate">Real Estate</option>
                   <option value="Consulting">Consulting</option>
-                  <option value="Other">Other</option>
                 </select>
                 {errors.industry && <p className="text-sm text-red-600 mt-1">{errors.industry}</p>}
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Company Size
                 </label>
                 <select
                   value={formData.companySize}
-                  onChange={(e) => setFormData(prev => ({ ...prev, companySize: e.target.value as any }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onChange={(e) => setFormData(prev => ({ ...prev, companySize: e.target.value }))}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
+                  <option value="">Select company size</option>
                   <option value="1-10">1-10 employees</option>
                   <option value="11-50">11-50 employees</option>
                   <option value="51-200">51-200 employees</option>
                   <option value="201-500">201-500 employees</option>
                   <option value="501-1000">501-1000 employees</option>
                   <option value="1000+">1000+ employees</option>
-                  <option value="unknown">Unknown</option>
                 </select>
               </div>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Job Title *
-                </label>
-                <div className="relative">
-                  <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                  <input
-                    type="text"
-                    value={formData.jobTitle}
-                    onChange={(e) => setFormData(prev => ({ ...prev, jobTitle: e.target.value }))}
-                    className={`w-full pl-12 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
-                      errors.jobTitle ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                    }`}
-                    placeholder="Chief Technology Officer"
-                  />
-                </div>
-                {errors.jobTitle && <p className="text-sm text-red-600 mt-1">{errors.jobTitle}</p>}
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Seniority Level
-                </label>
-                <select
-                  value={formData.seniority}
-                  onChange={(e) => setFormData(prev => ({ ...prev, seniority: e.target.value as any }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="individual">Individual Contributor</option>
-                  <option value="manager">Manager</option>
-                  <option value="director">Director</option>
-                  <option value="vp">Vice President</option>
-                  <option value="c-level">C-Level Executive</option>
-                  <option value="owner">Owner/Founder</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Company Website
                 </label>
-                <div className="relative">
-                  <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                  <input
-                    type="url"
-                    value={formData.website || ''}
-                    onChange={(e) => setFormData(prev => ({ ...prev, website: e.target.value }))}
-                    className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="https://company.com"
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Annual Revenue
-                </label>
-                <div className="relative">
-                  <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                  <input
-                    type="number"
-                    value={formData.annualRevenue || ''}
-                    onChange={(e) => setFormData(prev => ({ ...prev, annualRevenue: Number(e.target.value) }))}
-                    className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="1000000"
-                    min="0"
-                  />
-                </div>
+                <input
+                  type="url"
+                  value={formData.companyWebsite}
+                  onChange={(e) => setFormData(prev => ({ ...prev, companyWebsite: e.target.value }))}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="https://company.com"
+                />
               </div>
             </div>
           </div>
@@ -634,117 +505,123 @@ const AddLeadPage: React.FC = () => {
       case 'qualification':
         return (
           <div className="space-y-6">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-2 bg-purple-100 rounded-lg">
+                <CurrentStepIcon className="h-5 w-5 text-purple-600" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Lead Qualification</h2>
+                <p className="text-gray-600">Assess the lead's potential and buying intent</p>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Lead Source *
+                  Lead Source
                 </label>
                 <select
                   value={formData.leadSource}
                   onChange={(e) => setFormData(prev => ({ ...prev, leadSource: e.target.value }))}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
-                    errors.leadSource ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                  }`}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="">Select Source</option>
+                  <option value="">Select source</option>
                   <option value="Website">Website</option>
                   <option value="LinkedIn">LinkedIn</option>
                   <option value="Referral">Referral</option>
                   <option value="Cold Email">Cold Email</option>
                   <option value="Trade Show">Trade Show</option>
                   <option value="Social Media">Social Media</option>
-                  <option value="Google Ads">Google Ads</option>
-                  <option value="Content Marketing">Content Marketing</option>
-                  <option value="Webinar">Webinar</option>
+                  <option value="Advertisement">Advertisement</option>
                   <option value="Partner">Partner</option>
                 </select>
-                {errors.leadSource && <p className="text-sm text-red-600 mt-1">{errors.leadSource}</p>}
               </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Campaign
-                </label>
-                <input
-                  type="text"
-                  value={formData.campaign || ''}
-                  onChange={(e) => setFormData(prev => ({ ...prev, campaign: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Q1 2024 Enterprise Campaign"
-                />
-              </div>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Estimated Deal Value
                 </label>
                 <div className="relative">
-                  <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
                     type="number"
                     value={formData.estimatedValue}
                     onChange={(e) => setFormData(prev => ({ ...prev, estimatedValue: Number(e.target.value) }))}
-                    className="w-full pl-12 pr-20 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="50000"
+                    className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="25000"
                     min="0"
                   />
-                  <select
-                    value={formData.currency}
-                    onChange={(e) => setFormData(prev => ({ ...prev, currency: e.target.value as any }))}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 border-0 bg-transparent focus:outline-none text-sm"
-                  >
-                    <option value="USD">USD</option>
-                    <option value="EUR">EUR</option>
-                    <option value="GBP">GBP</option>
-                    <option value="CAD">CAD</option>
-                    <option value="AUD">AUD</option>
-                  </select>
                 </div>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Purchase Timeframe
                 </label>
                 <select
-                  value={formData.timeframe}
-                  onChange={(e) => setFormData(prev => ({ ...prev, timeframe: e.target.value as any }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={formData.purchaseTimeframe}
+                  onChange={(e) => setFormData(prev => ({ ...prev, purchaseTimeframe: e.target.value }))}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="immediate">Immediate (0-30 days)</option>
-                  <option value="1-3-months">1-3 months</option>
-                  <option value="3-6-months">3-6 months</option>
-                  <option value="6-12-months">6-12 months</option>
-                  <option value="unknown">Unknown</option>
+                  <option value="">Select timeframe</option>
+                  <option value="Immediate">Immediate (0-30 days)</option>
+                  <option value="Short-term">Short-term (1-3 months)</option>
+                  <option value="Medium-term">Medium-term (3-6 months)</option>
+                  <option value="Long-term">Long-term (6+ months)</option>
+                  <option value="Unknown">Unknown</option>
                 </select>
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Budget Status
-              </label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {[
-                  { value: 'budget-approved', label: 'Budget Approved', color: 'green' },
-                  { value: 'budget-pending', label: 'Budget Pending', color: 'yellow' },
-                  { value: 'no-budget', label: 'No Budget', color: 'red' },
-                  { value: 'unknown', label: 'Unknown', color: 'gray' }
-                ].map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => setFormData(prev => ({ ...prev, budget: option.value as any }))}
-                    className={`p-3 border rounded-xl text-sm font-medium transition-all ${
-                      formData.budget === option.value
-                        ? `border-${option.color}-500 bg-${option.color}-50 text-${option.color}-700`
-                        : 'border-gray-200 hover:bg-gray-50'
-                    }`}
-                  >
-                    {option.label}
-                  </button>
-                ))}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Budget Status
+                </label>
+                <select
+                  value={formData.budgetStatus}
+                  onChange={(e) => setFormData(prev => ({ ...prev, budgetStatus: e.target.value }))}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Select budget status</option>
+                  <option value="Budget Approved">Budget Approved</option>
+                  <option value="Budget Identified">Budget Identified</option>
+                  <option value="Budget Pending">Budget Pending</option>
+                  <option value="No Budget">No Budget</option>
+                  <option value="Unknown">Unknown</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Decision Maker Level
+                </label>
+                <select
+                  value={formData.decisionMakerLevel}
+                  onChange={(e) => setFormData(prev => ({ ...prev, decisionMakerLevel: e.target.value }))}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Select level</option>
+                  <option value="Primary Decision Maker">Primary Decision Maker</option>
+                  <option value="Influencer">Influencer</option>
+                  <option value="Evaluator">Evaluator</option>
+                  <option value="End User">End User</option>
+                  <option value="Unknown">Unknown</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Currency
+                </label>
+                <select
+                  value={formData.currency}
+                  onChange={(e) => setFormData(prev => ({ ...prev, currency: e.target.value }))}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="USD">USD ($)</option>
+                  <option value="EUR">EUR (€)</option>
+                  <option value="GBP">GBP (£)</option>
+                  <option value="CAD">CAD (C$)</option>
+                </select>
               </div>
             </div>
           </div>
@@ -753,107 +630,98 @@ const AddLeadPage: React.FC = () => {
       case 'classification':
         return (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-2 bg-orange-100 rounded-lg">
+                <CurrentStepIcon className="h-5 w-5 text-orange-600" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Lead Classification</h2>
+                <p className="text-gray-600">Categorize and assign the lead for proper handling</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Priority Level
                 </label>
-                <div className="space-y-2">
+                <div className="grid grid-cols-2 gap-3">
                   {[
-                    { value: 'urgent', label: 'Urgent', color: 'red', icon: AlertCircle },
-                    { value: 'high', label: 'High', color: 'orange', icon: TrendingUp },
-                    { value: 'medium', label: 'Medium', color: 'blue', icon: Target },
-                    { value: 'low', label: 'Low', color: 'gray', icon: Clock }
-                  ].map((option) => {
-                    const Icon = option.icon;
-                    return (
-                      <button
-                        key={option.value}
-                        onClick={() => setFormData(prev => ({ ...prev, priority: option.value as any }))}
-                        className={`w-full flex items-center p-3 border rounded-xl text-sm font-medium transition-all ${
-                          formData.priority === option.value
-                            ? `border-${option.color}-500 bg-${option.color}-50 text-${option.color}-700`
-                            : 'border-gray-200 hover:bg-gray-50'
-                        }`}
-                      >
-                        <Icon className="h-4 w-4 mr-3" />
-                        {option.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Temperature
-                </label>
-                <div className="space-y-2">
-                  {[
-                    { value: 'hot', label: 'Hot Lead', color: 'red', desc: 'Ready to buy' },
-                    { value: 'warm', label: 'Warm Lead', color: 'orange', desc: 'Interested' },
-                    { value: 'cold', label: 'Cold Lead', color: 'blue', desc: 'Early stage' }
-                  ].map((option) => (
+                    { value: 'low', label: 'Low', color: 'gray' },
+                    { value: 'medium', label: 'Medium', color: 'blue' },
+                    { value: 'high', label: 'High', color: 'orange' },
+                    { value: 'urgent', label: 'Urgent', color: 'red' }
+                  ].map((priority) => (
                     <button
-                      key={option.value}
-                      onClick={() => setFormData(prev => ({ ...prev, temperature: option.value as any }))}
-                      className={`w-full text-left p-3 border rounded-xl text-sm transition-all ${
-                        formData.temperature === option.value
-                          ? `border-${option.color}-500 bg-${option.color}-50 text-${option.color}-700`
+                      key={priority.value}
+                      onClick={() => setFormData(prev => ({ ...prev, priority: priority.value as any }))}
+                      className={`p-3 border rounded-xl text-center transition-colors ${
+                        formData.priority === priority.value
+                          ? `border-${priority.color}-500 bg-${priority.color}-50 text-${priority.color}-700`
                           : 'border-gray-200 hover:bg-gray-50'
                       }`}
                     >
-                      <div className="font-medium">{option.label}</div>
-                      <div className="text-xs text-gray-500">{option.desc}</div>
+                      <p className="font-medium">{priority.label}</p>
                     </button>
                   ))}
                 </div>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Lead Owner *
+                  Lead Temperature
+                </label>
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { value: 'hot', label: 'Hot', color: 'red', icon: '🔥' },
+                    { value: 'warm', label: 'Warm', color: 'orange', icon: '🌡️' },
+                    { value: 'cold', label: 'Cold', color: 'blue', icon: '❄️' }
+                  ].map((temp) => (
+                    <button
+                      key={temp.value}
+                      onClick={() => setFormData(prev => ({ ...prev, temperature: temp.value as any }))}
+                      className={`p-3 border rounded-xl text-center transition-colors ${
+                        formData.temperature === temp.value
+                          ? `border-${temp.color}-500 bg-${temp.color}-50 text-${temp.color}-700`
+                          : 'border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      <div className="text-lg mb-1">{temp.icon}</div>
+                      <p className="font-medium text-sm">{temp.label}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Lead Status
+                </label>
+                <select
+                  value={formData.status}
+                  onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as any }))}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                  <option value="nurturing">Nurturing</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Assigned To
                 </label>
                 <select
                   value={formData.assignedTo}
                   onChange={(e) => setFormData(prev => ({ ...prev, assignedTo: e.target.value }))}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
-                    errors.assignedTo ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                  }`}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="">Select Owner</option>
-                  {employees.map(emp => (
-                    <option key={emp.id} value={emp.id}>{emp.name}</option>
-                  ))}
+                  <option value="">Auto-assign</option>
+                  <option value="user1">John Smith</option>
+                  <option value="user2">Sarah Johnson</option>
+                  <option value="user3">Mike Chen</option>
                 </select>
-                {errors.assignedTo && <p className="text-sm text-red-600 mt-1">{errors.assignedTo}</p>}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Lead Status
-              </label>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                {[
-                  { value: 'new', label: 'New', color: 'gray' },
-                  { value: 'contacted', label: 'Contacted', color: 'blue' },
-                  { value: 'qualified', label: 'Qualified', color: 'green' },
-                  { value: 'unqualified', label: 'Unqualified', color: 'red' },
-                  { value: 'nurturing', label: 'Nurturing', color: 'purple' }
-                ].map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => setFormData(prev => ({ ...prev, status: option.value as any }))}
-                    className={`p-3 border rounded-xl text-sm font-medium transition-all ${
-                      formData.status === option.value
-                        ? `border-${option.color}-500 bg-${option.color}-50 text-${option.color}-700`
-                        : 'border-gray-200 hover:bg-gray-50'
-                    }`}
-                  >
-                    {option.label}
-                  </button>
-                ))}
               </div>
             </div>
           </div>
@@ -862,130 +730,139 @@ const AddLeadPage: React.FC = () => {
       case 'additional':
         return (
           <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Notes & Comments
-              </label>
-              <textarea
-                rows={4}
-                value={formData.notes}
-                onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                placeholder="Add any relevant notes about this lead, their requirements, or conversation history..."
-              />
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-2 bg-purple-100 rounded-lg">
+                <CurrentStepIcon className="h-5 w-5 text-purple-600" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Additional Information</h2>
+                <p className="text-gray-600">Notes, tags, and preferences</p>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tags
-              </label>
-              <div className="flex flex-wrap gap-2 mb-3">
-                {formData.tags.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
-                  >
-                    <Tag className="h-3 w-3 mr-1" />
-                    {tag}
-                    <button
-                      onClick={() => removeTag(tag)}
-                      className="ml-2 text-blue-600 hover:text-blue-800"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </span>
-                ))}
-              </div>
-              <div className="flex">
-                <input
-                  type="text"
-                  value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-l-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Add tag..."
+            <div className="space-y-6">
+              {/* Notes */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Notes
+                </label>
+                <textarea
+                  rows={4}
+                  value={formData.notes}
+                  onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  placeholder="Add any additional notes about this lead..."
                 />
-                <button
-                  onClick={addTag}
-                  className="px-4 py-3 bg-blue-600 text-white rounded-r-xl hover:bg-blue-700 transition-colors"
-                >
-                  Add
-                </button>
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Communication Preference
-              </label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {[
-                  { value: 'email', label: 'Email', icon: Mail },
-                  { value: 'phone', label: 'Phone', icon: Phone },
-                  { value: 'sms', label: 'SMS', icon: Phone },
-                  { value: 'linkedin', label: 'LinkedIn', icon: Users }
-                ].map((option) => {
-                  const Icon = option.icon;
-                  return (
-                    <button
-                      key={option.value}
-                      onClick={() => setFormData(prev => ({ ...prev, communicationPreference: option.value as any }))}
-                      className={`flex items-center justify-center p-3 border rounded-xl text-sm font-medium transition-all ${
-                        formData.communicationPreference === option.value
-                          ? 'border-blue-500 bg-blue-50 text-blue-700'
-                          : 'border-gray-200 hover:bg-gray-50'
-                      }`}
+              {/* Tags */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Tags
+                </label>
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {formData.tags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
                     >
-                      <Icon className="h-4 w-4 mr-2" />
-                      {option.label}
-                    </button>
-                  );
-                })}
+                      <Tag className="h-3 w-3 mr-1" />
+                      {tag}
+                      <button
+                        onClick={() => removeTag(tag)}
+                        className="ml-2 text-blue-600 hover:text-blue-800"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <div className="flex">
+                  <input
+                    type="text"
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-l-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Add tag..."
+                  />
+                  <button
+                    onClick={addTag}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-r-xl hover:bg-blue-700"
+                  >
+                    Add
+                  </button>
+                </div>
               </div>
-            </div>
 
-            {/* GDPR & Compliance */}
-            <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
-              <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <Shield className="h-5 w-5 mr-2 text-green-600" />
-                Privacy & Compliance
-              </h4>
-              <div className="space-y-4">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={formData.gdprConsent}
-                    onChange={(e) => setFormData(prev => ({ ...prev, gdprConsent: e.target.checked }))}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <span className="ml-3 text-sm text-gray-700">
-                    GDPR Consent - I consent to processing of my personal data
-                  </span>
-                </label>
-                
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={formData.marketingOptIn}
-                    onChange={(e) => setFormData(prev => ({ ...prev, marketingOptIn: e.target.checked }))}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <span className="ml-3 text-sm text-gray-700">
-                    Marketing Opt-in - I agree to receive marketing communications
-                  </span>
-                </label>
-                
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={formData.dataProcessingConsent}
-                    onChange={(e) => setFormData(prev => ({ ...prev, dataProcessingConsent: e.target.checked }))}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <span className="ml-3 text-sm text-gray-700">
-                    Data Processing Consent - I consent to data processing for CRM purposes
-                  </span>
-                </label>
+              {/* Communication Preferences */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Preferred Communication
+                  </label>
+                  <select
+                    value={formData.communicationPreference}
+                    onChange={(e) => setFormData(prev => ({ ...prev, communicationPreference: e.target.value }))}
+                    className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="email">Email</option>
+                    <option value="phone">Phone</option>
+                    <option value="sms">SMS</option>
+                    <option value="whatsapp">WhatsApp</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Timezone
+                  </label>
+                  <select
+                    value={formData.timezone}
+                    onChange={(e) => setFormData(prev => ({ ...prev, timezone: e.target.value }))}
+                    className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Select timezone</option>
+                    <option value="PST">Pacific (PST)</option>
+                    <option value="MST">Mountain (MST)</option>
+                    <option value="CST">Central (CST)</option>
+                    <option value="EST">Eastern (EST)</option>
+                    <option value="GMT">GMT</option>
+                    <option value="CET">Central European (CET)</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* GDPR & Privacy */}
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                  <Shield className="h-5 w-5 mr-2 text-green-600" />
+                  Privacy & Consent
+                </h3>
+                <div className="space-y-4">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={formData.gdprConsent}
+                      onChange={(e) => setFormData(prev => ({ ...prev, gdprConsent: e.target.checked }))}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <span className="ml-3 text-sm text-gray-700">
+                      GDPR Consent - Lead has consented to data processing
+                    </span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={formData.marketingOptIn}
+                      onChange={(e) => setFormData(prev => ({ ...prev, marketingOptIn: e.target.checked }))}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <span className="ml-3 text-sm text-gray-700">
+                      Marketing Opt-in - Lead agrees to receive marketing communications
+                    </span>
+                  </label>
+                </div>
               </div>
             </div>
           </div>
@@ -996,15 +873,12 @@ const AddLeadPage: React.FC = () => {
     }
   };
 
-  const progressPercentage = ((currentStep + 1) / steps.length) * 100;
-  const completionPercentage = getCompletionPercentage();
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
         <div className="px-8 py-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => navigate('/crm/leads')}
@@ -1012,14 +886,12 @@ const AddLeadPage: React.FC = () => {
               >
                 <ArrowLeft className="h-5 w-5 text-gray-600" />
               </button>
-              <div className="flex items-center space-x-3">
-                <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl">
-                  {React.createElement(steps[currentStep].icon, { className: "h-5 w-5 text-blue-600" })}
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-900">Add New Lead</h1>
-                  <p className="text-gray-600">Capture and qualify your next opportunity</p>
-                </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 flex items-center">
+                  <Sparkles className="h-8 w-8 mr-3 text-blue-600" />
+                  Add New Lead
+                </h1>
+                <p className="text-gray-600">Capture and qualify your next opportunity</p>
               </div>
             </div>
             
@@ -1041,52 +913,52 @@ const AddLeadPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Progress Indicators */}
-          <div className="mt-6">
+          {/* Progress Indicator */}
+          <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700">Form Progress</span>
-              <span className="text-sm text-gray-500">{currentStep + 1} of {steps.length}</span>
+              <span className="text-sm font-medium text-gray-700">Progress</span>
+              <span className="text-sm text-gray-500">{currentStepIndex + 1} of {steps.length}</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+            <div className="w-full bg-gray-200 rounded-full h-2">
               <div 
-                className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-500"
+                className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-500 ease-out"
                 style={{ width: `${progressPercentage}%` }}
               />
             </div>
-            
-            {/* Step Navigation */}
-            <div className="flex items-center justify-between space-x-2">
-              {steps.map((step, index) => {
-                const Icon = step.icon;
-                const isActive = index === currentStep;
-                const isCompleted = index < currentStep;
-                const isAccessible = index <= currentStep;
-                
-                return (
-                  <button
-                    key={step.id}
-                    onClick={() => isAccessible && setCurrentStep(index)}
-                    disabled={!isAccessible}
-                    className={`flex-1 flex items-center justify-center p-3 rounded-xl text-sm font-medium transition-all ${
-                      isActive 
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' 
-                        : isCompleted
-                        ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                        : isAccessible
-                        ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        : 'bg-gray-50 text-gray-400 cursor-not-allowed'
-                    }`}
-                  >
-                    <Icon className="h-4 w-4 mr-2" />
-                    <span className="hidden md:inline">{step.title}</span>
-                    <span className="md:hidden">{step.title.split(' ')[0]}</span>
-                    {step.required && !isCompleted && !isActive && (
-                      <span className="ml-1 text-red-500">*</span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
+          </div>
+
+          {/* Step Navigation */}
+          <div className="flex items-center justify-between space-x-2">
+            {steps.map((step, index) => {
+              const StepIcon = step.icon;
+              const isActive = step.id === currentStep;
+              const isCompleted = index < currentStepIndex;
+              const isAccessible = index <= currentStepIndex;
+              
+              return (
+                <button
+                  key={step.id}
+                  onClick={() => isAccessible && setCurrentStep(step.id as WizardStep)}
+                  disabled={!isAccessible}
+                  className={`flex-1 flex items-center justify-center p-3 rounded-xl text-sm font-medium transition-all ${
+                    isActive 
+                      ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' 
+                      : isCompleted
+                      ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                      : isAccessible
+                      ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      : 'bg-gray-50 text-gray-400 cursor-not-allowed'
+                  }`}
+                >
+                  <StepIcon className="h-4 w-4 mr-2" />
+                  <span className="hidden md:inline">{step.title}</span>
+                  <span className="md:hidden">{step.title.split(' ')[0]}</span>
+                  {step.required && !isCompleted && !isActive && (
+                    <span className="ml-1 text-red-500">*</span>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -1106,105 +978,76 @@ const AddLeadPage: React.FC = () => {
                   <X className="h-4 w-4" />
                 </button>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-4 bg-white rounded-lg border border-purple-200">
-                  <Lightbulb className="h-5 w-5 text-purple-600 mb-2" />
-                  <h4 className="font-medium text-purple-900 mb-1">Smart Suggestions</h4>
-                  <p className="text-sm text-purple-700">Get AI-powered field suggestions based on company domain</p>
-                </div>
-                <div className="p-4 bg-white rounded-lg border border-purple-200">
-                  <Sparkles className="h-5 w-5 text-purple-600 mb-2" />
-                  <h4 className="font-medium text-purple-900 mb-1">Lead Scoring</h4>
-                  <p className="text-sm text-purple-700">Automatic lead scoring based on qualification criteria</p>
-                </div>
-                <div className="p-4 bg-white rounded-lg border border-purple-200">
-                  <Target className="h-5 w-5 text-purple-600 mb-2" />
-                  <h4 className="font-medium text-purple-900 mb-1">Duplicate Detection</h4>
-                  <p className="text-sm text-purple-700">Real-time duplicate lead detection and merging</p>
-                </div>
+              <div className="space-y-3">
+                {getAISuggestions().map((suggestion, index) => (
+                  <div key={index} className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-purple-200">
+                    <Lightbulb className="h-4 w-4 text-purple-600 mt-0.5" />
+                    <span className="text-sm text-purple-800">{suggestion}</span>
+                  </div>
+                ))}
+                <button className="w-full flex items-center justify-center p-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Help me complete this lead
+                </button>
               </div>
             </div>
           )}
 
           {/* Form Content */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-            <div className="p-8">
-              <div className="mb-8">
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    {React.createElement(steps[currentStep].icon, { className: "h-5 w-5 text-blue-600" })}
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-bold text-gray-900">{steps[currentStep].title}</h2>
-                    <p className="text-gray-600">{steps[currentStep].description}</p>
-                  </div>
-                </div>
-                
-                {/* Completion Progress */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-700">Form Completion</span>
-                    <span className="text-sm text-gray-600">{completionPercentage}%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full transition-all duration-500"
-                      style={{ width: `${completionPercentage}%` }}
-                    />
-                  </div>
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
+            {renderStepContent()}
+            
+            {errors.submit && (
+              <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-center space-x-2">
+                  <AlertCircle className="h-4 w-4 text-red-600" />
+                  <span className="text-sm font-medium text-red-800">{errors.submit}</span>
                 </div>
               </div>
+            )}
+          </div>
 
-              {/* Step Content */}
-              {renderStepContent()}
-            </div>
-
-            {/* Navigation Footer */}
-            <div className="px-8 py-6 bg-gray-50 border-t border-gray-200 rounded-b-xl">
-              <div className="flex items-center justify-between">
+          {/* Navigation Footer */}
+          <div className="flex items-center justify-between mt-8">
+            <button
+              onClick={prevStep}
+              disabled={currentStepIndex === 0}
+              className="flex items-center px-6 py-3 border border-gray-300 rounded-xl text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Previous
+            </button>
+            
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => navigate('/crm/leads')}
+                className="px-6 py-3 border border-gray-300 rounded-xl text-sm hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              
+              {currentStepIndex === steps.length - 1 ? (
                 <button
-                  onClick={prevStep}
-                  disabled={currentStep === 0}
-                  className="flex items-center px-6 py-3 border border-gray-300 rounded-xl text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  onClick={handleSubmit}
+                  disabled={isLoading}
+                  className="flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl text-sm hover:from-green-700 hover:to-green-800 disabled:opacity-50 transition-all"
                 >
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Previous
-                </button>
-                
-                <div className="flex items-center space-x-3">
-                  <button
-                    onClick={() => handleSubmit(false)}
-                    disabled={isLoading}
-                    className="flex items-center px-6 py-3 bg-green-600 text-white rounded-xl text-sm hover:bg-green-700 disabled:opacity-50 transition-colors"
-                  >
-                    {isLoading ? (
-                      <div className="animate-spin h-4 w-4 mr-2 border-2 border-white border-t-transparent rounded-full" />
-                    ) : (
-                      <Save className="h-4 w-4 mr-2" />
-                    )}
-                    Save Lead
-                  </button>
-                  
-                  <button
-                    onClick={() => handleSubmit(true)}
-                    disabled={isLoading}
-                    className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl text-sm hover:bg-blue-700 disabled:opacity-50 transition-colors"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Save & Add New
-                  </button>
-                  
-                  {currentStep < steps.length - 1 && (
-                    <button
-                      onClick={nextStep}
-                      className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm hover:from-blue-700 hover:to-purple-700 transition-all"
-                    >
-                      Next
-                      <ChevronRight className="h-4 w-4 ml-2" />
-                    </button>
+                  {isLoading ? (
+                    <div className="animate-spin h-4 w-4 mr-2 border-2 border-white border-t-transparent rounded-full" />
+                  ) : (
+                    <Save className="h-4 w-4 mr-2" />
                   )}
-                </div>
-              </div>
+                  Create Lead
+                </button>
+              ) : (
+                <button
+                  onClick={nextStep}
+                  className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm hover:from-blue-700 hover:to-purple-700 transition-all"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-2" />
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -1214,43 +1057,3 @@ const AddLeadPage: React.FC = () => {
 };
 
 export default AddLeadPage;
-
-/*
-INTEGRATION POINTS FOR FUTURE DEVELOPMENT:
-
-1. API Integration:
-   - POST /api/leads - Create new lead
-   - GET /api/leads/check-duplicate - Check for duplicates
-   - GET /api/companies/autocomplete - Company name suggestions
-   - POST /api/leads/enrich - Data enrichment from external sources
-
-2. Lead Generation Module Integration:
-   - Import leads from lead gen campaigns
-   - Sync with external lead sources (LinkedIn, ZoomInfo, etc.)
-   - Automatic lead scoring based on ICP matching
-   - Lead routing based on territory/assignment rules
-
-3. AI/ML Integration:
-   - Real-time lead scoring
-   - Industry/company size prediction
-   - Lead quality assessment
-   - Duplicate detection and merging suggestions
-
-4. External Integrations:
-   - Email validation services
-   - Company data enrichment (Clearbit, ZoomInfo)
-   - Social media profile matching
-   - Geographic/timezone detection
-
-5. Workflow Integration:
-   - Automatic task creation for new leads
-   - Lead assignment rules and round-robin
-   - Notification triggers for high-value leads
-   - Sequence enrollment based on lead characteristics
-
-6. Custom Fields System:
-   - Dynamic custom field rendering
-   - Field validation and formatting
-   - Integration-specific field mapping
-   - Custom field analytics and reporting
-*/
