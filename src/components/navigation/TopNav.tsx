@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Bell, Settings, ChevronDown, Plus, Mail, Building2 } from 'lucide-react';
+import { Search, Bell, Settings, ChevronDown, Plus, Mail, Building2, Target, DollarSign, Users, Calendar } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
