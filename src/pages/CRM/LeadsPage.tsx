@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Plus, Filter, Download, Upload, Search, LayoutGrid, List, 
   Users, Target, TrendingUp, DollarSign, Calendar, Phone, Mail, 
@@ -59,6 +60,7 @@ interface BulkAction {
 
 const LeadsPage: React.FC = () => {
   const { leads: rawLeads, employees, updateLead, deleteLead } = useData();
+  const navigate = useNavigate();
   
   // Enhanced leads with AI scoring
   const [leads, setLeads] = useState<EnhancedLead[]>([]);
@@ -361,7 +363,12 @@ const LeadsPage: React.FC = () => {
                     </div>
                     <div>
                       <div className="flex items-center space-x-2">
-                        <p className="text-sm font-semibold text-gray-900">{lead.name}</p>
+                        <button 
+                          onClick={() => navigate(`/crm/leads/${lead.id}`)}
+                          className="text-sm font-semibold text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+                        >
+                          {lead.name}
+                        </button>
                         <div className={`w-2 h-2 rounded-full ${getTemperatureColor(lead.temperature)}`} />
                       </div>
                       <p className="text-sm text-gray-600">{lead.position}</p>
@@ -431,7 +438,10 @@ const LeadsPage: React.FC = () => {
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center space-x-2">
-                    <button className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors">
+                    <button 
+                      onClick={() => navigate(`/crm/leads/${lead.id}`)}
+                      className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors"
+                    >
                       <Eye className="h-4 w-4" />
                     </button>
                     <button className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors">
@@ -483,6 +493,7 @@ const LeadsPage: React.FC = () => {
                   {stageLeads.map(lead => (
                     <div
                       key={lead.id}
+                      onClick={() => navigate(`/crm/leads/${lead.id}`)}
                       className="bg-white rounded-xl border border-gray-200 p-4 cursor-pointer hover:shadow-lg transition-all duration-200 hover:border-gray-300 group shadow-sm"
                     >
                       <div className="flex items-start justify-between mb-3">
@@ -591,6 +602,7 @@ const LeadsPage: React.FC = () => {
                 Export
               </button>
               
+                onClick={() => navigate('/crm/leads/new')}
               <button className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm hover:from-blue-700 hover:to-purple-700 transition-all shadow-md">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Lead
@@ -908,7 +920,9 @@ const LeadsPage: React.FC = () => {
             }
           </p>
           <button className="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-colors">
-            <Plus className="h-4 w-4 mr-2 inline" />
+            <Plus className="h-4 w-4 mr-2 inline" 
+            onClick={() => navigate('/crm/leads/new')}
+            />
             Add Your First Lead
           </button>
         </div>
