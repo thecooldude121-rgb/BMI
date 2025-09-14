@@ -20,8 +20,7 @@ import LeadDetailPage from './pages/CRM/LeadDetailPage';
 import HRMSModule from './pages/HRMS/HRMSModule';
 import Analytics from './pages/Analytics/Analytics';
 import Calendar from './pages/Calendar/Calendar';
-import LeadGeneration from './pages/LeadGeneration/LeadGeneration';
-import LeadGenerationDetailPage from './pages/LeadGeneration/LeadDetailPage';
+import LeadGenerationModule from './pages/LeadGeneration/LeadGenerationModule';
 import Settings from './pages/Settings/Settings';
 import Login from './pages/Auth/Login';
 import GamificationPage from './pages/CRM/GamificationPage';
@@ -75,8 +74,7 @@ const App = () => {
                 <Route path="/hrms/*" element={<HRMSModule />} />
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/calendar" element={<Calendar />} />
-                <Route path="/lead-generation" element={<LeadGeneration />} />
-                <Route path="/lead-generation/leads/:id" element={<LeadGenerationDetailPage />} />
+                <Route path="/lead-generation/*" element={<LeadGenerationModule />} />
                 <Route path="/settings" element={<Settings />} />
               </Routes>
             </Layout>
