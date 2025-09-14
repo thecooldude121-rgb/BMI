@@ -131,15 +131,6 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({
     return colors[priority as keyof typeof colors] || colors.medium;
   };
 
-  const toggleSection = (sectionId: string) => {
-    const newExpanded = new Set(expandedSections);
-    if (newExpanded.has(sectionId)) {
-      newExpanded.delete(sectionId);
-    } else {
-      newExpanded.add(sectionId);
-    }
-    setExpandedSections(newExpanded);
-  };
 
   const handleFieldEdit = (field: string, value: any) => {
     setEditableFields(prev => ({ ...prev, [field]: value }));
