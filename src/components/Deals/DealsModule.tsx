@@ -7,7 +7,7 @@ import {
   ArrowUpDown, Columns, Save, Share, Copy, FileText,
   Mail, Phone, Video, CheckSquare, Clock, Building
 } from 'lucide-react';
-import { DragDropContext, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import { Deal, Pipeline, DealFilters, DealColumn, CustomView, BulkAction, DEFAULT_DEAL_COLUMNS, SAMPLE_PIPELINES } from '../../types/deals';
 import { generateSampleDeals, SAMPLE_ACCOUNTS, SAMPLE_CONTACTS, SAMPLE_USERS } from '../../utils/sampleDealsData';
 import DealKanban from './DealKanban';
@@ -209,7 +209,7 @@ const DealsModule: React.FC = () => {
   };
 
   const handleDealClick = (deal: Deal) => {
-    console.log('Deal clicked:', deal);
+    console.log('DealsModule: Deal clicked:', deal);
     setSelectedDeal(deal);
     setShowDealDetail(true);
   };
@@ -913,19 +913,19 @@ const DealsModule: React.FC = () => {
         )}
 
         {/* Content */}
-        {viewMode === 'list' ? (
-          renderTableView()
-        ) : (
-          <DragDropContext onDragEnd={handleDragEnd}>
-            <DealKanban
-              deals={filteredDeals}
-              pipelines={pipelines}
-              onDealClick={handleDealClick}
-              formatCurrency={formatCurrency}
-              getAccountName={getAccountName}
-              getUserName={getUserName}
-            />
-          </DragDropContext>
+        {viewMode === 'list' ? renderTableView() : (
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <DealKanban
+                deals={filteredDeals}
+                pipelines={pipelines}
+                onDealClick={handleDealClick}
+                formatCurrency={formatCurrency}
+                getAccountName={getAccountName}
+                getUserName={getUserName}
+              />
+            </DragDropContext>
+          </div>
         )}
 
         {/* Empty State */}
