@@ -61,7 +61,6 @@ interface BulkAction {
 const LeadsPage: React.FC = () => {
   const { leads: rawLeads, employees, updateLead, deleteLead } = useData();
   const navigate = useNavigate();
-  const navigate = useNavigate();
   
   // Enhanced leads with AI scoring
   const [leads, setLeads] = useState<EnhancedLead[]>([]);
