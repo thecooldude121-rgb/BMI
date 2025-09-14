@@ -313,217 +313,293 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({
             {activeTab === 'summary' && (
               <div className="space-y-8">
                 {/* Basic Information */}
-                {renderCollapsibleSection(
-                  'basic',
-                  'Basic Information',
-                  Briefcase,
-                  <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-600 mb-1">Deal Name</label>
-                        {isEditing ? (
-                          <input
-                            type="text"
-                            value={editableFields.name || deal.name}
-                            onChange={(e) => handleFieldEdit('name', e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          />
-                        ) : (
-                          <p className="text-lg font-medium text-gray-900">{deal.name}</p>
-                        )}
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                  <div 
+                    className="flex items-center justify-between p-6 cursor-pointer hover:bg-gray-50 transition-colors"
+                    onClick={() => toggleSection('basic')}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 bg-blue-100 rounded-lg">
+                        <Briefcase className="h-5 w-5 text-blue-600" />
                       </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-600 mb-1">Account</label>
-                        <p className="text-lg font-medium text-gray-900">
-                          {account ? (
-                            <button className="text-blue-600 hover:text-blue-800 hover:underline">
-                              {account.name}
-                            </button>
-                          ) : (
-                            'No account'
-                          )}
-                        </p>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-600 mb-1">Primary Contact</label>
-                        <p className="text-lg font-medium text-gray-900">
-                          {contact ? (
-                            <button className="text-blue-600 hover:text-blue-800 hover:underline">
-                              {contact.name}
-                            </button>
-                          ) : (
-                            'No contact'
-                          )}
-                        </p>
-                      </div>
+                      <h3 className="text-lg font-semibold text-gray-900">Basic Information</h3>
                     </div>
-                    
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-600 mb-1">Deal Owner</label>
-                        <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                            <User className="h-4 w-4 text-blue-600" />
-                          </div>
-                          <span className="text-lg font-medium text-gray-900">{owner?.name}</span>
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-600 mb-1">Pipeline</label>
-                        <p className="text-lg font-medium text-gray-900">{pipeline?.name}</p>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-600 mb-1">Deal Type</label>
-                        <p className="text-lg font-medium text-gray-900 capitalize">
-                          {deal.dealType.replace('-', ' ')}
-                        </p>
-                      </div>
+                    <div className="flex items-center space-x-3">
+                      {expandedSections.has('basic') ? (
+                        <ChevronUp className="h-5 w-5 text-gray-400" />
+                      ) : (
+                        <ChevronDown className="h-5 w-5 text-gray-400" />
+                      )}
                     </div>
                   </div>
-                )}
+                  {expandedSections.has('basic') && (
+                    <div className="px-6 pb-6 border-t border-gray-100">
+                      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">Deal Name</label>
+                            {isEditing ? (
+                              <input
+                                type="text"
+                                value={editableFields.name || deal.name}
+                                onChange={(e) => handleFieldEdit('name', e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              />
+                            ) : (
+                              <p className="text-lg font-medium text-gray-900">{deal.name}</p>
+                            )}
+                          </div>
+                          
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">Account</label>
+                            <p className="text-lg font-medium text-gray-900">
+                              {account ? (
+                                <button className="text-blue-600 hover:text-blue-800 hover:underline">
+                                  {account.name}
+                                </button>
+                              ) : (
+                                'No account'
+                              )}
+                            </p>
+                          </div>
+                          
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">Primary Contact</label>
+                            <p className="text-lg font-medium text-gray-900">
+                              {contact ? (
+                                <button className="text-blue-600 hover:text-blue-800 hover:underline">
+                                  {contact.name}
+                                </button>
+                              ) : (
+                                'No contact'
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">Deal Owner</label>
+                            <div className="flex items-center space-x-3">
+                              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                <User className="h-4 w-4 text-blue-600" />
+                              </div>
+                              <span className="text-lg font-medium text-gray-900">{owner?.name}</span>
+                            </div>
+                          </div>
+                          
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">Pipeline</label>
+                            <p className="text-lg font-medium text-gray-900">{pipeline?.name}</p>
+                          </div>
+                          
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">Deal Type</label>
+                            <p className="text-lg font-medium text-gray-900 capitalize">
+                              {deal.dealType.replace('-', ' ')}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 {/* Financial Information */}
-                {renderCollapsibleSection(
-                  'financial',
-                  'Financial Information',
-                  DollarSign,
-                  <div className="mt-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                      <div className="text-center p-6 bg-green-50 rounded-xl border border-green-200">
-                        <DollarSign className="h-8 w-8 text-green-600 mx-auto mb-3" />
-                        <p className="text-sm font-medium text-green-600 mb-1">Deal Value</p>
-                        <p className="text-3xl font-bold text-green-700">
-                          {formatCurrency(deal.amount, deal.currency)}
-                        </p>
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                  <div 
+                    className="flex items-center justify-between p-6 cursor-pointer hover:bg-gray-50 transition-colors"
+                    onClick={() => toggleSection('financial')}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 bg-blue-100 rounded-lg">
+                        <DollarSign className="h-5 w-5 text-blue-600" />
                       </div>
-                      
-                      <div className="text-center p-6 bg-blue-50 rounded-xl border border-blue-200">
-                        <Target className="h-8 w-8 text-blue-600 mx-auto mb-3" />
-                        <p className="text-sm font-medium text-blue-600 mb-1">Win Probability</p>
-                        <p className="text-3xl font-bold text-blue-700">{deal.probability}%</p>
-                        <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                          <div
-                            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${deal.probability}%` }}
-                          />
-                        </div>
-                      </div>
-                      
-                      <div className="text-center p-6 bg-purple-50 rounded-xl border border-purple-200">
-                        <TrendingUp className="h-8 w-8 text-purple-600 mx-auto mb-3" />
-                        <p className="text-sm font-medium text-purple-600 mb-1">Weighted Value</p>
-                        <p className="text-3xl font-bold text-purple-700">
-                          {formatCurrency(deal.amount * deal.probability / 100, deal.currency)}
-                        </p>
-                      </div>
+                      <h3 className="text-lg font-semibold text-gray-900">Financial Information</h3>
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-600 mb-1">Expected Close Date</label>
-                        <p className="text-lg font-medium text-gray-900">
-                          {deal.expectedCloseDate ? new Date(deal.expectedCloseDate).toLocaleDateString() : 'Not set'}
-                        </p>
-                      </div>
-                      
-                      {deal.actualCloseDate && (
-                        <div>
-                          <label className="block text-sm font-medium text-gray-600 mb-1">Actual Close Date</label>
-                          <p className="text-lg font-medium text-gray-900">
-                            {new Date(deal.actualCloseDate).toLocaleDateString()}
-                          </p>
-                        </div>
+                    <div className="flex items-center space-x-3">
+                      {expandedSections.has('financial') ? (
+                        <ChevronUp className="h-5 w-5 text-gray-400" />
+                      ) : (
+                        <ChevronDown className="h-5 w-5 text-gray-400" />
                       )}
                     </div>
                   </div>
-                )}
+                  {expandedSections.has('financial') && (
+                    <div className="px-6 pb-6 border-t border-gray-100">
+                      <div className="mt-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                          <div className="text-center p-6 bg-green-50 rounded-xl border border-green-200">
+                            <DollarSign className="h-8 w-8 text-green-600 mx-auto mb-3" />
+                            <p className="text-sm font-medium text-green-600 mb-1">Deal Value</p>
+                            <p className="text-3xl font-bold text-green-700">
+                              {formatCurrency(deal.amount, deal.currency)}
+                            </p>
+                          </div>
+                          
+                          <div className="text-center p-6 bg-blue-50 rounded-xl border border-blue-200">
+                            <Target className="h-8 w-8 text-blue-600 mx-auto mb-3" />
+                            <p className="text-sm font-medium text-blue-600 mb-1">Win Probability</p>
+                            <p className="text-3xl font-bold text-blue-700">{deal.probability}%</p>
+                            <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                              <div
+                                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                                style={{ width: `${deal.probability}%` }}
+                              />
+                            </div>
+                          </div>
+                          
+                          <div className="text-center p-6 bg-purple-50 rounded-xl border border-purple-200">
+                            <TrendingUp className="h-8 w-8 text-purple-600 mx-auto mb-3" />
+                            <p className="text-sm font-medium text-purple-600 mb-1">Weighted Value</p>
+                            <p className="text-3xl font-bold text-purple-700">
+                              {formatCurrency(deal.amount * deal.probability / 100, deal.currency)}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">Expected Close Date</label>
+                            <p className="text-lg font-medium text-gray-900">
+                              {deal.expectedCloseDate ? new Date(deal.expectedCloseDate).toLocaleDateString() : 'Not set'}
+                            </p>
+                          </div>
+                          
+                          {deal.actualCloseDate && (
+                            <div>
+                              <label className="block text-sm font-medium text-gray-600 mb-1">Actual Close Date</label>
+                              <p className="text-lg font-medium text-gray-900">
+                                {new Date(deal.actualCloseDate).toLocaleDateString()}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 {/* Deal Details */}
-                {renderCollapsibleSection(
-                  'details',
-                  'Deal Details',
-                  FileText,
-                  <div className="mt-6 space-y-6">
-                    {deal.description && (
-                      <div>
-                        <label className="block text-sm font-medium text-gray-600 mb-2">Description</label>
-                        <p className="text-gray-700 leading-relaxed">{deal.description}</p>
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                  <div 
+                    className="flex items-center justify-between p-6 cursor-pointer hover:bg-gray-50 transition-colors"
+                    onClick={() => toggleSection('details')}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 bg-blue-100 rounded-lg">
+                        <FileText className="h-5 w-5 text-blue-600" />
                       </div>
-                    )}
-                    
-                    {deal.nextSteps && (
-                      <div>
-                        <label className="block text-sm font-medium text-gray-600 mb-2">Next Steps</label>
-                        <p className="text-gray-700 leading-relaxed">{deal.nextSteps}</p>
-                      </div>
-                    )}
-                    
-                    {deal.tags.length > 0 && (
-                      <div>
-                        <label className="block text-sm font-medium text-gray-600 mb-2">Tags</label>
-                        <div className="flex flex-wrap gap-2">
-                          {deal.tags.map((tag, index) => (
-                            <span
-                              key={index}
-                              className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
-                            >
-                              <Tag className="h-3 w-3 mr-1" />
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Timeline */}
-                {renderCollapsibleSection(
-                  'timeline',
-                  'Deal Timeline',
-                  Clock,
-                  <div className="mt-6">
-                    <div className="space-y-4">
-                      <div className="flex items-center space-x-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                        <div className="p-2 bg-blue-100 rounded-lg">
-                          <Calendar className="h-5 w-5 text-blue-600" />
-                        </div>
-                        <div>
-                          <p className="font-medium text-gray-900">Deal Created</p>
-                          <p className="text-sm text-gray-600">{new Date(deal.createdAt).toLocaleDateString()}</p>
-                        </div>
-                      </div>
-                      
-                      {deal.lastActivityAt && (
-                        <div className="flex items-center space-x-4 p-4 bg-green-50 rounded-lg border border-green-200">
-                          <div className="p-2 bg-green-100 rounded-lg">
-                            <Activity className="h-5 w-5 text-green-600" />
-                          </div>
-                          <div>
-                            <p className="font-medium text-gray-900">Last Activity</p>
-                            <p className="text-sm text-gray-600">{new Date(deal.lastActivityAt).toLocaleDateString()}</p>
-                          </div>
-                        </div>
-                      )}
-                      
-                      {deal.expectedCloseDate && (
-                        <div className="flex items-center space-x-4 p-4 bg-orange-50 rounded-lg border border-orange-200">
-                          <div className="p-2 bg-orange-100 rounded-lg">
-                            <Target className="h-5 w-5 text-orange-600" />
-                          </div>
-                          <div>
-                            <p className="font-medium text-gray-900">Expected Close</p>
-                            <p className="text-sm text-gray-600">{new Date(deal.expectedCloseDate).toLocaleDateString()}</p>
-                          </div>
-                        </div>
+                      <h3 className="text-lg font-semibold text-gray-900">Deal Details</h3>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      {expandedSections.has('details') ? (
+                        <ChevronUp className="h-5 w-5 text-gray-400" />
+                      ) : (
+                        <ChevronDown className="h-5 w-5 text-gray-400" />
                       )}
                     </div>
                   </div>
-                )}
+                  {expandedSections.has('details') && (
+                    <div className="px-6 pb-6 border-t border-gray-100">
+                      <div className="mt-6 space-y-6">
+                        {deal.description && (
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-2">Description</label>
+                            <p className="text-gray-700 leading-relaxed">{deal.description}</p>
+                          </div>
+                        )}
+                        
+                        {deal.nextSteps && (
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-2">Next Steps</label>
+                            <p className="text-gray-700 leading-relaxed">{deal.nextSteps}</p>
+                          </div>
+                        )}
+                        
+                        {deal.tags.length > 0 && (
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-2">Tags</label>
+                            <div className="flex flex-wrap gap-2">
+                              {deal.tags.map((tag, index) => (
+                                <span
+                                  key={index}
+                                  className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
+                                >
+                                  <Tag className="h-3 w-3 mr-1" />
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Timeline */}
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                  <div 
+                    className="flex items-center justify-between p-6 cursor-pointer hover:bg-gray-50 transition-colors"
+                    onClick={() => toggleSection('timeline')}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 bg-blue-100 rounded-lg">
+                        <Clock className="h-5 w-5 text-blue-600" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-900">Deal Timeline</h3>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      {expandedSections.has('timeline') ? (
+                        <ChevronUp className="h-5 w-5 text-gray-400" />
+                      ) : (
+                        <ChevronDown className="h-5 w-5 text-gray-400" />
+                      )}
+                    </div>
+                  </div>
+                  {expandedSections.has('timeline') && (
+                    <div className="px-6 pb-6 border-t border-gray-100">
+                      <div className="mt-6">
+                        <div className="space-y-4">
+                          <div className="flex items-center space-x-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                            <div className="p-2 bg-blue-100 rounded-lg">
+                              <Calendar className="h-5 w-5 text-blue-600" />
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-900">Deal Created</p>
+                              <p className="text-sm text-gray-600">{new Date(deal.createdAt).toLocaleDateString()}</p>
+                            </div>
+                          </div>
+                          
+                          {deal.lastActivityAt && (
+                            <div className="flex items-center space-x-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                              <div className="p-2 bg-green-100 rounded-lg">
+                                <Activity className="h-5 w-5 text-green-600" />
+                              </div>
+                              <div>
+                                <p className="font-medium text-gray-900">Last Activity</p>
+                                <p className="text-sm text-gray-600">{new Date(deal.lastActivityAt).toLocaleDateString()}</p>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {deal.expectedCloseDate && (
+                            <div className="flex items-center space-x-4 p-4 bg-orange-50 rounded-lg border border-orange-200">
+                              <div className="p-2 bg-orange-100 rounded-lg">
+                                <Target className="h-5 w-5 text-orange-600" />
+                              </div>
+                              <div>
+                                <p className="font-medium text-gray-900">Expected Close</p>
+                                <p className="text-sm text-gray-600">{new Date(deal.expectedCloseDate).toLocaleDateString()}</p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 

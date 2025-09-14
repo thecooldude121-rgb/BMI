@@ -7,7 +7,7 @@ import {
   ArrowUpDown, Columns, Save, Share, Copy, FileText,
   Mail, Phone, Video, CheckSquare, Clock, Building
 } from 'lucide-react';
-import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
+import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import { Deal, Pipeline, DealFilters, DealColumn, CustomView, BulkAction, DEFAULT_DEAL_COLUMNS, SAMPLE_PIPELINES } from '../../types/deals';
 import { generateSampleDeals, SAMPLE_ACCOUNTS, SAMPLE_CONTACTS, SAMPLE_USERS } from '../../utils/sampleDealsData';
 import DealKanban from './DealKanban';
@@ -915,16 +915,15 @@ const DealsModule: React.FC = () => {
         {viewMode === 'list' ? (
           renderTableView()
         ) : (
-          <DragDropContext onDragEnd={handleDragEnd}>
-            <DealKanban
-              deals={filteredDeals}
-              pipelines={pipelines}
-              onDealClick={handleDealClick}
-              formatCurrency={formatCurrency}
-              getAccountName={getAccountName}
-              getUserName={getUserName}
-            />
-          </DragDropContext>
+          <DealKanban
+            deals={filteredDeals}
+            pipelines={pipelines}
+            onDealClick={handleDealClick}
+            onDragEnd={handleDragEnd}
+            formatCurrency={formatCurrency}
+            getAccountName={getAccountName}
+            getUserName={getUserName}
+          />
         )}
 
         {/* Empty State */}
