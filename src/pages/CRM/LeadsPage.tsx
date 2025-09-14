@@ -601,7 +601,6 @@ const LeadsPage: React.FC = () => {
                 <Download className="h-4 w-4 mr-2" />
                 Export
               </button>
-               onClick={() => navigate('/crm/leads/new')}
               
               <button 
                 onClick={() => navigate('/crm/leads/new')}
