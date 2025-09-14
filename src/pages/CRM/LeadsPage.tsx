@@ -602,7 +602,6 @@ const LeadsPage: React.FC = () => {
                 Export
               </button>
               
-                onClick={() => navigate('/crm/leads/new')}
               <button className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm hover:from-blue-700 hover:to-purple-700 transition-all shadow-md">
                 onClick={() => navigate('/crm/leads/new')}
                 <Plus className="h-4 w-4 mr-2" />
