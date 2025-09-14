@@ -45,46 +45,6 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({
   ) => {
     const Icon = icon;
     const isExpanded = expandedSections.has(id);
-
-    return (
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div 
-          className="flex items-center justify-between p-6 cursor-pointer hover:bg-gray-50 transition-colors"
-          onClick={() => toggleSection(id)}
-        >
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Icon className="h-5 w-5 text-blue-600" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-          </div>
-          <div className="flex items-center space-x-3">
-            {actions}
-            {isExpanded ? (
-              <ChevronUp className="h-5 w-5 text-gray-400" />
-            ) : (
-              <ChevronDown className="h-5 w-5 text-gray-400" />
-            )}
-          </div>
-        </div>
-        {isExpanded && (
-          <div className="px-6 pb-6 border-t border-gray-100">
-            {children}
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const toggleSection = (sectionId: string) => {
-    const newExpanded = new Set(expandedSections);
-    if (newExpanded.has(sectionId)) {
-      newExpanded.delete(sectionId);
-    } else {
-      newExpanded.add(sectionId);
-    }
-    setExpandedSections(newExpanded);
-  };
   const pipeline = pipelines.find(p => p.id === deal.pipelineId);
   const currentStage = pipeline?.stages.find(s => s.id === deal.stageId);
   const account = accounts.find(a => a.id === deal.accountId);
