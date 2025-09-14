@@ -1174,6 +1174,14 @@ const LeadGeneration: React.FC = () => {
                 <Download className="h-4 w-4 mr-2" />
                 Export
               </button>
+              
+              <button 
+                onClick={() => navigate('/crm/leads/new')}
+                className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm hover:from-blue-700 hover:to-purple-700 transition-all shadow-md"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Lead
+              </button>
             </div>
           </div>
 

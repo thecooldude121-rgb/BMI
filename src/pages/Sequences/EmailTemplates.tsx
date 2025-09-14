@@ -302,7 +302,7 @@ const EmailTemplates: React.FC = () => {
                   {selectedTemplate.variables.map((variable) => (
                     <div key={variable.name} className="p-3 bg-blue-50 rounded-lg border border-blue-200">
                       <div className="flex items-center justify-between">
-                        <span className="font-medium text-blue-900">{`{{${variable.name}}}`}</span>
+                        <span className="font-medium text-blue-900">{{variable.name}}</span>
                         {variable.required && (
                           <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded">Required</span>
                         )}
