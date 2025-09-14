@@ -604,6 +604,7 @@ const LeadsPage: React.FC = () => {
               
                 onClick={() => navigate('/crm/leads/new')}
               <button className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm hover:from-blue-700 hover:to-purple-700 transition-all shadow-md">
+                onClick={() => navigate('/crm/leads/new')}
                 <Plus className="h-4 w-4 mr-2" />
                 Add Lead
               </button>
@@ -920,8 +921,8 @@ const LeadsPage: React.FC = () => {
             }
           </p>
           <button className="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-colors">
-            <Plus className="h-4 w-4 mr-2 inline" 
             onClick={() => navigate('/crm/leads/new')}
+            <Plus className="h-4 w-4 mr-2 inline" 
             />
             Add Your First Lead
           </button>
