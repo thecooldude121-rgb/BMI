@@ -448,6 +448,13 @@ const LeadGeneration: React.FC = () => {
               tags: [],
               intent: [],
               verified: null
+            })}
+            className="flex items-center px-3 py-2 bg-gray-600 text-white rounded-lg text-sm hover:bg-gray-700 transition-colors"
+          >
+            <X className="h-4 w-4 mr-2" />
+            Clear All
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
