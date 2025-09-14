@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
 import { 
   Plus, Filter, Download, Upload, Search, LayoutGrid, List, 
   Users, Target, TrendingUp, DollarSign, Calendar, Phone, Mail, 
