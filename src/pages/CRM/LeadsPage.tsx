@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { 
   Plus, Filter, Download, Upload, Search, LayoutGrid, List, 
   Users, Target, TrendingUp, DollarSign, Calendar, Phone, Mail, 
@@ -60,6 +61,7 @@ interface BulkAction {
 
 const LeadsPage: React.FC = () => {
   const { leads: rawLeads, employees, updateLead, deleteLead } = useData();
+  const navigate = useNavigate();
   const navigate = useNavigate();
   
   // Enhanced leads with AI scoring
@@ -921,9 +923,7 @@ const LeadsPage: React.FC = () => {
           </p>
           <button className="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-colors">
             onClick={() => navigate('/crm/leads/new')}
-            onClick={() => navigate('/crm/leads/new')}
-            <Plus className="h-4 w-4 mr-2 inline" 
-            />
+            <Plus className="h-4 w-4 mr-2 inline" />
             Add Your First Lead
           </button>
         </div>
