@@ -40,7 +40,7 @@ const Header: React.FC = () => {
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'CRM', href: '/crm', icon: Users },
     { name: 'HRMS', href: '/hrms', icon: UserCheck },
-    { name: 'Lead Generation', href: '/lead-generation', icon: Target },
+    { name: 'Lead Generation', href: '/lead-generation/dashboard', icon: Target },
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },
     { name: 'Calendar', href: '/calendar', icon: Calendar },
     { name: 'Settings', href: '/settings', icon: Settings },
