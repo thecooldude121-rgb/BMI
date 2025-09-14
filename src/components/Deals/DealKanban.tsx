@@ -1,5 +1,5 @@
 import React from 'react';
-import { Droppable, Draggable } from '@hello-pangea/dnd';
+import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { Plus, DollarSign, Users, Calendar, Clock, MoreHorizontal, Star, TrendingUp, AlertTriangle } from 'lucide-react';
 import { Deal, Pipeline } from '../../types/deals';
 
@@ -22,6 +22,17 @@ const DealKanban: React.FC<DealKanbanProps> = ({
 }) => {
   // Use the first pipeline for now (in a real app, this would be selectable)
   const activePipeline = pipelines[0];
+
+  if (!activePipeline || !activePipeline.stages) {
+    return (
+      <div className="flex items-center justify-center h-64 text-gray-500">
+        <div className="text-center">
+          <p className="text-lg font-medium">No pipeline configured</p>
+          <p className="text-sm">Please configure a pipeline to view deals</p>
+        </div>
+      </div>
+    );
+  }
 
   const getStageDeals = (stageId: string) => {
     return deals.filter(deal => deal.stageId === stageId && deal.pipelineId === activePipeline.id);

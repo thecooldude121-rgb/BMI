@@ -1035,20 +1035,20 @@ const DealsModule: React.FC = () => {
             <div className="flex justify-end space-x-3 mt-6">
               <button
                 onClick={() => setShowColumnChooser(false)}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => setShowColumnChooser(false)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
-              >
-                Apply
-              </button>
-            </div>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        {viewMode === 'list' ? renderTableView() : (
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <DealKanban
+              deals={filteredDeals}
+              pipelines={pipelines}
+              onDealClick={handleDealClick}
+              formatCurrency={formatCurrency}
+              getAccountName={getAccountName}
+              getUserName={getUserName}
+            />
           </div>
-        </div>
-      )}
+        )}
+      </DragDropContext>
     </div>
   );
 };
