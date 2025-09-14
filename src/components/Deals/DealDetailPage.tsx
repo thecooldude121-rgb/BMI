@@ -36,15 +36,6 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['basic', 'financial', 'details']));
   const [showStageModal, setShowStageModal] = useState(false);
 
-  const renderCollapsibleSection = (
-    id: string,
-    title: string,
-    icon: React.ElementType,
-    children: React.ReactNode,
-    actions?: React.ReactNode
-  ) => {
-    const Icon = icon;
-    const isExpanded = expandedSections.has(id);
   const pipeline = pipelines.find(p => p.id === deal.pipelineId);
   const currentStage = pipeline?.stages.find(s => s.id === deal.stageId);
   const account = accounts.find(a => a.id === deal.accountId);
@@ -91,6 +82,17 @@ const DealDetailPage: React.FC<DealDetailPageProps> = ({
     return colors[priority as keyof typeof colors] || colors.medium;
   };
 
+  const toggleSection = (id: string) => {
+    setExpandedSections(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
 
   const handleFieldEdit = (field: string, value: any) => {
     setEditableFields(prev => ({ ...prev, [field]: value }));
