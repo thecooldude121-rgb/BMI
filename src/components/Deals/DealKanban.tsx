@@ -1,5 +1,5 @@
 import React from 'react';
-import { Droppable, Draggable } from 'react-beautiful-dnd';
+import { Droppable, Draggable } from '@hello-pangea/dnd';
 import { Plus, DollarSign, Users, Calendar, Clock, MoreHorizontal, Star, TrendingUp, AlertTriangle } from 'lucide-react';
 import { Deal, Pipeline } from '../../types/deals';
 
@@ -139,17 +139,15 @@ const DealKanban: React.FC<DealKanbanProps> = ({
                               ref={provided.innerRef}
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                console.log('Deal card clicked:', deal);
-                                onDealClick(deal);
-                              }}
                               className={`bg-white rounded-xl border border-gray-200 p-4 cursor-pointer transition-all duration-200 hover:shadow-lg hover:border-gray-300 group ${
                                 snapshot.isDragging 
                                   ? 'shadow-2xl rotate-3 scale-105 border-blue-300' 
                                   : 'shadow-sm'
                               }`}
+                              onClick={() => {
+                                console.log('DealKanban: Deal card clicked:', deal);
+                                onDealClick(deal);
+                              }}
                             >
                               {/* Deal Header */}
                               <div className="flex items-start justify-between mb-3">
