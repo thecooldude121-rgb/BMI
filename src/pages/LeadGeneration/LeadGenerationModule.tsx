@@ -4,7 +4,7 @@ import LeadGenerationDashboard from './LeadGenerationDashboard';
 import ProspectDiscovery from './ProspectDiscovery';
 import ProspectsPage from './ProspectsPage';
 import CompaniesPage from './CompaniesPage';
-import DealsPage from './DealsPage';
+import DealsPage from '../CRM/DealsPage';
 import ListsPage from './ListsPage';
 import DataEnrichmentPage from './DataEnrichmentPage';
 import SequencesPage from './SequencesPage';

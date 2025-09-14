@@ -625,7 +625,7 @@ const ProspectsPage: React.FC = () => {
                 <option value="all">All Scores</option>
                 <option value="high">High (80+)</option>
                 <option value="medium">Medium (60-79)</option>
-                <option value="low">Low (<60)</option>
+                <option value="low">Low (&lt;60)</option>
               </select>
             </div>
 
