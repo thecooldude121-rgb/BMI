@@ -3,7 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, Users, DollarSign, Target, BarChart3, Calendar, 
   Settings, UserCheck, Building2, Phone, Mail, Activity, CheckSquare,
-  TrendingUp, Zap, Award, Trophy
+  TrendingUp, Zap, Award
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
