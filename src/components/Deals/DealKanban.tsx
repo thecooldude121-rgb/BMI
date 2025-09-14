@@ -155,7 +155,9 @@ const DealKanban: React.FC<DealKanbanProps> = ({
                                   ? 'shadow-2xl rotate-3 scale-105 border-blue-300' 
                                   : 'shadow-sm'
                               }`}
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
                                 console.log('DealKanban: Deal card clicked:', deal);
                                 onDealClick(deal);
                               }}
@@ -215,7 +217,6 @@ const DealKanban: React.FC<DealKanbanProps> = ({
                                     <span className="truncate">{getUserName(deal.ownerId)}</span>
                                   </div>
                                   <div className="flex items-center space-x-1 text-gray-600">
-                                    <Building className="h-3 w-3" />
                                     <span className="truncate">{getAccountName(deal.accountId)}</span>
                                   </div>
                                 </div>
