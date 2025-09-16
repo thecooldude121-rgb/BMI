@@ -749,7 +749,6 @@ const ProspectDetailPage: React.FC = () => {
                   </div>
                 )}
               </div>
-              </>
             )}
 
             {activeTab === 'activity' && (
