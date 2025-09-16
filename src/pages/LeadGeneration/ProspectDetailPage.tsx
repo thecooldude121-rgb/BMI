@@ -748,6 +748,7 @@ const ProspectDetailPage: React.FC = () => {
                     </div>
                   </div>
                 )}
+              </div>
               </>
             )}
 
