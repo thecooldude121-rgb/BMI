@@ -191,308 +191,309 @@ const LeadGenerationDashboard: React.FC = () => {
 
         {/* Main Content */}
         <div className="flex-1 px-8 py-8">
-        {/* Key Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {renderMetricCard('Total Prospects', metrics.totalProspects.toLocaleString(), Users, '+12%', 'blue')}
-          {renderMetricCard('Companies', metrics.totalCompanies.toLocaleString(), Building, '+8%', 'green')}
-          {renderMetricCard('Pipeline Value', `$${(metrics.revenue / 1000).toFixed(0)}K`, DollarSign, '+15%', 'purple')}
-          {renderMetricCard('Reply Rate', `${metrics.replyRate}%`, TrendingUp, '+0.8%', 'orange')}
-        </div>
-
-        {/* Performance Overview */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-          {/* Email Performance */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-gray-900">Email Performance</h3>
-              <Mail className="h-5 w-5 text-blue-600" />
-            </div>
-            
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Emails Sent</span>
-                <span className="text-lg font-bold text-gray-900">{metrics.emailsSent.toLocaleString()}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Open Rate</span>
-                <span className="text-lg font-bold text-blue-600">{metrics.openRate}%</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Reply Rate</span>
-                <span className="text-lg font-bold text-green-600">{metrics.replyRate}%</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Meeting Booked</span>
-                <span className="text-lg font-bold text-purple-600">{metrics.meetingBookedRate}%</span>
-              </div>
-            </div>
-
-            <div className="mt-6 pt-4 border-t border-gray-200">
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <p className="text-2xl font-bold text-blue-600">{metrics.emailsOpened}</p>
-                  <p className="text-xs text-gray-500">Opens</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-green-600">{metrics.emailsReplied}</p>
-                  <p className="text-xs text-gray-500">Replies</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-purple-600">{metrics.meetingsBooked}</p>
-                  <p className="text-xs text-gray-500">Meetings</p>
-                </div>
-              </div>
-            </div>
+          {/* Key Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {renderMetricCard('Total Prospects', metrics.totalProspects.toLocaleString(), Users, '+12%', 'blue')}
+            {renderMetricCard('Companies', metrics.totalCompanies.toLocaleString(), Building, '+8%', 'green')}
+            {renderMetricCard('Pipeline Value', `$${(metrics.revenue / 1000).toFixed(0)}K`, DollarSign, '+15%', 'purple')}
+            {renderMetricCard('Reply Rate', `${metrics.replyRate}%`, TrendingUp, '+0.8%', 'orange')}
           </div>
 
-          {/* Active Sequences */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-gray-900">Active Sequences</h3>
-              <div className="flex items-center space-x-2">
-                <Zap className="h-5 w-5 text-orange-600" />
-                <span className="text-sm text-gray-600">{metrics.activeSequences} running</span>
+          {/* Performance Overview */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+            {/* Email Performance */}
+            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900">Email Performance</h3>
+                <Mail className="h-5 w-5 text-blue-600" />
               </div>
-            </div>
-            
-            <div className="space-y-4">
-              {activeSequences.map((sequence) => (
-                <div key={sequence.id} className="p-4 bg-gray-50 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-gray-900">{sequence.name}</h4>
-                    <div className="flex items-center space-x-1">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      <span className="text-xs text-green-600">Active</span>
-                    </div>
+              
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600">Emails Sent</span>
+                  <span className="text-lg font-bold text-gray-900">{metrics.emailsSent.toLocaleString()}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600">Open Rate</span>
+                  <span className="text-lg font-bold text-blue-600">{metrics.openRate}%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600">Reply Rate</span>
+                  <span className="text-lg font-bold text-green-600">{metrics.replyRate}%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600">Meeting Booked</span>
+                  <span className="text-lg font-bold text-purple-600">{metrics.meetingBookedRate}%</span>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-gray-200">
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div>
+                    <p className="text-2xl font-bold text-blue-600">{metrics.emailsOpened}</p>
+                    <p className="text-xs text-gray-500">Opens</p>
                   </div>
-                  <div className="grid grid-cols-3 gap-2 text-xs">
-                    <div>
-                      <p className="text-gray-500">Enrolled</p>
-                      <p className="font-medium text-gray-900">{sequence.enrolled}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Open Rate</p>
-                      <p className="font-medium text-blue-600">{sequence.openRate}%</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Reply Rate</p>
-                      <p className="font-medium text-green-600">{sequence.replyRate}%</p>
-                    </div>
+                  <div>
+                    <p className="text-2xl font-bold text-green-600">{metrics.emailsReplied}</p>
+                    <p className="text-xs text-gray-500">Replies</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-purple-600">{metrics.meetingsBooked}</p>
+                    <p className="text-xs text-gray-500">Meetings</p>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
-            
-            <button
-              onClick={() => navigate('/lead-generation/sequences')}
-              className="w-full mt-4 text-center text-sm text-blue-600 hover:text-blue-800 font-medium"
-            >
-              View All Sequences
-            </button>
-          </div>
 
-          {/* Top Performers */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-gray-900">Top Performers</h3>
-              <Star className="h-5 w-5 text-yellow-500" />
-            </div>
-            
-            <div className="space-y-4">
-              {topPerformers.map((performer, index) => (
-                <div key={performer.name} className="flex items-center space-x-3">
-                  <div className="flex items-center space-x-3">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                      index === 0 ? 'bg-yellow-100 text-yellow-700' :
-                      index === 1 ? 'bg-gray-100 text-gray-700' :
-                      'bg-orange-100 text-orange-700'
-                    }`}>
-                      {index + 1}
-                    </div>
-                    <img
-                      src={performer.avatar}
-                      alt={performer.name}
-                      className="w-8 h-8 rounded-full object-cover"
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">{performer.name}</p>
-                    <p className="text-xs text-gray-500">{performer.role}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-bold text-green-600">{performer.deals} deals</p>
-                    <p className="text-xs text-gray-500">{performer.replies} replies</p>
-                  </div>
+            {/* Active Sequences */}
+            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900">Active Sequences</h3>
+                <div className="flex items-center space-x-2">
+                  <Zap className="h-5 w-5 text-orange-600" />
+                  <span className="text-sm text-gray-600">{metrics.activeSequences} running</span>
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <button
-            onClick={() => navigate('/lead-generation/discovery')}
-            className="p-6 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-xl text-left hover:shadow-md transition-all group"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-blue-200 rounded-lg group-hover:bg-blue-300 transition-colors">
-                <Search className="h-6 w-6 text-blue-700" />
               </div>
-              <ArrowUpRight className="h-5 w-5 text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Find Prospects</h3>
-            <p className="text-sm text-gray-600">Search and discover new prospects with AI-powered filters</p>
-          </button>
-
-          <button
-            onClick={() => navigate('/lead-generation/sequences')}
-            className="p-6 bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 rounded-xl text-left hover:shadow-md transition-all group"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-orange-200 rounded-lg group-hover:bg-orange-300 transition-colors">
-                <Zap className="h-6 w-6 text-orange-700" />
+              
+              <div className="space-y-4">
+                {activeSequences.map((sequence) => (
+                  <div key={sequence.id} className="p-4 bg-gray-50 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-medium text-gray-900">{sequence.name}</h4>
+                      <div className="flex items-center space-x-1">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span className="text-xs text-green-600">Active</span>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-xs">
+                      <div>
+                        <p className="text-gray-500">Enrolled</p>
+                        <p className="font-medium text-gray-900">{sequence.enrolled}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500">Open Rate</p>
+                        <p className="font-medium text-blue-600">{sequence.openRate}%</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500">Reply Rate</p>
+                        <p className="font-medium text-green-600">{sequence.replyRate}%</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <ArrowUpRight className="h-5 w-5 text-orange-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+              
+              <button
+                onClick={() => navigate('/lead-generation/sequences')}
+                className="w-full mt-4 text-center text-sm text-blue-600 hover:text-blue-800 font-medium"
+              >
+                View All Sequences
+              </button>
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Create Sequence</h3>
-            <p className="text-sm text-gray-600">Build automated outreach campaigns with email sequences</p>
-          </button>
 
-          <button
-            onClick={() => navigate('/lead-generation/enrichment')}
-            className="p-6 bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200 rounded-xl text-left hover:shadow-md transition-all group"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-purple-200 rounded-lg group-hover:bg-purple-300 transition-colors">
-                <Sparkles className="h-6 w-6 text-purple-700" />
+            {/* Top Performers */}
+            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900">Top Performers</h3>
+                <Star className="h-5 w-5 text-yellow-500" />
               </div>
-              <ArrowUpRight className="h-5 w-5 text-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Enrich Data</h3>
-            <p className="text-sm text-gray-600">Enhance prospect data with AI-powered enrichment</p>
-          </button>
-
-          <button
-            onClick={() => navigate('/lead-generation/analytics')}
-            className="p-6 bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-xl text-left hover:shadow-md transition-all group"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-green-200 rounded-lg group-hover:bg-green-300 transition-colors">
-                <BarChart3 className="h-6 w-6 text-green-700" />
-              </div>
-              <ArrowUpRight className="h-5 w-5 text-green-600 opacity-0 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">View Analytics</h3>
-            <p className="text-sm text-gray-600">Analyze performance and optimize your outreach</p>
-          </button>
-        </div>
-
-        {/* Recent Activity & AI Insights */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Recent Activity */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-gray-900">Recent Activity</h3>
-              <Activity className="h-5 w-5 text-gray-400" />
-            </div>
-            
-            <div className="space-y-4">
-              {recentActivity.map((activity, index) => {
-                const Icon = activity.icon;
-                return (
-                  <div key={index} className="flex items-start space-x-3">
-                    <div className="p-2 bg-gray-100 rounded-lg">
-                      <Icon className="h-4 w-4 text-gray-600" />
+              
+              <div className="space-y-4">
+                {topPerformers.map((performer, index) => (
+                  <div key={performer.name} className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                        index === 0 ? 'bg-yellow-100 text-yellow-700' :
+                        index === 1 ? 'bg-gray-100 text-gray-700' :
+                        'bg-orange-100 text-orange-700'
+                      }`}>
+                        {index + 1}
+                      </div>
+                      <img
+                        src={performer.avatar}
+                        alt={performer.name}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900">{activity.action}</p>
-                      <p className="text-sm text-gray-600">{activity.details}</p>
-                      <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
+                      <p className="text-sm font-medium text-gray-900 truncate">{performer.name}</p>
+                      <p className="text-xs text-gray-500">{performer.role}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-bold text-green-600">{performer.deals} deals</p>
+                      <p className="text-xs text-gray-500">{performer.replies} replies</p>
                     </div>
                   </div>
-                );
-              })}
+                ))}
+              </div>
             </div>
-            
-            <button className="w-full mt-4 text-center text-sm text-blue-600 hover:text-blue-800 font-medium">
-              View All Activity
-            </button>
           </div>
 
-          {/* AI Insights */}
-          <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-xl p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-gray-900">AI Insights</h3>
-              <Sparkles className="h-5 w-5 text-purple-600" />
-            </div>
-            
-            <div className="space-y-4">
-              <div className="p-4 bg-white rounded-lg border border-purple-200">
-                <div className="flex items-center space-x-2 mb-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm font-medium text-gray-900">High-Intent Prospects</span>
-                </div>
-                <p className="text-sm text-gray-600">47 prospects showing high engagement signals. Consider prioritizing outreach.</p>
-              </div>
-              
-              <div className="p-4 bg-white rounded-lg border border-purple-200">
-                <div className="flex items-center space-x-2 mb-2">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                  <span className="text-sm font-medium text-gray-900">Sequence Optimization</span>
-                </div>
-                <p className="text-sm text-gray-600">Your "Enterprise Outreach" sequence could improve with A/B testing the subject line.</p>
-              </div>
-              
-              <div className="p-4 bg-white rounded-lg border border-purple-200">
-                <div className="flex items-center space-x-2 mb-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <span className="text-sm font-medium text-gray-900">Best Time to Send</span>
-                </div>
-                <p className="text-sm text-gray-600">Tuesday 10 AM shows 23% higher open rates for your target audience.</p>
-              </div>
-            </div>
-            
-            <button className="w-full mt-4 flex items-center justify-center p-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
-              <Sparkles className="h-4 w-4 mr-2" />
-              View All Insights
-            </button>
-          </div>
-        </div>
-
-        {/* Today's Tasks */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-gray-900">Today's Tasks</h3>
-            <div className="flex items-center space-x-2">
-              <CheckSquare className="h-5 w-5 text-green-600" />
-              <span className="text-sm text-gray-600">8 of 12 completed</span>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
-              <p className="text-2xl font-bold text-blue-600">24</p>
-              <p className="text-sm text-gray-600">Calls to Make</p>
-            </div>
-            <div className="text-center p-4 bg-green-50 rounded-lg">
-              <p className="text-2xl font-bold text-green-600">156</p>
-              <p className="text-sm text-gray-600">Emails to Send</p>
-            </div>
-            <div className="text-center p-4 bg-purple-50 rounded-lg">
-              <p className="text-2xl font-bold text-purple-600">8</p>
-              <p className="text-sm text-gray-600">Follow-ups Due</p>
-            </div>
-          </div>
-          
-          <div className="mt-6 flex justify-center">
+          {/* Quick Actions */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <button
-              onClick={() => navigate('/lead-generation/tasks')}
-              className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+              onClick={() => navigate('/lead-generation/discovery')}
+              className="p-6 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-xl text-left hover:shadow-md transition-all group"
             >
-              <CheckSquare className="h-4 w-4 mr-2" />
-              View All Tasks
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-3 bg-blue-200 rounded-lg group-hover:bg-blue-300 transition-colors">
+                  <Search className="h-6 w-6 text-blue-700" />
+                </div>
+                <ArrowUpRight className="h-5 w-5 text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Find Prospects</h3>
+              <p className="text-sm text-gray-600">Search and discover new prospects with AI-powered filters</p>
             </button>
+
+            <button
+              onClick={() => navigate('/lead-generation/sequences')}
+              className="p-6 bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 rounded-xl text-left hover:shadow-md transition-all group"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-3 bg-orange-200 rounded-lg group-hover:bg-orange-300 transition-colors">
+                  <Zap className="h-6 w-6 text-orange-700" />
+                </div>
+                <ArrowUpRight className="h-5 w-5 text-orange-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Create Sequence</h3>
+              <p className="text-sm text-gray-600">Build automated outreach campaigns with email sequences</p>
+            </button>
+
+            <button
+              onClick={() => navigate('/lead-generation/enrichment')}
+              className="p-6 bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200 rounded-xl text-left hover:shadow-md transition-all group"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-3 bg-purple-200 rounded-lg group-hover:bg-purple-300 transition-colors">
+                  <Sparkles className="h-6 w-6 text-purple-700" />
+                </div>
+                <ArrowUpRight className="h-5 w-5 text-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Enrich Data</h3>
+              <p className="text-sm text-gray-600">Enhance prospect data with AI-powered enrichment</p>
+            </button>
+
+            <button
+              onClick={() => navigate('/lead-generation/analytics')}
+              className="p-6 bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-xl text-left hover:shadow-md transition-all group"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-3 bg-green-200 rounded-lg group-hover:bg-green-300 transition-colors">
+                  <BarChart3 className="h-6 w-6 text-green-700" />
+                </div>
+                <ArrowUpRight className="h-5 w-5 text-green-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">View Analytics</h3>
+              <p className="text-sm text-gray-600">Analyze performance and optimize your outreach</p>
+            </button>
+          </div>
+
+          {/* Recent Activity & AI Insights */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Recent Activity */}
+            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900">Recent Activity</h3>
+                <Activity className="h-5 w-5 text-gray-400" />
+              </div>
+              
+              <div className="space-y-4">
+                {recentActivity.map((activity, index) => {
+                  const Icon = activity.icon;
+                  return (
+                    <div key={index} className="flex items-start space-x-3">
+                      <div className="p-2 bg-gray-100 rounded-lg">
+                        <Icon className="h-4 w-4 text-gray-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900">{activity.action}</p>
+                        <p className="text-sm text-gray-600">{activity.details}</p>
+                        <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              
+              <button className="w-full mt-4 text-center text-sm text-blue-600 hover:text-blue-800 font-medium">
+                View All Activity
+              </button>
+            </div>
+
+            {/* AI Insights */}
+            <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-xl p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900">AI Insights</h3>
+                <Sparkles className="h-5 w-5 text-purple-600" />
+              </div>
+              
+              <div className="space-y-4">
+                <div className="p-4 bg-white rounded-lg border border-purple-200">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="text-sm font-medium text-gray-900">High-Intent Prospects</span>
+                  </div>
+                  <p className="text-sm text-gray-600">47 prospects showing high engagement signals. Consider prioritizing outreach.</p>
+                </div>
+                
+                <div className="p-4 bg-white rounded-lg border border-purple-200">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                    <span className="text-sm font-medium text-gray-900">Sequence Optimization</span>
+                  </div>
+                  <p className="text-sm text-gray-600">Your "Enterprise Outreach" sequence could improve with A/B testing the subject line.</p>
+                </div>
+                
+                <div className="p-4 bg-white rounded-lg border border-purple-200">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <span className="text-sm font-medium text-gray-900">Best Time to Send</span>
+                  </div>
+                  <p className="text-sm text-gray-600">Tuesday 10 AM shows 23% higher open rates for your target audience.</p>
+                </div>
+              </div>
+              
+              <button className="w-full mt-4 flex items-center justify-center p-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                <Sparkles className="h-4 w-4 mr-2" />
+                View All Insights
+              </button>
+            </div>
+          </div>
+
+          {/* Today's Tasks */}
+          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-gray-900">Today's Tasks</h3>
+              <div className="flex items-center space-x-2">
+                <CheckSquare className="h-5 w-5 text-green-600" />
+                <span className="text-sm text-gray-600">8 of 12 completed</span>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center p-4 bg-blue-50 rounded-lg">
+                <p className="text-2xl font-bold text-blue-600">24</p>
+                <p className="text-sm text-gray-600">Calls to Make</p>
+              </div>
+              <div className="text-center p-4 bg-green-50 rounded-lg">
+                <p className="text-2xl font-bold text-green-600">156</p>
+                <p className="text-sm text-gray-600">Emails to Send</p>
+              </div>
+              <div className="text-center p-4 bg-purple-50 rounded-lg">
+                <p className="text-2xl font-bold text-purple-600">8</p>
+                <p className="text-sm text-gray-600">Follow-ups Due</p>
+              </div>
+            </div>
+            
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={() => navigate('/lead-generation/tasks')}
+                className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+              >
+                <CheckSquare className="h-4 w-4 mr-2" />
+                View All Tasks
+              </button>
+            </div>
           </div>
         </div>
       </div>
