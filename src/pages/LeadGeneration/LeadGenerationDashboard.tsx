@@ -3,13 +3,15 @@ import {
   Search, Target, Users, Building, DollarSign, Mail, Calendar, 
   CheckSquare, TrendingUp, Zap, Filter, Plus, BarChart3, 
   Activity, Clock, Star, Globe, ArrowUpRight, Eye, Play,
-  Pause, Settings, Download, RefreshCw, Bell, Sparkles
+  Pause, Settings, Download, RefreshCw, Bell, Sparkles,
+  ChevronLeft, ChevronRight, Menu
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const LeadGenerationDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [timeRange, setTimeRange] = useState('30');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Mock metrics - in real app, these would come from API
   const metrics = {
@@ -79,69 +81,116 @@ const LeadGenerationDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="px-8 py-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-4">
-              <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl">
-                <Target className="h-8 w-8 text-white" />
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Left Sidebar Navigation */}
+      <div className={`bg-white border-r border-gray-200 shadow-sm transition-all duration-300 ${
+        sidebarCollapsed ? 'w-16' : 'w-64'
+      }`}>
+        {/* Sidebar Header */}
+        <div className="p-4 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            {!sidebarCollapsed && (
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
+                  <Target className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">Lead Gen</h2>
+                  <p className="text-xs text-gray-600">Modules</p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Lead Generation</h1>
-                <p className="text-gray-600 text-lg">AI-powered prospecting and outreach platform</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <select
-                value={timeRange}
-                onChange={(e) => setTimeRange(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm"
-              >
-                <option value="7">Last 7 days</option>
-                <option value="30">Last 30 days</option>
-                <option value="90">Last 90 days</option>
-              </select>
-              
-              <button
-                onClick={() => navigate('/lead-generation/discovery')}
-                className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm hover:from-blue-700 hover:to-purple-700 transition-all shadow-md"
-              >
-                <Search className="h-4 w-4 mr-2" />
-                Find Prospects
-              </button>
-            </div>
-          </div>
-
-          {/* Quick Navigation */}
-          <div className="flex items-center space-x-2 overflow-x-auto pb-2">
-            {[
-              { name: 'Discovery', path: '/lead-generation/discovery', icon: Search, color: 'blue' },
-              { name: 'Prospects', path: '/lead-generation/prospects', icon: Users, color: 'green' },
-              { name: 'Companies', path: '/lead-generation/companies', icon: Building, color: 'purple' },
-              { name: 'Sequences', path: '/lead-generation/sequences', icon: Zap, color: 'orange' },
-              { name: 'Analytics', path: '/lead-generation/analytics', icon: BarChart3, color: 'red' }
-            ].map((item) => {
-              const Icon = item.icon;
-              return (
-                <button
-                  key={item.name}
-                  onClick={() => navigate(item.path)}
-                  className="flex items-center px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm hover:bg-gray-50 transition-colors whitespace-nowrap"
-                >
-                  <Icon className="h-4 w-4 mr-2 text-gray-600" />
-                  {item.name}
-                </button>
-              );
-            })}
+            )}
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              {sidebarCollapsed ? (
+                <ChevronRight className="h-4 w-4 text-gray-600" />
+              ) : (
+                <ChevronLeft className="h-4 w-4 text-gray-600" />
+              )}
+            </button>
           </div>
         </div>
+
+        {/* Navigation Items */}
+        <nav className="p-4 space-y-2">
+          {[
+            { name: 'Discovery', path: '/lead-generation/discovery', icon: Search, color: 'text-blue-600', bg: 'bg-blue-100' },
+            { name: 'Prospects', path: '/lead-generation/prospects', icon: Users, color: 'text-green-600', bg: 'bg-green-100' },
+            { name: 'Companies', path: '/lead-generation/companies', icon: Building, color: 'text-purple-600', bg: 'bg-purple-100' },
+            { name: 'Sequences', path: '/lead-generation/sequences', icon: Zap, color: 'text-orange-600', bg: 'bg-orange-100' },
+            { name: 'Lists', path: '/lead-generation/lists', icon: CheckSquare, color: 'text-indigo-600', bg: 'bg-indigo-100' },
+            { name: 'Emails', path: '/lead-generation/emails', icon: Mail, color: 'text-red-600', bg: 'bg-red-100' },
+            { name: 'Meetings', path: '/lead-generation/meetings', icon: Calendar, color: 'text-pink-600', bg: 'bg-pink-100' },
+            { name: 'Tasks', path: '/lead-generation/tasks', icon: CheckSquare, color: 'text-yellow-600', bg: 'bg-yellow-100' },
+            { name: 'Analytics', path: '/lead-generation/analytics', icon: BarChart3, color: 'text-cyan-600', bg: 'bg-cyan-100' },
+            { name: 'Enrichment', path: '/lead-generation/enrichment', icon: Sparkles, color: 'text-violet-600', bg: 'bg-violet-100' },
+            { name: 'Settings', path: '/lead-generation/settings', icon: Settings, color: 'text-gray-600', bg: 'bg-gray-100' }
+          ].map((item) => {
+            const Icon = item.icon;
+            const isActive = window.location.pathname === item.path;
+            
+            return (
+              <button
+                key={item.name}
+                onClick={() => navigate(item.path)}
+                className={`w-full flex items-center px-3 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                  isActive
+                    ? `${item.bg} ${item.color} shadow-sm border border-opacity-20`
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                } ${sidebarCollapsed ? 'justify-center' : 'justify-start'}`}
+                title={sidebarCollapsed ? item.name : undefined}
+              >
+                <Icon className={`h-5 w-5 ${sidebarCollapsed ? '' : 'mr-3'} ${isActive ? item.color : ''}`} />
+                {!sidebarCollapsed && <span>{item.name}</span>}
+              </button>
+            );
+          })}
+        </nav>
       </div>
 
-      {/* Main Content */}
-      <div className="px-8 py-8">
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col">
+        {/* Header */}
+        <div className="bg-white border-b border-gray-200 shadow-sm">
+          <div className="px-8 py-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-4">
+                <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl">
+                  <Target className="h-8 w-8 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold text-gray-900">Lead Generation</h1>
+                  <p className="text-gray-600 text-lg">AI-powered prospecting and outreach platform</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-4">
+                <select
+                  value={timeRange}
+                  onChange={(e) => setTimeRange(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm"
+                >
+                  <option value="7">Last 7 days</option>
+                  <option value="30">Last 30 days</option>
+                  <option value="90">Last 90 days</option>
+                </select>
+                
+                <button
+                  onClick={() => navigate('/lead-generation/discovery')}
+                  className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm hover:from-blue-700 hover:to-purple-700 transition-all shadow-md"
+                >
+                  <Search className="h-4 w-4 mr-2" />
+                  Find Prospects
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 px-8 py-8">
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {renderMetricCard('Total Prospects', metrics.totalProspects.toLocaleString(), Users, '+12%', 'blue')}
