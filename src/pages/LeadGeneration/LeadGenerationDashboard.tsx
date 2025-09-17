@@ -142,7 +142,7 @@ const LeadGenerationDashboard: React.FC = () => {
                 } ${sidebarCollapsed ? 'justify-center' : 'justify-start'}`}
                 title={sidebarCollapsed ? item.name : undefined}
               >
-                <Icon className={`h-5 w-5 ${sidebarCollapsed ? '' : 'mr-3'} ${isActive ? item.color : ''}`} />
+                <Icon className={`${sidebarCollapsed ? 'h-6 w-6' : 'h-5 w-5'} ${sidebarCollapsed ? '' : 'mr-3'} ${isActive ? item.color : ''}`} />
                 {!sidebarCollapsed && <span>{item.name}</span>}
               </button>
             );
