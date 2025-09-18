@@ -181,7 +181,7 @@ const LeadGenerationDashboard: React.FC = () => {
                   onClick={() => navigate('/lead-generation/discovery')}
                   className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm hover:from-blue-700 hover:to-purple-700 transition-all shadow-md"
                 >
-                 <Icon className={`${sidebarCollapsed ? 'h-12 w-12' : 'h-5 w-5'} ${sidebarCollapsed ? '' : 'mr-3'} ${isActive ? item.color : ''}`} />
+                 <Plus className="h-5 w-5 mr-3" />
                   Find Prospects
                 </button>
               </div>
