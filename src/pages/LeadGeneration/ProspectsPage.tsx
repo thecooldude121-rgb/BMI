@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  Users, Search, Filter, Plus, Download, Upload, Eye, Edit, 
+  Users, Search, Filter, Plus, Download, Upload, Eye, Edit, ArrowLeft,
   MoreHorizontal, Star, Mail, Phone, MessageSquare, Calendar,
   Target, Zap, Tag, Globe, Building, MapPin, Clock, TrendingUp,
   CheckSquare, X, Settings, RefreshCw, ArrowUpDown, Columns
@@ -522,6 +522,12 @@ const ProspectsPage: React.FC = () => {
         <div className="px-8 py-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-4">
+              <button
+                onClick={() => navigate('/lead-generation/dashboard')}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <ArrowLeft className="h-5 w-5 text-gray-600" />
+              </button>
               <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl">
                 <Users className="h-8 w-8 text-white" />
               </div>

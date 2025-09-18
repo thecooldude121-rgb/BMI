@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Search, Filter, Save, Download, Users, Building, MapPin, 
+  Search, Filter, Save, Download, Users, Building, MapPin, ArrowLeft,
   Briefcase, DollarSign, Globe, Zap, Target, Plus, X, 
   ChevronDown, ChevronUp, Sparkles, Eye, ArrowRight,
   Settings, RefreshCw, BookOpen, Star, TrendingUp
@@ -227,6 +227,12 @@ const ProspectDiscovery: React.FC = () => {
         <div className="px-8 py-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-4">
+              <button
+                onClick={() => navigate('/lead-generation/dashboard')}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <ArrowLeft className="h-5 w-5 text-gray-600" />
+              </button>
               <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl">
                 <Search className="h-8 w-8 text-white" />
               </div>
