@@ -110,6 +110,8 @@ const ProspectDiscovery: React.FC = () => {
   const [selectedPreset, setSelectedPreset] = useState<string>('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [searchExecuted, setSearchExecuted] = useState(false);
+  const [searchError, setSearchError] = useState<string>('');
   const [selectedResults, setSelectedResults] = useState<string[]>([]);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
@@ -267,6 +269,357 @@ const ProspectDiscovery: React.FC = () => {
       tags: ['healthcare', 'series-b', 'hipaa-compliant']
     }
   ];
+
+  const executeSearch = async () => {
+    setIsSearching(true);
+    setSearchError('');
+    
+    try {
+      console.log('Executing search with filters:', filters);
+      console.log('Search query:', searchQuery);
+      
+      // Validate search criteria
+      if (!searchQuery.trim() && Object.keys(filters).length === 0) {
+        setSearchError('Please enter a search query or select at least one filter');
+        setIsSearching(false);
+        return;
+      }
+      
+      // Simulate API call with actual filter processing
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Generate mock search results based on actual filters and query
+      const mockResults = generateSearchResults(searchQuery, filters);
+      
+      setSearchResults(mockResults);
+      setSearchExecuted(true);
+      setEstimatedResults(mockResults.length);
+      
+      console.log('Search completed. Results:', mockResults.length);
+    } catch (error) {
+      console.error('Search failed:', error);
+      setSearchError('Search failed. Please try again.');
+    } finally {
+      setIsSearching(false);
+    }
+  };
+  
+  const generateSearchResults = (query: string, searchFilters: any): SearchResult[] => {
+    // Base mock data
+    const baseResults: SearchResult[] = [
+      {
+        id: '1',
+        type: 'person',
+        name: 'Sarah Chen',
+        title: 'Chief Technology Officer',
+        company: 'TechCorp Solutions',
+        industry: 'Technology',
+        location: 'San Francisco, CA',
+        email: 'sarah.chen@techcorp.com',
+        phone: '+1-555-0101',
+        linkedinUrl: 'https://linkedin.com/in/sarahchen',
+        leadScore: 92,
+        aiScore: 88,
+        dataQuality: 95,
+        lastEnriched: '2024-01-20T10:00:00Z',
+        sources: ['LinkedIn', 'Apollo'],
+        buyingIntent: 'high',
+        companySize: '500-1000',
+        revenue: '$50M-$100M',
+        fundingStage: 'Series B',
+        technologies: ['React', 'AWS', 'Kubernetes'],
+        verified: { email: true, phone: true, linkedin: true }
+      },
+      {
+        id: '2',
+        type: 'person',
+        name: 'Michael Rodriguez',
+        title: 'VP of Operations',
+        company: 'HealthPlus Medical',
+        industry: 'Healthcare',
+        location: 'Boston, MA',
+        email: 'michael.rodriguez@healthplus.com',
+        phone: '+1-555-0102',
+        linkedinUrl: 'https://linkedin.com/in/michaelrodriguez',
+        leadScore: 78,
+        aiScore: 82,
+        dataQuality: 87,
+        lastEnriched: '2024-01-19T14:30:00Z',
+        sources: ['ZoomInfo', 'Clearbit'],
+        buyingIntent: 'medium',
+        companySize: '200-500',
+        revenue: '$10M-$50M',
+        fundingStage: 'Private',
+        technologies: ['Epic', 'Cerner', 'Microsoft Azure'],
+        verified: { email: true, phone: false, linkedin: true }
+      },
+      {
+        id: '3',
+        type: 'person',
+        name: 'Jennifer Kim',
+        title: 'Chief Financial Officer',
+        company: 'Finance Group LLC',
+        industry: 'Financial Services',
+        location: 'New York, NY',
+        email: 'jennifer.kim@financegroup.com',
+        phone: '+1-555-0103',
+        linkedinUrl: 'https://linkedin.com/in/jenniferkim',
+        leadScore: 85,
+        aiScore: 90,
+        dataQuality: 93,
+        lastEnriched: '2024-01-18T16:20:00Z',
+        sources: ['LinkedIn', 'Apollo', 'Hunter'],
+        buyingIntent: 'high',
+        companySize: '100-200',
+        revenue: '$10M-$50M',
+        fundingStage: 'Series A',
+        technologies: ['Salesforce', 'QuickBooks', 'Tableau'],
+        verified: { email: true, phone: true, linkedin: true }
+      },
+      {
+        id: '4',
+        type: 'company',
+        name: 'InnovateAI Corp',
+        industry: 'Artificial Intelligence',
+        location: 'Seattle, WA',
+        website: 'https://innovateai.com',
+        companySize: '50-100',
+        revenue: '$5M-$10M',
+        fundingStage: 'Seed',
+        technologies: ['Python', 'TensorFlow', 'AWS'],
+        leadScore: 88,
+        aiScore: 91,
+        dataQuality: 89,
+        lastEnriched: '2024-01-20T09:15:00Z',
+        sources: ['Crunchbase', 'BuiltWith'],
+        buyingIntent: 'medium',
+        verified: { email: false, phone: false, linkedin: false }
+      },
+      {
+        id: '5',
+        type: 'person',
+        name: 'Alex Thompson',
+        title: 'Head of Growth',
+        company: 'StartupX Innovation',
+        industry: 'Technology',
+        location: 'Austin, TX',
+        email: 'alex.thompson@startupx.io',
+        phone: '+1-555-0105',
+        linkedinUrl: 'https://linkedin.com/in/alexthompson',
+        leadScore: 76,
+        aiScore: 79,
+        dataQuality: 84,
+        lastEnriched: '2024-01-17T11:45:00Z',
+        sources: ['Apollo', 'Hunter'],
+        buyingIntent: 'high',
+        companySize: '10-50',
+        revenue: '$1M-$5M',
+        fundingStage: 'Pre-Seed',
+        technologies: ['React', 'Node.js', 'MongoDB'],
+        verified: { email: true, phone: false, linkedin: true }
+      }
+    ];
+    
+    let filteredResults = [...baseResults];
+    
+    // Apply search query filter
+    if (query.trim()) {
+      const queryLower = query.toLowerCase();
+      filteredResults = filteredResults.filter(result => 
+        result.name.toLowerCase().includes(queryLower) ||
+        result.title?.toLowerCase().includes(queryLower) ||
+        result.company?.toLowerCase().includes(queryLower) ||
+        result.industry.toLowerCase().includes(queryLower) ||
+        result.location.toLowerCase().includes(queryLower)
+      );
+    }
+    
+    // Apply person filters
+    if (searchFilters.person?.jobTitles?.length > 0) {
+      filteredResults = filteredResults.filter(result => 
+        result.type === 'company' || 
+        searchFilters.person.jobTitles.some((title: string) => 
+          result.title?.toLowerCase().includes(title.toLowerCase())
+        )
+      );
+    }
+    
+    if (searchFilters.person?.seniority?.length > 0) {
+      filteredResults = filteredResults.filter(result => 
+        result.type === 'company' ||
+        searchFilters.person.seniority.some((level: string) => {
+          const title = result.title?.toLowerCase() || '';
+          switch (level) {
+            case 'C-Level':
+              return title.includes('ceo') || title.includes('cto') || title.includes('cfo') || title.includes('chief');
+            case 'VP':
+              return title.includes('vp') || title.includes('vice president');
+            case 'Director':
+              return title.includes('director');
+            case 'Manager':
+              return title.includes('manager');
+            default:
+              return true;
+          }
+        })
+      );
+    }
+    
+    // Apply company filters
+    if (searchFilters.company?.industries?.length > 0) {
+      filteredResults = filteredResults.filter(result => 
+        searchFilters.company.industries.includes(result.industry)
+      );
+    }
+    
+    if (searchFilters.company?.companySizes?.length > 0) {
+      filteredResults = filteredResults.filter(result => 
+        result.companySize && searchFilters.company.companySizes.includes(result.companySize)
+      );
+    }
+    
+    if (searchFilters.company?.fundingStages?.length > 0) {
+      filteredResults = filteredResults.filter(result => 
+        result.fundingStage && searchFilters.company.fundingStages.includes(result.fundingStage)
+      );
+    }
+    
+    // Apply geography filters
+    if (searchFilters.geography?.countries?.length > 0) {
+      filteredResults = filteredResults.filter(result => 
+        searchFilters.geography.countries.some((country: string) => 
+          result.location.includes(country)
+        )
+      );
+    }
+    
+    // Apply engagement filters
+    if (searchFilters.engagement?.buyingIntent?.length > 0) {
+      filteredResults = filteredResults.filter(result => 
+        result.buyingIntent && searchFilters.engagement.buyingIntent.includes(result.buyingIntent)
+      );
+    }
+    
+    // Apply technology filters
+    if (searchFilters.technology?.technologies?.length > 0) {
+      filteredResults = filteredResults.filter(result => 
+        result.technologies?.some((tech: string) => 
+          searchFilters.technology.technologies.some((filterTech: string) => 
+            tech.toLowerCase().includes(filterTech.toLowerCase())
+          )
+        )
+      );
+    }
+    
+    return filteredResults;
+  };
+  
+  const clearAllFilters = () => {
+    setFilters({});
+    setSearchQuery('');
+    setSearchResults([]);
+    setSearchExecuted(false);
+    setEstimatedResults(0);
+    setSearchError('');
+  };
+  
+  const saveCurrentSearch = () => {
+    const searchConfig = {
+      id: Date.now().toString(),
+      name: searchQuery || 'Custom Search',
+      query: searchQuery,
+      filters: filters,
+      createdAt: new Date().toISOString()
+    };
+    
+    setSavedSearches(prev => [...prev, searchConfig]);
+    console.log('Search saved:', searchConfig);
+  };
+  
+  const loadSavedSearch = (search: any) => {
+    setSearchQuery(search.query);
+    setFilters(search.filters);
+    setEstimatedResults(0);
+    setSearchResults([]);
+    setSearchExecuted(false);
+  };
+  
+  const applyPersonaPreset = (preset: any) => {
+    setFilters(preset.filters);
+    setSearchQuery(preset.query || '');
+    setEstimatedResults(0);
+    setSearchResults([]);
+    setSearchExecuted(false);
+    console.log('Applied persona preset:', preset.name);
+  };
+  
+  const handleBulkAction = async (action: string, selectedIds: string[]) => {
+    console.log(`Executing bulk action: ${action} on ${selectedIds.length} items`);
+    
+    switch (action) {
+      case 'enrich':
+        // Simulate enrichment
+        setSearchResults(prev => prev.map(result => 
+          selectedIds.includes(result.id) 
+            ? { ...result, dataQuality: Math.min(100, result.dataQuality + 5) }
+            : result
+        ));
+        break;
+      case 'export':
+        // Simulate export
+        const exportData = searchResults.filter(r => selectedIds.includes(r.id));
+        console.log('Exporting data:', exportData);
+        break;
+      case 'addToSequence':
+        console.log('Adding to sequence:', selectedIds);
+        break;
+      case 'addToList':
+        console.log('Adding to list:', selectedIds);
+        break;
+    }
+    
+    setSelectedResults([]);
+  };
+  
+  // Real-time search estimation
+  const updateEstimation = () => {
+    if (!searchQuery.trim() && Object.keys(filters).length === 0) {
+      setEstimatedResults(0);
+      return;
+    }
+    
+    // Simulate real-time estimation based on filters
+    let estimation = 15420; // Base database size
+    
+    // Apply filter-based estimation
+    if (filters.person?.jobTitles?.length > 0) {
+      estimation = Math.floor(estimation * 0.3); // Job titles reduce pool
+    }
+    if (filters.person?.seniority?.length > 0) {
+      estimation = Math.floor(estimation * 0.4); // Seniority reduces pool
+    }
+    if (filters.company?.industries?.length > 0) {
+      estimation = Math.floor(estimation * 0.2); // Industry focus
+    }
+    if (filters.company?.companySizes?.length > 0) {
+      estimation = Math.floor(estimation * 0.3); // Company size filter
+    }
+    if (filters.geography?.countries?.length > 0) {
+      estimation = Math.floor(estimation * 0.5); // Geographic filter
+    }
+    
+    // Search query impact
+    if (searchQuery.trim()) {
+      estimation = Math.floor(estimation * 0.6); // Text search narrows results
+    }
+    
+    setEstimatedResults(Math.max(1, estimation));
+  };
+  
+  // Update estimation when filters or query change
+  React.useEffect(() => {
+    updateEstimation();
+  }, [filters, searchQuery]);
 
   useEffect(() => {
     // Simulate real-time search estimation
