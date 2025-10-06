@@ -1,24 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import {
-  ArrowLeft,
-  Building2,
-  Mail,
-  Phone,
-  Globe,
-  MapPin,
-  TrendingUp,
-  Users,
-  DollarSign,
-  FileText,
-  MessageSquare,
-  Activity,
-  Edit,
-  MoreVertical,
-  ExternalLink,
-  CheckCircle2,
-  AlertTriangle
-} from 'lucide-react';
+import { ArrowLeft, Building2, Mail, Phone, Globe, MapPin, TrendingUp, Users, DollarSign, FileText, MessageSquare, Activity, CreditCard as Edit, MoreVertical, ExternalLink, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { useAccounts } from '../../contexts/AccountsContext';
 
 const AccountDetailView: React.FC = () => {
