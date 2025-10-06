@@ -1,25 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Plus,
-  Search,
-  Filter,
-  Download,
-  Upload,
-  MoreVertical,
-  Building2,
-  TrendingUp,
-  TrendingDown,
-  AlertTriangle,
-  CheckCircle2,
-  Eye,
-  Edit,
-  Trash2,
-  Users,
-  DollarSign,
-  Calendar,
-  Tag
-} from 'lucide-react';
+import { Plus, Search, Filter, Download, Upload, MoreVertical, Building2, TrendingUp, TrendingDown, AlertTriangle, CheckCircle2, Eye, CreditCard as Edit, Trash2, Users, DollarSign, Calendar, Tag } from 'lucide-react';
 import { useAccounts } from '../../contexts/AccountsContext';
 import { EnhancedAccount } from '../../types/accounts';
 
