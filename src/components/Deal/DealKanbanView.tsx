@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { Plus, MoreHorizontal, Filter, Search, Calendar, DollarSign, User, Clock, Target, ArrowUp, ArrowDown, Zap, Star, Briefcase, Globe, TrendingUp } from 'lucide-react';
 import { Deal, DealPipeline, DealStage, DealFilters } from '../../types/dealManagement';
 

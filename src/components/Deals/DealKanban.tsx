@@ -1,5 +1,5 @@
 import React from 'react';
-import { Droppable, Draggable } from 'react-beautiful-dnd';
+import { Droppable, Draggable } from '@hello-pangea/dnd';
 import { Plus, DollarSign, Users, Calendar, Clock, MoreHorizontal, Star, TrendingUp, AlertTriangle } from 'lucide-react';
 import { Deal, Pipeline } from '../../types/deals';
 
