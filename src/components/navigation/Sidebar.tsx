@@ -24,7 +24,7 @@ const Sidebar: React.FC = () => {
       permission: 'crm',
       children: [
         { name: 'Leads', href: '/crm/leads', icon: Target },
-        { name: 'Accounts', href: '/crm/accounts', icon: Building2 },
+        { name: 'Accounts', href: '/accounts', icon: Building2 },
         { name: 'Contacts', href: '/crm/contacts', icon: Users },
         { name: 'Deals', href: '/crm/deals', icon: DollarSign },
         { name: 'Pipeline', href: '/crm/pipeline', icon: TrendingUp },

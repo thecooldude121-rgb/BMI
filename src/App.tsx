@@ -7,7 +7,7 @@ import Dashboard from './pages/Dashboard';
 import CRMPage from './pages/CRM/CRMPage';
 import LeadsPage from './pages/CRM/LeadsPage';
 import ContactsPage from './pages/CRM/ContactsPage';
-import CompaniesPage from './pages/CRM/CompaniesPage';
+import AccountsModule from './pages/Accounts';
 import UnifiedDealsPage from './pages/CRM/UnifiedDealsPage';
 import DealsPage from './pages/CRM/DealsPage';
 import PipelinePage from './pages/CRM/PipelinePage';
@@ -46,7 +46,6 @@ const CRMRoutes = () => {
         <Route path="/leads/new" element={<AddLeadPage />} />
         <Route path="/leads/:id" element={<LeadDetailPage />} />
         <Route path="/contacts" element={<ContactsPage />} />
-        <Route path="/accounts" element={<CompaniesPage />} />
         <Route path="/deals" element={<DealsPage />} />
         <Route path="/deals-unified" element={<UnifiedDealsPage />} />
         <Route path="/deals/create" element={<CreateDealWizard />} />
@@ -71,6 +70,7 @@ const App = () => {
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/crm/*" element={<CRMRoutes />} />
+                <Route path="/accounts/*" element={<AccountsModule />} />
                 <Route path="/hrms/*" element={<HRMSModule />} />
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/calendar" element={<Calendar />} />
