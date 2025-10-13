@@ -19,13 +19,13 @@ const Header: React.FC = () => {
   const [showAppMenu, setShowAppMenu] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
-  
-  const isCRMPage = location.pathname.startsWith('/crm');
+
+  const isCRMPage = location.pathname.startsWith('/crm') || location.pathname.startsWith('/accounts');
 
   const crmNavigation = [
     { name: 'Gamification', href: '/crm/gamification', icon: Trophy },
     { name: 'Leads', href: '/crm/leads', icon: UserPlus },
-    { name: 'Accounts', href: '/crm/accounts', icon: Building },
+    { name: 'Accounts', href: '/accounts', icon: Building },
     { name: 'Deals', href: '/crm/deals', icon: DollarSign },
     { name: 'Tasks', href: '/crm/tasks', icon: Phone }
   ];
@@ -50,7 +50,7 @@ const Header: React.FC = () => {
     { name: 'Add Lead', action: () => navigate('/crm/leads/new'), icon: UserPlus },
     { name: 'Create Deal', action: () => navigate('/deals/create'), icon: DollarSign },
     { name: 'Add Contact', action: () => navigate('/crm/contacts/new'), icon: Users },
-    { name: 'Add Company', action: () => navigate('/crm/accounts/new'), icon: Building2 },
+    { name: 'Add Company', action: () => navigate('/accounts/new'), icon: Building2 },
     { name: 'Schedule Meeting', action: () => navigate('/calendar/new'), icon: Calendar },
     { name: 'Add Task', action: () => navigate('/crm/tasks/new'), icon: Phone },
   ];
