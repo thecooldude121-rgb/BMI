@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { DataProvider } from './contexts/DataContext';
 import { LeadProvider } from './contexts/LeadContext';
+import { SettingsProvider } from './contexts/SettingsContext';
 import Header from './components/Layout/Header';
 import Dashboard from './pages/Dashboard';
 import CRMPage from './pages/CRM/CRMPage';
@@ -22,7 +23,7 @@ import HRMSModule from './pages/HRMS/HRMSModule';
 import Analytics from './pages/Analytics/Analytics';
 import Calendar from './pages/Calendar/Calendar';
 import LeadGenerationModule from './pages/LeadGeneration/LeadGenerationModule';
-import Settings from './pages/Settings/Settings';
+import SettingsPage from './pages/Settings/SettingsPage';
 import Login from './pages/Auth/Login';
 import GamificationPage from './pages/CRM/GamificationPage';
 
@@ -64,24 +65,26 @@ const App = () => {
     <AuthProvider>
       <DataProvider>
         <LeadProvider>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/*" element={
-              <Layout>
-                <Routes>
-                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/crm/*" element={<CRMRoutes />} />
-                  <Route path="/accounts/*" element={<AccountsModule />} />
-                  <Route path="/hrms/*" element={<HRMSModule />} />
-                  <Route path="/analytics" element={<Analytics />} />
-                  <Route path="/calendar" element={<Calendar />} />
-                  <Route path="/lead-generation/*" element={<LeadGenerationModule />} />
-                  <Route path="/settings" element={<Settings />} />
-                </Routes>
-              </Layout>
-            } />
-          </Routes>
+          <SettingsProvider>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/*" element={
+                <Layout>
+                  <Routes>
+                    <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/crm/*" element={<CRMRoutes />} />
+                    <Route path="/accounts/*" element={<AccountsModule />} />
+                    <Route path="/hrms/*" element={<HRMSModule />} />
+                    <Route path="/analytics" element={<Analytics />} />
+                    <Route path="/calendar" element={<Calendar />} />
+                    <Route path="/lead-generation/*" element={<LeadGenerationModule />} />
+                    <Route path="/settings" element={<SettingsPage />} />
+                  </Routes>
+                </Layout>
+              } />
+            </Routes>
+          </SettingsProvider>
         </LeadProvider>
       </DataProvider>
     </AuthProvider>
