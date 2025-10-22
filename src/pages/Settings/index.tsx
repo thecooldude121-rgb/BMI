@@ -1,7 +1,7 @@
 // Settings Module Index
 // Main entry point for application settings and configuration
 
-export { default as Settings } from './Settings';
+export { default as Settings } from './SettingsPage';
 
 // Re-export settings components when they exist
 // export { default as ProfileSettings } from './ProfileSettings';
