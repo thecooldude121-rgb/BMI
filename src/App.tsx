@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { DataProvider } from './contexts/DataContext';
+import { LeadProvider } from './contexts/LeadContext';
 import Header from './components/Layout/Header';
 import Dashboard from './pages/Dashboard';
 import CRMPage from './pages/CRM/CRMPage';
@@ -62,24 +63,26 @@ const App = () => {
   return (
     <AuthProvider>
       <DataProvider>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/*" element={
-            <Layout>
-              <Routes>
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/crm/*" element={<CRMRoutes />} />
-                <Route path="/accounts/*" element={<AccountsModule />} />
-                <Route path="/hrms/*" element={<HRMSModule />} />
-                <Route path="/analytics" element={<Analytics />} />
-                <Route path="/calendar" element={<Calendar />} />
-                <Route path="/lead-generation/*" element={<LeadGenerationModule />} />
-                <Route path="/settings" element={<Settings />} />
-              </Routes>
-            </Layout>
-          } />
-        </Routes>
+        <LeadProvider>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/*" element={
+              <Layout>
+                <Routes>
+                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/crm/*" element={<CRMRoutes />} />
+                  <Route path="/accounts/*" element={<AccountsModule />} />
+                  <Route path="/hrms/*" element={<HRMSModule />} />
+                  <Route path="/analytics" element={<Analytics />} />
+                  <Route path="/calendar" element={<Calendar />} />
+                  <Route path="/lead-generation/*" element={<LeadGenerationModule />} />
+                  <Route path="/settings" element={<Settings />} />
+                </Routes>
+              </Layout>
+            } />
+          </Routes>
+        </LeadProvider>
       </DataProvider>
     </AuthProvider>
   );
