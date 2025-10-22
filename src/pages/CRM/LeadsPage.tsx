@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Plus, Filter, Download, Upload, Search, LayoutGrid, List, 
-  Users, Target, TrendingUp, DollarSign, Calendar, Phone, Mail, 
+import {
+  Plus, Filter, Download, Upload, Search, LayoutGrid, List,
+  Users, Target, TrendingUp, DollarSign, Calendar, Phone, Mail,
   Video, CheckSquare, MoreHorizontal, Star, Eye, Edit, Trash2,
   ArrowUpDown, ChevronDown, X, Settings, RefreshCw, Bell,
   Activity, Clock, Globe, Building, Tag, Zap, Bot, Sparkles
 } from 'lucide-react';
 import { useData } from '../../contexts/DataContext';
 import { aiEngine } from '../../utils/aiEngine';
+import AIInsightsModal from '../../components/Lead/AIInsightsModal';
 
 // Enhanced Lead interface with additional properties
 interface EnhancedLead {
@@ -68,6 +69,7 @@ const LeadsPage: React.FC = () => {
   const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const [showBulkActions, setShowBulkActions] = useState(false);
+  const [showAIInsights, setShowAIInsights] = useState(false);
   const [sortBy, setSortBy] = useState<string>('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [currentPage, setCurrentPage] = useState(1);
@@ -97,6 +99,23 @@ const LeadsPage: React.FC = () => {
     }));
     setLeads(enhancedLeads);
   }, [rawLeads]);
+
+  const handleDeleteLead = async (leadId: string) => {
+    if (window.confirm('Are you sure you want to delete this lead?')) {
+      await deleteLead(leadId);
+      setLeads(leads.filter(l => l.id !== leadId));
+    }
+  };
+
+  const handleBulkDelete = async (leadIds: string[]) => {
+    if (window.confirm(`Are you sure you want to delete ${leadIds.length} leads?`)) {
+      for (const id of leadIds) {
+        await deleteLead(id);
+      }
+      setLeads(leads.filter(l => !leadIds.includes(l.id)));
+      setSelectedLeads([]);
+    }
+  };
 
   const getNextAction = (lead: any): string => {
     if (lead.stage === 'new') return 'Initial contact';
@@ -200,7 +219,7 @@ const LeadsPage: React.FC = () => {
       id: 'delete',
       label: 'Delete',
       icon: Trash2,
-      action: (leadIds) => console.log('Deleting leads:', leadIds),
+      action: (leadIds) => handleBulkDelete(leadIds),
       color: 'red'
     }
   ];
@@ -444,11 +463,19 @@ const LeadsPage: React.FC = () => {
                     >
                       <Eye className="h-4 w-4" />
                     </button>
-                    <button className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors">
+                    <button
+                      onClick={() => navigate(`/crm/leads/edit/${lead.id}`)}
+                      className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+                      title="Edit Lead"
+                    >
                       <Edit className="h-4 w-4" />
                     </button>
-                    <button className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors">
-                      <MoreHorizontal className="h-4 w-4" />
+                    <button
+                      onClick={() => handleDeleteLead(lead.id)}
+                      className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Delete Lead"
+                    >
+                      <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
                 </td>
@@ -795,7 +822,10 @@ const LeadsPage: React.FC = () => {
                 </p>
               </div>
             </div>
-            <button className="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+            <button
+              onClick={() => setShowAIInsights(true)}
+              className="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+            >
               <Sparkles className="h-4 w-4 mr-2" />
               View Insights
             </button>
@@ -921,13 +951,22 @@ const LeadsPage: React.FC = () => {
               : 'Get started by adding your first lead'
             }
           </p>
-          <button className="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-colors">
+          <button
             onClick={() => navigate('/crm/leads/new')}
+            className="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-colors"
+          >
             <Plus className="h-4 w-4 mr-2 inline" />
             Add Your First Lead
           </button>
         </div>
       )}
+
+      {/* AI Insights Modal */}
+      <AIInsightsModal
+        isOpen={showAIInsights}
+        onClose={() => setShowAIInsights(false)}
+        leads={leads}
+      />
     </div>
   );
 };
