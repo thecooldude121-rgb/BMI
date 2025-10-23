@@ -6,6 +6,7 @@ import {
   Plus, Edit, Trash2, Eye, X
 } from 'lucide-react';
 import { useSettings } from '../../contexts/SettingsContext';
+import RolesManagement from './RolesManagement';
 
 interface SettingsSection {
   id: string;
@@ -192,53 +193,7 @@ const SettingsPage: React.FC = () => {
 
     switch (sectionId) {
       case 'roles':
-        return (
-          <div>
-            <div className="flex items-center space-x-4 mb-6">
-              <div className={`p-3 rounded-xl bg-gradient-to-r ${section.color}`}>
-                <Icon className="h-8 w-8 text-white" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900">{section.title}</h2>
-                <p className="text-gray-600">{section.description}</p>
-              </div>
-            </div>
-            <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">System Roles</h3>
-                <button
-                  onClick={() => setShowCreateRoleModal(true)}
-                  className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                  <Plus className="h-4 w-4 mr-2" />Create Role
-                </button>
-              </div>
-              <div className="space-y-3">
-                {roles.map(role => (
-                  <div key={role.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
-                    <div>
-                      <h4 className="font-medium text-gray-900">{role.name}</h4>
-                      <p className="text-sm text-gray-600">{role.description || 'No description'}</p>
-                      <p className="text-xs text-gray-500 mt-1">Level {role.hierarchy_level} • {role.is_active ? 'Active' : 'Inactive'}</p>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"><Eye className="h-4 w-4" /></button>
-                      <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"><Edit className="h-4 w-4" /></button>
-                      <button className="p-2 text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="h-4 w-4" /></button>
-                    </div>
-                  </div>
-                ))}
-                {roles.length === 0 && (
-                  <div className="text-center py-8 text-gray-500">No roles found. Create your first role to get started.</div>
-                )}
-              </div>
-            </div>
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-              <h4 className="font-medium text-blue-900 mb-2">Role Hierarchy</h4>
-              <p className="text-sm text-blue-700">Roles inherit permissions from parent roles.</p>
-            </div>
-          </div>
-        );
+        return <RolesManagement />;
 
       case 'audit':
         return (
@@ -433,6 +388,21 @@ const SettingsPage: React.FC = () => {
   };
 
   if (selectedSection) {
+    if (selectedSection === 'roles') {
+      return (
+        <div className="h-screen flex flex-col bg-gray-50">
+          <div className="bg-white border-b border-gray-200 px-6 py-4">
+            <button onClick={() => setSelectedSection(null)} className="flex items-center text-gray-600 hover:text-gray-900">
+              <ArrowLeft className="h-5 w-5 mr-2" />Back to Settings
+            </button>
+          </div>
+          <div className="flex-1 overflow-hidden">
+            {renderSectionContent(selectedSection)}
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

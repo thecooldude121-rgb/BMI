@@ -2,6 +2,7 @@
 // Main entry point for application settings and configuration
 
 export { default as Settings } from './SettingsPage';
+export { default as RolesManagement } from './RolesManagement';
 
 // Re-export settings components when they exist
 // export { default as ProfileSettings } from './ProfileSettings';
