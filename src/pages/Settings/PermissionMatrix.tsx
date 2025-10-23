@@ -56,7 +56,14 @@ interface ConflictWarning {
 }
 
 const PermissionMatrix: React.FC = () => {
-  const { roles, fetchRoles } = useSettings();
+  const {
+    roles,
+    fetchRoles,
+    getModulePermissions,
+    setModulePermission,
+    getFieldPermissions,
+    setFieldPermission
+  } = useSettings();
 
   const [modules] = useState<Module[]>([
     {
@@ -144,46 +151,51 @@ const PermissionMatrix: React.FC = () => {
 
   const loadData = async () => {
     await fetchRoles();
-    initializePermissions();
+    await loadPermissionsFromDatabase();
   };
 
-  const initializePermissions = () => {
+  const loadPermissionsFromDatabase = async () => {
     const permMap = new Map<string, PermissionCell>();
 
-    roles.forEach(role => {
-      modules.forEach(module => {
+    for (const role of roles) {
+      for (const module of modules) {
+        const modulePerms = await getModulePermissions(role.id);
+        const modulePerm = modulePerms.find(p => p.module_name === module.name);
+
         const key = `${role.id}-${module.id}`;
         permMap.set(key, {
           roleId: role.id,
           moduleId: module.id,
           permissions: {
-            read: false,
-            write: false,
-            delete: false,
-            export: false,
-            import: false,
+            read: modulePerm?.can_read || false,
+            write: modulePerm?.can_update || false,
+            delete: modulePerm?.can_delete || false,
+            export: modulePerm?.can_export || false,
+            import: modulePerm?.can_import || false,
             hide: false
           }
         });
 
+        const fieldPerms = await getFieldPermissions(role.id, module.name);
         module.fields.forEach(field => {
+          const fieldPerm = fieldPerms.find(p => p.field_name === field.name);
           const fieldKey = `${role.id}-${module.id}-${field.id}`;
           permMap.set(fieldKey, {
             roleId: role.id,
             moduleId: module.id,
             fieldId: field.id,
             permissions: {
-              read: false,
-              write: false,
-              delete: false,
+              read: fieldPerm?.can_read || false,
+              write: fieldPerm?.can_write || false,
+              delete: fieldPerm?.can_delete || false,
               export: false,
               import: false,
-              hide: true
+              hide: !fieldPerm?.can_read || false
             }
           });
         });
-      });
-    });
+      }
+    }
 
     setPermissions(permMap);
   };
@@ -327,11 +339,45 @@ const PermissionMatrix: React.FC = () => {
   };
 
   const savePermissions = async () => {
-    setHasUnsavedChanges(false);
+    try {
+      for (const [key, cell] of permissions.entries()) {
+        if (cell.fieldId) {
+          const module = modules.find(m => m.id === cell.moduleId);
+          if (module) {
+            await setFieldPermission({
+              role_id: cell.roleId,
+              module_name: module.name,
+              field_name: module.fields.find(f => f.id === cell.fieldId)?.name || '',
+              can_read: cell.permissions.read,
+              can_write: cell.permissions.write,
+              can_delete: cell.permissions.delete
+            });
+          }
+        } else {
+          const module = modules.find(m => m.id === cell.moduleId);
+          if (module) {
+            await setModulePermission({
+              role_id: cell.roleId,
+              module_name: module.name,
+              can_read: cell.permissions.read,
+              can_create: cell.permissions.write,
+              can_update: cell.permissions.write,
+              can_delete: cell.permissions.delete,
+              can_export: cell.permissions.export,
+              can_import: cell.permissions.import
+            });
+          }
+        }
+      }
+      setHasUnsavedChanges(false);
+    } catch (error) {
+      console.error('Error saving permissions:', error);
+      alert('Failed to save permissions. Please try again.');
+    }
   };
 
-  const discardChanges = () => {
-    initializePermissions();
+  const discardChanges = async () => {
+    await loadPermissionsFromDatabase();
     setHasUnsavedChanges(false);
   };
 
