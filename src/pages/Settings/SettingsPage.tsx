@@ -3,7 +3,7 @@ import {
   Settings, Shield, Users, Lock, Activity, Key, Globe,
   Database, Bell, FileText, Workflow, UserCheck, Zap,
   Search, ChevronRight, AlertTriangle, CheckCircle, Info, ArrowLeft,
-  Plus, Edit, Trash2, Eye
+  Plus, Edit, Trash2, Eye, X
 } from 'lucide-react';
 import { useSettings } from '../../contexts/SettingsContext';
 
@@ -25,6 +25,7 @@ const SettingsPage: React.FC = () => {
     permissions,
     fetchRoles,
     fetchPermissions,
+    createRole,
     auditLogs,
     fetchAuditLogs
   } = useSettings();
@@ -32,6 +33,13 @@ const SettingsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [securityMetrics, setSecurityMetrics] = useState<any>(null);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
+  const [showCreateRoleModal, setShowCreateRoleModal] = useState(false);
+  const [newRole, setNewRole] = useState({
+    name: '',
+    description: '',
+    hierarchy_level: 1,
+    parent_role_id: ''
+  });
 
   useEffect(() => {
     const loadData = async () => {
@@ -138,6 +146,26 @@ const SettingsPage: React.FC = () => {
     section.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleCreateRole = async () => {
+    if (!newRole.name.trim()) {
+      alert('Role name is required');
+      return;
+    }
+
+    const result = await createRole({
+      name: newRole.name,
+      description: newRole.description,
+      hierarchy_level: newRole.hierarchy_level,
+      parent_role_id: newRole.parent_role_id || undefined
+    });
+
+    if (result) {
+      setShowCreateRoleModal(false);
+      setNewRole({ name: '', description: '', hierarchy_level: 1, parent_role_id: '' });
+      await fetchRoles();
+    }
+  };
+
   const renderAlert = (type: 'warning' | 'info' | 'success', message: string) => {
     const icons = { warning: AlertTriangle, info: Info, success: CheckCircle };
     const colors = {
@@ -178,7 +206,10 @@ const SettingsPage: React.FC = () => {
             <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">System Roles</h3>
-                <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                <button
+                  onClick={() => setShowCreateRoleModal(true)}
+                  className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
                   <Plus className="h-4 w-4 mr-2" />Create Role
                 </button>
               </div>
@@ -316,6 +347,91 @@ const SettingsPage: React.FC = () => {
     }
   };
 
+  const renderCreateRoleModal = () => {
+    if (!showCreateRoleModal) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-xl shadow-xl max-w-md w-full mx-4">
+          <div className="flex items-center justify-between p-6 border-b border-gray-200">
+            <h3 className="text-xl font-semibold text-gray-900">Create New Role</h3>
+            <button
+              onClick={() => setShowCreateRoleModal(false)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+          <div className="p-6 space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Role Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={newRole.name}
+                onChange={(e) => setNewRole({ ...newRole, name: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="e.g., Sales Manager"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <textarea
+                value={newRole.description}
+                onChange={(e) => setNewRole({ ...newRole, description: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={3}
+                placeholder="Describe the role's responsibilities"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Hierarchy Level</label>
+              <input
+                type="number"
+                value={newRole.hierarchy_level}
+                onChange={(e) => setNewRole({ ...newRole, hierarchy_level: parseInt(e.target.value) || 1 })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                min="1"
+                max="10"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Parent Role</label>
+              <select
+                value={newRole.parent_role_id}
+                onChange={(e) => setNewRole({ ...newRole, parent_role_id: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">No Parent (Top Level)</option>
+                {roles.map(role => (
+                  <option key={role.id} value={role.id}>
+                    {role.name} (Level {role.hierarchy_level})
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200">
+            <button
+              onClick={() => setShowCreateRoleModal(false)}
+              className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleCreateRole}
+              disabled={!newRole.name.trim()}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+            >
+              Create Role
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   if (selectedSection) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -325,6 +441,7 @@ const SettingsPage: React.FC = () => {
           </button>
           {renderSectionContent(selectedSection)}
         </div>
+        {renderCreateRoleModal()}
       </div>
     );
   }
@@ -425,6 +542,7 @@ const SettingsPage: React.FC = () => {
           </div>
         )}
       </div>
+      {renderCreateRoleModal()}
     </div>
   );
 };
