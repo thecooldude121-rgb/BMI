@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useSettings } from '../../contexts/SettingsContext';
 import RolesManagement from './RolesManagement';
+import PermissionMatrix from './PermissionMatrix';
 
 interface SettingsSection {
   id: string;
@@ -61,6 +62,14 @@ const SettingsPage: React.FC = () => {
       icon: Users,
       color: 'from-blue-500 to-blue-600',
       badge: 'Core'
+    },
+    {
+      id: 'permission-matrix',
+      title: 'Permission Matrix',
+      description: 'Interactive matrix for granular permission assignment',
+      icon: Shield,
+      color: 'from-blue-500 to-cyan-600',
+      badge: 'New'
     },
     {
       id: 'profiles',
@@ -194,6 +203,9 @@ const SettingsPage: React.FC = () => {
     switch (sectionId) {
       case 'roles':
         return <RolesManagement />;
+
+      case 'permission-matrix':
+        return <PermissionMatrix />;
 
       case 'audit':
         return (
@@ -388,7 +400,7 @@ const SettingsPage: React.FC = () => {
   };
 
   if (selectedSection) {
-    if (selectedSection === 'roles') {
+    if (selectedSection === 'roles' || selectedSection === 'permission-matrix') {
       return (
         <div className="h-screen flex flex-col bg-gray-50">
           <div className="bg-white border-b border-gray-200 px-6 py-4">

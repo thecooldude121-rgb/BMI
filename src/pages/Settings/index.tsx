@@ -3,6 +3,7 @@
 
 export { default as Settings } from './SettingsPage';
 export { default as RolesManagement } from './RolesManagement';
+export { default as PermissionMatrix } from './PermissionMatrix';
 
 // Re-export settings components when they exist
 // export { default as ProfileSettings } from './ProfileSettings';
