@@ -32,7 +32,7 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>({
-    id: '1',
+    id: '00000000-0000-0000-0000-000000000001',
     name: 'John Smith',
     email: 'john.smith@company.com',
     role: 'Admin',
@@ -44,7 +44,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Mock authentication
     if (email && password) {
       setUser({
-        id: '1',
+        id: '00000000-0000-0000-0000-000000000001',
         name: 'John Smith',
         email,
         role: 'Admin',
