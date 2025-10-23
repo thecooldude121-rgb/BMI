@@ -723,13 +723,16 @@ const RolesManagement: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Role Name <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="text"
+                <select
                   value={newRoleData.name}
                   onChange={(e) => setNewRoleData({ ...newRoleData, name: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="e.g., Senior Sales Manager"
-                />
+                >
+                  <option value="">Select a role</option>
+                  <option value="CEO">CEO</option>
+                  <option value="Manager">Manager</option>
+                  <option value="Executive">Executive</option>
+                </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
