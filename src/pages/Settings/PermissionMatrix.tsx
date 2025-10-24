@@ -142,6 +142,9 @@ const PermissionMatrix: React.FC = () => {
   const [hoveredCell, setHoveredCell] = useState<string | null>(null);
   const [tooltipVisible, setTooltipVisible] = useState<string | null>(null);
   const [validationWarnings, setValidationWarnings] = useState<Map<string, string[]>>(new Map());
+  const [selectAllModules, setSelectAllModules] = useState(false);
+  const [copyFromRole, setCopyFromRole] = useState<string>('');
+  const [showCopyModal, setShowCopyModal] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -441,6 +444,96 @@ const PermissionMatrix: React.FC = () => {
 
   const categories = Array.from(new Set(modules.map(m => m.category)));
 
+  const handleSelectAllModules = (checked: boolean) => {
+    setSelectAllModules(checked);
+
+    const newPermissions = new Map(permissions);
+
+    filteredRoles.forEach(role => {
+      filteredModules.forEach(module => {
+        const moduleKey = `${role.id}-${module.id}`;
+        const moduleCell = newPermissions.get(moduleKey) || {
+          roleId: role.id,
+          moduleId: module.id,
+          permissions: {
+            read: false,
+            write: false,
+            delete: false,
+            export: false,
+            import: false,
+            hide: false
+          }
+        };
+
+        moduleCell.permissions.read = checked;
+        moduleCell.permissions.write = checked;
+        moduleCell.permissions.delete = checked;
+        moduleCell.permissions.export = checked;
+        newPermissions.set(moduleKey, moduleCell);
+
+        module.fields.forEach(field => {
+          const fieldKey = `${role.id}-${module.id}-${field.id}`;
+          const fieldCell = newPermissions.get(fieldKey) || {
+            roleId: role.id,
+            moduleId: module.id,
+            fieldId: field.id,
+            permissions: {
+              read: false,
+              write: false,
+              delete: false,
+              export: false,
+              import: false,
+              hide: false
+            }
+          };
+
+          fieldCell.permissions.read = checked;
+          fieldCell.permissions.write = checked;
+          fieldCell.permissions.delete = checked;
+          newPermissions.set(fieldKey, fieldCell);
+        });
+      });
+    });
+
+    setPermissions(newPermissions);
+    setHasUnsavedChanges(true);
+  };
+
+  const copyPermissionsFromRole = (sourceRoleId: string, targetRoleId: string) => {
+    const newPermissions = new Map(permissions);
+
+    filteredModules.forEach(module => {
+      const sourceKey = `${sourceRoleId}-${module.id}`;
+      const targetKey = `${targetRoleId}-${module.id}`;
+      const sourceCell = permissions.get(sourceKey);
+
+      if (sourceCell) {
+        newPermissions.set(targetKey, {
+          ...sourceCell,
+          roleId: targetRoleId
+        });
+      }
+
+      module.fields.forEach(field => {
+        const sourceFieldKey = `${sourceRoleId}-${module.id}-${field.id}`;
+        const targetFieldKey = `${targetRoleId}-${module.id}-${field.id}`;
+        const sourceFieldCell = permissions.get(sourceFieldKey);
+
+        if (sourceFieldCell) {
+          newPermissions.set(targetFieldKey, {
+            ...sourceFieldCell,
+            roleId: targetRoleId
+          });
+        }
+      });
+    });
+
+    setPermissions(newPermissions);
+    setHasUnsavedChanges(true);
+    setShowCopyModal(false);
+    setCopyFromRole('');
+  };
+
   const getPermissionTooltip = (permType: PermissionType): string => {
     const tooltips = {
       read: 'View and access records. Required for all other permissions.',
@@ -738,6 +831,31 @@ const PermissionMatrix: React.FC = () => {
               <Download className="h-4 w-4 mr-2" />
               Export
             </button>
+
+            <button
+              onClick={() => setShowCopyModal(true)}
+              className="flex items-center px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+            >
+              <Copy className="h-4 w-4 mr-2" />
+              Copy Permissions
+            </button>
+          </div>
+
+          {/* Bulk Operations Bar */}
+          <div className="mt-4 flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <label className="flex items-center space-x-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={selectAllModules}
+                  onChange={(e) => handleSelectAllModules(e.target.checked)}
+                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span className="text-sm font-medium text-gray-700">
+                  Select All Modules (Enable all permissions)
+                </span>
+              </label>
+            </div>
           </div>
 
           {/* Legend */}
@@ -1167,6 +1285,103 @@ const PermissionMatrix: React.FC = () => {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Copy Permissions Modal */}
+      {showCopyModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full mx-4">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h3 className="text-xl font-semibold text-gray-900">Copy Permissions</h3>
+              <button
+                onClick={() => setShowCopyModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Copy From Role
+                </label>
+                <select
+                  value={copyFromRole}
+                  onChange={(e) => setCopyFromRole(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Select a role...</option>
+                  {roles.map(role => (
+                    <option key={role.id} value={role.id}>
+                      {role.name} (Level {role.hierarchy_level})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Copy To Roles
+                </label>
+                <div className="max-h-48 overflow-y-auto border border-gray-300 rounded-lg p-3 space-y-2">
+                  {roles.filter(r => r.id !== copyFromRole).map(role => (
+                    <label
+                      key={role.id}
+                      className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedRoles.has(role.id)}
+                        onChange={() => toggleRoleSelection(role.id)}
+                        className="rounded border-gray-300 text-blue-600"
+                      />
+                      <span className="text-sm text-gray-700">{role.name}</span>
+                      <span className="text-xs text-gray-500">Level {role.hierarchy_level}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <div className="flex items-start space-x-2">
+                  <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <div className="text-sm text-blue-800">
+                    <p className="font-medium mb-1">Selected: {selectedRoles.size} roles</p>
+                    <p>Permissions from the source role will be copied to all selected roles, overwriting their current permissions.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200">
+              <button
+                onClick={() => {
+                  setShowCopyModal(false);
+                  setCopyFromRole('');
+                  setSelectedRoles(new Set());
+                }}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  if (copyFromRole && selectedRoles.size > 0) {
+                    selectedRoles.forEach(targetRoleId => {
+                      copyPermissionsFromRole(copyFromRole, targetRoleId);
+                    });
+                    setSelectedRoles(new Set());
+                  }
+                }}
+                disabled={!copyFromRole || selectedRoles.size === 0}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+              >
+                Copy Permissions
+              </button>
+            </div>
           </div>
         </div>
       )}

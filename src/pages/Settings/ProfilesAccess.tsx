@@ -158,6 +158,8 @@ const ProfilesAccess: React.FC = () => {
   const [bulkAction, setBulkAction] = useState<string>('');
   const [successMessage, setSuccessMessage] = useState('');
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [showBulkPreview, setShowBulkPreview] = useState(false);
+  const [previewAction, setPreviewAction] = useState<{ action: string; value: string; users: User[] } | null>(null);
 
   const [newUser, setNewUser] = useState({
     firstName: '',
@@ -942,7 +944,36 @@ const ProfilesAccess: React.FC = () => {
                   <p className="font-medium text-gray-900">Deactivate Users</p>
                   <p className="text-sm text-gray-600">Set status to inactive</p>
                 </button>
+
+                <button
+                  onClick={() => setBulkAction('changeRole')}
+                  className={`w-full text-left px-4 py-3 border rounded-lg hover:bg-gray-50 ${
+                    bulkAction === 'changeRole' ? 'border-blue-600 bg-blue-50' : 'border-gray-300'
+                  }`}
+                >
+                  <p className="font-medium text-gray-900">Change Role</p>
+                  <p className="text-sm text-gray-600">Assign a different role to selected users</p>
+                </button>
               </div>
+
+              {bulkAction === 'changeRole' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    New Role
+                  </label>
+                  <select
+                    id="bulkRoleSelect"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Select a role...</option>
+                    {roles.map(role => (
+                      <option key={role.id} value={role.id}>
+                        {role.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
 
             <div className="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
@@ -956,11 +987,114 @@ const ProfilesAccess: React.FC = () => {
                 Cancel
               </button>
               <button
-                onClick={handleBulkAction}
-                disabled={!bulkAction}
+                onClick={() => {
+                  if (bulkAction === 'changeRole') {
+                    const select = document.getElementById('bulkRoleSelect') as HTMLSelectElement;
+                    const newRoleId = select?.value;
+                    if (newRoleId) {
+                      const affectedUsers = users.filter(u => selectedUserIds.has(u.id));
+                      const newRole = roles.find(r => r.id === newRoleId);
+                      setPreviewAction({
+                        action: 'Change Role',
+                        value: newRole?.name || '',
+                        users: affectedUsers
+                      });
+                      setShowBulkPreview(true);
+                      setShowBulkActionsModal(false);
+                    }
+                  } else {
+                    handleBulkAction();
+                  }
+                }}
+                disabled={!bulkAction || (bulkAction === 'changeRole' && !(document.getElementById('bulkRoleSelect') as HTMLSelectElement)?.value)}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
-                Apply
+                {bulkAction === 'changeRole' ? 'Preview Changes' : 'Apply'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Action Preview Modal */}
+      {showBulkPreview && previewAction && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[80vh] flex flex-col">
+            <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900">Preview Bulk Action</h3>
+              <button onClick={() => {
+                setShowBulkPreview(false);
+                setPreviewAction(null);
+              }}>
+                <X className="h-5 w-5 text-gray-400" />
+              </button>
+            </div>
+
+            <div className="px-6 py-4 flex-1 overflow-y-auto">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                <div className="flex items-start space-x-3">
+                  <AlertTriangle className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium text-blue-900 mb-1">Action Summary</p>
+                    <p className="text-sm text-blue-800">
+                      <strong>{previewAction.action}:</strong> {previewAction.value}
+                    </p>
+                    <p className="text-sm text-blue-800 mt-1">
+                      This will affect <strong>{previewAction.users.length}</strong> user(s)
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <h4 className="font-medium text-gray-900 mb-3">Affected Users</h4>
+              <div className="space-y-2">
+                {previewAction.users.map(user => (
+                  <div
+                    key={user.id}
+                    className="flex items-center justify-between p-3 border border-gray-200 rounded-lg"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <img
+                        src={user.avatar}
+                        alt={`${user.firstName} ${user.lastName}`}
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
+                      <div>
+                        <p className="font-medium text-gray-900">
+                          {user.firstName} {user.lastName}
+                        </p>
+                        <p className="text-sm text-gray-600">{user.email}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-gray-600">Current: {user.roleName}</p>
+                      <p className="text-sm font-medium text-blue-600">New: {previewAction.value}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+              <button
+                onClick={() => {
+                  setShowBulkPreview(false);
+                  setPreviewAction(null);
+                  setShowBulkActionsModal(true);
+                }}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+              >
+                Back
+              </button>
+              <button
+                onClick={() => {
+                  handleBulkAction();
+                  setShowBulkPreview(false);
+                  setPreviewAction(null);
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Confirm Changes
               </button>
             </div>
           </div>

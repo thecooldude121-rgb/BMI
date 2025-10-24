@@ -411,9 +411,23 @@ const PermissionSets: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Select Roles
-                </label>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Select Roles
+                  </label>
+                  <button
+                    onClick={() => {
+                      if (selectedRoles.length === filteredRoles.length) {
+                        setSelectedRoles([]);
+                      } else {
+                        setSelectedRoles([...filteredRoles]);
+                      }
+                    }}
+                    className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                  >
+                    {selectedRoles.length === filteredRoles.length ? 'Deselect All' : 'Select All'}
+                  </button>
+                </div>
                 <div className="mb-2 relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
