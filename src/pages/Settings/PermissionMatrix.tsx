@@ -975,11 +975,11 @@ const PermissionMatrix: React.FC = () => {
                         </div>
                         <span className="text-xs text-gray-500">{module.category}</span>
                       </div>
-                      <div className="flex items-center space-x-2 mt-2">
+                      <div className="flex space-x-2 mt-2">
                         {(['read', 'write', 'delete', 'export', 'import', 'hide'] as PermissionType[]).map(perm => (
                           <div
                             key={perm}
-                            className="w-12 flex justify-center relative group"
+                            className="w-12 flex justify-center items-center relative group"
                           >
                             <span className="text-xs text-gray-500 capitalize">
                               {perm}
