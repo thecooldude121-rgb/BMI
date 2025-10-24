@@ -922,8 +922,9 @@ const PermissionMatrix: React.FC = () => {
           <div className="inline-block min-w-full">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50 sticky top-0 z-10">
+                {/* Module Names Row */}
                 <tr>
-                  <th className="sticky left-0 z-20 bg-gray-50 px-6 py-3 text-left">
+                  <th className="sticky left-0 z-20 bg-gray-50 px-6 py-3 text-left border-b border-gray-200" rowSpan={2}>
                     <div className="flex items-center space-x-2">
                       {bulkMode && (
                         <input
@@ -946,10 +947,10 @@ const PermissionMatrix: React.FC = () => {
                   {filteredModules.map(module => (
                     <th
                       key={module.id}
-                      className="py-3 bg-gray-50 border-l border-gray-200"
+                      className="px-6 py-3 bg-gray-50 border-l border-b border-gray-200"
                       colSpan={6}
                     >
-                      <div className="px-6 flex items-center justify-between">
+                      <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
                           {bulkMode && (
                             <input
@@ -975,25 +976,30 @@ const PermissionMatrix: React.FC = () => {
                         </div>
                         <span className="text-xs text-gray-500">{module.category}</span>
                       </div>
-                      <div className="px-6 flex items-center gap-2 mt-2">
-                        {(['read', 'write', 'delete', 'export', 'import', 'hide'] as PermissionType[]).map(perm => (
-                          <div
-                            key={perm}
-                            className="w-12 flex-shrink-0 flex justify-center relative group"
-                          >
-                            <span className="text-xs text-gray-500 capitalize">
-                              {perm}
-                            </span>
-                            <div className="invisible group-hover:visible absolute z-50 bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded shadow-lg w-48 whitespace-normal">
-                              {getPermissionTooltip(perm)}
-                              <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
-                                <div className="border-4 border-transparent border-t-gray-900"></div>
-                              </div>
+                    </th>
+                  ))}
+                </tr>
+                {/* Permission Column Headers Row */}
+                <tr>
+                  {filteredModules.map(module => (
+                    <React.Fragment key={module.id}>
+                      {(['read', 'write', 'delete', 'export', 'import', 'hide'] as PermissionType[]).map(perm => (
+                        <th
+                          key={`${module.id}-${perm}`}
+                          className="px-6 py-2 bg-gray-50 border-l border-gray-200 text-center relative group"
+                        >
+                          <span className="text-xs text-gray-500 capitalize">
+                            {perm}
+                          </span>
+                          <div className="invisible group-hover:visible absolute z-50 bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded shadow-lg w-48 whitespace-normal">
+                            {getPermissionTooltip(perm)}
+                            <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                              <div className="border-4 border-transparent border-t-gray-900"></div>
                             </div>
                           </div>
-                        ))}
-                      </div>
-                    </th>
+                        </th>
+                      ))}
+                    </React.Fragment>
                   ))}
                 </tr>
               </thead>
