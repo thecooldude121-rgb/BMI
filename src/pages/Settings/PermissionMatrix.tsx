@@ -1035,9 +1035,9 @@ const PermissionMatrix: React.FC = () => {
                       {filteredModules.map(module => (
                         <td
                           key={module.id}
-                          className="px-6 py-4 border-l border-gray-200"
+                          className="py-4 border-l border-gray-200"
                         >
-                          <div className="flex items-center gap-2">
+                          <div className="px-6 flex items-center gap-2">
                             {(['read', 'write', 'delete', 'export', 'import', 'hide'] as PermissionType[]).map(perm => (
                               <div key={perm} className="w-12 flex-shrink-0 flex justify-center">
                                 {renderPermissionCheckbox(role.id, module.id, perm)}
