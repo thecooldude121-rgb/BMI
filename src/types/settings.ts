@@ -18,6 +18,8 @@ export interface SystemRole {
   description?: string;
   parent_role_id?: string;
   hierarchy_level: number;
+  business_unit?: string;
+  status?: string;
   is_system: boolean;
   is_active: boolean;
   permissions: Record<string, any>;
@@ -25,6 +27,7 @@ export interface SystemRole {
   created_at: string;
   updated_at: string;
   created_by: string;
+  updated_by?: string;
 }
 
 export interface SystemPermission {

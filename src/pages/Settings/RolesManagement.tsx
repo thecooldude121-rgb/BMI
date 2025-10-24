@@ -45,8 +45,13 @@ const RolesManagement: React.FC = () => {
   const [newRoleData, setNewRoleData] = useState({
     name: '',
     description: '',
-    business_unit: ''
+    business_unit: '',
+    parent_role_id: ''
   });
+  const [nameError, setNameError] = useState('');
+  const [parentError, setParentError] = useState('');
+  const [roleSuggestions, setRoleSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -119,27 +124,89 @@ const RolesManagement: React.FC = () => {
     }
   };
 
+  const validateRoleName = (name: string): boolean => {
+    setNameError('');
+
+    if (!name.trim()) {
+      setNameError('Role name is required');
+      return false;
+    }
+
+    const duplicateRole = roles.find(
+      r => r.name.toLowerCase() === name.trim().toLowerCase()
+    );
+
+    if (duplicateRole) {
+      setNameError('A role with this name already exists');
+      return false;
+    }
+
+    return true;
+  };
+
+  const validateParentRole = (parentId: string): boolean => {
+    setParentError('');
+
+    if (!parentId) return true;
+
+    const parent = roles.find(r => r.id === parentId);
+    if (!parent) {
+      setParentError('Invalid parent role');
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleRoleNameChange = (name: string) => {
+    setNewRoleData({ ...newRoleData, name });
+    setNameError('');
+
+    if (name.trim().length > 0) {
+      const suggestions = roles
+        .map(r => r.name)
+        .filter(n => n.toLowerCase().includes(name.toLowerCase()))
+        .slice(0, 5);
+      setRoleSuggestions(suggestions);
+      setShowSuggestions(suggestions.length > 0);
+    } else {
+      setShowSuggestions(false);
+    }
+  };
+
   const handleCreateRole = async () => {
-    if (!newRoleData.name.trim()) return;
+    if (!validateRoleName(newRoleData.name)) return;
 
-    const parentLevel = parentRoleForNew
-      ? roles.find(r => r.id === parentRoleForNew)?.hierarchy_level || 0
-      : 0;
+    const parentId = newRoleData.parent_role_id || parentRoleForNew;
+    if (parentId && !validateParentRole(parentId)) return;
 
-    const result = await createRole({
-      name: newRoleData.name,
-      description: newRoleData.description,
-      parent_role_id: parentRoleForNew || undefined,
-      hierarchy_level: parentLevel + 1,
-      permissions: {},
-      restrictions: {}
-    });
+    try {
+      const result = await createRole({
+        name: newRoleData.name.trim(),
+        description: newRoleData.description,
+        parent_role_id: parentId || undefined,
+        business_unit: newRoleData.business_unit || undefined,
+        hierarchy_level: 1,
+        permissions: {},
+        restrictions: {}
+      });
 
-    if (result) {
-      setShowCreateModal(false);
-      setNewRoleData({ name: '', description: '', business_unit: '' });
-      setParentRoleForNew(null);
-      await fetchRoles();
+      if (result) {
+        setShowCreateModal(false);
+        setNewRoleData({ name: '', description: '', business_unit: '', parent_role_id: '' });
+        setParentRoleForNew(null);
+        setNameError('');
+        setParentError('');
+        await fetchRoles();
+      }
+    } catch (error: any) {
+      if (error.message?.includes('Circular')) {
+        setParentError('Circular parent reference detected. This would create an infinite loop.');
+      } else if (error.message?.includes('duplicate')) {
+        setNameError('A role with this name already exists');
+      } else {
+        console.error('Error creating role:', error);
+      }
     }
   };
 
@@ -304,8 +371,19 @@ const RolesManagement: React.FC = () => {
 
           <div className="flex items-center space-x-2 flex-1 min-w-0">
             <Shield className="h-4 w-4 text-blue-600 flex-shrink-0" />
-            <span className="font-medium text-gray-900 truncate">{node.name}</span>
-            <span className="text-xs text-gray-500 flex-shrink-0">L{node.hierarchy_level}</span>
+            <div className="flex flex-col min-w-0">
+              <span className="font-medium text-gray-900 truncate">{node.name}</span>
+              <div className="flex items-center space-x-1 mt-0.5">
+                <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded flex-shrink-0">
+                  L{node.hierarchy_level}
+                </span>
+                {node.business_unit && (
+                  <span className="text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded truncate">
+                    {node.business_unit}
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
 
           {permSummary.total > 0 && (
@@ -424,10 +502,17 @@ const RolesManagement: React.FC = () => {
                     ) : (
                       <h1 className="text-2xl font-bold text-gray-900">{selectedRole.name}</h1>
                     )}
-                    <div className="flex items-center space-x-3 mt-2">
-                      <span className="text-sm text-gray-600">Level {selectedRole.hierarchy_level}</span>
-                      {selectedRole.is_system && (
+                    <div className="flex flex-wrap items-center gap-2 mt-2">
+                      <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                        Level {selectedRole.hierarchy_level}
+                      </span>
+                      {selectedRole.business_unit && (
                         <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-medium rounded-full">
+                          {selectedRole.business_unit}
+                        </span>
+                      )}
+                      {selectedRole.is_system && (
+                        <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-xs font-medium rounded-full">
                           System Role
                         </span>
                       )}
@@ -553,6 +638,66 @@ const RolesManagement: React.FC = () => {
                     <p className="text-sm text-gray-600 font-mono">{selectedRole.id.substring(0, 8)}...</p>
                   </div>
                 </div>
+              </div>
+
+              {/* Role Metadata */}
+              <div className="mt-6 pt-6 border-t border-gray-200 grid grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Parent Role</label>
+                  {isEditing ? (
+                    <select
+                      value={editedRole.parent_role_id || ''}
+                      onChange={(e) => setEditedRole({ ...editedRole, parent_role_id: e.target.value || undefined })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">None (Root Level)</option>
+                      {roles
+                        .filter(r => r.id !== selectedRole.id)
+                        .map((role) => (
+                          <option key={role.id} value={role.id}>
+                            {role.name} (Level {role.hierarchy_level})
+                          </option>
+                        ))}
+                    </select>
+                  ) : (
+                    <p className="text-gray-900">
+                      {selectedRole.parent_role_id
+                        ? roles.find(r => r.id === selectedRole.parent_role_id)?.name || 'Unknown'
+                        : 'None (Root Level)'}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Business Unit</label>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={editedRole.business_unit || ''}
+                      onChange={(e) => setEditedRole({ ...editedRole, business_unit: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="e.g., Sales Department"
+                    />
+                  ) : (
+                    <p className="text-gray-900">{selectedRole.business_unit || 'Not assigned'}</p>
+                  )}
+                </div>
+
+                {selectedRole.description && (
+                  <div className="col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    {isEditing ? (
+                      <textarea
+                        value={editedRole.description || ''}
+                        onChange={(e) => setEditedRole({ ...editedRole, description: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        rows={2}
+                      />
+                    ) : (
+                      <p className="text-gray-900">{selectedRole.description}</p>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -719,21 +864,89 @@ const RolesManagement: React.FC = () => {
                   </p>
                 </div>
               )}
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Role Name <span className="text-red-500">*</span>
                 </label>
-                <select
-                  value={newRoleData.name}
-                  onChange={(e) => setNewRoleData({ ...newRoleData, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Select a role</option>
-                  <option value="CEO">CEO</option>
-                  <option value="Manager">Manager</option>
-                  <option value="Executive">Executive</option>
-                </select>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={newRoleData.name}
+                    onChange={(e) => handleRoleNameChange(e.target.value)}
+                    onFocus={() => setShowSuggestions(roleSuggestions.length > 0)}
+                    onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      nameError ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    placeholder="e.g., Sales Manager - North Region"
+                    aria-required="true"
+                    aria-invalid={!!nameError}
+                    aria-describedby={nameError ? 'name-error' : undefined}
+                  />
+                  {showSuggestions && roleSuggestions.length > 0 && (
+                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                      {roleSuggestions.map((suggestion, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            setNewRoleData({ ...newRoleData, name: suggestion });
+                            setShowSuggestions(false);
+                          }}
+                          className="w-full px-3 py-2 text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-none"
+                        >
+                          <span className="text-sm text-gray-900">{suggestion}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {nameError && (
+                  <p id="name-error" className="mt-1 text-sm text-red-600 flex items-center" role="alert">
+                    <AlertCircle className="h-4 w-4 mr-1" />
+                    {nameError}
+                  </p>
+                )}
+                <p className="mt-1 text-xs text-gray-500">
+                  Enter a custom role name or select from suggestions
+                </p>
               </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Parent Role
+                </label>
+                <select
+                  value={newRoleData.parent_role_id || parentRoleForNew || ''}
+                  onChange={(e) => {
+                    setNewRoleData({ ...newRoleData, parent_role_id: e.target.value });
+                    setParentError('');
+                  }}
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    parentError ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  disabled={!!parentRoleForNew}
+                  aria-describedby={parentError ? 'parent-error' : undefined}
+                >
+                  <option value="">None (Root Level - Level 1)</option>
+                  {roles.map((role) => (
+                    <option key={role.id} value={role.id}>
+                      {role.name} (Level {role.hierarchy_level})
+                    </option>
+                  ))}
+                </select>
+                {parentError && (
+                  <p id="parent-error" className="mt-1 text-sm text-red-600 flex items-center" role="alert">
+                    <AlertCircle className="h-4 w-4 mr-1" />
+                    {parentError}
+                  </p>
+                )}
+                <p className="mt-1 text-xs text-gray-500">
+                  Child roles automatically inherit parent's level + 1
+                </p>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                 <textarea
@@ -744,6 +957,7 @@ const RolesManagement: React.FC = () => {
                   placeholder="Describe the role's responsibilities and access level"
                 />
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Business Unit</label>
                 <input
@@ -751,7 +965,7 @@ const RolesManagement: React.FC = () => {
                   value={newRoleData.business_unit}
                   onChange={(e) => setNewRoleData({ ...newRoleData, business_unit: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="e.g., Sales Department"
+                  placeholder="e.g., Sales Department, North Region"
                 />
               </div>
             </div>
@@ -759,8 +973,10 @@ const RolesManagement: React.FC = () => {
               <button
                 onClick={() => {
                   setShowCreateModal(false);
-                  setNewRoleData({ name: '', description: '', business_unit: '' });
+                  setNewRoleData({ name: '', description: '', business_unit: '', parent_role_id: '' });
                   setParentRoleForNew(null);
+                  setNameError('');
+                  setParentError('');
                 }}
                 className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
               >
