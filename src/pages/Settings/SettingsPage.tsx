@@ -15,6 +15,7 @@ import { SharingRuleBuilder } from '../../components/Permissions/SharingRuleBuil
 import { UserGroupManagement } from '../../components/Permissions/UserGroupManagement';
 import { AuditFeed } from '../../components/Permissions/AuditFeed';
 import { APIIntegrationsPanel } from '../../components/Permissions/APIIntegrationsPanel';
+import AuditTrail from './AuditTrail';
 
 interface SettingsSection {
   id: string;
@@ -258,40 +259,7 @@ const SettingsPage: React.FC = () => {
         return <AuditFeed />;
 
       case 'audit':
-        return (
-          <div>
-            <div className="flex items-center space-x-4 mb-6">
-              <div className={`p-3 rounded-xl bg-gradient-to-r ${section.color}`}>
-                <Icon className="h-8 w-8 text-white" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900">{section.title}</h2>
-                <p className="text-gray-600">{section.description}</p>
-              </div>
-            </div>
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
-              <div className="space-y-3">
-                {auditLogs.slice(0, 10).map(log => (
-                  <div key={log.id} className="flex items-start space-x-3 p-3 border border-gray-200 rounded-lg">
-                    <div className="p-2 bg-gray-100 rounded-lg"><Activity className="h-4 w-4 text-gray-600" /></div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <p className="font-medium text-gray-900">{log.action}</p>
-                        <span className="text-xs text-gray-500">{new Date(log.created_at).toLocaleString()}</span>
-                      </div>
-                      {log.description && <p className="text-sm text-gray-600 mt-1">{log.description}</p>}
-                      {log.module_name && <p className="text-xs text-gray-500 mt-1">Module: {log.module_name}</p>}
-                    </div>
-                  </div>
-                ))}
-                {auditLogs.length === 0 && (
-                  <div className="text-center py-8 text-gray-500">No audit logs found.</div>
-                )}
-              </div>
-            </div>
-          </div>
-        );
+        return <AuditTrail />;
 
       case 'security':
         return (
