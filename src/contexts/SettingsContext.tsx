@@ -152,7 +152,6 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
   // ============================================
 
   const fetchRoles = useCallback(async (filters?: RoleFilters) => {
-    if (!user) return;
     setLoading(true);
     setError(null);
 
@@ -197,14 +196,12 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
   };
 
   const createRole = async (role: Partial<SystemRole>): Promise<SystemRole | null> => {
-    if (!user) return null;
-
     try {
       const { data, error } = await supabase
         .from('system_roles')
         .insert({
           ...role,
-          created_by: user.id,
+          created_by: user?.id || null,
           permissions: role.permissions || {},
           restrictions: role.restrictions || {},
           is_system: false,
@@ -219,6 +216,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
       return data;
     } catch (err: any) {
       setError(err.message);
+      console.error('Error creating role:', err);
       return null;
     }
   };
@@ -278,7 +276,6 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
   };
 
   const fetchPermissions = useCallback(async () => {
-    if (!user) return;
     setLoading(true);
 
     try {
@@ -981,14 +978,13 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
   // ============================================
 
   const fetchAuditLogs = useCallback(async (filters?: AuditLogFilters) => {
-    if (!user) return;
     setLoading(true);
 
     try {
       let query = supabase
-        .from('system_audit_logs')
+        .from('audit_logs')
         .select('*')
-        .order('created_at', { ascending: false })
+        .order('timestamp', { ascending: false })
         .limit(100);
 
       if (filters?.user_id) {
