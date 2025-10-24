@@ -979,13 +979,12 @@ const PermissionMatrix: React.FC = () => {
                         {(['read', 'write', 'delete', 'export', 'import', 'hide'] as PermissionType[]).map(perm => (
                           <div
                             key={perm}
-                            className="w-12 flex items-center justify-center relative group"
+                            className="w-12 flex justify-center relative group"
                           >
-                            <span className="text-xs text-gray-500 capitalize flex items-center">
+                            <span className="text-xs text-gray-500 capitalize">
                               {perm}
-                              <HelpCircle className="h-3 w-3 ml-0.5 text-gray-400" />
                             </span>
-                            <div className="invisible group-hover:visible absolute z-50 bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded shadow-lg w-48">
+                            <div className="invisible group-hover:visible absolute z-50 bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded shadow-lg w-48 whitespace-normal">
                               {getPermissionTooltip(perm)}
                               <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                                 <div className="border-4 border-transparent border-t-gray-900"></div>
