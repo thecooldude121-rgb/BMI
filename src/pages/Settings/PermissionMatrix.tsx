@@ -975,11 +975,11 @@ const PermissionMatrix: React.FC = () => {
                         </div>
                         <span className="text-xs text-gray-500">{module.category}</span>
                       </div>
-                      <div className="flex space-x-2 mt-2">
+                      <div className="flex items-center gap-2 mt-2">
                         {(['read', 'write', 'delete', 'export', 'import', 'hide'] as PermissionType[]).map(perm => (
                           <div
                             key={perm}
-                            className="w-12 flex justify-center items-center relative group"
+                            className="w-12 flex justify-center relative group"
                           >
                             <div className="relative">
                               <span className="text-xs text-gray-500 capitalize p-1.5 inline-block">
@@ -1027,7 +1027,7 @@ const PermissionMatrix: React.FC = () => {
                           key={module.id}
                           className="px-6 py-4 border-l border-gray-200"
                         >
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center gap-2">
                             {(['read', 'write', 'delete', 'export', 'import', 'hide'] as PermissionType[]).map(perm => (
                               <div key={perm} className="w-12 flex justify-center">
                                 {renderPermissionCheckbox(role.id, module.id, perm)}
@@ -1053,7 +1053,7 @@ const PermissionMatrix: React.FC = () => {
                             }
                             return (
                               <td key={m.id} className="px-6 py-2 border-l border-gray-200">
-                                <div className="flex items-center space-x-2">
+                                <div className="flex items-center gap-2">
                                   {(['read', 'write', 'delete', 'export', 'import', 'hide'] as PermissionType[]).map(perm => (
                                     <div key={perm} className="w-12 flex justify-center">
                                       {renderPermissionCheckbox(role.id, module.id, perm, field.id)}
