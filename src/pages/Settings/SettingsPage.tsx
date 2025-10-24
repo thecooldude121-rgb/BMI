@@ -3,11 +3,16 @@ import {
   Settings, Shield, Users, Lock, Activity, Key, Globe,
   Database, Bell, FileText, Workflow, UserCheck, Zap,
   Search, ChevronRight, AlertTriangle, CheckCircle, Info, ArrowLeft,
-  Plus, Edit, Trash2, Eye, X
+  Plus, Edit, Trash2, Eye, X, Webhook, MessageSquare
 } from 'lucide-react';
 import { useSettings } from '../../contexts/SettingsContext';
 import RolesManagement from './RolesManagement';
 import PermissionMatrix from './PermissionMatrix';
+import { WhatIfSimulator } from '../../components/Permissions/WhatIfSimulator';
+import { SharingRuleBuilder } from '../../components/Permissions/SharingRuleBuilder';
+import { UserGroupManagement } from '../../components/Permissions/UserGroupManagement';
+import { AuditFeed } from '../../components/Permissions/AuditFeed';
+import { APIIntegrationsPanel } from '../../components/Permissions/APIIntegrationsPanel';
 
 interface SettingsSection {
   id: string;
@@ -126,7 +131,24 @@ const SettingsPage: React.FC = () => {
       title: 'User Groups',
       description: 'Organize users into hierarchical groups',
       icon: Users,
-      color: 'from-teal-500 to-teal-600'
+      color: 'from-teal-500 to-teal-600',
+      badge: 'New'
+    },
+    {
+      id: 'webhooks',
+      title: 'Webhooks & Integrations',
+      description: 'Configure webhooks and external integrations',
+      icon: Webhook,
+      color: 'from-indigo-500 to-indigo-600',
+      badge: 'New'
+    },
+    {
+      id: 'collaboration',
+      title: 'Audit & Collaboration',
+      description: 'View audit logs, comments, and approval workflows',
+      icon: MessageSquare,
+      color: 'from-orange-500 to-orange-600',
+      badge: 'New'
     },
     {
       id: 'notifications',
@@ -206,6 +228,18 @@ const SettingsPage: React.FC = () => {
 
       case 'permission-matrix':
         return <PermissionMatrix />;
+
+      case 'groups':
+        return <UserGroupManagement />;
+
+      case 'sharing':
+        return <SharingRuleBuilder isOpen={false} onClose={() => {}} onSave={() => {}} />;
+
+      case 'webhooks':
+        return <APIIntegrationsPanel />;
+
+      case 'collaboration':
+        return <AuditFeed />;
 
       case 'audit':
         return (
