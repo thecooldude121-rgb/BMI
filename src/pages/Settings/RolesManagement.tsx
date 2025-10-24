@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useSettings } from '../../contexts/SettingsContext';
 import { SystemRole } from '../../types/settings';
+import { RolePermissionEditor } from '../../components/Permissions/RolePermissionEditor';
 
 interface RoleNode extends SystemRole {
   children: RoleNode[];
@@ -41,6 +42,7 @@ const RolesManagement: React.FC = () => {
   const [parentRoleForNew, setParentRoleForNew] = useState<string | null>(null);
   const [draggedRole, setDraggedRole] = useState<RoleNode | null>(null);
   const [showPermissions, setShowPermissions] = useState(false);
+  const [showPermissionEditor, setShowPermissionEditor] = useState(false);
   const [editedRole, setEditedRole] = useState<Partial<SystemRole>>({});
   const [newRoleData, setNewRoleData] = useState({
     name: '',
@@ -121,6 +123,26 @@ const RolesManagement: React.FC = () => {
       if (updatedRole) {
         setSelectedRole({ ...updatedRole, children: selectedRole.children });
       }
+    }
+  };
+
+  const handleSavePermissions = async (permissions: Record<string, any>): Promise<boolean> => {
+    if (!selectedRole) return false;
+
+    try {
+      const success = await updateRole(selectedRole.id, { permissions });
+      if (success) {
+        await fetchRoles();
+        const updatedRole = roles.find(r => r.id === selectedRole.id);
+        if (updatedRole) {
+          setSelectedRole({ ...updatedRole, children: selectedRole.children });
+        }
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error saving permissions:', error);
+      return false;
     }
   };
 
@@ -801,6 +823,43 @@ const RolesManagement: React.FC = () => {
                   </div>
                 );
               })()}
+            </div>
+
+            {/* Permission Editor Section */}
+            <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Configure Permissions</h3>
+                <button
+                  onClick={() => setShowPermissionEditor(!showPermissionEditor)}
+                  className="flex items-center px-4 py-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {showPermissionEditor ? (
+                    <>
+                      <EyeOff className="h-4 w-4 mr-2" />
+                      Hide Permission Editor
+                    </>
+                  ) : (
+                    <>
+                      <Eye className="h-4 w-4 mr-2" />
+                      Show Permission Editor
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {showPermissionEditor ? (
+                <RolePermissionEditor
+                  roleId={selectedRole.id}
+                  roleName={selectedRole.name}
+                  onSave={handleSavePermissions}
+                />
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <Shield className="h-12 w-12 mx-auto mb-3 text-gray-400" />
+                  <p className="mb-2">Click "Show Permission Editor" to configure module and field-level permissions</p>
+                  <p className="text-sm">Changes will sync instantly with the global Permission Matrix</p>
+                </div>
+              )}
             </div>
 
             {/* Child Roles */}
