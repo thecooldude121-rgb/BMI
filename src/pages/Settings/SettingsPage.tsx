@@ -8,6 +8,7 @@ import {
 import { useSettings } from '../../contexts/SettingsContext';
 import RolesManagement from './RolesManagement';
 import PermissionMatrix from './PermissionMatrix';
+import PermissionSets from './PermissionSets';
 import { WhatIfSimulator } from '../../components/Permissions/WhatIfSimulator';
 import { SharingRuleBuilder } from '../../components/Permissions/SharingRuleBuilder';
 import { UserGroupManagement } from '../../components/Permissions/UserGroupManagement';
@@ -74,6 +75,14 @@ const SettingsPage: React.FC = () => {
       description: 'Interactive matrix for granular permission assignment',
       icon: Shield,
       color: 'from-blue-500 to-cyan-600',
+      badge: 'New'
+    },
+    {
+      id: 'permission-sets',
+      title: 'Permission Sets',
+      description: 'Create reusable permission templates to apply across multiple roles',
+      icon: FileText,
+      color: 'from-teal-500 to-teal-600',
       badge: 'New'
     },
     {
@@ -228,6 +237,9 @@ const SettingsPage: React.FC = () => {
 
       case 'permission-matrix':
         return <PermissionMatrix />;
+
+      case 'permission-sets':
+        return <PermissionSets />;
 
       case 'groups':
         return <UserGroupManagement />;
@@ -437,7 +449,7 @@ const SettingsPage: React.FC = () => {
   };
 
   if (selectedSection) {
-    if (selectedSection === 'roles' || selectedSection === 'permission-matrix') {
+    if (selectedSection === 'roles' || selectedSection === 'permission-matrix' || selectedSection === 'permission-sets') {
       return (
         <div className="h-screen flex flex-col bg-gray-50">
           <div className="bg-white border-b border-gray-200 px-6 py-4">
