@@ -4,6 +4,7 @@ import {
   ChevronRight, X, Check, AlertTriangle, Package
 } from 'lucide-react';
 import { PermissionSetBuilder } from '../../components/Permissions/PermissionSetBuilder';
+import BreadcrumbNav from '../../components/navigation/BreadcrumbNav';
 
 interface PermissionSet {
   id: string;
@@ -170,6 +171,11 @@ const PermissionSets: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <BreadcrumbNav items={[
+        { label: 'Settings', onClick: () => window.history.back() },
+        { label: 'Permission Sets', current: true }
+      ]} />
+
       {successMessage && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
           <div className="flex items-center">

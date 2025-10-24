@@ -2,9 +2,10 @@ import React from 'react';
 import { ChevronRight, Home } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
-interface BreadcrumbItem {
+export interface BreadcrumbItem {
   label: string;
   href?: string;
+  onClick?: () => void;
   current?: boolean;
 }
 
@@ -57,7 +58,16 @@ const BreadcrumbNav: React.FC<BreadcrumbNavProps> = ({ items }) => {
       {breadcrumbItems.slice(1).map((item, index) => (
         <React.Fragment key={index}>
           <ChevronRight className="h-4 w-4 text-gray-400" />
-          {item.href && !item.current ? (
+          {item.onClick ? (
+            <button
+              onClick={item.onClick}
+              className={`hover:text-gray-900 transition-colors ${
+                item.current ? 'text-gray-900 font-semibold cursor-default' : ''
+              }`}
+            >
+              {item.label}
+            </button>
+          ) : item.href && !item.current ? (
             <Link
               to={item.href}
               className="hover:text-gray-900 transition-colors"

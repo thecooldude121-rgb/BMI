@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import {
   Plus, Search, Filter, Users, Mail, Building, Shield,
   ChevronDown, X, Check, AlertTriangle, Edit, Trash2,
-  Download, Power, Clock, Globe, Calendar
+  Download, Power, Clock, Globe, Calendar, ArrowLeft
 } from 'lucide-react';
+import BreadcrumbNav from '../../components/navigation/BreadcrumbNav';
 
 interface User {
   id: string;
@@ -270,8 +271,30 @@ const ProfilesAccess: React.FC = () => {
 
   const getCurrentRole = (roleId: string) => roles.find(r => r.id === roleId);
 
+  const getBreadcrumbs = () => {
+    const breadcrumbs = [
+      { label: 'Settings', onClick: () => window.history.back() },
+      { label: 'Profiles & Access' }
+    ];
+
+    if (editingUser) {
+      breadcrumbs.push({ label: `${editingUser.firstName} ${editingUser.lastName}`, onClick: () => setEditingUser(null) });
+      breadcrumbs.push({ label: 'Edit', current: true });
+    } else if (selectedUser) {
+      breadcrumbs.push({ label: `${selectedUser.firstName} ${selectedUser.lastName}`, current: true });
+    } else {
+      breadcrumbs[breadcrumbs.length - 1].current = true;
+    }
+
+    return breadcrumbs;
+  };
+
   return (
     <div className="h-full flex flex-col bg-gray-50">
+      <div className="bg-white border-b border-gray-200 px-6 py-4">
+        <BreadcrumbNav items={getBreadcrumbs()} />
+      </div>
+
       {successMessage && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-4 m-6 mb-0">
           <div className="flex items-center">
@@ -441,6 +464,14 @@ const ProfilesAccess: React.FC = () => {
         <div className="flex-1 overflow-y-auto p-6">
           {selectedUser && !editingUser && (
             <div className="max-w-4xl mx-auto space-y-6">
+              <button
+                onClick={() => setSelectedUser(null)}
+                className="flex items-center text-gray-600 hover:text-gray-900 mb-4"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Users
+              </button>
+
               <div className="bg-white rounded-lg border border-gray-200 p-6">
                 <div className="flex items-start justify-between mb-6">
                   <div className="flex items-center space-x-4">
@@ -575,6 +606,14 @@ const ProfilesAccess: React.FC = () => {
 
           {editingUser && (
             <div className="max-w-4xl mx-auto space-y-6">
+              <button
+                onClick={() => setEditingUser(null)}
+                className="flex items-center text-gray-600 hover:text-gray-900 mb-4"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Details
+              </button>
+
               <div className="bg-white rounded-lg border border-gray-200 p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-6">Edit User</h3>
 

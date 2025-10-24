@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import {
   Users, ChevronDown, ChevronRight, Plus, Copy, Trash2, Edit2,
   Save, X, Search, AlertCircle, CheckCircle, Shield, Clock,
-  User, Calendar, FileText, Eye, EyeOff, Info, Move, List, GitBranch
+  User, Calendar, FileText, Eye, EyeOff, Info, Move, List, GitBranch, ArrowLeft
 } from 'lucide-react';
 import { useSettings } from '../../contexts/SettingsContext';
 import { SystemRole } from '../../types/settings';
 import { RolePermissionEditor } from '../../components/Permissions/RolePermissionEditor';
 import { RoleHierarchyView } from '../../components/Permissions/RoleHierarchyView';
+import BreadcrumbNav, { BreadcrumbItem } from '../../components/navigation/BreadcrumbNav';
 
 interface RoleNode extends SystemRole {
   children: RoleNode[];
@@ -38,6 +39,7 @@ const RolesManagement: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [viewMode, setViewMode] = useState<'list' | 'hierarchy'>('list');
+  const [settingsHome, setSettingsHome] = useState<(() => void) | undefined>();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showCloneModal, setShowCloneModal] = useState(false);
@@ -445,6 +447,32 @@ const RolesManagement: React.FC = () => {
 
   const filteredTree = filterRoles(roleTree, searchQuery);
 
+  const getBreadcrumbs = (): BreadcrumbItem[] => {
+    const breadcrumbs: BreadcrumbItem[] = [
+      { label: 'Settings', onClick: () => window.history.back() }
+    ];
+
+    if (viewMode === 'hierarchy') {
+      breadcrumbs.push({ label: 'Roles & Permissions', current: false });
+      breadcrumbs.push({ label: 'Hierarchy View', current: true });
+    } else if (selectedRole && isEditing) {
+      breadcrumbs.push({ label: 'Roles & Permissions', onClick: () => setSelectedRole(null) });
+      breadcrumbs.push({ label: selectedRole.name, onClick: () => setIsEditing(false) });
+      breadcrumbs.push({ label: 'Edit', current: true });
+    } else if (selectedRole && showPermissionEditor) {
+      breadcrumbs.push({ label: 'Roles & Permissions', onClick: () => setSelectedRole(null) });
+      breadcrumbs.push({ label: selectedRole.name, onClick: () => setShowPermissionEditor(false) });
+      breadcrumbs.push({ label: 'Permissions', current: true });
+    } else if (selectedRole) {
+      breadcrumbs.push({ label: 'Roles & Permissions', onClick: () => setSelectedRole(null) });
+      breadcrumbs.push({ label: selectedRole.name, current: true });
+    } else {
+      breadcrumbs.push({ label: 'Roles & Permissions', current: true });
+    }
+
+    return breadcrumbs;
+  };
+
   const handleHierarchyRoleSelect = (role: any) => {
     const roleNode = roleTree.find(node => findRoleInTree(node, role.id));
     if (roleNode) {
@@ -561,9 +589,11 @@ const RolesManagement: React.FC = () => {
 
       {/* Hierarchy View */}
       {viewMode === 'hierarchy' && (
-        <div className="flex-1 h-full">
-          <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+        <div className="flex-1 h-full flex flex-col">
+          <div className="bg-white border-b border-gray-200 px-6 py-4">
+            <BreadcrumbNav items={getBreadcrumbs()} />
+            <div className="flex items-center justify-between mt-2">
+              <div className="flex items-center space-x-3">
               <div className="p-2 bg-blue-100 rounded-lg">
                 <GitBranch className="h-6 w-6 text-blue-600" />
               </div>
@@ -582,8 +612,9 @@ const RolesManagement: React.FC = () => {
               <Plus className="h-4 w-4 mr-2" />
               Create Role
             </button>
+            </div>
           </div>
-          <div className="h-[calc(100%-80px)]">
+          <div className="flex-1">
             <RoleHierarchyView
               roles={roles.map(r => ({
                 ...r,
@@ -601,6 +632,25 @@ const RolesManagement: React.FC = () => {
         <div className="flex-1 overflow-y-auto">
         {selectedRole ? (
           <div className="max-w-4xl mx-auto p-8">
+            <BreadcrumbNav items={getBreadcrumbs()} />
+
+            {/* Back Button */}
+            <button
+              onClick={() => {
+                if (showPermissionEditor) {
+                  setShowPermissionEditor(false);
+                } else if (isEditing) {
+                  setIsEditing(false);
+                } else {
+                  setSelectedRole(null);
+                }
+              }}
+              className="flex items-center text-gray-600 hover:text-gray-900 mb-4"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back
+            </button>
+
             {/* Header */}
             <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
               <div className="flex items-start justify-between mb-4">
