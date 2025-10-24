@@ -982,24 +982,30 @@ const PermissionMatrix: React.FC = () => {
                 {/* Permission Column Headers Row */}
                 <tr>
                   {filteredModules.map(module => (
-                    <React.Fragment key={module.id}>
-                      {(['read', 'write', 'delete', 'export', 'import', 'hide'] as PermissionType[]).map(perm => (
-                        <th
-                          key={`${module.id}-${perm}`}
-                          className="px-6 py-2 bg-gray-50 border-l border-gray-200 text-center relative group"
-                        >
-                          <span className="text-xs text-gray-500 capitalize">
-                            {perm}
-                          </span>
-                          <div className="invisible group-hover:visible absolute z-50 bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded shadow-lg w-48 whitespace-normal">
-                            {getPermissionTooltip(perm)}
-                            <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
-                              <div className="border-4 border-transparent border-t-gray-900"></div>
+                    <th
+                      key={`${module.id}-headers`}
+                      className="py-2 bg-gray-50 border-l border-gray-200"
+                      colSpan={6}
+                    >
+                      <div className="px-6 flex items-center gap-2">
+                        {(['read', 'write', 'delete', 'export', 'import', 'hide'] as PermissionType[]).map(perm => (
+                          <div
+                            key={`${module.id}-${perm}`}
+                            className="w-12 flex-shrink-0 flex justify-center relative group"
+                          >
+                            <span className="text-xs text-gray-500 capitalize">
+                              {perm}
+                            </span>
+                            <div className="invisible group-hover:visible absolute z-50 bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded shadow-lg w-48 whitespace-normal">
+                              {getPermissionTooltip(perm)}
+                              <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                                <div className="border-4 border-transparent border-t-gray-900"></div>
+                              </div>
                             </div>
                           </div>
-                        </th>
-                      ))}
-                    </React.Fragment>
+                        ))}
+                      </div>
+                    </th>
                   ))}
                 </tr>
               </thead>
