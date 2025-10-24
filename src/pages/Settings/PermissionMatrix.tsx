@@ -982,30 +982,24 @@ const PermissionMatrix: React.FC = () => {
                 {/* Permission Column Headers Row */}
                 <tr>
                   {filteredModules.map(module => (
-                    <th
-                      key={`${module.id}-headers`}
-                      className="py-2 bg-gray-50 border-l border-gray-200"
-                      colSpan={6}
-                    >
-                      <div className="px-6 flex items-center gap-2">
-                        {(['read', 'write', 'delete', 'export', 'import', 'hide'] as PermissionType[]).map(perm => (
-                          <div
-                            key={`${module.id}-${perm}`}
-                            className="w-12 flex-shrink-0 flex justify-center relative group"
-                          >
-                            <span className="text-xs text-gray-500 capitalize">
-                              {perm}
-                            </span>
-                            <div className="invisible group-hover:visible absolute z-50 bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded shadow-lg w-48 whitespace-normal">
-                              {getPermissionTooltip(perm)}
-                              <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
-                                <div className="border-4 border-transparent border-t-gray-900"></div>
-                              </div>
+                    <React.Fragment key={`${module.id}-headers`}>
+                      {(['read', 'write', 'delete', 'export', 'import', 'hide'] as PermissionType[]).map((perm, idx) => (
+                        <th
+                          key={`${module.id}-${perm}`}
+                          className={`w-12 py-2 bg-gray-50 text-center ${idx === 0 ? 'border-l' : ''} border-gray-200 relative group`}
+                        >
+                          <span className="text-xs text-gray-500 capitalize">
+                            {perm}
+                          </span>
+                          <div className="invisible group-hover:visible absolute z-50 bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded shadow-lg w-48 whitespace-normal">
+                            {getPermissionTooltip(perm)}
+                            <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                              <div className="border-4 border-transparent border-t-gray-900"></div>
                             </div>
                           </div>
-                        ))}
-                      </div>
-                    </th>
+                        </th>
+                      ))}
+                    </React.Fragment>
                   ))}
                 </tr>
               </thead>
@@ -1033,18 +1027,16 @@ const PermissionMatrix: React.FC = () => {
                         </div>
                       </td>
                       {filteredModules.map(module => (
-                        <td
-                          key={module.id}
-                          className="py-4 border-l border-gray-200"
-                        >
-                          <div className="px-6 flex items-center gap-2">
-                            {(['read', 'write', 'delete', 'export', 'import', 'hide'] as PermissionType[]).map(perm => (
-                              <div key={perm} className="w-12 flex-shrink-0 flex justify-center">
-                                {renderPermissionCheckbox(role.id, module.id, perm)}
-                              </div>
-                            ))}
-                          </div>
-                        </td>
+                        <React.Fragment key={module.id}>
+                          {(['read', 'write', 'delete', 'export', 'import', 'hide'] as PermissionType[]).map((perm, idx) => (
+                            <td
+                              key={`${module.id}-${perm}`}
+                              className={`w-12 py-4 text-center ${idx === 0 ? 'border-l' : ''} border-gray-200`}
+                            >
+                              {renderPermissionCheckbox(role.id, module.id, perm)}
+                            </td>
+                          ))}
+                        </React.Fragment>
                       ))}
                     </tr>
 
@@ -1059,18 +1051,28 @@ const PermissionMatrix: React.FC = () => {
                           </td>
                           {filteredModules.map(m => {
                             if (m.id !== module.id) {
-                              return <td key={m.id} className="border-l border-gray-200" />;
+                              return (
+                                <React.Fragment key={m.id}>
+                                  <td className="border-l border-gray-200" />
+                                  <td className="border-gray-200" />
+                                  <td className="border-gray-200" />
+                                  <td className="border-gray-200" />
+                                  <td className="border-gray-200" />
+                                  <td className="border-gray-200" />
+                                </React.Fragment>
+                              );
                             }
                             return (
-                              <td key={m.id} className="px-6 py-2 border-l border-gray-200">
-                                <div className="flex items-center gap-2">
-                                  {(['read', 'write', 'delete', 'export', 'import', 'hide'] as PermissionType[]).map(perm => (
-                                    <div key={perm} className="w-12 flex-shrink-0 flex justify-center">
-                                      {renderPermissionCheckbox(role.id, module.id, perm, field.id)}
-                                    </div>
-                                  ))}
-                                </div>
-                              </td>
+                              <React.Fragment key={m.id}>
+                                {(['read', 'write', 'delete', 'export', 'import', 'hide'] as PermissionType[]).map((perm, idx) => (
+                                  <td
+                                    key={`${m.id}-${perm}`}
+                                    className={`w-12 py-2 text-center ${idx === 0 ? 'border-l' : ''} border-gray-200`}
+                                  >
+                                    {renderPermissionCheckbox(role.id, module.id, perm, field.id)}
+                                  </td>
+                                ))}
+                              </React.Fragment>
                             );
                           })}
                         </tr>
