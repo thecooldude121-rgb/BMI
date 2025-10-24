@@ -946,10 +946,10 @@ const PermissionMatrix: React.FC = () => {
                   {filteredModules.map(module => (
                     <th
                       key={module.id}
-                      className="px-6 py-3 bg-gray-50 border-l border-gray-200"
+                      className="py-3 bg-gray-50 border-l border-gray-200"
                       colSpan={6}
                     >
-                      <div className="flex items-center justify-between">
+                      <div className="px-6 flex items-center justify-between">
                         <div className="flex items-center space-x-2">
                           {bulkMode && (
                             <input
@@ -975,7 +975,7 @@ const PermissionMatrix: React.FC = () => {
                         </div>
                         <span className="text-xs text-gray-500">{module.category}</span>
                       </div>
-                      <div className="flex items-center gap-2 mt-2">
+                      <div className="px-6 flex items-center gap-2 mt-2">
                         {(['read', 'write', 'delete', 'export', 'import', 'hide'] as PermissionType[]).map(perm => (
                           <div
                             key={perm}
