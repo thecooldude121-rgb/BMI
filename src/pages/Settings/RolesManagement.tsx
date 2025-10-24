@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import {
   Users, ChevronDown, ChevronRight, Plus, Copy, Trash2, Edit2,
   Save, X, Search, AlertCircle, CheckCircle, Shield, Clock,
-  User, Calendar, FileText, Eye, EyeOff, Info, Move
+  User, Calendar, FileText, Eye, EyeOff, Info, Move, List, GitBranch
 } from 'lucide-react';
 import { useSettings } from '../../contexts/SettingsContext';
 import { SystemRole } from '../../types/settings';
 import { RolePermissionEditor } from '../../components/Permissions/RolePermissionEditor';
+import { RoleHierarchyView } from '../../components/Permissions/RoleHierarchyView';
 
 interface RoleNode extends SystemRole {
   children: RoleNode[];
@@ -36,6 +37,7 @@ const RolesManagement: React.FC = () => {
   const [selectedRole, setSelectedRole] = useState<RoleNode | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const [viewMode, setViewMode] = useState<'list' | 'hierarchy'>('list');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showCloneModal, setShowCloneModal] = useState(false);
@@ -443,10 +445,37 @@ const RolesManagement: React.FC = () => {
 
   const filteredTree = filterRoles(roleTree, searchQuery);
 
+  const handleHierarchyRoleSelect = (role: any) => {
+    const roleNode = roleTree.find(node => findRoleInTree(node, role.id));
+    if (roleNode) {
+      const foundNode = findRoleNodeById(roleNode, role.id);
+      if (foundNode) {
+        handleSelectRole(foundNode);
+      }
+    } else {
+      handleSelectRole({ ...role, children: [], expanded: true });
+    }
+  };
+
+  const findRoleInTree = (node: RoleNode, roleId: string): boolean => {
+    if (node.id === roleId) return true;
+    return node.children.some(child => findRoleInTree(child, roleId));
+  };
+
+  const findRoleNodeById = (node: RoleNode, roleId: string): RoleNode | null => {
+    if (node.id === roleId) return node;
+    for (const child of node.children) {
+      const found = findRoleNodeById(child, roleId);
+      if (found) return found;
+    }
+    return null;
+  };
+
   return (
     <div className="flex h-full bg-gray-50">
-      {/* Sidebar - Role Tree */}
-      <div className="w-80 bg-white border-r border-gray-200 flex flex-col overflow-hidden">
+      {/* Sidebar - Role Tree (hidden in hierarchy view) */}
+      {viewMode === 'list' && (
+        <div className="w-80 bg-white border-r border-gray-200 flex flex-col overflow-hidden">
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
@@ -465,15 +494,42 @@ const RolesManagement: React.FC = () => {
             </button>
           </div>
 
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search roles..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+          <div className="space-y-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search roles..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setViewMode('list')}
+                className={`flex-1 flex items-center justify-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  viewMode === 'list'
+                    ? 'bg-blue-100 text-blue-700 border border-blue-300'
+                    : 'bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200'
+                }`}
+              >
+                <List className="h-4 w-4 mr-1.5" />
+                List
+              </button>
+              <button
+                onClick={() => setViewMode('hierarchy')}
+                className={`flex-1 flex items-center justify-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  viewMode === 'hierarchy'
+                    ? 'bg-blue-100 text-blue-700 border border-blue-300'
+                    : 'bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200'
+                }`}
+              >
+                <GitBranch className="h-4 w-4 mr-1.5" />
+                Hierarchy
+              </button>
+            </div>
           </div>
         </div>
 
@@ -501,9 +557,48 @@ const RolesManagement: React.FC = () => {
           </div>
         </div>
       </div>
+      )}
 
-      {/* Main Content - Role Details */}
-      <div className="flex-1 overflow-y-auto">
+      {/* Hierarchy View */}
+      {viewMode === 'hierarchy' && (
+        <div className="flex-1 h-full">
+          <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <GitBranch className="h-6 w-6 text-blue-600" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">Role Hierarchy</h2>
+                <p className="text-sm text-gray-600">Organizational structure and reporting relationships</p>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                setParentRoleForNew(null);
+                setShowCreateModal(true);
+              }}
+              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Create Role
+            </button>
+          </div>
+          <div className="h-[calc(100%-80px)]">
+            <RoleHierarchyView
+              roles={roles.map(r => ({
+                ...r,
+                user_count: 0
+              }))}
+              onSelectRole={handleHierarchyRoleSelect}
+              selectedRoleId={selectedRole?.id}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Main Content - Role Details (shown when in list view) */}
+      {viewMode === 'list' && (
+        <div className="flex-1 overflow-y-auto">
         {selectedRole ? (
           <div className="max-w-4xl mx-auto p-8">
             {/* Header */}
@@ -894,7 +989,8 @@ const RolesManagement: React.FC = () => {
             </div>
           </div>
         )}
-      </div>
+        </div>
+      )}
 
       {/* Create Role Modal */}
       {showCreateModal && (
