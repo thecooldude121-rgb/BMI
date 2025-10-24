@@ -9,6 +9,7 @@ import { useSettings } from '../../contexts/SettingsContext';
 import RolesManagement from './RolesManagement';
 import PermissionMatrix from './PermissionMatrix';
 import PermissionSets from './PermissionSets';
+import ProfilesAccess from './ProfilesAccess';
 import { WhatIfSimulator } from '../../components/Permissions/WhatIfSimulator';
 import { SharingRuleBuilder } from '../../components/Permissions/SharingRuleBuilder';
 import { UserGroupManagement } from '../../components/Permissions/UserGroupManagement';
@@ -241,6 +242,9 @@ const SettingsPage: React.FC = () => {
       case 'permission-sets':
         return <PermissionSets />;
 
+      case 'profiles':
+        return <ProfilesAccess />;
+
       case 'groups':
         return <UserGroupManagement />;
 
@@ -449,7 +453,7 @@ const SettingsPage: React.FC = () => {
   };
 
   if (selectedSection) {
-    if (selectedSection === 'roles' || selectedSection === 'permission-matrix' || selectedSection === 'permission-sets') {
+    if (selectedSection === 'roles' || selectedSection === 'permission-matrix' || selectedSection === 'permission-sets' || selectedSection === 'profiles') {
       return (
         <div className="h-screen flex flex-col bg-gray-50">
           <div className="bg-white border-b border-gray-200 px-6 py-4">
