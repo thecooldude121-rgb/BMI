@@ -140,6 +140,8 @@ const PermissionMatrix: React.FC = () => {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [sidebarView, setSidebarView] = useState<'sets' | 'conflicts' | 'help'>('sets');
   const [hoveredCell, setHoveredCell] = useState<string | null>(null);
+  const [tooltipVisible, setTooltipVisible] = useState<string | null>(null);
+  const [validationWarnings, setValidationWarnings] = useState<Map<string, string[]>>(new Map());
 
   useEffect(() => {
     loadData();
@@ -147,6 +149,7 @@ const PermissionMatrix: React.FC = () => {
 
   useEffect(() => {
     detectConflicts();
+    validateDependencies();
   }, [permissions, roles]);
 
   const loadData = async () => {
@@ -438,6 +441,90 @@ const PermissionMatrix: React.FC = () => {
 
   const categories = Array.from(new Set(modules.map(m => m.category)));
 
+  const getPermissionTooltip = (permType: PermissionType): string => {
+    const tooltips = {
+      read: 'View and access records. Required for all other permissions.',
+      write: 'Create and edit records. Requires Read permission.',
+      delete: 'Remove records permanently. Requires Read permission.',
+      export: 'Download and export data. Requires Read permission.',
+      import: 'Upload and import data. Requires Write permission.',
+      hide: 'Hide fields from view. Overrides Read permission for specific fields.'
+    };
+    return tooltips[permType];
+  };
+
+  const validateDependencies = () => {
+    const warnings = new Map<string, string[]>();
+
+    permissions.forEach((cell, key) => {
+      const cellWarnings: string[] = [];
+
+      if (cell.permissions.write && !cell.permissions.read) {
+        cellWarnings.push('Write requires Read permission');
+      }
+
+      if (cell.permissions.delete && !cell.permissions.read) {
+        cellWarnings.push('Delete requires Read permission');
+      }
+
+      if (cell.permissions.export && !cell.permissions.read) {
+        cellWarnings.push('Export requires Read permission');
+      }
+
+      if (cell.permissions.import && !cell.permissions.write) {
+        cellWarnings.push('Import requires Write permission');
+      }
+
+      if (cellWarnings.length > 0) {
+        warnings.set(key, cellWarnings);
+      }
+    });
+
+    setValidationWarnings(warnings);
+  };
+
+  const getPermissionCount = (): { total: number; byType: Record<PermissionType, number> } => {
+    const byType: Record<PermissionType, number> = {
+      read: 0,
+      write: 0,
+      delete: 0,
+      export: 0,
+      import: 0,
+      hide: 0
+    };
+    let total = 0;
+
+    permissions.forEach(cell => {
+      (Object.keys(cell.permissions) as PermissionType[]).forEach(permType => {
+        if (cell.permissions[permType]) {
+          byType[permType]++;
+          total++;
+        }
+      });
+    });
+
+    return { total, byType };
+  };
+
+  const isInherited = (roleId: string, moduleId: string, fieldId?: string): boolean => {
+    const role = roles.find(r => r.id === roleId);
+    if (!role || !role.parent_role_id) return false;
+
+    const key = fieldId ? `${roleId}-${moduleId}-${fieldId}` : `${roleId}-${moduleId}`;
+    const parentKey = fieldId
+      ? `${role.parent_role_id}-${moduleId}-${fieldId}`
+      : `${role.parent_role_id}-${moduleId}`;
+
+    const cell = permissions.get(key);
+    const parentCell = permissions.get(parentKey);
+
+    if (!cell || !parentCell) return false;
+
+    return (Object.keys(cell.permissions) as PermissionType[]).some(
+      permType => cell.permissions[permType] && parentCell.permissions[permType]
+    );
+  };
+
   const renderPermissionCheckbox = (
     roleId: string,
     moduleId: string,
@@ -447,6 +534,10 @@ const PermissionMatrix: React.FC = () => {
     const key = fieldId ? `${roleId}-${moduleId}-${fieldId}` : `${roleId}-${moduleId}`;
     const cell = permissions.get(key);
     const isChecked = cell?.permissions[permType] || false;
+    const inherited = isInherited(roleId, moduleId, fieldId);
+    const warnings = validationWarnings.get(key) || [];
+    const hasWarning = warnings.length > 0;
+    const tooltipKey = `${key}-${permType}`;
 
     if (!fieldId) {
       const state = getPermissionState(roleId, moduleId, permType);
@@ -454,29 +545,75 @@ const PermissionMatrix: React.FC = () => {
       const color = state === 'all' ? 'text-green-600' : state === 'some' ? 'text-blue-600' : 'text-gray-400';
 
       return (
-        <button
-          onClick={() => {
-            const newValue = state !== 'all';
-            setModulePermissions(roleId, moduleId, permType, newValue);
-          }}
-          className={`p-1.5 hover:bg-gray-100 rounded transition-colors ${color}`}
-          title={`${permType} - ${state}`}
-        >
-          <Icon className="h-4 w-4" />
-        </button>
+        <div className="relative">
+          <button
+            onClick={() => {
+              const newValue = state !== 'all';
+              setModulePermissions(roleId, moduleId, permType, newValue);
+            }}
+            onMouseEnter={() => setTooltipVisible(tooltipKey)}
+            onMouseLeave={() => setTooltipVisible(null)}
+            className={`p-1.5 hover:bg-gray-100 rounded transition-colors ${color} ${
+              inherited ? 'ring-2 ring-blue-300 ring-offset-1' : ''
+            } ${hasWarning ? 'ring-2 ring-amber-300 ring-offset-1' : ''}`}
+          >
+            <Icon className="h-4 w-4" />
+          </button>
+          {tooltipVisible === tooltipKey && (
+            <div className="absolute z-50 bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded shadow-lg w-48">
+              {getPermissionTooltip(permType)}
+              {inherited && (
+                <div className="mt-1 pt-1 border-t border-gray-700 text-blue-300">
+                  ✓ Inherited from parent role
+                </div>
+              )}
+              {hasWarning && (
+                <div className="mt-1 pt-1 border-t border-gray-700 text-amber-300">
+                  ⚠ {warnings[0]}
+                </div>
+              )}
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                <div className="border-4 border-transparent border-t-gray-900"></div>
+              </div>
+            </div>
+          )}
+        </div>
       );
     }
 
     return (
-      <button
-        onClick={() => togglePermission(roleId, moduleId, permType, fieldId)}
-        className={`p-1.5 hover:bg-gray-100 rounded transition-colors ${
-          isChecked ? 'text-green-600' : 'text-gray-400'
-        }`}
-        title={permType}
-      >
-        {isChecked ? <CheckSquare className="h-4 w-4" /> : <Square className="h-4 w-4" />}
-      </button>
+      <div className="relative">
+        <button
+          onClick={() => togglePermission(roleId, moduleId, permType, fieldId)}
+          onMouseEnter={() => setTooltipVisible(tooltipKey)}
+          onMouseLeave={() => setTooltipVisible(null)}
+          className={`p-1.5 hover:bg-gray-100 rounded transition-colors ${
+            isChecked ? 'text-green-600' : 'text-gray-400'
+          } ${inherited ? 'ring-2 ring-blue-300 ring-offset-1' : ''} ${
+            hasWarning ? 'ring-2 ring-amber-300 ring-offset-1' : ''
+          }`}
+        >
+          {isChecked ? <CheckSquare className="h-4 w-4" /> : <Square className="h-4 w-4" />}
+        </button>
+        {tooltipVisible === tooltipKey && (
+          <div className="absolute z-50 bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded shadow-lg w-48">
+            {getPermissionTooltip(permType)}
+            {inherited && (
+              <div className="mt-1 pt-1 border-t border-gray-700 text-blue-300">
+                ✓ Inherited from parent role
+              </div>
+            )}
+            {hasWarning && (
+              <div className="mt-1 pt-1 border-t border-gray-700 text-amber-300">
+                ⚠ {warnings[0]}
+              </div>
+            )}
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+              <div className="border-4 border-transparent border-t-gray-900"></div>
+            </div>
+          </div>
+        )}
+      </div>
     );
   };
 
@@ -489,7 +626,24 @@ const PermissionMatrix: React.FC = () => {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
               <Grid className="h-6 w-6 text-blue-600" />
-              <h2 className="text-xl font-semibold text-gray-900">Permission Matrix</h2>
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">Permission Matrix</h2>
+                <div className="flex items-center space-x-4 mt-1">
+                  <span className="text-xs text-gray-600">
+                    <strong>{getPermissionCount().total}</strong> permissions assigned
+                  </span>
+                  <span className="text-xs text-gray-400">•</span>
+                  <span className="text-xs text-gray-600">
+                    Read: <strong>{getPermissionCount().byType.read}</strong>
+                  </span>
+                  <span className="text-xs text-gray-600">
+                    Write: <strong>{getPermissionCount().byType.write}</strong>
+                  </span>
+                  <span className="text-xs text-gray-600">
+                    Delete: <strong>{getPermissionCount().byType.delete}</strong>
+                  </span>
+                </div>
+              </div>
               {conflicts.length > 0 && (
                 <button
                   onClick={() => setShowConflicts(!showConflicts)}
@@ -498,6 +652,12 @@ const PermissionMatrix: React.FC = () => {
                   <AlertTriangle className="h-4 w-4" />
                   <span className="text-sm font-medium">{conflicts.length} Conflicts</span>
                 </button>
+              )}
+              {validationWarnings.size > 0 && (
+                <div className="flex items-center space-x-1 px-3 py-1 bg-amber-50 text-amber-700 rounded-lg">
+                  <AlertTriangle className="h-4 w-4" />
+                  <span className="text-sm font-medium">{validationWarnings.size} Warnings</span>
+                </div>
               )}
             </div>
 
@@ -578,6 +738,27 @@ const PermissionMatrix: React.FC = () => {
               <Download className="h-4 w-4 mr-2" />
               Export
             </button>
+          </div>
+
+          {/* Legend */}
+          <div className="mt-4 flex items-center space-x-6 text-xs">
+            <span className="font-medium text-gray-700">Legend:</span>
+            <div className="flex items-center space-x-1">
+              <div className="w-4 h-4 border-2 border-green-600 bg-white rounded"></div>
+              <span className="text-gray-600">Checked</span>
+            </div>
+            <div className="flex items-center space-x-1">
+              <div className="w-4 h-4 border-2 border-blue-300 bg-white rounded ring-2 ring-blue-300 ring-offset-1"></div>
+              <span className="text-gray-600">Inherited</span>
+            </div>
+            <div className="flex items-center space-x-1">
+              <div className="w-4 h-4 border-2 border-amber-300 bg-white rounded ring-2 ring-amber-300 ring-offset-1"></div>
+              <span className="text-gray-600">Warning</span>
+            </div>
+            <div className="flex items-center space-x-1">
+              <HelpCircle className="h-4 w-4 text-gray-400" />
+              <span className="text-gray-600">Hover for info</span>
+            </div>
           </div>
         </div>
 
@@ -677,12 +858,23 @@ const PermissionMatrix: React.FC = () => {
                         <span className="text-xs text-gray-500">{module.category}</span>
                       </div>
                       <div className="flex items-center space-x-2 mt-2">
-                        <span className="text-xs text-gray-500 w-12">Read</span>
-                        <span className="text-xs text-gray-500 w-12">Write</span>
-                        <span className="text-xs text-gray-500 w-12">Delete</span>
-                        <span className="text-xs text-gray-500 w-12">Export</span>
-                        <span className="text-xs text-gray-500 w-12">Import</span>
-                        <span className="text-xs text-gray-500 w-12">Hide</span>
+                        {(['read', 'write', 'delete', 'export', 'import', 'hide'] as PermissionType[]).map(perm => (
+                          <div
+                            key={perm}
+                            className="w-12 flex items-center justify-center relative group"
+                          >
+                            <span className="text-xs text-gray-500 capitalize flex items-center">
+                              {perm}
+                              <HelpCircle className="h-3 w-3 ml-0.5 text-gray-400" />
+                            </span>
+                            <div className="invisible group-hover:visible absolute z-50 bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded shadow-lg w-48">
+                              {getPermissionTooltip(perm)}
+                              <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                                <div className="border-4 border-transparent border-t-gray-900"></div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </th>
                   ))}
