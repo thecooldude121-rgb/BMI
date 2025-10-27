@@ -58,6 +58,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = () => {
     setUser(null);
+
+    const rememberMe = localStorage.getItem('rememberMe');
+    if (rememberMe !== 'true') {
+      localStorage.removeItem('userEmail');
+    }
+
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('sessionData');
   };
 
   const hasPermission = (permission: string): boolean => {

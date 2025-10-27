@@ -25,6 +25,7 @@ import Calendar from './pages/Calendar/Calendar';
 import LeadGenerationModule from './pages/LeadGeneration/LeadGenerationModule';
 import SettingsPage from './pages/Settings/SettingsPage';
 import Login from './pages/Auth/Login';
+import LoginWireframe from './pages/Auth/LoginWireframe';
 import GamificationPage from './pages/CRM/GamificationPage';
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
@@ -68,6 +69,7 @@ const App = () => {
           <SettingsProvider>
             <Routes>
               <Route path="/login" element={<Login />} />
+              <Route path="/login/wireframe" element={<LoginWireframe />} />
               <Route path="/*" element={
                 <Layout>
                   <Routes>

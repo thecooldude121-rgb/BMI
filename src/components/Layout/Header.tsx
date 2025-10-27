@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate, NavLink } from 'react-router-dom';
-import { 
-  Bell, Search, Settings, Menu, Plus, Mail, Building2, 
+import {
+  Bell, Search, Settings, Menu, Plus, Mail, Building2,
   Users, UserPlus, DollarSign, Phone, Activity, LayoutDashboard,
   UserCheck, Target, BarChart3, Calendar, ChevronDown, X, MoreHorizontal,
-  Building, Trophy
+  Building, Trophy, LogOut
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -274,9 +274,11 @@ const Header: React.FC = () => {
                   onClick={() => {
                     logout();
                     setShowProfileMenu(false);
+                    navigate('/login');
                   }}
-                  className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors border-t border-gray-200"
                 >
+                  <LogOut className="mr-3 h-4 w-4" />
                   Sign out
                 </button>
               </div>
