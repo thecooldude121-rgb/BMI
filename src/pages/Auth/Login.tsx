@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Building2, Eye, EyeOff, AlertCircle, CheckCircle, Mail, Lock, Info,
-  TrendingDown, Bell, Calendar, Maximize2, Shield, Award, Users, Zap
+  Globe, Activity, Sparkles, Rocket, Shield, Award, Users, Zap
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -193,29 +193,29 @@ const Login: React.FC = () => {
 
   const uspItems = [
     {
-      icon: TrendingDown,
-      title: '30% Cost Reduction',
-      description: 'Lower operational costs compared to competitors'
+      icon: Globe,
+      title: 'Global OOH/DOOH Campaign Management',
+      description: 'Manage international billboard campaigns across 50+ countries from one unified platform'
     },
     {
-      icon: Bell,
-      title: 'Live Offline Notifications',
-      description: 'Stay updated even when offline'
+      icon: Activity,
+      title: 'Real-Time Device Monitoring',
+      description: 'Live status tracking of every screen with instant offline/online notifications'
     },
     {
-      icon: Calendar,
-      title: 'Dynamic Content Scheduling',
-      description: 'Intelligent automation for content delivery'
+      icon: Sparkles,
+      title: 'AI-Powered Creative Optimization',
+      description: 'Automatic resizing and format adaptation for thousands of screen specifications'
     },
     {
-      icon: Maximize2,
-      title: 'Auto Creative Resizing',
-      description: 'Automatic optimization for all platforms'
+      icon: Rocket,
+      title: '70% Faster Campaign Deployment',
+      description: 'Launch global campaigns in minutes, not weeks - with automated scheduling and content distribution'
     }
   ];
 
   const trustedPartners = [
-    'Salesforce', 'HubSpot', 'Microsoft', 'Google Workspace', 'Slack', 'Zoom'
+    'Clear Channel', 'JCDecaux', 'Lamar', 'Outfront Media', 'Broadsign', 'Vistar Media'
   ];
 
   return (
@@ -229,11 +229,11 @@ const Login: React.FC = () => {
               <Building2 className="h-12 w-12 text-white" strokeWidth={2.5} />
               <div>
                 <h1 className="text-4xl font-bold tracking-tight">BMI Platform</h1>
-                <p className="text-blue-100 text-lg mt-1">Business Management Intelligence</p>
+                <p className="text-blue-100 text-lg mt-1">Billboard Management Intelligence</p>
               </div>
             </div>
             <p className="text-blue-50 text-lg leading-relaxed">
-              Streamline your business operations with our all-in-one intelligent platform designed for modern enterprises.
+              Transform your OOH advertising operations with our AI-powered platform designed for global digital billboard networks and media owners.
             </p>
           </div>
 
