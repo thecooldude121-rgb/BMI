@@ -9,16 +9,25 @@ interface FormErrors {
   general?: string;
 }
 
+const uspItems = [
+  { title: '30% Cost Reduction', desc: 'Optimize media spend with AI-driven budgeting.', icon: CheckCircle },
+  { title: 'Live Offline Notifications', desc: 'Bridge online-to-offline conversions in real time.', icon: Info },
+  { title: 'Dynamic Content Scheduling', desc: 'Automate campaigns with rules and real-time signals.', icon: Chrome },
+  { title: 'Auto Creative Resizing', desc: 'One upload, all sizes—beautiful on every surface.', icon: Building2 },
+];
+
+const featureItems = [
+  { title: 'Unified Analytics', icon: Building2 },
+  { title: 'Role-based Access', icon: Lock },
+  { title: 'SSO & 2FA Ready', icon: Chrome },
+  { title: 'Enterprise Security', icon: CheckCircle },
+];
+
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const { user, login } = useAuth();
 
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    rememberMe: false
-  });
-
+  const [formData, setFormData] = useState({ email: '', password: '', rememberMe: false });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -28,7 +37,6 @@ const Login: React.FC = () => {
   const [loginAttempts, setLoginAttempts] = useState(0);
   const [rateLimited, setRateLimited] = useState(false);
 
-  // Redirect if already logged in
   useEffect(() => {
     if (user) {
       const redirectPath = user.role === 'Admin' ? '/settings' : '/';
@@ -36,7 +44,6 @@ const Login: React.FC = () => {
     }
   }, [user, navigate]);
 
-  // Email validation
   const validateEmail = (email: string): string | undefined => {
     if (!email) return 'Email is required';
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -44,449 +51,247 @@ const Login: React.FC = () => {
     return undefined;
   };
 
-  // Password validation
   const validatePassword = (password: string): string | undefined => {
     if (!password) return 'Password is required';
     if (password.length < 6) return 'Password must be at least 6 characters';
     return undefined;
   };
 
-  // Password strength checker
-  const checkPasswordStrength = (password: string) => {
-    if (password.length === 0) {
-      setPasswordStrength(null);
-      return;
-    }
+  useEffect(() => {
+    const val = formData.password;
+    const hasNum = /\d/.test(val);
+    const hasSym = /[^A-Za-z0-9]/.test(val);
+    const hasUpper = /[A-Z]/.test(val);
+    const strong = val.length >= 10 && hasNum && hasSym && hasUpper;
+    const medium = val.length >= 8 && ((hasNum && hasUpper) || (hasNum && hasSym));
+    setPasswordStrength(!val ? null : strong ? 'strong' : medium ? 'medium' : 'weak');
+  }, [formData.password]);
 
-    let strength = 0;
-    if (password.length >= 8) strength++;
-    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
-    if (/\d/.test(password)) strength++;
-    if (/[^a-zA-Z\d]/.test(password)) strength++;
-
-    if (strength <= 1) setPasswordStrength('weak');
-    else if (strength === 2 || strength === 3) setPasswordStrength('medium');
-    else setPasswordStrength('strong');
-  };
-
-  // Caps Lock detection
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.getModifierState && e.getModifierState('CapsLock')) {
-      setCapsLockOn(true);
-    } else {
-      setCapsLockOn(false);
-    }
-  };
-
-  // Handle input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    const fieldValue = type === 'checkbox' ? checked : value;
-
-    setFormData(prev => ({ ...prev, [name]: fieldValue }));
-
-    // Clear error for this field
-    if (errors[name as keyof FormErrors]) {
-      setErrors(prev => ({ ...prev, [name]: undefined }));
-    }
-
-    // Check password strength
-    if (name === 'password') {
-      checkPasswordStrength(value);
-    }
-  };
-
-  // Handle blur
-  const handleBlur = (field: 'email' | 'password') => {
-    setTouched(prev => ({ ...prev, [field]: true }));
-
-    // Validate on blur
-    if (field === 'email') {
-      const error = validateEmail(formData.email);
-      if (error) setErrors(prev => ({ ...prev, email: error }));
-    } else if (field === 'password') {
-      const error = validatePassword(formData.password);
-      if (error) setErrors(prev => ({ ...prev, password: error }));
-    }
-  };
-
-  // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Rate limiting check
+  useEffect(() => {
     if (loginAttempts >= 5) {
       setRateLimited(true);
-      setErrors({ general: 'Too many login attempts. Please try again in 5 minutes.' });
-      setTimeout(() => {
+      const t = setTimeout(() => {
         setRateLimited(false);
         setLoginAttempts(0);
-        setErrors({});
-      }, 300000); // 5 minutes
-      return;
+      }, 5 * 60 * 1000);
+      return () => clearTimeout(t);
     }
+  }, [loginAttempts]);
 
-    // Validate all fields
-    const emailError = validateEmail(formData.email);
-    const passwordError = validatePassword(formData.password);
+  const onKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // @ts-ignore
+    setCapsLockOn(e.getModifierState && e.getModifierState('CapsLock'));
+  };
 
-    if (emailError || passwordError) {
-      setErrors({
-        email: emailError,
-        password: passwordError
-      });
-      setTouched({ email: true, password: true });
-      return;
-    }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, checked, type } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+  };
 
-    setLoading(true);
-    setErrors({});
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const { name } = e.target;
+    setTouched((t) => ({ ...t, [name]: true }));
+    if (name === 'email') setErrors((er) => ({ ...er, email: validateEmail(formData.email) }));
+    if (name === 'password') setErrors((er) => ({ ...er, password: validatePassword(formData.password) }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (rateLimited) return;
+
+    const emailErr = validateEmail(formData.email);
+    const passErr = validatePassword(formData.password);
+    setErrors({ email: emailErr, password: passErr });
+    if (emailErr || passErr) return;
 
     try {
-      const success = await login(formData.email, formData.password);
-
-      if (success) {
-        // Store remember me preference
-        if (formData.rememberMe) {
-          localStorage.setItem('rememberMe', 'true');
-          localStorage.setItem('userEmail', formData.email);
-        } else {
-          localStorage.removeItem('rememberMe');
-          localStorage.removeItem('userEmail');
-        }
-
-        // Navigation is handled by useEffect when user state updates
-      } else {
-        setLoginAttempts(prev => prev + 1);
-        setErrors({
-          general: 'Invalid email or password. Please try again.'
-        });
-      }
-    } catch (error) {
-      setLoginAttempts(prev => prev + 1);
-      setErrors({
-        general: 'An error occurred during login. Please try again.'
-      });
-      console.error('Login failed:', error);
-    } finally {
+      setLoading(true);
+      await login(formData.email, formData.password, formData.rememberMe);
       setLoading(false);
+    } catch (err: any) {
+      setLoading(false);
+      setLoginAttempts((c) => c + 1);
+      setErrors({ general: err?.message || 'Unable to sign in. Please try again.' });
     }
   };
-
-  // SSO handlers (placeholders)
-  const handleGoogleSSO = () => {
-    setErrors({ general: 'Google SSO is not configured yet.' });
-  };
-
-  const handleMicrosoftSSO = () => {
-    setErrors({ general: 'Microsoft SSO is not configured yet.' });
-  };
-
-  const handleForgotPassword = () => {
-    setErrors({ general: 'Password reset functionality will be available soon.' });
-  };
-
-  // Load remembered email
-  useEffect(() => {
-    const rememberMe = localStorage.getItem('rememberMe');
-    const savedEmail = localStorage.getItem('userEmail');
-
-    if (rememberMe === 'true' && savedEmail) {
-      setFormData(prev => ({ ...prev, email: savedEmail, rememberMe: true }));
-    }
-  }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 px-4 py-12">
-      <div className="max-w-md w-full">
-        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6 text-center">
-            <div className="flex justify-center items-center space-x-3 mb-2">
-              <Building2 className="h-10 w-10 text-white" strokeWidth={2.5} />
-              <span className="text-3xl font-bold text-white tracking-tight">BMI</span>
+    <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900">
+      <div className="mx-auto max-w-6xl px-4 py-10 md:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-stretch">
+          {/* Left: About BMI */}
+          <div className="relative overflow-hidden rounded-2xl bg-slate-900 text-slate-50 p-8 md:p-10 flex flex-col justify-between">
+            <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-indigo-500/20 blur-3xl" aria-hidden="true" />
+            <div className="absolute -bottom-16 -left-20 h-56 w-56 rounded-full bg-cyan-400/10 blur-2xl" aria-hidden="true" />
+
+            <div className="relative z-10">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 grid place-items-center rounded-xl bg-indigo-500/20 ring-1 ring-white/10">
+                  <Building2 className="h-6 w-6 text-indigo-400" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-semibold tracking-tight">BMI Platform</h1>
+                  <p className="text-xs text-slate-300">Business Management Intelligence</p>
+                </div>
+              </div>
+
+              <p className="mt-6 text-lg leading-relaxed text-slate-200">
+                Orchestrate campaigns, insights, and operations across channels with one modern platform.
+              </p>
+
+              <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {uspItems.map(({ title, desc, icon: Icon }) => (
+                  <div key={title} className="rounded-xl bg-white/5 ring-1 ring-white/10 p-4">
+                    <div className="flex items-start gap-3">
+                      <Icon className="h-5 w-5 text-emerald-400 flex-shrink-0" />
+                      <div>
+                        <p className="font-medium text-slate-100">{title}</p>
+                        <p className="text-xs text-slate-300 mt-1">{desc}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6">
+                <p className="text-xs uppercase tracking-wider text-slate-400">Platform features</p>
+                <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {featureItems.map(({ title, icon: Icon }) => (
+                    <div key={title} className="flex items-center gap-2 rounded-lg bg-white/5 p-2 ring-1 ring-white/10">
+                      <Icon className="h-4 w-4 text-indigo-300" />
+                      <span className="text-xs text-slate-200">{title}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-            <h2 className="text-xl font-semibold text-blue-50">
-              Business Management Intelligence
-            </h2>
-            <p className="text-sm text-blue-100 mt-2">
-              Sign in to access your dashboard
-            </p>
+
+            <div className="relative z-10 mt-8 text-[11px] text-slate-400">
+              © {new Date().getFullYear()} BMI. Secure by design.
+            </div>
           </div>
 
-          <div className="px-8 py-8">
-            {/* Demo Credentials Notice */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-              <div className="flex items-start space-x-2">
-                <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+          {/* Right: Login form */}
+          <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-200 p-6 md:p-8 flex items-center">
+            <form onSubmit={handleSubmit} className="w-full" aria-label="Sign in to BMI">
+              <div className="mb-6">
+                <h2 className="text-2xl font-semibold tracking-tight">Welcome back</h2>
+                <p className="text-sm text-slate-500 mt-1">Sign in to access your dashboard</p>
+              </div>
+
+              {errors.general && (
+                <div className="mb-4 flex items-start gap-2 rounded-lg border border-rose-200 bg-rose-50 p-3 text-rose-700">
+                  <AlertCircle className="h-4 w-4 mt-0.5" />
+                  <p className="text-sm">{errors.general}</p>
+                </div>
+              )}
+
+              <div className="space-y-4">
                 <div>
-                  <h3 className="text-sm font-semibold text-blue-900 mb-1">Demo Access</h3>
-                  <p className="text-xs text-blue-800 leading-relaxed">
-                    <strong>Email:</strong> demo@company.com<br />
-                    <strong>Password:</strong> password123<br />
-                    <span className="text-blue-600 text-[11px]">(Any valid email/password combination works)</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* General Error Message */}
-            {errors.general && (
-              <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 animate-shake">
-                <div className="flex items-center space-x-2">
-                  <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
-                  <p className="text-sm text-red-800">{errors.general}</p>
-                </div>
-              </div>
-            )}
-
-            {/* Rate Limit Warning */}
-            {loginAttempts >= 3 && !rateLimited && (
-              <div className="mb-6 bg-orange-50 border border-orange-200 rounded-lg p-4">
-                <div className="flex items-center space-x-2">
-                  <AlertCircle className="h-5 w-5 text-orange-600 flex-shrink-0" />
-                  <p className="text-sm text-orange-800">
-                    Warning: {5 - loginAttempts} login attempts remaining
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* Login Form */}
-            <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Email Field */}
-              <div>
-                <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" />
+                  <label htmlFor="email" className="block text-sm font-medium text-slate-700">Email address</label>
+                  <div className="mt-1 relative">
+                    <Mail className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      aria-invalid={!!(touched.email && errors.email)}
+                      aria-describedby="email-error"
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      value={formData.email}
+                      className="w-full rounded-lg border border-slate-300 pl-9 pr-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition"
+                      placeholder="you@company.com"
+                    />
                   </div>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={formData.email}
-                    onChange={handleChange}
-                    onBlur={() => handleBlur('email')}
-                    aria-invalid={touched.email && !!errors.email}
-                    aria-describedby={errors.email ? "email-error" : undefined}
-                    className={`w-full pl-10 pr-4 py-3 border rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 transition-colors ${
-                      touched.email && errors.email
-                        ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                        : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-                    }`}
-                    placeholder="you@company.com"
-                  />
+                  {touched.email && errors.email && (
+                    <p id="email-error" className="mt-1 text-xs text-rose-600">{errors.email}</p>
+                  )}
                 </div>
-                {touched.email && errors.email && (
-                  <p id="email-error" className="mt-2 text-sm text-red-600 flex items-center space-x-1">
-                    <AlertCircle className="h-4 w-4" />
-                    <span>{errors.email}</span>
-                  </p>
-                )}
-              </div>
 
-              {/* Password Field */}
-              <div>
-                <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
-                  Password
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-slate-700">Password</label>
+                  <div className="mt-1 relative">
+                    <Lock className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <input
+                      id="password"
+                      name="password"
+                      type={showPassword ? 'text' : 'password'}
+                      autoComplete="current-password"
+                      aria-invalid={!!(touched.password && errors.password)}
+                      aria-describedby="password-error password-strength"
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      onKeyUp={onKeyPress}
+                      onKeyDown={onKeyPress}
+                      value={formData.password}
+                      className="w-full rounded-lg border border-slate-300 pl-9 pr-10 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition"
+                      placeholder="••••••••"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((s) => !s)}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1.5 rounded-md hover:bg-slate-100 text-slate-500"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
                   </div>
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    autoComplete="current-password"
-                    required
-                    value={formData.password}
-                    onChange={handleChange}
-                    onBlur={() => handleBlur('password')}
-                    onKeyUp={handleKeyPress}
-                    onKeyDown={handleKeyPress}
-                    aria-invalid={touched.password && !!errors.password}
-                    aria-describedby={errors.password ? "password-error" : undefined}
-                    className={`w-full pl-10 pr-12 py-3 border rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 transition-colors ${
-                      touched.password && errors.password
-                        ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                        : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-                    }`}
-                    placeholder="Enter your password"
-                  />
-                  <button
-                    type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center hover:bg-gray-50 rounded-r-lg transition-colors"
-                    onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                    ) : (
-                      <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                    )}
+                  {capsLockOn && (
+                    <p className="mt-1 text-xs text-amber-600">Caps Lock is on</p>
+                  )}
+                  {touched.password && errors.password && (
+                    <p id="password-error" className="mt-1 text-xs text-rose-600">{errors.password}</p>
+                  )}
+                  {passwordStrength && (
+                    <div id="password-strength" className="mt-2 flex items-center gap-2">
+                      <div className="flex gap-1">
+                        <span className={`h-1.5 w-10 rounded ${passwordStrength !== null ? 'bg-slate-200' : ''}`}></span>
+                        <span className={`h-1.5 w-10 rounded ${passwordStrength === 'weak' ? 'bg-rose-400' : passwordStrength === 'medium' ? 'bg-amber-400' : passwordStrength === 'strong' ? 'bg-emerald-500' : 'bg-slate-200'}`}></span>
+                      </div>
+                      <span className="text-xs text-slate-500 capitalize">{passwordStrength} password</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <label className="inline-flex items-center gap-2 text-sm text-slate-700">
+                    <input type="checkbox" name="rememberMe" checked={formData.rememberMe} onChange={handleChange} className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+                    Remember me
+                  </label>
+                  <button type="button" onClick={() => navigate('/forgot-password')} className="text-sm text-indigo-600 hover:text-indigo-700">
+                    Forgot password?
                   </button>
                 </div>
 
-                {/* Caps Lock Warning */}
-                {capsLockOn && (
-                  <p className="mt-2 text-sm text-orange-600 flex items-center space-x-1">
-                    <AlertCircle className="h-4 w-4" />
-                    <span>Caps Lock is on</span>
-                  </p>
-                )}
-
-                {/* Password Error */}
-                {touched.password && errors.password && (
-                  <p id="password-error" className="mt-2 text-sm text-red-600 flex items-center space-x-1">
-                    <AlertCircle className="h-4 w-4" />
-                    <span>{errors.password}</span>
-                  </p>
-                )}
-
-                {/* Password Strength Indicator */}
-                {formData.password && passwordStrength && (
-                  <div className="mt-2">
-                    <div className="flex items-center space-x-2">
-                      <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full transition-all duration-300 ${
-                            passwordStrength === 'weak' ? 'w-1/3 bg-red-500' :
-                            passwordStrength === 'medium' ? 'w-2/3 bg-yellow-500' :
-                            'w-full bg-green-500'
-                          }`}
-                        />
-                      </div>
-                      <span className={`text-xs font-medium ${
-                        passwordStrength === 'weak' ? 'text-red-600' :
-                        passwordStrength === 'medium' ? 'text-yellow-600' :
-                        'text-green-600'
-                      }`}>
-                        {passwordStrength.charAt(0).toUpperCase() + passwordStrength.slice(1)}
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Remember Me & Forgot Password */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <input
-                    id="rememberMe"
-                    name="rememberMe"
-                    type="checkbox"
-                    checked={formData.rememberMe}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
-                  />
-                  <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-700 cursor-pointer select-none">
-                    Remember me
-                  </label>
-                </div>
                 <button
-                  type="button"
-                  onClick={handleForgotPassword}
-                  className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
+                  type="submit"
+                  disabled={loading || rateLimited}
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 text-white py-2.5 text-sm font-medium shadow-sm hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed transition"
                 >
-                  Forgot password?
+                  {loading ? 'Signing in…' : 'Sign In'}
                 </button>
-              </div>
 
-              {/* Sign In Button */}
-              <button
-                type="submit"
-                disabled={loading || rateLimited}
-                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
-              >
-                {loading ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Signing in...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle className="h-5 w-5 mr-2" />
-                    Sign In
-                  </>
+                <div className="relative my-3">
+                  <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-200" /></div>
+                  <div className="relative flex justify-center"><span className="bg-white px-2 text-[11px] text-slate-500">Or continue with</span></div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <button type="button" className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white py-2 text-sm hover:bg-slate-50">
+                    <img alt="Google" src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" className="h-4 w-4" />
+                    Google
+                  </button>
+                  <button type="button" className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white py-2 text-sm hover:bg-slate-50">
+                    <img alt="Microsoft" src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" className="h-4 w-4" />
+                    Microsoft
+                  </button>
+                </div>
+
+                {rateLimited && (
+                  <p className="text-xs text-amber-600 mt-2">Too many attempts. Try again in a few minutes.</p>
                 )}
-              </button>
-            </form>
 
-            {/* Divider */}
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white text-gray-500 font-medium">Or continue with</span>
-                </div>
-              </div>
-            </div>
-
-            {/* SSO Buttons */}
-            <div className="mt-6 grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={handleGoogleSSO}
-                disabled={loading}
-                className="flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                </svg>
-                Google
-              </button>
-              <button
-                type="button"
-                onClick={handleMicrosoftSSO}
-                disabled={loading}
-                className="flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <svg className="h-5 w-5 mr-2" viewBox="0 0 23 23">
-                  <path fill="#f3f3f3" d="M0 0h23v23H0z"/>
-                  <path fill="#f35325" d="M1 1h10v10H1z"/>
-                  <path fill="#81bc06" d="M12 1h10v10H12z"/>
-                  <path fill="#05a6f0" d="M1 12h10v10H1z"/>
-                  <path fill="#ffba08" d="M12 12h10v10H12z"/>
-                </svg>
-                Microsoft
-              </button>
-            </div>
-
-            {/* 2FA Placeholder Notice */}
-            <div className="mt-6 text-center">
-              <p className="text-xs text-gray-500">
-                Two-factor authentication will be available in a future update
-              </p>
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="bg-gray-50 px-8 py-4 border-t border-gray-200">
-            <p className="text-xs text-center text-gray-500">
-              © 2024 BMI Platform. All rights reserved.
-            </p>
-            <p className="text-xs text-center text-gray-400 mt-1">
-              Protected by enterprise-grade security
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default Login;
+                <p className="mt-4 text-[11px] text-slate-500">Two-factor authentication is coming soon.</p>
+             
