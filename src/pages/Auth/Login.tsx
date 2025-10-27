@@ -193,29 +193,34 @@ const Login: React.FC = () => {
 
   const uspItems = [
     {
-      icon: Globe,
-      title: 'Global OOH/DOOH Campaign Management',
-      description: 'Manage international billboard campaigns across 50+ countries from one unified platform'
-    },
-    {
-      icon: Activity,
-      title: 'Real-Time Device Monitoring',
-      description: 'Live status tracking of every screen with instant offline/online notifications'
-    },
-    {
       icon: Sparkles,
-      title: 'AI-Powered Creative Optimization',
-      description: 'Automatic resizing and format adaptation for thousands of screen specifications'
+      title: 'Intuitive, Modern User Experience',
+      description: 'Designed with simplicity in mind, BMI offers a clean, modern interface that reduces training time and boosts team productivity from day one.'
+    },
+    {
+      icon: Zap,
+      title: 'Fully Customizable & Modular CRM',
+      description: 'Tailor every module to your workflow. Add, remove, or configure features without developer support—BMI adapts to your business, not the other way around.'
     },
     {
       icon: Rocket,
-      title: '70% Faster Campaign Deployment',
-      description: 'Launch global campaigns in minutes, not weeks - with automated scheduling and content distribution'
+      title: 'Advanced Automation & Intelligence',
+      description: 'Leverage AI-driven insights and smart automation to eliminate repetitive tasks, predict customer behavior, and close deals faster.'
+    },
+    {
+      icon: Shield,
+      title: 'Transparent, Actionable Insights',
+      description: 'Real-time dashboards and analytics provide clear visibility into your sales pipeline, team performance, and growth opportunities at a glance.'
+    },
+    {
+      icon: Award,
+      title: 'Built to Outperform Leading CRMs',
+      description: 'BMI combines the power of Salesforce, the usability of HubSpot, and the affordability of Zoho—delivering enterprise-grade capabilities at a fraction of the cost.'
     }
   ];
 
   const trustedPartners = [
-    'Clear Channel', 'JCDecaux', 'Lamar', 'Outfront Media', 'Broadsign', 'Vistar Media'
+    'Salesforce', 'HubSpot', 'Zoho', 'Microsoft Dynamics', 'Pipedrive', 'Zendesk'
   ];
 
   return (
@@ -241,7 +246,7 @@ const Login: React.FC = () => {
           <div className="mb-8 lg:mb-12">
             <h2 className="text-2xl font-bold mb-6 flex items-center">
               <Zap className="h-6 w-6 mr-2" />
-              Why Choose BMI?
+              Why Choose BMI Platform?
             </h2>
             <div className="space-y-4">
               {uspItems.map((item, index) => {
