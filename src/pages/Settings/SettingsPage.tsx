@@ -11,6 +11,8 @@ import PermissionMatrix from './PermissionMatrix';
 import PermissionSets from './PermissionSets';
 import ProfilesAccess from './ProfilesAccess';
 import SecurityPolicies from './SecurityPolicies';
+import SSOAuthentication from './SSOAuthentication';
+import SharingRules from './SharingRules';
 import { WhatIfSimulator } from '../../components/Permissions/WhatIfSimulator';
 import { SharingRuleBuilder } from '../../components/Permissions/SharingRuleBuilder';
 import { UserGroupManagement } from '../../components/Permissions/UserGroupManagement';
@@ -251,7 +253,10 @@ const SettingsPage: React.FC = () => {
         return <UserGroupManagement />;
 
       case 'sharing':
-        return <SharingRuleBuilder isOpen={false} onClose={() => {}} onSave={() => {}} />;
+        return <SharingRules />;
+
+      case 'sso':
+        return <SSOAuthentication />;
 
       case 'webhooks':
         return <APIIntegrationsPanel />;
