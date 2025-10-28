@@ -10,6 +10,7 @@ import RolesManagement from './RolesManagement';
 import PermissionMatrix from './PermissionMatrix';
 import PermissionSets from './PermissionSets';
 import ProfilesAccess from './ProfilesAccess';
+import SecurityPolicies from './SecurityPolicies';
 import { WhatIfSimulator } from '../../components/Permissions/WhatIfSimulator';
 import { SharingRuleBuilder } from '../../components/Permissions/SharingRuleBuilder';
 import { UserGroupManagement } from '../../components/Permissions/UserGroupManagement';
@@ -262,45 +263,7 @@ const SettingsPage: React.FC = () => {
         return <AuditTrail />;
 
       case 'security':
-        return (
-          <div>
-            <div className="flex items-center space-x-4 mb-6">
-              <div className={`p-3 rounded-xl bg-gradient-to-r ${section.color}`}>
-                <Icon className="h-8 w-8 text-white" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900">{section.title}</h2>
-                <p className="text-gray-600">{section.description}</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Password Policy</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-700">Minimum Length</span>
-                    <span className="text-sm font-medium text-gray-900">8 characters</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-700">Require Uppercase</span>
-                    <span className="text-sm font-medium text-green-600">✓ Enabled</span>
-                  </div>
-                </div>
-                <button className="mt-4 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Edit Policy</button>
-              </div>
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Session Settings</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-700">Session Timeout</span>
-                    <span className="text-sm font-medium text-gray-900">60 minutes</span>
-                  </div>
-                </div>
-                <button className="mt-4 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Edit Settings</button>
-              </div>
-            </div>
-          </div>
-        );
+        return <SecurityPolicies />;
 
       default:
         return (
