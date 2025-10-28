@@ -13,6 +13,7 @@ import ProfilesAccess from './ProfilesAccess';
 import SecurityPolicies from './SecurityPolicies';
 import SSOAuthentication from './SSOAuthentication';
 import SharingRules from './SharingRules';
+import Integrations from './Integrations';
 import { WhatIfSimulator } from '../../components/Permissions/WhatIfSimulator';
 import { SharingRuleBuilder } from '../../components/Permissions/SharingRuleBuilder';
 import { UserGroupManagement } from '../../components/Permissions/UserGroupManagement';
@@ -257,6 +258,9 @@ const SettingsPage: React.FC = () => {
 
       case 'sso':
         return <SSOAuthentication />;
+
+      case 'integrations':
+        return <Integrations />;
 
       case 'webhooks':
         return <APIIntegrationsPanel />;
