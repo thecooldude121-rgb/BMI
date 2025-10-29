@@ -3,7 +3,7 @@ import {
   Settings, Shield, Users, Lock, Activity, Key, Globe,
   Database, Bell, FileText, Workflow, UserCheck, Zap,
   Search, ChevronRight, AlertTriangle, CheckCircle, Info, ArrowLeft,
-  Plus, Edit, Trash2, Eye, X, Webhook, MessageSquare
+  Plus, Edit, Trash2, Eye, X, Webhook, MessageSquare, TrendingUp, Smartphone
 } from 'lucide-react';
 import { useSettings } from '../../contexts/SettingsContext';
 import RolesManagement from './RolesManagement';
@@ -148,6 +148,14 @@ const SettingsPage: React.FC = () => {
       color: 'from-pink-500 to-pink-600'
     },
     {
+      id: 'analytics',
+      title: 'Analytics & Reporting',
+      description: 'Create dashboards, reports, and AI-powered insights',
+      icon: TrendingUp,
+      color: 'from-blue-500 to-purple-600',
+      badge: 'New'
+    },
+    {
       id: 'groups',
       title: 'User Groups',
       description: 'Organize users into hierarchical groups',
@@ -184,6 +192,22 @@ const SettingsPage: React.FC = () => {
       description: 'Connect third-party apps and webhooks',
       icon: Zap,
       color: 'from-violet-500 to-violet-600'
+    },
+    {
+      id: 'advanced_security',
+      title: 'Advanced Security',
+      description: 'Threat detection, device management, and compliance',
+      icon: Shield,
+      color: 'from-red-500 to-red-600',
+      badge: 'Enterprise'
+    },
+    {
+      id: 'mobile_api',
+      title: 'Mobile & API Platform',
+      description: 'Mobile app and developer API management',
+      icon: Smartphone,
+      color: 'from-green-500 to-green-600',
+      badge: 'New'
     },
     {
       id: 'compliance',
