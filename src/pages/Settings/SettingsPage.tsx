@@ -17,6 +17,9 @@ import Integrations from './Integrations';
 import UserGroups from './UserGroups';
 import NotificationsManagement from './NotificationsManagement';
 import AdvancedSecurity from './AdvancedSecurity';
+import WorkflowAutomation from './WorkflowAutomation';
+import AnalyticsReporting from './AnalyticsReporting';
+import MobileAPI from './MobileAPI';
 import { WhatIfSimulator } from '../../components/Permissions/WhatIfSimulator';
 import { SharingRuleBuilder } from '../../components/Permissions/SharingRuleBuilder';
 import { UserGroupManagement } from '../../components/Permissions/UserGroupManagement';
@@ -282,6 +285,15 @@ const SettingsPage: React.FC = () => {
 
       case 'advanced_security':
         return <AdvancedSecurity />;
+
+      case 'workflows':
+        return <WorkflowAutomation />;
+
+      case 'analytics':
+        return <AnalyticsReporting />;
+
+      case 'mobile_api':
+        return <MobileAPI />;
 
       default:
         return (
