@@ -16,6 +16,7 @@ import SharingRules from './SharingRules';
 import Integrations from './Integrations';
 import UserGroups from './UserGroups';
 import NotificationsManagement from './NotificationsManagement';
+import AdvancedSecurity from './AdvancedSecurity';
 import { WhatIfSimulator } from '../../components/Permissions/WhatIfSimulator';
 import { SharingRuleBuilder } from '../../components/Permissions/SharingRuleBuilder';
 import { UserGroupManagement } from '../../components/Permissions/UserGroupManagement';
@@ -278,6 +279,9 @@ const SettingsPage: React.FC = () => {
 
       case 'security':
         return <SecurityPolicies />;
+
+      case 'advanced_security':
+        return <AdvancedSecurity />;
 
       default:
         return (
