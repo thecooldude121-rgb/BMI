@@ -14,6 +14,8 @@ import SecurityPolicies from './SecurityPolicies';
 import SSOAuthentication from './SSOAuthentication';
 import SharingRules from './SharingRules';
 import Integrations from './Integrations';
+import UserGroups from './UserGroups';
+import NotificationsManagement from './NotificationsManagement';
 import { WhatIfSimulator } from '../../components/Permissions/WhatIfSimulator';
 import { SharingRuleBuilder } from '../../components/Permissions/SharingRuleBuilder';
 import { UserGroupManagement } from '../../components/Permissions/UserGroupManagement';
@@ -251,7 +253,7 @@ const SettingsPage: React.FC = () => {
         return <ProfilesAccess />;
 
       case 'groups':
-        return <UserGroupManagement />;
+        return <UserGroups />;
 
       case 'sharing':
         return <SharingRules />;
@@ -261,6 +263,9 @@ const SettingsPage: React.FC = () => {
 
       case 'integrations':
         return <Integrations />;
+
+      case 'notifications':
+        return <NotificationsManagement />;
 
       case 'webhooks':
         return <APIIntegrationsPanel />;
