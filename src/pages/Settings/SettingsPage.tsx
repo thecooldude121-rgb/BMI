@@ -20,6 +20,7 @@ import AdvancedSecurity from './AdvancedSecurity';
 import WorkflowAutomation from './WorkflowAutomation';
 import AnalyticsReporting from './AnalyticsReporting';
 import MobileAPI from './MobileAPI';
+import MobileDeviceManagement from './MobileDeviceManagement';
 import { WhatIfSimulator } from '../../components/Permissions/WhatIfSimulator';
 import { SharingRuleBuilder } from '../../components/Permissions/SharingRuleBuilder';
 import { UserGroupManagement } from '../../components/Permissions/UserGroupManagement';
@@ -210,6 +211,14 @@ const SettingsPage: React.FC = () => {
       badge: 'New'
     },
     {
+      id: 'mobile_mdm',
+      title: 'Mobile Device Management',
+      description: 'Manage mobile devices, app policies, and security settings',
+      icon: Smartphone,
+      color: 'from-teal-500 to-teal-600',
+      badge: 'Enterprise'
+    },
+    {
       id: 'compliance',
       title: 'Compliance & Data',
       description: 'Data encryption, backup, and GDPR settings',
@@ -318,6 +327,9 @@ const SettingsPage: React.FC = () => {
 
       case 'mobile_api':
         return <MobileAPI />;
+
+      case 'mobile_mdm':
+        return <MobileDeviceManagement />;
 
       default:
         return (
